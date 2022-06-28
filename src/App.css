@@ -1,2 +1,9 @@
 .App {
+    touch-action: none;
 }
+/*#container {*/
+/*    position: relative;*/
+/*}*/
+/*#container canvas, .tiling {*/
+/*    position: absolute;*/
+/*}*/

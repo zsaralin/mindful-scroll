@@ -1,6 +1,11 @@
+'use strict'
+
 import './App.css';
 import {useEffect, useRef, useState} from "react";
 import {Helmet} from "react-helmet";
+import { mul, EdgeShape, tilingTypes, IsohedralTiling }
+    from './lib/tactile.js';
+import tiling from './Tiling.js'
 
 function getRandomColor() {
     var o = Math.round, r = Math.random, s = 255;
@@ -10,12 +15,15 @@ function getRandomColor() {
 function App() {
     const canvas = useRef();
     let color = getRandomColor();
+
     // disable right clicking
     document.oncontextmenu = function () {
         return false;
     }
     useEffect(() => {
         redrawCanvas();
+        // tiling.drawRandomTiling()
+
     }, []);
 
     // list of all strokes drawn
@@ -50,6 +58,7 @@ function App() {
 
         // const canvas = document.getElementById("canvas");
         const context = canvas.getContext("2d");
+
         // set the canvas to the size of the window
         canvas.width = document.body.clientWidth;
         canvas.height = window.innerHeight;
@@ -60,6 +69,11 @@ function App() {
             const line = drawings[i];
             drawLine(toScreenX(line.x0), toScreenY(line.y0), toScreenX(line.x1), toScreenY(line.y1), line.color);
         }
+
+        const canvas2 = document.getElementById("tiling-canvas")
+        canvas2.width = document.body.clientWidth;
+        canvas2.height = window.innerHeight;
+        tiling.drawRandomTiling()
     }
 
     // if the window changes size, redraw the canvas
@@ -233,16 +247,28 @@ function App() {
           }
         `}
         </style>
+        <div class = "wrapper">
       <canvas ref={canvas} id = "canvas"
-              onMouseDown={onMouseDown}
-              onMouseUp={onMouseUp}
-              onMouseOut={onMouseUp}
-              onMouseMove={onMouseMove}
-              onTouchStart={onTouchStart}
-              onTouchEnd={onTouchEnd}
-              onTouchCancel={onTouchEnd}
-              onTouchMove={onTouchMove}
+              // onMouseDown={onMouseDown}
+              // onMouseUp={onMouseUp}
+              // onMouseOut={onMouseUp}
+              // onMouseMove={onMouseMove}
+              // onTouchStart={onTouchStart}
+              // onTouchEnd={onTouchEnd}
+              // onTouchCancel={onTouchEnd}
+              // onTouchMove={onTouchMove}
       >Your browser does not support HTML5 canvas</canvas>
+        <canvas id = "tiling-canvas" width = "document.body.clientWidth" height = "client.innerHeight"
+                onMouseDown={onMouseDown}
+                onMouseUp={onMouseUp}
+                onMouseOut={onMouseUp}
+                onMouseMove={onMouseMove}
+                onTouchStart={onTouchStart}
+                onTouchEnd={onTouchEnd}
+                onTouchCancel={onTouchEnd}
+                onTouchMove={onTouchMove}
+        ></canvas>
+        </div>
     </div>
   );
 }
