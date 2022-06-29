@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
 }
 
 code {
@@ -18,4 +19,14 @@ code {
 .wrapper canvas {
   position: absolute;
 
+}
+.introPage {
+  position: absolute;
+  height: 100vh;
+  width: 100%;
+  left: 0;
+  top: 0;
+  text-align: center;
+  padding-top: 20%;
+  background-color: white;
 }

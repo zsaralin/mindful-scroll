@@ -7,6 +7,9 @@ import {mul, EdgeShape, tilingTypes, IsohedralTiling}
     from './lib/tactile.js';
 import tilingObject from './Tiling.js'
 
+let audio = new Audio('https://audio.jukehost.co.uk/M8pzlNF3rdamYbcdo7cLg9b41gfwqC1b');
+audio.volume = .2;
+
 function getRandomColor() {
     var o = Math.round, r = Math.random, s = 255;
     return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + 1 + ')';
@@ -15,8 +18,11 @@ function getRandomColor() {
 function App() {
     const canvas = useRef();
     let color = getRandomColor();
+
     const [randTiling, setRandTiling] = useState(null)
     const [randEdges, setRandEdges] = useState(null)
+
+    const [intro, setIntro] = useState(true)
 
     // disable right clicking
     document.oncontextmenu = function () {
@@ -44,15 +50,7 @@ function App() {
     useEffect(() => {
         redrawCanvas();
         pageScroll()
-    }, [randTiling]);
-
-    // useEffect(() => {
-    //     redrawCanvas();
-    // }, [offsetY]);
-
-    // useEffect(() => {
-    //     pageScroll()
-    // }, );
+    }, [randTiling, intro]);
 
     // convert coordinates
     function toScreenX(xTrue) {
@@ -72,11 +70,6 @@ function App() {
     }
 
     function redrawCanvas() {
-        // if (randTiling !== null && randEdges !== null) {
-        //     tilingObject.drawTiling(offsetX, offsetY, randTiling, randEdges);
-        // }
-        // const canvas = document.querySelector('#canvas')
-        // setColor(getRandomColor())
         const canvas = document.getElementById("canvas");
 
         const context = canvas.getContext("2d");
@@ -95,7 +88,7 @@ function App() {
         const canvas2 = document.getElementById("tiling-canvas")
         canvas2.width = document.body.clientWidth;
         canvas2.height = window.innerHeight;
-        if (randTiling && randEdges) {
+        if (randTiling && randEdges && !intro) {
             tilingObject.drawTiling(offsetX, offsetY, randTiling, randEdges);
         }
     }
@@ -168,7 +161,9 @@ function App() {
     }
 
     function drawLine(x0, y0, x1, y1, theColor) {
-        const context = canvas.current.getContext("2d");
+        var canvas = document.getElementById('canvas');
+
+        const context = canvas.getContext("2d");
         context.beginPath();
         context.moveTo(x0, y0);
         context.lineCap = 'round'
@@ -268,19 +263,24 @@ function App() {
     }
 
     function pageScroll() {
-        let start = Date.now();
-        let timer = requestAnimationFrame(function animate(timestamp) {
-            let interval = Date.now() -  start;
-            offsetY += 1
+        requestAnimationFrame(function animate(timestamp) {
+            offsetY += 0.2
             redrawCanvas()
-            if (interval < 1000) requestAnimationFrame(pageScroll); // queue request for next frame
+            requestAnimationFrame(animate); // queue request for next frame
         });
-        // offsetY += 1
-        // redrawCanvas()
-        // canvas.current = this.requestAnimationFrame(pageScroll);
-        // setTimeout(pageScroll,10);
     }
 
+    const playAud = () => {
+        let playPromise = audio.play()
+        if (playPromise !== undefined) {
+            playPromise.then(function() {
+                // Automatic playback started!
+            }).catch(function(error) {
+                // Automatic playback failed.
+                // Show a UI element to let the user manually start playback.
+            });
+            setIntro(false)
+        }}
 
     return (
         <div className="App">
@@ -294,8 +294,8 @@ function App() {
           }
         `}
             </style>
-            <div className="wrapper">
-                <canvas ref={canvas} id="canvas"
+            <div className= {intro ? "introPage" : "wrapper"} onClick ={playAud} > {intro ? "Click Anywhere to Start!" : ""}
+                <canvas ref={canvas} id="canvas" style = {{visibility : intro ? 'hidden' : ''}}
                 >Your browser does not support HTML5 canvas
                 </canvas>
                 <canvas id="tiling-canvas" width="document.body.clientWidth" height="client.innerHeight"
@@ -307,6 +307,7 @@ function App() {
                         onTouchEnd={onTouchEnd}
                         onTouchCancel={onTouchEnd}
                         onTouchMove={onTouchMove}
+                        // onClick ={playAud}
                 ></canvas>
             </div>
         </div>
