@@ -26,7 +26,6 @@ function App() {
         const {tiling, edges} = tilingObject.makeRandomTiling()
         setRandTiling(tiling)
         setRandEdges(edges)
-
     }, []);
 
     // list of all strokes drawn
@@ -46,6 +45,10 @@ function App() {
         redrawCanvas();
         pageScroll()
     }, [randTiling]);
+
+    // useEffect(() => {
+    //     redrawCanvas();
+    // }, [offsetY]);
 
     // useEffect(() => {
     //     pageScroll()
@@ -69,9 +72,9 @@ function App() {
     }
 
     function redrawCanvas() {
-        if (randTiling !== null && randEdges !== null) {
-            tilingObject.drawTiling(offsetX, offsetY, randTiling, randEdges);
-        }
+        // if (randTiling !== null && randEdges !== null) {
+        //     tilingObject.drawTiling(offsetX, offsetY, randTiling, randEdges);
+        // }
         // const canvas = document.querySelector('#canvas')
         // setColor(getRandomColor())
         const canvas = document.getElementById("canvas");
@@ -265,9 +268,17 @@ function App() {
     }
 
     function pageScroll() {
-        offsetY += 1
-        redrawCanvas()
-        setTimeout(pageScroll,50);
+        let start = Date.now();
+        let timer = requestAnimationFrame(function animate(timestamp) {
+            let interval = Date.now() -  start;
+            offsetY += 1
+            redrawCanvas()
+            if (interval < 1000) requestAnimationFrame(pageScroll); // queue request for next frame
+        });
+        // offsetY += 1
+        // redrawCanvas()
+        // canvas.current = this.requestAnimationFrame(pageScroll);
+        // setTimeout(pageScroll,10);
     }
 
 
