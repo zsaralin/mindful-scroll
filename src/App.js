@@ -19,10 +19,14 @@ function App() {
     const canvas = useRef();
     let color = getRandomColor();
 
-    const [randTiling, setRandTiling] = useState(null)
-    const [randEdges, setRandEdges] = useState(null)
+    let xMouse = 0; let yMouse = 0;
+    let xTouch = 0; let yTouch = 0;
+
+    let yMousePos = 0; let yTouchPos = 0
 
     const [intro, setIntro] = useState(true)
+
+    const [numTiles, setNumTiles] = useState(1)
 
     // disable right clicking
     document.oncontextmenu = function () {
@@ -30,12 +34,22 @@ function App() {
     }
     useEffect(() => {
         const {tiling, edges} = tilingObject.makeRandomTiling()
-        setRandTiling(tiling)
-        setRandEdges(edges)
+        setTilingArr([
+            {tiling: tiling, edges: edges},])
     }, []);
+
+    useEffect(() => {
+        if (numTiles > 1) {
+            const {tiling, edges} = tilingObject.makeRandomTiling()
+            setTilingArr(state => [...state, {tiling: tiling, edges: edges}])
+        }
+    }, [numTiles]);
 
     // list of all strokes drawn
     const drawings = [];
+
+    // list of all tilings
+    const [tilingArr, setTilingArr] = useState([])
 
     // coordinates of our cursor
     let cursorX;
@@ -47,26 +61,29 @@ function App() {
     let offsetX = 0;
     let offsetY = 0;
 
+    // default line width at the start of each stroke
+    let lineWidth = 50;
+
     useEffect(() => {
         redrawCanvas();
-        pageScroll()
-    }, [randTiling, intro]);
+        // pageScroll()
+    }, [tilingArr, intro]);
 
     // convert coordinates
     function toScreenX(xTrue) {
-        return (xTrue + offsetX)
+        return (xTrue - offsetX)
     }
 
     function toScreenY(yTrue) {
-        return (yTrue + offsetY)
+        return (yTrue - offsetY)
     }
 
     function toTrueX(xScreen) {
-        return (xScreen) - offsetX;
+        return (xScreen) + offsetX;
     }
 
     function toTrueY(yScreen) {
-        return (yScreen) - offsetY;
+        return (yScreen) + offsetY;
     }
 
     function redrawCanvas() {
@@ -82,20 +99,28 @@ function App() {
         context.fillRect(0, 0, canvas.width, canvas.height);
         for (let i = 0; i < drawings.length; i++) {
             const line = drawings[i];
-            drawLine(toScreenX(line.x0), toScreenY(line.y0), toScreenX(line.x1), toScreenY(line.y1), line.color);
+            drawLine(toScreenX(line.x0), toScreenY(line.y0), toScreenX(line.x1), toScreenY(line.y1), line.color, line.lineWidth);
         }
 
-        const canvas2 = document.getElementById("tiling-canvas")
-        canvas2.width = document.body.clientWidth;
-        canvas2.height = window.innerHeight;
-        if (randTiling && randEdges && !intro) {
-            tilingObject.drawTiling(offsetX, offsetY, randTiling, randEdges);
+        const tilingCanvas = document.getElementById("tiling-canvas")
+        tilingCanvas.width = document.body.clientWidth;
+        tilingCanvas.height = window.innerHeight;
+
+        console.log('OFFSET Y ' + offsetY)
+        console.log('TILING ARRAY LENGTH ' + tilingArr.length)
+        console.log('nUMBER OF TILESSSS ' + numTiles)
+
+
+        if (!intro) {
+            for (let i = 0; i < tilingArr.length; i++) {
+                tilingObject.drawTiling(offsetX, offsetY - (1800 * i), tilingArr[i].tiling, tilingArr[i].edges);
+            }
         }
     }
 
     // if the window changes size, redraw the canvas
     window.addEventListener("resize", (event) => {
-        redrawCanvas();
+        // redrawCanvas();
     });
 
     // mouse functions
@@ -133,34 +158,53 @@ function App() {
         const prevScaledY = toTrueY(prevCursorY);
 
         if (leftMouseDown) {
+            // speed of stroke
+            xMouse = event.movementX;
+            yMouse = event.movementY;
+
+            // y position of stroke
+            yMousePos = event.pageY;
+
             // add the line to our drawing history
             drawings.push({
                 x0: prevScaledX,
                 y0: prevScaledY,
                 x1: scaledX,
                 y1: scaledY,
-                color: color
+                color: color,
+                lineWidth : getLineWidth()
             })
+            //scroll if drawing on bottom part of page
+            if (yMousePos + 20 > window.innerHeight){
+                pageScroll();
+            }
             // draw a line
-            drawLine(prevCursorX, prevCursorY, cursorX, cursorY, color);
+            drawLine(prevCursorX, prevCursorY, cursorX, cursorY, color, lineWidth);
+
         }
         if (rightMouseDown) {
             // move the screen
             // offsetX += (cursorX - prevCursorX) / scale;
-            offsetY += (cursorY - prevCursorY);
+            offsetY -= (cursorY - prevCursorY);
+            if (offsetY > (1100 * numTiles)) {
+                setNumTiles(numTiles + 1);
+            }
             redrawCanvas();
         }
         prevCursorX = cursorX;
         prevCursorY = cursorY;
+        // console.log("SPEEEED " + xMouse)
+
     }
 
     function onMouseUp() {
         // setColor(getRandomColor)
         leftMouseDown = false;
         rightMouseDown = false;
+        lineWidth = 50;
     }
 
-    function drawLine(x0, y0, x1, y1, theColor) {
+    function drawLine(x0, y0, x1, y1, color, lineWidth) {
         var canvas = document.getElementById('canvas');
 
         const context = canvas.getContext("2d");
@@ -168,7 +212,14 @@ function App() {
         context.moveTo(x0, y0);
         context.lineCap = 'round'
         context.lineJoin = 'round'
-        drawLineEffect(context, x1, y1, theColor)
+
+        context.strokeStyle = color;
+        // context.lineWidth = getLineWidth();
+
+        context.lineWidth = lineWidth;
+        context.lineTo(x1, y1);
+        context.stroke();
+        // drawLineEffect(context, x1, y1, theColor)
     }
 
     // touch functions
@@ -197,8 +248,8 @@ function App() {
         // get first touch coordinates
         const touch0X = event.touches[0].pageX;
         const touch0Y = event.touches[0].pageY;
-        const prevTouch0X = prevTouches[0].pageX;
-        const prevTouch0Y = prevTouches[0].pageY;
+        const prevTouch0X = prevTouches[0]?.pageX;
+        const prevTouch0Y = prevTouches[0]?.pageY;
 
         const scaledX = toTrueX(touch0X);
         const scaledY = toTrueY(touch0Y);
@@ -212,13 +263,28 @@ function App() {
                 y0: prevScaledY,
                 x1: scaledX,
                 y1: scaledY,
-                color: color
+                color: color,
+                lineWidth : getLineWidth()
             })
-            drawLine(prevTouch0X, prevTouch0Y, touch0X, touch0Y, color);
+
+            // speed of stroke
+            xTouch = event.touches[0].pageX - prevTouches[0]?.pageX;
+            yTouch = event.touches[0].pageY - prevTouches[0]?.pageY;
+
+            // y position of stroke
+            yTouchPos = event.touches[0].pageY
+            if (yTouchPos + 20 > window.innerHeight){
+                pageScroll();
+            }
+            // console.log('TOUCH POSTIONNNN ' + yTouchPos + ' ' + window.innerHeight)
+
+            drawLine(prevTouch0X, prevTouch0Y, touch0X, touch0Y, color, lineWidth);
         }
 
         if (doubleTouch) {
-            offsetY += (touch0Y - prevTouch0Y);
+            offsetY -= (touch0Y - prevTouch0Y);
+            if (offsetY > (1100 * numTiles)) {
+                setNumTiles(numTiles + 1); }
             redrawCanvas();
         }
         prevTouches[0] = event.touches[0];
@@ -228,16 +294,17 @@ function App() {
     function onTouchEnd(event) {
         singleTouch = false;
         doubleTouch = false;
+        lineWidth = 50;
     }
 
     function drawLineEffect(context, x1, y1, color) {
         context.strokeStyle = color;
-        context.lineWidth = 5;
+        context.lineWidth = 5 ;
         context.lineTo(x1, y1);
         context.stroke();
 
         context.strokeStyle = color.substring(0, color.length - 2) + '0.7)';
-        context.lineWidth = 10;
+        context.lineWidth = 10 ;
         context.lineTo(x1, y1);
         context.stroke();
 
@@ -262,11 +329,32 @@ function App() {
         context.stroke();
     }
 
+    function getLineWidth(){
+        let speedX = Math.abs(xTouch)
+        let speedY = Math.abs(yTouch)
+
+        if (!singleTouch) { //if using Mouse
+            speedX = Math.abs(xMouse)
+            speedY = Math.abs(yMouse)
+        }
+        if ((speedX > 10  || speedY > 10) && lineWidth > 20)  {
+            lineWidth -= 1;
+            return lineWidth
+        }
+        else if (lineWidth < 80) {
+            lineWidth += 0.1;
+            return lineWidth
+        }
+        return 80;
+    }
+
     function pageScroll() {
-        requestAnimationFrame(function animate(timestamp) {
+        let start = Date.now();
+        requestAnimationFrame(function animate(timestamp6000) {
+            let interval = Date.now() - start;
             offsetY += 0.2
             redrawCanvas()
-            requestAnimationFrame(animate); // queue request for next frame
+            if (interval < 3000) requestAnimationFrame(animate); // queue request for next frame
         });
     }
 
@@ -307,7 +395,6 @@ function App() {
                         onTouchEnd={onTouchEnd}
                         onTouchCancel={onTouchEnd}
                         onTouchMove={onTouchMove}
-                        // onClick ={playAud}
                 ></canvas>
             </div>
         </div>
