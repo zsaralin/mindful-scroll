@@ -359,7 +359,7 @@ function App() {
             speedY = Math.abs(yMouse)
         }
         var decreaseVol = setInterval(function () {
-            if ((speedX > 5 || speedY > 5) && audio.volume > 0.2) {
+            if ((leftMouseDown || singleTouch) && (speedX > 5 || speedY > 5) && audio.volume > 0.2) {
                 // console.log("increasing" + audio.volume)
                 audio.volume -= .005;
                 // console.log('volume' + audio.volume)
@@ -385,7 +385,7 @@ function App() {
         var decreaseVol = setInterval(function () {
             if (audio.volume > 0.2) {
                 // console.log("increasing" + audio.volume)
-                audio.volume -= .02;
+                audio.volume -= .05;
                 // console.log('volume' + audio.volume)
             } else {
                 // Stop the setInterval when 0.8 is reached
