@@ -2,7 +2,18 @@
 import {mul, EdgeShape, tilingTypes, IsohedralTiling}
     from './lib/tactile.js';
 
+function getRandomColor() {
+    var o = Math.round, r = Math.random, s = 255;
+    return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + 1 + ')';
+};
+
+function generateRandomNum() {
+    var num = Math.floor(81 * Math.random());
+    return (num === 27 ? generateRandomNum() : num);
+}
+
 class Tiling{
+
     drawRandomTiling() {
         {
             var canvas = document.getElementById('tiling-canvas');
@@ -24,13 +35,13 @@ class Tiling{
             const ST = [80.0, 0.0, 0.0,
                 0.0, 90.0, 0.0];
 
-            for (let i of tiling.fillRegionBounds(-2, -2, 12, 12)) {
+            for (let i of tiling.fillRegionBounds(-2, -2, 8, 8)) {
                 const T = mul(ST, i.T);
                 // ctx.fillStyle = cols[ tiling.getColour( i.t1, i.t2, i.aspect ) ];
                 ctx.fillStyle = "rgba(255, 255, 255, 0.5)"
                 let start = true;
                 ctx.beginPath();
-
+                const circle = new Path2D();
                 for (let si of tiling.shape()) {
                     const S = mul(T, si.T);
                     let seg = [mul(S, {x: 0.0, y: 0.0})];
@@ -69,11 +80,13 @@ class Tiling{
         }
     }
 
-    drawTiling(offsetX, offsetY, tiling, edges, canvas) {
-        {
-            var canvas = document.getElementById('tiling-canvas');
-            var ctx = canvas.getContext('2d');
+    drawTiling(offsetX, offsetY, tiling, edges, transition) {
+            var tilingCanvas = document.getElementById('tiling-canvas');
+            var tilingCtx = tilingCanvas.getContext('2d');
             // const {tiling, edges} = this.makeTiling();
+
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext('2d');
 
             // Make some random colours.
             // let cols = [];
@@ -84,24 +97,24 @@ class Tiling{
             //         Math.floor(Math.random() * 255.0) + ')');
             // }
             //
-            ctx.lineWidth = 10.0;
-            ctx.lineJoin = "round";
-            ctx.strokeStyle = '#000';
+            tilingCtx.lineWidth = 10.0;
+            tilingCtx.lineJoin = "round";
+            tilingCtx.strokeStyle = '#000';
 
             // Define a world-to-screen transformation matrix that scales by 50x.
             const ST = [100.0, 0, 0.0,
                 0.0, 100.0, 0.0];
 
-            let transition = 0.95
-            let transition1; let transition2;
+            let transition1y = 1; let transition2y = 1;
+            let transition1x = 1; let transition2x = 1;
 
-            for (let i of tiling.fillRegionBounds(-2, 1.25, 8, 12)) {
-            // for (let i of tiling.fillRegionBounds(0, 9, 8, 16)) {
+            for (let i of tiling.fillRegionBounds(-2, 1.25, 8, 15)) {
+            // for (let i of tiling.fillRegionBounds(0,0,0,0)) {
                 const T = mul(ST, i.T);
                 // ctx.fillStyle = cols[ tiling.getColour( i.t1, i.t2, i.aspect ) ];
-                ctx.fillStyle = "rgba(255, 255, 255, 0)"
+                // ctx.fillStyle = "rgba(255, 255, 255, 0)"
                 let start = true;
-                ctx.beginPath();
+                tilingCtx.beginPath();
 
                 for (let si of tiling.shape()) {
                     const S = mul(T, si.T);
@@ -121,45 +134,99 @@ class Tiling{
 
                     if (start) {
                         start = false;
-                        ctx.moveTo(seg[0].x - offsetX, seg[0].y - offsetY);
+                        tilingCtx.moveTo(seg[0].x - offsetX, seg[0].y - offsetY);
+
                     }
 
                     if (seg.length == 2) {
+                        let transitionX = 0;
                         let midpointX = (seg[0].x + seg[1].x) / 2;
                         let midpointY = (seg[0].y + seg[1].y) / 2;
-                        ctx.lineTo(midpointX - offsetX, midpointY * transition - offsetY);
-                        ctx.lineTo(seg[1].x - offsetX, seg[1].y - offsetY);
+                        if (seg[0].x === seg[1].x ){
+                            // transitionX = 0.5 * midpointY
+                            // transition = 1
+                        }
+                        tilingCtx.lineTo(midpointX - transitionX - offsetX, midpointY * transition - offsetY);
+                        tilingCtx.lineTo(seg[1].x - offsetX, seg[1].y - offsetY);
+
+                        // ctx.fillStyle = "pink"
+                        // ctx.fillRect(seg[1].x - offsetX, seg[1].y - offsetY, 30, 30)
+                        // ctx.stroke()
+                        // ctx.fillStyle = "black"
+                        // ctx.fillText(seg[0].x + " " + seg[1].x,seg[1].x + 10- offsetX, seg[1].y - offsetY - 10)
+                        // ctx.fillStyle = "rgba(255, 255, 255, 0)"
 
                     } else {
                         let midpointY = (seg[0].y + seg[3].y) / 2;
+                        let midpointX = (seg[0].x + seg[3].x) / 2;
+
                         if (seg[1].y < midpointY) {
-                            transition1 = 1.05
+                            transition1y = 1.02
                         } else {
-                            transition1 = .95
+                            transition1y = .97
                         }
                         if (seg[2].y < midpointY) {
-                            transition2 = 1.05
+                            transition2y = 1.02
                         } else {
-                            transition2 = .95
+                            transition2y = .97
                         }
 
-                        ctx.bezierCurveTo(
-                            seg[1].x - offsetX, seg[1].y * transition1  - offsetY,
-                            seg[2].x - offsetX, seg[2].y * transition2 - offsetY,
+                        if (seg[1].x < midpointX) {
+                            transition1x = -0.03 * seg[1].y
+                        } else {
+                            transition1x = 0.03 * seg[1].y
+                        }
+                        if (seg[2].x < midpointX) {
+                            transition2x = -0.03 * seg[2].y
+                        } else {
+                            transition2x = 0.03 * seg[2].y
+                        }
+
+                        // if (seg[1].y < midpointY && seg[2].y < midpointY) {
+                        //     transition1y =  1.03; transition2y = 1.03;
+                        // }
+                        // console.log('SEG 1 ' + seg[1].y)
+                        // console.log('SEG 2 ' + seg[2].y)
+
+                        tilingCtx.bezierCurveTo(
+                            seg[1].x - transition1x - offsetX, seg[1].y * transition1y - offsetY,
+                            seg[2].x - transition2x - offsetX, seg[2].y * transition2y - offsetY,
                             seg[3].x - offsetX, seg[3].y  - offsetY);
+                        tilingCtx.stroke();
+
+                        // ctx.fillStyle = "blue"
+                        // ctx.fillRect(seg[1].x - offsetX, seg[1].y - offsetY, 10, 10)
+                        //
+                        // ctx.fillStyle = "red"
+                        // ctx.fillRect(seg[2].x - oit ends with usffsetX, seg[2].y - offsetY, 10, 10)
+                        //
+                        // ctx.fillStyle = "purple"
+                        // ctx.fillRect(midpointX - offsetX, midpointY - offsetY, 10, 10)
+                        //
+                        // ctx.fillStyle = "green"
+                        // ctx.fillRect(seg[1].x - offsetX, seg[1].y * transition1y - offsetY, 10, 10)
+                        //
+                        // ctx.fillStyle = "pink"
+                        // ctx.fillRect(seg[2].x - offsetX, seg[2].y * transition2y - offsetY, 10, 10)
+                        //
+                        // ctx.fillStyle = "rgba(255, 255, 255, 0)"
+                        // ctx.stroke();
                     }
                 }
-                ctx.closePath();
-                ctx.fill();
-                ctx.stroke();
+                tilingCtx.closePath();
+                tilingCtx.stroke();
             }
-        }
+        return tilingCtx.path
+
     }
 
     makeRandomTiling() {
         // Construct a tiling
-        const tp = tilingTypes[Math.floor(81 * Math.random())];
-        // const tp = tilingTypes[Math.floor(63)]; //64 is the squares
+        let theTiling = generateRandomNum()
+        const tp = tilingTypes[theTiling];
+        console.log( 'THE SPECIFIC TRILING ' + theTiling)
+
+        // const tp = tilingTypes[Math.floor(72)]; //64 is the squares, 27 is super large
         let tiling = new IsohedralTiling(tp);
 
         // Randomize the tiling vertex parameters
@@ -167,9 +234,7 @@ class Tiling{
         for (let i = 0; i < ps.length; ++i) {
             ps[i] += Math.random() * 0.1 - 0.05;
         }
-        tiling.setParameters(ps);
-        console.log( 'NUM EDGE SHAPE' + tiling.numEdgeShapes())
-        // Make some random edge shapes.  Note that here, we sidestep the
+        tiling.setParameters(ps);// Make some random edge shapes.  Note that here, we sidestep the
         // potential complexity of using .shape() vs. .parts() by checking
         // ahead of time what the intrinsic edge shape is and building
         // Bezier control points that have all necessary symmetries.
@@ -178,7 +243,7 @@ class Tiling{
         for (let i = 0; i < tiling.numEdgeShapes(); ++i) {
             let ej = [];
             const shp = tiling.getEdgeShape(i);
-            console.log('EDGE SHAPE' + tiling.getEdgeShape(i))
+            // console.log('EDGE SHAPE' + tiling.getEdgeShape(i))
             if (shp == EdgeShape.I) {
                 // Pass
             } else if (shp == EdgeShape.J) {
@@ -200,7 +265,7 @@ class Tiling{
 
     makeTiling() {
         // Construct a tiling
-        const tp = tilingTypes[Math.floor(65)];
+        const tp = tilingTypes[Math.floor(12)];
         let tiling = new IsohedralTiling(tp);
 
         // Randomize the tiling vertex parameters

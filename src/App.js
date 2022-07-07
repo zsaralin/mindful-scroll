@@ -19,14 +19,15 @@ function App() {
     const canvas = useRef();
     let color = getRandomColor();
 
-    let xMouse = 0; let yMouse = 0;
-    let xTouch = 0; let yTouch = 0;
+    let xMouse = 0;
+    let yMouse = 0;
+    let xTouch = 0;
+    let yTouch = 0;
 
-    let yMousePos = 0; let yTouchPos = 0
+    let yMousePos = 0;
+    let yTouchPos = 0
 
     const [intro, setIntro] = useState(true)
-
-    const [numTiles, setNumTiles] = useState(1)
 
     // disable right clicking
     document.oncontextmenu = function () {
@@ -35,18 +36,12 @@ function App() {
     useEffect(() => {
         const {tiling, edges} = tilingObject.makeRandomTiling()
         setTilingArr([
-            {tiling: tiling, edges: edges},])
+            {tiling: tiling, edges: edges, transition: getRandomTransition()}])
     }, []);
 
-    useEffect(() => {
-        if (numTiles > 1) {
-            const {tiling, edges} = tilingObject.makeRandomTiling()
-            setTilingArr(state => [...state, {tiling: tiling, edges: edges}])
-        }
-    }, [numTiles]);
-
     // list of all strokes drawn
-    const drawings = [];
+    // const drawings = [];
+    const [drawings, setDrawings] = useState([])
 
     // list of all tilings
     const [tilingArr, setTilingArr] = useState([])
@@ -60,6 +55,8 @@ function App() {
     // distance from origin
     let offsetX = 0;
     let offsetY = 0;
+    // let offsetX = -300;
+    // let offsetY = -300;
 
     // default line width at the start of each stroke
     let lineWidth = 50;
@@ -67,7 +64,7 @@ function App() {
     useEffect(() => {
         redrawCanvas();
         // pageScroll()
-    }, [tilingArr, intro]);
+    }, [intro]);
 
     // convert coordinates
     function toScreenX(xTrue) {
@@ -88,15 +85,10 @@ function App() {
 
     function redrawCanvas() {
         const canvas = document.getElementById("canvas");
-
-        const context = canvas.getContext("2d");
-
         // set the canvas to the size of the window
         canvas.width = document.body.clientWidth;
         canvas.height = window.innerHeight;
 
-        context.fillStyle = 'white';
-        context.fillRect(0, 0, canvas.width, canvas.height);
         for (let i = 0; i < drawings.length; i++) {
             const line = drawings[i];
             drawLine(toScreenX(line.x0), toScreenY(line.y0), toScreenX(line.x1), toScreenY(line.y1), line.color, line.lineWidth);
@@ -106,15 +98,16 @@ function App() {
         tilingCanvas.width = document.body.clientWidth;
         tilingCanvas.height = window.innerHeight;
 
-        console.log('OFFSET Y ' + offsetY)
-        console.log('TILING ARRAY LENGTH ' + tilingArr.length)
-        console.log('nUMBER OF TILESSSS ' + numTiles)
-
-
+        // console.log('TILING ARRAY LENGTH ' + tilingArr.length)
+        // console.log('nUMBER OF TILESSSS ' + numTiles)
         if (!intro) {
             for (let i = 0; i < tilingArr.length; i++) {
-                tilingObject.drawTiling(offsetX, offsetY - (1800 * i), tilingArr[i].tiling, tilingArr[i].edges);
+                tilingObject.drawTiling(offsetX, offsetY - (2000 * i), tilingArr[i].tiling, tilingArr[i].edges, tilingArr[i].transition);
             }
+        }
+
+        if (offsetY > 1300) {
+            color = getRandomColor();
         }
     }
 
@@ -132,7 +125,7 @@ function App() {
         if (event.button == 0) {
             leftMouseDown = true;
             rightMouseDown = false;
-            color = getRandomColor()
+            // color = getRandomColor()
 
         }
         // detect right clicks
@@ -165,6 +158,8 @@ function App() {
             // y position of stroke
             yMousePos = event.pageY;
 
+            changeAudio()
+
             // add the line to our drawing history
             drawings.push({
                 x0: prevScaledX,
@@ -172,10 +167,12 @@ function App() {
                 x1: scaledX,
                 y1: scaledY,
                 color: color,
-                lineWidth : getLineWidth()
+                lineWidth: getLineWidth()
             })
+            setDrawings(drawings)
+
             //scroll if drawing on bottom part of page
-            if (yMousePos + 20 > window.innerHeight){
+            if (yMousePos + 20 > window.innerHeight) {
                 pageScroll();
             }
             // draw a line
@@ -186,8 +183,8 @@ function App() {
             // move the screen
             // offsetX += (cursorX - prevCursorX) / scale;
             offsetY -= (cursorY - prevCursorY);
-            if (offsetY > (1100 * numTiles)) {
-                setNumTiles(numTiles + 1);
+            if (offsetY > (900 * tilingArr.length)) {
+                addToTilingArr()
             }
             redrawCanvas();
         }
@@ -202,6 +199,7 @@ function App() {
         leftMouseDown = false;
         rightMouseDown = false;
         lineWidth = 50;
+        reduceAudio()
     }
 
     function drawLine(x0, y0, x1, y1, color, lineWidth) {
@@ -231,7 +229,7 @@ function App() {
         if (event.touches.length == 1) {
             singleTouch = true;
             doubleTouch = false;
-            color = getRandomColor()
+            // color = getRandomColor()
         }
         if (event.touches.length >= 2) {
             singleTouch = false;
@@ -264,16 +262,19 @@ function App() {
                 x1: scaledX,
                 y1: scaledY,
                 color: color,
-                lineWidth : getLineWidth()
+                lineWidth: getLineWidth()
             })
 
+            changeAudio()
+
+            setDrawings(drawings)
             // speed of stroke
             xTouch = event.touches[0].pageX - prevTouches[0]?.pageX;
             yTouch = event.touches[0].pageY - prevTouches[0]?.pageY;
 
             // y position of stroke
             yTouchPos = event.touches[0].pageY
-            if (yTouchPos + 20 > window.innerHeight){
+            if (yTouchPos + 20 > window.innerHeight) {
                 pageScroll();
             }
             // console.log('TOUCH POSTIONNNN ' + yTouchPos + ' ' + window.innerHeight)
@@ -283,8 +284,9 @@ function App() {
 
         if (doubleTouch) {
             offsetY -= (touch0Y - prevTouch0Y);
-            if (offsetY > (1100 * numTiles)) {
-                setNumTiles(numTiles + 1); }
+            if (offsetY > (1100 * tilingArr.length)) {
+                addToTilingArr();
+            }
             redrawCanvas();
         }
         prevTouches[0] = event.touches[0];
@@ -295,16 +297,17 @@ function App() {
         singleTouch = false;
         doubleTouch = false;
         lineWidth = 50;
+        reduceAudio()
     }
 
     function drawLineEffect(context, x1, y1, color) {
         context.strokeStyle = color;
-        context.lineWidth = 5 ;
+        context.lineWidth = 5;
         context.lineTo(x1, y1);
         context.stroke();
 
         context.strokeStyle = color.substring(0, color.length - 2) + '0.7)';
-        context.lineWidth = 10 ;
+        context.lineWidth = 10;
         context.lineTo(x1, y1);
         context.stroke();
 
@@ -329,7 +332,7 @@ function App() {
         context.stroke();
     }
 
-    function getLineWidth(){
+    function getLineWidth() {
         let speedX = Math.abs(xTouch)
         let speedY = Math.abs(yTouch)
 
@@ -337,15 +340,58 @@ function App() {
             speedX = Math.abs(xMouse)
             speedY = Math.abs(yMouse)
         }
-        if ((speedX > 10  || speedY > 10) && lineWidth > 20)  {
+        if ((speedX > 10 || speedY > 10) && lineWidth > 20) {
             lineWidth -= 1;
             return lineWidth
-        }
-        else if (lineWidth < 80) {
+        } else if (lineWidth < 80) {
             lineWidth += 0.1;
             return lineWidth
         }
         return 80;
+    }
+
+    function changeAudio() {
+        let speedX = Math.abs(xTouch)
+        let speedY = Math.abs(yTouch)
+
+        if (!singleTouch) { //if using Mouse
+            speedX = Math.abs(xMouse)
+            speedY = Math.abs(yMouse)
+        }
+        var decreaseVol = setInterval(function () {
+            if ((speedX > 5 || speedY > 5) && audio.volume > 0.2) {
+                // console.log("increasing" + audio.volume)
+                audio.volume -= .005;
+                // console.log('volume' + audio.volume)
+            } else {
+                // Stop the setInterval when 0.8 is reached
+                clearInterval(decreaseVol);
+            }
+        }, 200);
+
+        var increaseVol = setInterval(function () {
+            if ((leftMouseDown || singleTouch) && (speedX < 5 || speedY < 5) && audio.volume < .8) {
+                // console.log("increasing" + audio.volume)
+                audio.volume += .005;
+                // console.log('volume' + audio.volume)
+            } else {
+                // Stop the setInterval when 0.8 is reached
+                clearInterval(increaseVol);
+            }
+        }, 200);
+    }
+
+    function reduceAudio() {
+        var decreaseVol = setInterval(function () {
+            if (audio.volume > 0.2) {
+                // console.log("increasing" + audio.volume)
+                audio.volume -= .02;
+                // console.log('volume' + audio.volume)
+            } else {
+                // Stop the setInterval when 0.8 is reached
+                clearInterval(decreaseVol);
+            }
+        }, 200);
     }
 
     function pageScroll() {
@@ -361,14 +407,27 @@ function App() {
     const playAud = () => {
         let playPromise = audio.play()
         if (playPromise !== undefined) {
-            playPromise.then(function() {
+            playPromise.then(function () {
                 // Automatic playback started!
-            }).catch(function(error) {
+            }).catch(function (error) {
                 // Automatic playback failed.
                 // Show a UI element to let the user manually start playback.
             });
             setIntro(false)
-        }}
+        }
+    }
+
+    // sets transition value to 0.95 or 1.05 for segments with len == 2
+    function getRandomTransition() {
+        let transitionArr = [0.98, 1.02]
+        return transitionArr[Math.floor(Math.random() * transitionArr.length)]
+    }
+
+    function addToTilingArr() {
+        const {tiling, edges} = tilingObject.makeRandomTiling()
+        tilingArr.push({tiling: tiling, edges: edges, transition: getRandomTransition()})
+        setTilingArr(tilingArr)
+    }
 
     return (
         <div className="App">
@@ -382,11 +441,12 @@ function App() {
           }
         `}
             </style>
-            <div className= {intro ? "introPage" : "wrapper"} onClick ={playAud} > {intro ? "Click Anywhere to Start!" : ""}
-                <canvas ref={canvas} id="canvas" style = {{visibility : intro ? 'hidden' : ''}}
+            <div className={intro ? "introPage" : "wrapper"}
+                 onClick={playAud}> {intro ? "Click Anywhere to Start!" : ""}
+                <canvas ref={canvas} id="canvas" style={{visibility: intro ? 'hidden' : ''}}
                 >Your browser does not support HTML5 canvas
                 </canvas>
-                <canvas id="tiling-canvas" width="document.body.clientWidth" height="client.innerHeight"
+                <canvas id="tiling-canvas"
                         onMouseDown={onMouseDown}
                         onMouseUp={onMouseUp}
                         onMouseOut={onMouseUp}
@@ -396,6 +456,7 @@ function App() {
                         onTouchCancel={onTouchEnd}
                         onTouchMove={onTouchMove}
                 ></canvas>
+
             </div>
         </div>
     );
