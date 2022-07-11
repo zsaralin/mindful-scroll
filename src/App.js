@@ -167,7 +167,6 @@ function App() {
                 lineWidth: getLineWidth(scaledX,scaledY)
             })
             setDrawings(drawings)
-
             //scroll if drawing on bottom 1/5 part of page
             if (yMousePos > window.innerHeight * 4 / 5) {
                 pageScroll();
@@ -215,16 +214,16 @@ function App() {
         context.lineWidth = lineWidth;
         // console.log('LIEN WIDTH ' + lineWidth)
         // context.lineWidth = getLineWidth();
-        var tilingCan = document.getElementById('tiling-canvas');
-        const tilingContext = tilingCan.getContext("2d");
-        if (tilingContext.getImageData(x1, y1 - 25 , 1, 1).data[3] === 0 )
-        {
-            context.strokeStyle = "white";
-        }
-        else{
+        // var tilingCan = document.getElementById('tiling-canvas');
+        // const tilingContext = tilingCan.getContext("2d");
+        // if (tilingContext.getImageData(x1, y1 - 25 , 1, 1).data[3] === 0 )
+        // {
+        //     context.strokeStyle = "white";
+        // }
+        // else{
             context.strokeStyle = color;
-
-        }
+        //
+        // }
         // context.lineWidth = lineWidth;
         // console.log('COLOURRRSSS' + tilingContext.getImageData(x1, y1, 1, 1).data )
         context.lineTo(x1, y1);
@@ -415,13 +414,19 @@ function App() {
     }
 
     function pageScroll() {
-        let start = Date.now();
-        requestAnimationFrame(function animate(timestamp6000) {
-            let interval = Date.now() - start;
+        console.log('TRIGGERED PAGE SCROLL' + offsetY)
+        // let start = Date.now();
+        // requestAnimationFrame(function animate(timestamp) {
+        //     let interval = Date.now() - start;
+        //     offsetY += 1
+        //     redrawCanvas()
+        //     if (interval < 3000) requestAnimationFrame(animate); // queue request for next frame
+        // });
+        setInterval(function () {
             offsetY += 1
             redrawCanvas()
-            if (interval < 3000) requestAnimationFrame(animate); // queue request for next frame
-        });
+        }, 100);
+
     }
 
     const playAud = () => {
