@@ -88,6 +88,7 @@ function App() {
         // set the canvas to the size of the window
         canvas.width = document.body.clientWidth;
         canvas.height = window.innerHeight;
+        var ctx = canvas.getContext('2d');
 
         for (let i = 0; i < drawings.length; i++) {
             const line = drawings[i];
@@ -104,10 +105,6 @@ function App() {
             for (let i = 0; i < tilingArr.length; i++) {
                 tilingObject.drawTiling(offsetX, offsetY - (2000 * i), tilingArr[i].tiling, tilingArr[i].edges, tilingArr[i].transition);
             }
-        }
-
-        if (offsetY > 1300) {
-            color = getRandomColor();
         }
     }
 
@@ -167,12 +164,12 @@ function App() {
                 x1: scaledX,
                 y1: scaledY,
                 color: color,
-                lineWidth: getLineWidth()
+                lineWidth: getLineWidth(scaledX,scaledY)
             })
             setDrawings(drawings)
 
-            //scroll if drawing on bottom part of page
-            if (yMousePos + 20 > window.innerHeight) {
+            //scroll if drawing on bottom 1/5 part of page
+            if (yMousePos > window.innerHeight * 4 / 5) {
                 pageScroll();
             }
             // draw a line
@@ -203,18 +200,33 @@ function App() {
     }
 
     function drawLine(x0, y0, x1, y1, color, lineWidth) {
+
+
         var canvas = document.getElementById('canvas');
 
         const context = canvas.getContext("2d");
+
+
+
         context.beginPath();
         context.moveTo(x0, y0);
         context.lineCap = 'round'
         context.lineJoin = 'round'
-
-        context.strokeStyle = color;
-        // context.lineWidth = getLineWidth();
-
         context.lineWidth = lineWidth;
+        // console.log('LIEN WIDTH ' + lineWidth)
+        // context.lineWidth = getLineWidth();
+        var tilingCan = document.getElementById('tiling-canvas');
+        const tilingContext = tilingCan.getContext("2d");
+        if (tilingContext.getImageData(x1, y1 - 25 , 1, 1).data[3] === 0 )
+        {
+            context.strokeStyle = "white";
+        }
+        else{
+            context.strokeStyle = color;
+
+        }
+        // context.lineWidth = lineWidth;
+        // console.log('COLOURRRSSS' + tilingContext.getImageData(x1, y1, 1, 1).data )
         context.lineTo(x1, y1);
         context.stroke();
         // drawLineEffect(context, x1, y1, theColor)
@@ -262,8 +274,9 @@ function App() {
                 x1: scaledX,
                 y1: scaledY,
                 color: color,
-                lineWidth: getLineWidth()
+                lineWidth: getLineWidth(scaledX,scaledY)
             })
+
 
             changeAudio()
 
@@ -274,7 +287,7 @@ function App() {
 
             // y position of stroke
             yTouchPos = event.touches[0].pageY
-            if (yTouchPos + 20 > window.innerHeight) {
+            if (yTouchPos > window.innerHeight * 4 / 5) {
                 pageScroll();
             }
             // console.log('TOUCH POSTIONNNN ' + yTouchPos + ' ' + window.innerHeight)
@@ -332,7 +345,14 @@ function App() {
         context.stroke();
     }
 
-    function getLineWidth() {
+    function getLineWidth(x1, y1) {
+        var tilingCan = document.getElementById('tiling-canvas');
+        const tilingContext = tilingCan.getContext("2d");
+        // if (tilingContext.getImageData(x1, y1 + 100, 1, 1).data[3] === 0) {
+        //     lineWidth = 0;
+        //     return lineWidth;
+        // }
+
         let speedX = Math.abs(xTouch)
         let speedY = Math.abs(yTouch)
 
@@ -398,7 +418,7 @@ function App() {
         let start = Date.now();
         requestAnimationFrame(function animate(timestamp6000) {
             let interval = Date.now() - start;
-            offsetY += 0.2
+            offsetY += 1
             redrawCanvas()
             if (interval < 3000) requestAnimationFrame(animate); // queue request for next frame
         });

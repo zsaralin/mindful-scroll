@@ -84,9 +84,7 @@ class Tiling{
             var tilingCanvas = document.getElementById('tiling-canvas');
             var tilingCtx = tilingCanvas.getContext('2d');
             // const {tiling, edges} = this.makeTiling();
-
-            var canvas = document.getElementById('canvas');
-            var ctx = canvas.getContext('2d');
+            tilingCtx.fillStyle = "rgba(255, 255, 255, 0.1)"
 
             // Make some random colours.
             // let cols = [];
@@ -214,6 +212,7 @@ class Tiling{
                     }
                 }
                 tilingCtx.closePath();
+                tilingCtx.fill();
                 tilingCtx.stroke();
             }
         return tilingCtx.path
