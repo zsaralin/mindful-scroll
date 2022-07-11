@@ -18,6 +18,7 @@ function getRandomColor() {
 function App() {
     const canvas = useRef();
     let color = getRandomColor();
+    let numIncrease = 0;
 
     let xMouse = 0;
     let yMouse = 0;
@@ -28,6 +29,8 @@ function App() {
     let yTouchPos = 0
 
     const [intro, setIntro] = useState(true)
+
+    let doScroll = false;
 
     // disable right clicking
     document.oncontextmenu = function () {
@@ -168,7 +171,7 @@ function App() {
             })
             setDrawings(drawings)
             //scroll if drawing on bottom 1/5 part of page
-            if (yMousePos > window.innerHeight * 4 / 5) {
+            if (!doScroll && yMousePos > window.innerHeight * 4 / 5) {
                 pageScroll();
             }
             // draw a line
@@ -204,8 +207,6 @@ function App() {
         var canvas = document.getElementById('canvas');
 
         const context = canvas.getContext("2d");
-
-
 
         context.beginPath();
         context.moveTo(x0, y0);
@@ -414,7 +415,9 @@ function App() {
     }
 
     function pageScroll() {
+        doScroll = true;
         console.log('TRIGGERED PAGE SCROLL' + offsetY)
+
         // let start = Date.now();
         // requestAnimationFrame(function animate(timestamp) {
         //     let interval = Date.now() - start;
@@ -422,10 +425,12 @@ function App() {
         //     redrawCanvas()
         //     if (interval < 3000) requestAnimationFrame(animate); // queue request for next frame
         // });
-        setInterval(function () {
-            offsetY += 1
-            redrawCanvas()
+        var scroll = setInterval(function () {
+                offsetY += 1;
+                redrawCanvas()
         }, 100);
+        setTimeout(function( ) { clearInterval( scroll );
+            doScroll = false}, 5000);
 
     }
 
