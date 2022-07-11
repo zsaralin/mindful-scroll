@@ -287,7 +287,7 @@ function App() {
 
             // y position of stroke
             yTouchPos = event.touches[0].pageY
-            if (yTouchPos > window.innerHeight * 4 / 5) {
+            if (!doScroll && yTouchPos > window.innerHeight * 4 / 5) {
                 pageScroll();
             }
             // console.log('TOUCH POSTIONNNN ' + yTouchPos + ' ' + window.innerHeight)
