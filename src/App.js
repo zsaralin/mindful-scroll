@@ -236,7 +236,7 @@ function App() {
             if (offsetY > (2300 * tilingArr.length)) {
                 addToTilingArr()
             }
-            clearTimeout(scroll)
+            // clearTimeout(scroll)
             redrawCanvas();
         }
         prevCursorX = cursorX;
@@ -251,7 +251,7 @@ function App() {
         lineWidth = 50;
         reduceAudio()
         colorDelay('mouse')
-        clearTimeout(expandTimer)
+        // clearTimeout(expandTimer)
 
         console.log(`OUTSIDE POLY ${outsidePoly} inside poly ${insidePoly} RA TIOOOO ${outsidePoly/insidePoly}`)
         sendAlert()
@@ -408,7 +408,7 @@ function App() {
             if (offsetY > (2300 * tilingArr.length)) {
                 addToTilingArr();
             }
-            clearTimeout(scroll)
+            // clearTimeout(scroll)
             redrawCanvas();
         }
         prevTouches[0] = event.touches[0];
@@ -421,7 +421,7 @@ function App() {
         lineWidth = 50;
         reduceAudio()
         colorDelay('touch')
-        clearTimeout(expandTimer)
+        // clearTimeout(expandTimer)
 
         sendAlert()
         insidePoly = 0;
