@@ -218,7 +218,7 @@ function App() {
                 drawLine(prevCursorX, prevCursorY, cursorX, cursorY, color, lineWidth);
 
                 if (Math.abs(xMouse) < 1 && Math.abs(yMouse) < 1) {
-                    expandTimer = setTimeout(horizExpandFn, 1500);
+                    // expandTimer = setTimeout(horizExpandFn, 1500);
                 }
                 //scroll if drawing on bottom 1/5 part of page
                 if (!doScroll && yMousePos > window.innerHeight * 4 / 5) {
@@ -336,7 +336,7 @@ function App() {
             })
             setDrawings(drawings)
             drawLine(touch0X, touch0Y, touch0X, touch0Y, color, lineWidth);
-            expandTimer = setTimeout(horizExpandFn, 1500);
+            // expandTimer = setTimeout(horizExpandFn, 1500);
 
         }
 
@@ -388,9 +388,9 @@ function App() {
 
                 changeAudio()
 
-                if (Math.abs(xTouch) < 1 && Math.abs(yTouch) < 1) {
-                    expandTimer = setTimeout(horizExpandFn, 1500);
-                }
+                // if (Math.abs(xTouch) < 1 && Math.abs(yTouch) < 1) {
+                //     expandTimer = setTimeout(horizExpandFn, 1500);
+                // }
 
                 // y position of stroke
                 yTouchPos = event.touches[0].pageY
@@ -648,8 +648,8 @@ function App() {
             // drawings.push(lastDrawingX)
 
             // setDrawings(drawings)
-            redrawCanvas()
-            setTimeout(horizExpandFn, 100);
+            // redrawCanvas()
+            // setTimeout(horizExpandFn, 100);
         }
     };
 
