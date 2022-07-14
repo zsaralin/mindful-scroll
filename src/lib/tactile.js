@@ -5,8 +5,8 @@
  * Distributed under the terms of the 3-clause BSD license.  See the
  * file "LICENSE" for more information.
  */
-
 'use strict'
+import { cross } from 'mathjs'
 
 const EdgeShape = {
 	J : 10001,
@@ -2085,6 +2085,8 @@ class IsohedralTiling
 		const ttd = this.ttd;
 		const aspects = this.aspects;
 
+		// const scale = Math.abs(t1.x*t2.y - t2.x*t1.y)/ttd.num_aspects
+
 		let last_y;
 
 		function bc( M, p ) {
@@ -2101,7 +2103,7 @@ class IsohedralTiling
 
 		function* doFill( A, B, C, D, do_top )
 		{
-			let x1 = A.x;
+			let x1 = A.x ;
 			const dx1 = (D.x-A.x)/(D.y-A.y);
 			let x2 = B.x;
 			const dx2 = (C.x-B.x)/(C.y-B.y);
@@ -2125,6 +2127,7 @@ class IsohedralTiling
 
 					for( let asp = 0; asp < ttd.num_aspects; ++asp ) {
 						let M = aspects[ asp ].slice( 0 );
+						//space between rows / columns of tiles
 						M[2] += xi*t1.x + yi*t2.x;
 						M[5] += xi*t1.y + yi*t2.y;
 
@@ -2218,7 +2221,7 @@ class IsohedralTiling
 	{
 		const clrg = this.ttd.colouring;
 		const nc = clrg[18];
-
+		// console.log('LOOOK HEREE' + clrg)
 		let mt1 = a % nc;
 		if( mt1 < 0 ) {
 			mt1 += nc;
