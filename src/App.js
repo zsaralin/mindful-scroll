@@ -231,12 +231,14 @@ function App() {
         }
         if (rightMouseDown) {
             // move the screen
+
             // offsetX += (cursorX - prevCursorX) / scale;
             offsetY -= (cursorY - prevCursorY);
             if (offsetY > (2300 * tilingArr.length)) {
                 addToTilingArr()
             }
-            clearTimeout(scroll)
+            clearTimeout(timeout);
+
             redrawCanvas();
         }
         prevCursorX = cursorX;
@@ -408,14 +410,14 @@ function App() {
             if (offsetY > (2300 * tilingArr.length)) {
                 addToTilingArr();
             }
-            clearTimeout(scroll)
+            clearTimeout(timeout)
             redrawCanvas();
         }
         prevTouches[0] = event.touches[0];
         prevTouches[1] = event.touches[1];
     }
 
-    function onTouchEnd() {
+    function onTouchEnd(event) {
         singleTouch = false;
         doubleTouch = false;
         lineWidth = 50;
@@ -525,10 +527,9 @@ function App() {
         }, 200);
     }
 
+    let timeout ;
 
-    var scroll ;
-
-    function pageScroll(stop) {
+    function pageScroll() {
         doScroll = true;
         // console.log('TRIGGERED PAGE SCROLL' + offsetY)
 
@@ -539,13 +540,13 @@ function App() {
         //     redrawCanvas()
         //     if (interval < 3000) requestAnimationFrame(animate); // queue request for next frame
         // });
-        scroll = setInterval(function () {
+        var scroll = setInterval(function () {
             offsetY += 1;
             redrawCanvas()
         }, 100);
-        setTimeout(function () {
-            clearInterval(scroll);
+        timeout = setTimeout(function () {
             doScroll = false
+            clearInterval(scroll);
         }, 5000);
     }
 
@@ -626,12 +627,12 @@ function App() {
             // }
 
             // expand horizontally
-            // if (colorCtx.getImageData(lastDrawingX.x1 + 10, lastDrawingX.y1, 1, 1).data.toString().trim() === invisCol?.trim()) {
-            //     lastDrawingX.x1 = lastDrawingX.x1 + 2
-            // }
-            // if (colorCtx.getImageData(lastDrawingX.x0 - 10 , lastDrawingX.y0, 1, 1).data.toString().trim() === invisCol?.trim()) {
-            //     lastDrawingX.x0 = lastDrawingX.x0 - 2;
-            // }
+            if (colorCtx.getImageData(lastDrawingX.x1 + 1, lastDrawingX.y1, 1, 1).data.toString().trim() === invisCol?.trim()) {
+                lastDrawingX.x1 = lastDrawingX.x1 + 1
+            }
+            if (colorCtx.getImageData(lastDrawingX.x0 - 1 , lastDrawingX.y0, 1, 1).data.toString().trim() === invisCol?.trim()) {
+                lastDrawingX.x0 = lastDrawingX.x0 - 1;
+            }
 
             // expand vertically
             // if (colorCtx.getImageData(lastDrawingY.x1, lastDrawingY.y1 + 5, 1, 1).data.toString().trim() === invisCol?.trim() ||
@@ -648,8 +649,8 @@ function App() {
             // drawings.push(lastDrawingX)
 
             // setDrawings(drawings)
-            // redrawCanvas()
-            setTimeout(horizExpandFn, 100);
+            redrawCanvas()
+            setTimeout(horizExpandFn, 40);
         }
     };
 
@@ -685,7 +686,7 @@ function App() {
                         onTouchCancel={onTouchEnd}
                         onTouchMove={onTouchMove}
                 ></canvas>
-                <div style = {{position:'absolute', width: '100%', height: '25px', backgroundColor : 'white', textAlign: 'center', transition: `opacity 1s linear`, opacity: 1}}> {alert} </div>
+                <div style = {{position:'absolute', width: '100%', height: '25px', backgroundColor : 'white', textAlign: 'center',}}> {alert} </div>
             </div>
         </div>
     );
