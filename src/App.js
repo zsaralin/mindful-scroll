@@ -415,7 +415,7 @@ function App() {
         prevTouches[1] = event.touches[1];
     }
 
-    function onTouchEnd(event) {
+    function onTouchEnd() {
         singleTouch = false;
         doubleTouch = false;
         lineWidth = 50;
@@ -423,7 +423,7 @@ function App() {
         colorDelay('touch')
         clearTimeout(expandTimer)
 
-        console.log(`OUTSIDE POLY ${outsidePoly} inside poly ${insidePoly} RATIOOOO ${outsidePoly/insidePoly}`)
+        sendAlert()
         insidePoly = 0;
         outsidePoly = 0;
     }
@@ -577,7 +577,6 @@ function App() {
     // changes color after a 2s pause, or changes hue slightly after a 500ms pause
     var colorTimer;
     var colorChange = 15;
-
     function colorDelay(input) {
         clearTimeout(colorTimer)
         var rgb = color.match(/\d+/g);
@@ -646,9 +645,9 @@ function App() {
             //     lastDrawingY.y0 -= 5;
             // }
 
-            drawings.push(lastDrawingX)
+            // drawings.push(lastDrawingX)
 
-            setDrawings(drawings)
+            // setDrawings(drawings)
             redrawCanvas()
             setTimeout(horizExpandFn, 100);
         }
@@ -686,7 +685,7 @@ function App() {
                         onTouchCancel={onTouchEnd}
                         onTouchMove={onTouchMove}
                 ></canvas>
-                <div style = {{position:'absolute', width: '100%', height: '25px', backgroundColor : 'white', textAlign: 'center',}}> {alert} </div>
+                <div style = {{position:'absolute', width: '100%', height: '25px', backgroundColor : 'white', textAlign: 'center', transition: `opacity 1s linear`, opacity: 1}}> {alert} </div>
             </div>
         </div>
     );
