@@ -2085,8 +2085,6 @@ class IsohedralTiling
 		const ttd = this.ttd;
 		const aspects = this.aspects;
 
-		// const scale = Math.abs(t1.x*t2.y - t2.x*t1.y)/ttd.num_aspects
-
 		let last_y;
 
 		function bc( M, p ) {
@@ -2109,7 +2107,6 @@ class IsohedralTiling
 			const dx2 = (C.x-B.x)/(C.y-B.y);
 			const ymin = A.y;
 			let ymax = C.y;
-
 			if( do_top ) {
 				ymax = ymax + 1.0;
 			}
@@ -2157,7 +2154,7 @@ class IsohedralTiling
 				yield* doFill( A, B, C, D, do_top );
 			}
 		}
-			
+
 		function* fillFixY( A, B, C, D, do_top ) 
 		{
 			if( A.y > C.y ) {
@@ -2221,7 +2218,6 @@ class IsohedralTiling
 	{
 		const clrg = this.ttd.colouring;
 		const nc = clrg[18];
-		// console.log('LOOOK HEREE' + clrg)
 		let mt1 = a % nc;
 		if( mt1 < 0 ) {
 			mt1 += nc;

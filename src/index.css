@@ -16,8 +16,8 @@ code {
 
 .wrapper canvas {
   position: absolute;
-
 }
+
 .introPage {
   position: absolute;
   height: 100vh;
@@ -27,5 +27,6 @@ code {
   text-align: center;
   padding-top: 20%;
   background-color: white;
+  z-index: 1;
 }
 

@@ -1,10 +1,12 @@
 .App {
     touch-action: none;
-
 }
-/*#container {*/
-/*    position: relative;*/
-/*}*/
-/*#container canvas, .tiling {*/
-/*    position: absolute;*/
-/*}*/
+
+#feedbackBar{
+    position: absolute;
+    width: 100%;
+    height: 25px;
+    background-color: white;
+    text-align: center;
+    z-index: 1;
+}

@@ -1,6 +1,6 @@
-'use strict'
+
 import {mul, EdgeShape, tilingTypes, IsohedralTiling}
-    from './lib/tactile.js';
+    from '../lib';
 
 function getRandomColor() {
     var o = Math.round, r = Math.random, s = 255;
@@ -32,11 +32,11 @@ class Tiling {
             ctx.lineWidth = 8.0;
             ctx.strokeStyle = '#000';
 
-            const B = Math.abs(tiling.getT1().x*tiling.getT2.y - tiling.getT2().x*tiling.getT1.y)/tiling.numAspects()
+            const B = Math.abs(tiling.getT1().x * tiling.getT2.y - tiling.getT2().x * tiling.getT1.y) / tiling.numAspects()
 
             // Define a world-to-screen transformation matrix that scales by 50x.
-            const ST = [Math.sqrt(80.0/B), 0.0, 0.0,
-                0.0, Math.sqrt(90.0/B), 0.0];
+            const ST = [Math.sqrt(80.0 / B), 0.0, 0.0,
+                0.0, Math.sqrt(90.0 / B), 0.0];
 
             for (let i of tiling.fillRegionBounds(-2, -2, 8, 8)) {
                 const T = mul(ST, i.T);
@@ -85,15 +85,36 @@ class Tiling {
     drawTiling(offsetX, offsetY, tiling, edges, transition) {
         var tilingCanvas = document.getElementById('tiling-canvas');
         var tilingCtx = tilingCanvas.getContext('2d');
+        tilingCtx.fillStyle = "rgba(255, 255, 255, 0)"; //white transparent canvas
 
         var invisCan = document.getElementById('invis-canvas');
         var ctx = invisCan.getContext('2d');
 
-        // const {tiling, edges} = this.makeTiling();
-        tilingCtx.fillStyle = "rgba(255, 255, 255, 0.1)";
+        let t1 = tiling.getT1()
+        let t2 = tiling.getT2()
+        const B = Math.abs((t1.x * t2.y) - (t2.x * t1.y)) / (tiling.numAspects())
+        const A = 2
+        const scaler = Math.sqrt(A / B)
 
+        let numTile = 0
+        for (let i of tiling.fillRegionBounds(0, 0, 6 / scaler, 6 / scaler)) {
+            numTile++;
+        }
+
+        let cols = new Array(numTile) // colour array, numTile must be <= 765
+        for (let i = 0; i < numTile; i++) {
+            if (i < 255) //(0-254, 255, 255)
+                cols[i] = `rgb(${i},255,255)`
+            else if (i < 255*2){ //(255, 0-254, 255)
+                cols[i] = `rgb(255,${i-255},255)`
+            }
+            else if (i < 255*3){  //(255, 255, 0-254)
+                cols[i] = `rgb(255,255,${i-255*2})`
+            }
+        }
+
+        // const {tiling, edges} = this.makeTiling();
         // Make some random colours.
-        let cols = ['red', 'blue', 'green', 'purple', 'pink', 'yellow', 'orange', 'grey', 'turquoise', 'maroon', 'lime', 'olive', 'teal', 'navy'];
         // for (let i = 0; i < 30; ++i) {
         //     cols.push('rgb(' +
         //         Math.floor(Math.random() * 255.0) + ',' +
@@ -101,27 +122,19 @@ class Tiling {
         //         Math.floor(Math.random() * 255.0) + ')');
         // }
 
-        let t1 = tiling.getT1()
-        let t2 = tiling.getT2()
+        console.log(`B is ${B} and num aspects is ${tiling.numAspects()}  and scale is ${scaler}`)
 
-        const B = Math.abs((t1.x * t2.y) - (t2.x * t1.y)) / (tiling.numAspects())
-        const A = 0.5
-        const scaler = Math.sqrt(A/B)
-
-        // console.log(`B is ${B} and num aspects is ${tiling.numAspects()}  and scale is ${scaler}`)
         // tilingCtx.scale(scaler, scaler)
 
-        tilingCtx.lineWidth = 40;
+        // tilingCtx.lineWidth = 10;
         tilingCtx.lineJoin = "round";
         tilingCtx.strokeStyle = '#000';
-
-        ctx.lineWidth = 40.0;
+        // ctx.lineWidth = 1.0;
         ctx.lineJoin = "round";
         ctx.strokeStyle = '#000';
 
         // Define a world-to-screen transformation matrix that scales by 50x.
-        const ST = [200, 0.0, 0.0,
-            0.0, 200, 0.0];
+        const ST = [22 * scaler, 0.0, 0.0, 0.0, 22 * scaler, 0.0];
 
         let transition1y = 1;
         let transition2y = 1;
@@ -130,9 +143,7 @@ class Tiling {
 
         let colorIndex = 0;
 
-        // tilingCtx.scale(scaler, scaler)
-
-        for (let i of tiling.fillRegionBounds(0,0,3,8)) {
+        for (let i of tiling.fillRegionBounds(0, 0, 6 / scaler, 6 / scaler)) {
             // for (let i of tiling.fillRegionBounds(0,0,0,0)) {
             const T = mul(ST, i.T);
             // ctx.fillStyle = 'rgb(' +
@@ -263,6 +274,7 @@ class Tiling {
             ctx.stroke();
 
         }
+        console.log('NUM TILESSSS ' + numTile)
     }
 
     makeRandomTiling() {
