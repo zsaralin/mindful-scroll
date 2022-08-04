@@ -210,7 +210,8 @@ function App() {
             let colorCtx = document.getElementById('invis-canvas').getContext("2d");
             let s = colorCtx.getImageData(touch1X, touch1Y, 1, 1).data.toString().substring(0,5)
             console.log(s !== '0,0,0')
-            if (colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim().substring(0,5) !== '0,0,0'){
+            if (colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim().substring(0,5) !== '0,0,0' ||
+                colorCtx.getImageData(touch1X, touch1Y, 1, 1).data.toString().trim().substring(0,5) !== '0,0,0' ){
                 removeLastPoint()
             }
             singleTouch = false;
