@@ -48,7 +48,6 @@ function App() {
     let insidePoly = [] // number of points inside and outside polygon
 
     let expandTimer;
-    let r2 = 50;
 
     function toTrueX(xScreen) {
         return (xScreen) + offsetX;
@@ -195,8 +194,8 @@ function App() {
 
             setInvisCol(touch0X, touch0Y)
             if (invisCol !== undefined && invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
-                pushStroke(scaledX, scaledY, scaledX, scaledY)
-                drawStroke(touch0X, touch0Y, touch0X, touch0Y);
+                pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                drawStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
                 expandTimer = setTimeout(fillTile, 3000, touch0X, touch0Y, invisCol, 25)
             }
 
