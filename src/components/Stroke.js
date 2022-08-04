@@ -22,6 +22,8 @@ export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
     context.strokeStyle = theColor ? theColor : color;
     context.beginPath();
     context.moveTo(x0, y0);
+    context.fillStyle = 'blue'
+    context.fillRect(x1,y1, 50,50)
     context.lineTo(x1, y1);
     context.stroke();
 }

@@ -1,5 +1,5 @@
 .App {
-    /*touch-action: none;*/
+    touch-action: none;
 }
 
 #feedbackBar{
