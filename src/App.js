@@ -120,7 +120,7 @@ function App() {
         const scaledY = toTrueY(cursorY);
         const prevScaledX = toTrueX(prevCursorX);
         const prevScaledY = toTrueY(prevCursorY);
-
+        clearTimeout(expandTimer)
         if (leftMouseDown) {
             if (isMatchInvisCol(prevCursorX, prevCursorY, cursorX, cursorY)) {
                 // speed of stroke
@@ -216,6 +216,7 @@ function App() {
         const prevScaledX = toTrueX(prevTouch0X);
         const prevScaledY = toTrueY(prevTouch0Y);
 
+        clearTimeout(expandTimer)
         if (singleTouch) {
             if (isMatchInvisCol(prevTouch0X, prevTouch0Y, touch0X, touch0Y)) {
                 insidePoly[0] += 1;
@@ -230,6 +231,9 @@ function App() {
                     startAutoScroll();
                 }
                 // if (Math.abs(touchSpeed[0]) < 1 && Math.abs(touchSpeed[1]) < 1) {
+                //     expandTimer = setTimeout(fillTile, 3000, touch0X, touch0Y, invisCol, 25)
+                //
+                // }
                 // expandTimer = setTimeout(horizExpandFn, 1500);
                 // }
 
