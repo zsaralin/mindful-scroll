@@ -78,8 +78,8 @@ export function redrawStrokes(offsetX, offsetY) {
         }
         // (1450 * (tilingArrLength() - 2) + window.innerHeight - 5))
     }
-    for (let i = 0; i < drawings.length; i++) {
-        const point = drawings[i];
+    for (let i = 0; i < points.length; i++) {
+        const point = points[i];
         let x0 = toScreen(point.x0, offsetX)
         let y0 = toScreen(point.y0, offsetY)
         if (y0 >= 0 && y0 <= window.innerHeight) { // if in browser window
