@@ -213,7 +213,7 @@ function App() {
             //     colorCtx.getImageData(touch1X, touch1Y, 1, 1).data.toString().trim().substring(0,5) !== '0,0,0' ){
             //     removeLastPoint()
             // }
-            removeLastPoint(touch0X, touch0Y, touch1X, touch1Y)
+            // removeLastPoint(touch0X, touch0Y, touch1X, touch1Y)
 
             singleTouch = false;
             doubleTouch = true;
