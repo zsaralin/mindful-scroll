@@ -46,12 +46,12 @@ export function pushPoint(x0, y0, theColor) {
 }
 
 export function removeLastPoint(x0, y0, x1, y1) {
-    let lastP = points[points.length-1]
-    if(lastP.x0 === x0 && lastP.y0 === y0){
+    let lastP = points[points.length - 1]
+    if (lastP.x0 === x0 && lastP.y0 === y0) {
+        points.pop();
+    } else if (lastP.x0 === x1 && lastP.y1 === y1) {
         points.pop();
     }
-    else if(lastP.x0 === x1 && lastP.y1 === y1)
-        points.pop();
 }
 
 export function pushStroke(x0, y0, x1, y1) {
@@ -87,7 +87,7 @@ export function redrawStrokes(offsetX, offsetY) {
         let x0 = toScreen(point.x0, offsetX)
         let y0 = toScreen(point.y0, offsetY)
         if (y0 >= 0 && y0 <= window.innerHeight) { // if in browser window
-            drawPoint(x0, y0,point.color);
+            drawPoint(x0, y0, point.color);
         }
     }
 }
