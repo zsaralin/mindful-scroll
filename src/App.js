@@ -211,7 +211,7 @@ function App() {
             // let s = colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().substring(0,5)
             // console.log(s.substring(0,5))
             if (colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().substring(0,5) !== '0,0,0' ||
-                colorCtx.getImageData(touch1X, touch1Y, 1, 1).data.toString().substring(0,5)){
+                colorCtx.getImageData(touch1X, touch1Y, 1, 1).data.toString().substring(0,5)  !== '0,0,0'){
                 removeLastPoint()
             }
             removeLastPoint()
