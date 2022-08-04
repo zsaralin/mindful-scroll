@@ -208,12 +208,13 @@ function App() {
             const touch1X = event.touches[1].pageX;
             const touch1Y = event.touches[1].pageY;
             let colorCtx = document.getElementById('invis-canvas').getContext("2d");
-            let s = colorCtx.getImageData(touch1X, touch1Y, 1, 1).data.toString().substring(0,5)
-            console.log(s !== '0,0,0')
-            if (colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim().substring(0,5) !== '0,0,0' ||
-                colorCtx.getImageData(touch1X, touch1Y, 1, 1).data.toString().trim().substring(0,5) !== '0,0,0' ){
-                removeLastPoint()
-            }
+
+            // if (colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim().substring(0,5) !== '0,0,0' ||
+            //     colorCtx.getImageData(touch1X, touch1Y, 1, 1).data.toString().trim().substring(0,5) !== '0,0,0' ){
+            //     removeLastPoint()
+            // }
+            removeLastPoint(touch0X, touch0Y, touch1X, touch1Y)
+
             singleTouch = false;
             doubleTouch = true;
         }

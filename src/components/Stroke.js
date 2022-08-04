@@ -45,8 +45,13 @@ export function pushPoint(x0, y0, theColor) {
     })
 }
 
-export function removeLastPoint() {
-    points.pop()
+export function removeLastPoint(x0, y0, x1, y1) {
+    let lastP = points[points.length-1]
+    if(lastP.x0 === x0 && lastP.y0 === y0){
+        points.pop();
+    }
+    else if(lastP.x0 === x1 && lastP.y1 === y1)
+        points.pop();
 }
 
 export function pushStroke(x0, y0, x1, y1) {
