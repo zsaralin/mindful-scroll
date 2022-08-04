@@ -37,17 +37,16 @@ export function drawPoint(x0, y0, theColor) {
     context.fill()
 }
 
-export function pushPoint(x0, y0) {
+export function pushPoint(x0, y0, theColor) {
     points.push({
         x0: x0,
         y0: y0,
-        color: color,
-        lineWidth: lineWidth
+        color: theColor ? theColor : color,
     })
 }
 
 export function removeLastPoint() {
-    // points.pop()
+    points.pop()
 }
 
 export function pushStroke(x0, y0, x1, y1) {
