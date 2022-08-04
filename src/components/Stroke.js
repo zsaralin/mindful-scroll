@@ -47,7 +47,7 @@ export function pushPoint(x0, y0) {
 }
 
 export function removeLastPoint() {
-    points.pop()
+    // points.pop()
 }
 
 export function pushStroke(x0, y0, x1, y1) {
