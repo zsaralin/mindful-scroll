@@ -87,7 +87,7 @@ export function redrawStrokes(offsetX, offsetY) {
         let x0 = toScreen(point.x0, offsetX)
         let y0 = toScreen(point.y0, offsetY)
         if (y0 >= 0 && y0 <= window.innerHeight) { // if in browser window
-            drawPoint(x0, y0, point.lineWidth, point.color);
+            drawPoint(x0, y0,point.color);
         }
     }
 }
