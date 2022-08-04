@@ -10,7 +10,7 @@ function getScaler(tiling) {
     let t1 = tiling.getT1()
     let t2 = tiling.getT2()
     const B = Math.abs((t1.x * t2.y) - (t2.x * t1.y)) / (tiling.numAspects())
-    const A = 2
+    const A = .5
     return Math.sqrt(A / B)
 }
 
@@ -28,129 +28,158 @@ function fillColourArray(numTile) {
     return cols
 }
 
-class TestTiling {
+let scale;
+let ST;
+let currTiling;
+let currEdges;
+let segArr;
+let tilingIndex;
 
-    getYBounds(tiling, edges) {
-        const scaler = getScaler(tiling)
+let transition1x = 1;
+let transition1y = 1;
+let transition2x = 1;
+let transition2y = 1;
 
-        let yMin = null;
-        let yMax = null;
-        const ST = [50 * scaler, 0.0, 0.0, 0.0, 50 * scaler, 0.0];
+let transition;
+let list;
 
-        for (let i of tiling.fillRegionBounds(0, 0, 7 / scaler, 15 / scaler)) {
-            const T = mul(ST, i.T);
+let xMin; let xMax;
+let yMin; let yMax;
 
-            for (let si of tiling.shape()) {
-                const S = mul(T, si.T);
-                let seg = [mul(S, {x: 0.0, y: 0.0})];
+let numTile ;
 
-                if (si.shape != EdgeShape.I) {
-                    const ej = edges[si.id];
-                    seg.push(mul(S, ej[0]));
-                    seg.push(mul(S, ej[1]));
-                }
+function setSegArr() {
+    segArr = []
+    numTile = 0;
+    for (let i of currTiling.fillRegionBounds(list[0], list[1], list[2], list[3])) {
+        const T = mul(ST, i.T);
+        let outOfBounds = false;
+        let pathSeg = [] //contains segments of a path
+        for (let si of currTiling.shape()) {
+            const S = mul(T, si.T);
+            let seg = [mul(S, {x: 0.0, y: 0.0})];
 
-                seg.push(mul(S, {x: 1.0, y: 0.0}));
+            if (si.shape != EdgeShape.I) {
+                const ej = currEdges[si.id];
+                seg.push(mul(S, ej[0]));
+                seg.push(mul(S, ej[1]));
+                if (tilingIndex !== 67) transition = 1;
+            }
+            seg.push(mul(S, {x: 1.0, y: 0.0}));
 
-                if (si.rev) {
-                    seg = seg.reverse();
-                }
-
-                if (seg.length == 2) {
-                    yMin = this.setYMin(yMin, seg[0].y, seg[1].y)
-                    yMax = this.setYMax(yMax, seg[0].y, seg[1].y)
-                } else {
-                    yMin = this.setYMin(yMin, seg[0].y, seg[3].y)
-                    yMax = this.setYMax(yMax, seg[0].y, seg[3].y)
+            if (si.rev) {
+                seg = seg.reverse();
+            }
+            if (seg.length == 2) {
+                if (seg[0].x >= (window.innerWidth - 50) || seg[0].x <= 50
+                    || seg[1].x >= (window.innerWidth - 50) || seg[1].x <= 50) {
+                    outOfBounds = true;
+                }}
+            else {
+                if (seg[0].x >= (window.innerWidth - 50) || seg[0].x <= 50 || seg[3].x >= (window.innerWidth - 50) || seg[3].x <= 50) {
+                    outOfBounds = true;
                 }
             }
+            pathSeg.push(seg)
         }
-        console.log(`YMIN AND MAX: ${yMax - yMin}`)
-        return [yMin, yMax]
-    }
-
-    drawTiling(offsetX, offsetY, tiling, edges, transition) {
-        const scaler = getScaler(tiling)
-        let yBounds = this.getYBounds(tiling, edges)
-        let yMin = yBounds[0]
-        let yMax = yBounds[1]
-
-        let currYMin = null;
-        let currYMax = null;
-        let numTile = 0
-        for (let tile of tiling.fillRegionBounds(0, 0, 7 / scaler, 15 / scaler)) {
+        if (outOfBounds === false){
+            segArr.push(...pathSeg)
             numTile++;
         }
+    }
+}
 
-        let cols = fillColourArray(numTile)
-        var pathDict = {}
-        // console.log(`B is ${B} and num aspects is ${tiling.numAspects()}  and scale is ${scaler}`)
-        offsetY += yMin;
-        console.log('importaint ' + (50 * scaler) * Math.sqrt(50 / (yMax - yMin)))
-        // Define a world-to-screen transformation matrix that scales by 50x.
-        const ST = [(50 * scaler) * Math.sqrt((yMax - yMin) / 1500), 0.0, 0.0, 0.0, (50 * scaler) * Math.sqrt((yMax - yMin) / 1500), 0.0];
+function getRandomTransition() {
+    return [0.98, 1.02][Math.floor(Math.random() * 2)]
+}
 
-        let transition1y = 1;
-        let transition2y = 1;
-        let transition1x = 1;
-        let transition2x = 1;
+export function getYBounds(offsetY) {
+    yMin = null;
+    yMax = null;
 
-        let colorIndex = 0
+    for (let i = 0; i < segArr.length; i++) {
+        let seg = segArr[i]
+        if (seg.length === 2) {
+            yMin = setYMin(yMin, seg[0].y + offsetY, seg[1].y + offsetY)
+            yMax = setYMax(yMax, seg[0].y + offsetY, seg[1].y + offsetY)
+        } else {
+            yMin = setYMin(yMin, seg[0].y + offsetY, seg[3].y + offsetY)
+            yMax = setYMax(yMax, seg[0].y + offsetY, seg[3].y + offsetY)
+        }
+    }
+    return [yMin, yMax]
+}
 
-        // let yMin = null;
-        // let yMax = null;
+export function getXBounds() {
+    let xMin = null;
+    let xMax = null;
 
-        for (let i of tiling.fillRegionBounds(0, 0, 7 / scaler, 15 / scaler)) {
-            let path = new Path2D()
-            const T = mul(ST, i.T);
-            let start = true;
-            for (let si of tiling.shape()) {
-                const S = mul(T, si.T);
-                let seg = [mul(S, {x: 0.0, y: 0.0})];
+    for (let i = 0; i < segArr.length; i++) {
+        let seg = segArr[i]
+        if (seg.length === 2) {
+            xMin = setYMin(xMin, seg[0].x, seg[1].x)
+            xMax = setYMax(xMax, seg[0].x, seg[1].x)
+        } else {
+            xMin = setYMin(xMin, seg[0].x, seg[3].x)
+            xMax = setYMax(xMax, seg[0].x, seg[3].x)
+        }
+    }
+    return [xMin, xMax]
+}
 
-                if (si.shape != EdgeShape.I) {
-                    const ej = edges[si.id];
-                    seg.push(mul(S, ej[0]));
-                    seg.push(mul(S, ej[1]));
-                }
+export function drawTiling(offsetX, offsetY) {
+    let pathDict = {}
+    let colorIndex = 0
+    let cols = fillColourArray(numTile + 1)
+    for (let i of currTiling.fillRegionBounds(list[0], list[1], list[2], list[3])) {
+        let path = new Path2D()
+        let start = true;
+        let outOfBounds = false;
+        const T = mul(ST, i.T);
+        for (let si of currTiling.shape()) {
+            const S = mul(T, si.T);
+            let seg = [mul(S, {x: 0.0, y: 0.0})];
 
-                seg.push(mul(S, {x: 1.0, y: 0.0}));
+            if (si.shape != EdgeShape.I) {
+                const ej = currEdges[si.id];
+                seg.push(mul(S, ej[0]));
+                seg.push(mul(S, ej[1]));
+            }
 
-                if (si.rev) {
-                    seg = seg.reverse();
-                }
+            seg.push(mul(S, {x: 1.0, y: 0.0}));
 
-                if (start) {
-                    start = false;
-                    path.moveTo(seg[0].x - offsetX, seg[0].y - offsetY)
-                }
+            if (si.rev) {
+                seg = seg.reverse();
+            }
 
-                if (seg.length == 2) {
-                    let transitionX = 0;
+            if (start) {
+                start = false;
+                path.moveTo(seg[0].x + offsetX, seg[0].y + offsetY)
+            }
+            if (seg.length == 2) {
+                if (seg[0].x < (window.innerWidth - 50) && seg[0].x > 50
+                    && seg[1].x < (window.innerWidth - 50) && seg[1].x > 50) {
                     let midpointX = (seg[0].x + seg[1].x) / 2;
                     let midpointY = (seg[0].y + seg[1].y) / 2;
-                    currYMin = this.setYMin(yMin, seg[0].y, seg[1].y)
-                    currYMax = this.setYMax(yMax, seg[0].y, seg[1].y)
-
-                    path.lineTo(midpointX - transitionX - offsetX, midpointY * transition - offsetY);
-                    path.lineTo(seg[1].x - offsetX, seg[1].y - offsetY);
-
+                    path.lineTo(midpointX + offsetX, midpointY * transition + offsetY);
+                    path.lineTo(seg[1].x + offsetX, seg[1].y + offsetY);
                 } else {
-                    currYMin = this.setYMin(yMin, seg[0].y, seg[3].y)
-                    currYMax = this.setYMax(yMax, seg[0].y, seg[3].y)
-
+                    outOfBounds = true
+                }
+            } else {
+                if (seg[0].x < (window.innerWidth - 50) && seg[0].x > 50 && seg[3].x < (window.innerWidth - 50) && seg[3].x > 50) {
                     let midpointY = (seg[0].y + seg[3].y) / 2;
                     let midpointX = (seg[0].x + seg[3].x) / 2;
 
                     if (seg[1].y < midpointY) {
-                        transition1y = 1.02
+                        transition1y = 1.04
                     } else {
-                        transition1y = .97
+                        transition1y = .96
                     }
                     if (seg[2].y < midpointY) {
-                        transition2y = 1.02
+                        transition2y = 1.04
                     } else {
-                        transition2y = .97
+                        transition2y = .96
                     }
 
                     if (seg[1].x < midpointX) {
@@ -165,121 +194,215 @@ class TestTiling {
                     }
 
                     path.bezierCurveTo(
-                        seg[1].x - transition1x - offsetX, seg[1].y * transition1y - offsetY,
-                        seg[2].x - transition2x - offsetX, seg[2].y * transition2y - offsetY,
-                        seg[3].x - offsetX, seg[3].y - offsetY);
+                        seg[1].x + offsetX - transition1x, seg[1].y * transition1y + offsetY,
+                        seg[2].x + offsetX - transition2x, seg[2].y * transition2y + offsetY,
+                        seg[3].x + offsetX, seg[3].y + offsetY);
+                } else {
+                    outOfBounds = true
                 }
-
             }
+        }
+        if (outOfBounds === false) {
             pathDict[cols[colorIndex]] = path;
             colorIndex++;
         }
-        console.log(currYMax - currYMin)
-
-        this.fillTiling(pathDict, yMin, yMax)
-        // console.log(`yMin : ${yMin - offsetY}`)
-        // console.log(`yMax : ${yMax - offsetY}`)
-        // console.log('yMin: ' + {$yMin+offsetX} + ' yMax: ' + {yMax + offsetY})
-        return [yMin, yMax, pathDict]
     }
-
-    fillTiling(pathDict, yMin, yMax) {
-        var tilingCanvas = document.getElementById('tiling-canvas');
-        var tilingCtx = tilingCanvas.getContext('2d');
-        // tilingCtx.translate(0, -(yMin))
-
-        // tilingCtx.scale(2000 / (yMax - yMin), 2000 / (yMax - yMin))
-        tilingCtx.fillStyle = "rgba(255, 255, 255, 0)"; //white transparent canvas
-
-        var invisCan = document.getElementById('invis-canvas');
-        var ctx = invisCan.getContext('2d');
-        // ctx.translate(0, -(yMin))
-        // ctx.scale(2000 / (yMax - yMin), 2000 / (yMax - yMin))
-
-        tilingCtx.lineWidth = 50;
-        tilingCtx.lineJoin = "round";
-        tilingCtx.strokeStyle = '#000';
-        ctx.lineWidth = 50;
-        ctx.lineJoin = "round";
-        ctx.strokeStyle = '#000';
-
-        for (let p in pathDict) {
-            tilingCtx.fill(pathDict[p])
-            tilingCtx.stroke(pathDict[p])
-            ctx.fillStyle = p
-
-            ctx.fill(pathDict[p])
-            ctx.stroke(pathDict[p])
-        }
-        // tilingCtx.setTransform(1, 0, 0, 1, 0, 0);
-        // ctx.setTransform(1, 0, 0, 1, 0, 0);
-    }
-
-    setYMin(yMin, y0, y1) {
-        if (yMin === null || (y0 < yMin && y0 < y1)) {
-            return y0
-        }
-        if (yMin === null || (y1 < yMin && y1 < y0)) {
-            return y1
-        }
-        return yMin
-    }
-
-    setYMax(yMax, y0, y1) {
-        if (yMax === null || (y0 > yMax && y0 > y1)) {
-
-            return y0
-        }
-        if (yMax === null || (y1 > yMax && y1 > y0)) {
-
-            return y1
-        }
-        return yMax
-    }
-
-    makeRandomTiling() {
-        // Construct a tiling
-        let theTiling = generateRandomNum()
-        const tp = tilingTypes[theTiling];
-        // console.log( 'THE SPECIFIC TILING ' + theTiling)
-
-        // const tp = tilingTypes[Math.floor(72)]; //64 is the squares, 27 is super large
-        let tiling = new IsohedralTiling(tp);
-
-        // Randomize the tiling vertex parameters
-        let ps = tiling.getParameters();
-        for (let i = 0; i < ps.length; ++i) {
-            ps[i] += Math.random() * 0.1 - 0.05;
-        }
-        tiling.setParameters(ps);// Make some random edge shapes.  Note that here, we sidestep the
-        // potential complexity of using .shape() vs. .parts() by checking
-        // ahead of time what the intrinsic edge shape is and building
-        // Bezier control points that have all necessary symmetries.
-
-        let edges = [];
-        for (let i = 0; i < tiling.numEdgeShapes(); ++i) {
-            let ej = [];
-            const shp = tiling.getEdgeShape(i);
-            // console.log('EDGE SHAPE' + tiling.getEdgeShape(i))
-            if (shp == EdgeShape.I) {
-                // Pass
-            } else if (shp == EdgeShape.J) {
-                ej.push({x: Math.random() * 0.6, y: Math.random() - 0.5});
-                ej.push({x: Math.random() * 0.6 + 0.4, y: Math.random() - 0.5});
-            } else if (shp == EdgeShape.S) {
-                ej.push({x: Math.random() * 0.6, y: Math.random() - 0.5});
-                ej.push({x: 1.0 - ej[0].x, y: -ej[0].y});
-            } else if (shp == EdgeShape.U) {
-                ej.push({x: Math.random() * 0.6, y: Math.random() - 0.5});
-                ej.push({x: 1.0 - ej[0].x, y: ej[0].y});
-            }
-
-            edges.push(ej);
-        }
-
-        return {tiling: tiling, edges: edges}
-    }
+    // let shapePath = new Path2D()
+    // shapePath.moveTo(window.innerWidth/2 - 50, yMax  + 300  )
+    // shapePath.lineTo(window.innerWidth/2 - 50, yMax   + 400)
+    // shapePath.lineTo(window.innerWidth/2 + 50, yMax   + 400)
+    // shapePath.lineTo(window.innerWidth/2 + 50, yMax + 300)
+    // shapePath.lineTo(window.innerWidth/2 - 50 , yMax  + 300)
+    //
+    // pathDict[cols[colorIndex]] = shapePath;
+    return pathDict
 }
 
-const tiling = new TestTiling();
-export default tiling;
+export function fillTiling(pathDict, triangles, vertices) {
+    var tilingCanvas = document.getElementById('tiling-canvas');
+    var tilingCtx = tilingCanvas.getContext('2d');
+    tilingCtx.fillStyle = "rgba(255, 255, 255, 0)"; //white transparent canvas
+    var invisCan = document.getElementById('invis-canvas');
+    var ctx = invisCan.getContext('2d');
+
+    tilingCtx.lineWidth = 10 + Math.sqrt(window.innerHeight * window.innerWidth) / 30
+    tilingCtx.lineJoin = "round";
+    tilingCtx.lineCap = "round"
+    tilingCtx.strokeStyle = '#000';
+
+    ctx.lineWidth = 10 + Math.sqrt(window.innerHeight * window.innerWidth) / 30
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round"
+
+    ctx.strokeStyle = '#000';
+
+    for (let p in pathDict) {
+        tilingCtx.fill(pathDict[p])
+        tilingCtx.stroke(pathDict[p])
+        tilingCtx.closePath()
+        ctx.fillStyle = p
+        ctx.fill(pathDict[p])
+        ctx.stroke(pathDict[p])
+        ctx.closePath()
+    }
+    // tilingCtx.fillStyle = 'blue'
+    // tilingCtx.fill(pathDict['rgb(0,255,255)'])
+    // tilingCtx.stroke(pathDict['rgb(0,255,255)'])
+
+
+    // tilingCtx.strokeStyle = 'red'
+    // tilingCtx.fillStyle = 'blue'
+    // if (triangles !== undefined) {
+    //     for (let i = 0; i < triangles.length; i += 3) {
+    //         var p0 = triangles[i];
+    //         var p1 = triangles[i + 1];
+    //         var p2 = triangles[i + 2];
+    //         tilingCtx.moveTo(vertices[p0][0], vertices[p0][1]);
+    //         if (Math.abs(vertices[p1][1] - vertices[p0][1]) > 22) {
+    //             tilingCtx.lineTo(vertices[p1][0], vertices[p1][1]);
+    //         }
+    //         if (Math.abs(vertices[p1][1] - vertices[p2][1]) > 22) {
+    //             tilingCtx.lineTo(vertices[p2][0], vertices[p2][1])
+    //         }
+    //         // tilingCtx.stroke();
+    //     }
+    // }
+    // for (let i = 0; i < vertices?.length; i++) {
+    //     tilingCtx.fillRect(vertices[i][0], vertices[i][1], 9, 9)
+    // }
+
+}
+
+function setYMin(yMin, y0, y1) {
+    if (yMin === null) return Math.min(y0, y1)
+    return Math.min(Math.min(yMin, y0), y1)
+}
+
+function setYMax(yMax, y0, y1) {
+    if (yMax === null) return Math.max(y0, y1)
+    return Math.max(Math.max(yMax, y0), y1)
+}
+
+function findBottom(tiling, edges, yMin, yMax, sumArray) {
+    const scaler = getScaler(tiling)
+
+    let topVerts = []; // top and bottom vertices of tiling
+    let bottomVerts = [];
+
+    // console.log(`B is ${B} and num aspects is ${tiling.numAspects()}  and scale is ${scaler}`)
+    // Define a world-to-screen transformation matrix that scales by 50x.
+    const ST = [1 * scaler * (window.innerHeight / 4), 0.0, 0.0, 0.0, (1 * scaler) * (window.innerWidth / 4), 0.0];
+    //*Math.sqrt(1500/(yMax-yMin))
+
+    for (let i of tiling.fillRegionBounds(0, 0, 4 / scaler, 6 / scaler)) {
+        const T = mul(ST, i.T);
+        let start = true;
+        for (let si of tiling.shape()) {
+            const S = mul(T, si.T);
+            let seg = [mul(S, {x: 0.0, y: 0.0})];
+
+            if (si.shape != EdgeShape.I) {
+                const ej = edges[si.id];
+                seg.push(mul(S, ej[0]));
+                seg.push(mul(S, ej[1]));
+            }
+
+            seg.push(mul(S, {x: 1.0, y: 0.0}));
+
+            if (si.rev) {
+                seg = seg.reverse();
+            }
+
+            if (start) {
+                start = false;
+            }
+
+            if (seg.length == 2) {
+                if (seg[0].y < seg[1].y && seg[0].y <= yMin + (yMax - yMin) / 55) {
+                    topVerts.push([seg[0].x, seg[0].y + sumArray - yMin])
+                } else if (seg[0].y > seg[1].y && seg[1].y <= yMin + (yMax - yMin) / 55) {
+                    topVerts.push([seg[1].x, seg[1].y + sumArray - yMin])
+                }
+                if (seg[0].y > seg[1].y && seg[0].y >= yMax - (yMax - yMin) / 55) {
+                    bottomVerts.push([seg[0].x, seg[0].y + sumArray - yMin])
+                } else if (seg[0].y < seg[1].y && seg[1].y >= yMax - (yMax - yMin) / 55) {
+                    bottomVerts.push([seg[1].x, seg[1].y + sumArray - yMin])
+                }
+
+            } else {
+                if (seg[0].y < seg[3].y && seg[0].y <= yMin + (yMax - yMin) / 55) {
+                    topVerts.push([seg[0].x, seg[0].y + sumArray - yMin])
+
+                } else if (seg[0].y > seg[3].y && seg[3].y <= yMin + (yMax - yMin) / 55) {
+                    topVerts.push([seg[3].x, seg[3].y + sumArray - yMin])
+                }
+                if (seg[0].y > seg[3].y && seg[0].y >= yMax - (yMax - yMin) / 55) {
+                    bottomVerts.push([seg[0].x, seg[0].y + sumArray - yMin])
+
+                } else if (seg[0].y < seg[3].y && seg[3].y >= yMax - (yMax - yMin) / 55) {
+                    bottomVerts.push([seg[3].x, seg[3].y + sumArray - yMin])
+                }
+
+            }
+
+        }
+    }
+    return [topVerts, bottomVerts]
+}
+
+export function makeRandomTiling() {
+    // Construct a tiling
+    tilingIndex = generateRandomNum()
+    const tp = tilingTypes[tilingIndex]; //67
+    // console.log( 'THE SPECIFIC TILING ' + theTiling)
+
+    // const tp = tilingTypes[Math.floor(72)]; //64 is the squares, 27 is super large
+    let tiling = new IsohedralTiling(tp);
+
+    // Randomize the tiling vertex parameters
+    let ps = tiling.getParameters();
+    for (let i = 0; i < ps.length; ++i) {
+        ps[i] += Math.random() * 0.1 - 0.05;
+    }
+    tiling.setParameters(ps);
+
+    // Make some random edge shapes.  Note that here, we sidestep the
+    // potential complexity of using .shape() vs. .parts() by checking
+    // ahead of time what the intrinsic edge shape is and building
+    // Bezier control points that have all necessary symmetries.
+
+    let edges = [];
+    for (let i = 0; i < tiling.numEdgeShapes(); ++i) {
+        let ej = [];
+        const shp = tiling.getEdgeShape(i);
+        // console.log('EDGE SHAPE' + tiling.getEdgeShape(i))
+        if (shp == EdgeShape.I) {
+            // Pass
+        } else if (shp == EdgeShape.J) {
+            ej.push({x: Math.random() * 0.6, y: Math.random() - 0.5});
+            ej.push({x: Math.random() * 0.6 + 0.4, y: Math.random() - 0.5});
+        } else if (shp == EdgeShape.S) {
+            ej.push({x: Math.random() * 0.6, y: Math.random() - 0.5});
+            ej.push({x: 1.0 - ej[0].x, y: -ej[0].y});
+        } else if (shp == EdgeShape.U) {
+            ej.push({x: Math.random() * 0.6, y: Math.random() - 0.5});
+            ej.push({x: 1.0 - ej[0].x, y: ej[0].y});
+        }
+
+        edges.push(ej);
+    }
+    scale = getScaler(tiling)
+    list = [0, 0, 4 / scale, 9 / scale]
+
+    let area = (window.innerWidth * window.innerHeight) / 50
+    ST = [50 + scale * Math.sqrt(area), 0.0, 0.0, 0.0, 50 + scale * Math.sqrt(area), 0.0];
+    // ST = [1 * scale * (500 / 4), 0.0, 0.0, 0.0, (1 * scale) * (500 / 4), 0.0];
+
+    currTiling = tiling;
+    currEdges = edges;
+    transition = getRandomTransition()
+    setSegArr()
+
+    return {tiling: tiling, edges: edges}
+}
+

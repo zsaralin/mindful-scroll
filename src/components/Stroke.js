@@ -99,3 +99,7 @@ export function setLineWidth(speedArr) {
 export function resetLineWidth() {
     lineWidth = 50;
 }
+
+export function getCurrColor(){
+    return color
+}

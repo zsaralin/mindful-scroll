@@ -31,11 +31,9 @@ function fillColourArray(numTile) {
 
 class TestTiling {
 
-    getYBounds(tiling, edges, offsetY) {
+    getSegArr(tiling, edges) {
+        let segArr = [];
         const scaler = getScaler(tiling)
-
-        let yMin = null;
-        let yMax = null;
         const ST = [1 * scaler * (window.innerHeight / 4), 0.0, 0.0, 0.0, (1 * scaler) * (window.innerWidth / 4), 0.0];
 
         for (let i of tiling.fillRegionBounds(-2 / scaler, 0, 3 / scaler, 6 / scaler)) {
@@ -56,6 +54,37 @@ class TestTiling {
                 if (si.rev) {
                     seg = seg.reverse();
                 }
+                segArr.push(seg)
+            }
+        }
+        return segArr;
+    }
+
+    getYBounds(tiling, edges, offsetY) {
+        const scaler = getScaler(tiling)
+
+        let yMin = null;
+        let yMax = null;
+        const ST = [1 * scaler * (window.innerHeight / 4), 0.0, 0.0, 0.0, (1 * scaler) * (window.innerWidth / 4), 0.0];
+
+        for (let seg of this.getSegArr(tiling, edges)) {
+            // const T = mul(ST, i.T);
+            //
+            // for (let si of tiling.shape()) {
+            //     const S = mul(T, si.T);
+            //     let seg = [mul(S, {x: 0.0, y: 0.0})];
+            //
+            //     if (si.shape != EdgeShape.I) {
+            //         const ej = edges[si.id];
+            //         seg.push(mul(S, ej[0]));
+            //         seg.push(mul(S, ej[1]));
+            //     }
+            //
+            //     seg.push(mul(S, {x: 1.0, y: 0.0}));
+            //
+            //     if (si.rev) {
+            //         seg = seg.reverse();
+            //     }
 
                 if (seg.length == 2) {
                     yMin = this.setYMin(yMin, seg[0].y+ offsetY, seg[1].y + offsetY)
@@ -63,7 +92,7 @@ class TestTiling {
                 } else {
                     yMin = this.setYMin(yMin, seg[0].y+ offsetY, seg[3].y+ offsetY)
                     yMax = this.setYMax(yMax, seg[0].y+ offsetY, seg[3].y+ offsetY)
-                }
+                // }
             }
         }
         return [yMin, yMax]
@@ -179,6 +208,7 @@ class TestTiling {
 
         tilingCtx.lineWidth = 50;
         tilingCtx.lineJoin = "round";
+        tilingCtx.lineCap = "round"
         tilingCtx.strokeStyle = '#000';
         ctx.lineWidth = 50;
 
