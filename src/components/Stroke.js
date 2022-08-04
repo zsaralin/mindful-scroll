@@ -45,11 +45,15 @@ export function pushPoint(x0, y0, theColor) {
     })
 }
 
-export function removeLastPoint(x0, y0, x1, y1) {
+export function removeLastPoint(x0, y0, x1, y1, offsetY) {
     let lastP = points[points.length - 1]
-    if (lastP.x0 === x0 && lastP.y0 === y0) {
+    console.log(`lastP ${lastP.x0} and ${lastP.y0}`)
+    console.log(`oneTouch ${x0} and ${y0}`)
+    console.log(`twoTouch ${x1} and ${y1}`)
+    console.log(`offsetY ${offsetY}`)
+    if (lastP.x0 === x0 && lastP.y0 === y0 + offsetY) {
         points.pop();
-    } else if (lastP.x0 === x1 && lastP.y1 === y1) {
+    } else if (lastP.x0 === x1 && lastP.y1 === y1 + offsetY) {
         points.pop();
     }
 }
