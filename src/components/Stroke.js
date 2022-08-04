@@ -22,10 +22,18 @@ export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
     context.strokeStyle = theColor ? theColor : color;
     context.beginPath();
     context.moveTo(x0, y0);
-    context.fillStyle = 'blue'
-    context.fillRect(x1,y1, 50,50)
     context.lineTo(x1, y1);
     context.stroke();
+}
+
+export function drawPoint(x0, y0, theColor){
+    let context = document.getElementById('canvas').getContext("2d");
+    context.lineCap = 'round'
+    context.lineJoin = 'round'
+    context.beginPath();
+    context.fillStyle = theColor ? theColor : color;
+    context.arc(x0, y0, 25, 0, 2 * Math.PI);
+    context.fill()
 }
 
 export function pushStroke(x0, y0, x1, y1) {
