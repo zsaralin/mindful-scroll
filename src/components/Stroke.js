@@ -3,6 +3,7 @@ import {getAbsArray} from './Audio.js'
 import {tilingArrLength} from "./TilingArr";
 
 let drawings = [];
+let points = []
 let lineWidth = 50;
 let shortPause;
 let longPause;
@@ -26,7 +27,7 @@ export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
     context.stroke();
 }
 
-export function drawPoint(x0, y0, theColor){
+export function drawPoint(x0, y0, theColor) {
     let context = document.getElementById('canvas').getContext("2d");
     context.lineCap = 'round'
     context.lineJoin = 'round'
@@ -34,6 +35,19 @@ export function drawPoint(x0, y0, theColor){
     context.fillStyle = theColor ? theColor : color;
     context.arc(x0, y0, 25, 0, 2 * Math.PI);
     context.fill()
+}
+
+export function pushPoint(x0, y0) {
+    points.push({
+        x0: x0,
+        y0: y0,
+        color: color,
+        lineWidth: lineWidth
+    })
+}
+
+export function removeLastPoint() {
+    points.pop()
 }
 
 export function pushStroke(x0, y0, x1, y1) {
@@ -58,11 +72,19 @@ export function redrawStrokes(offsetX, offsetY) {
         if (y0 >= 0 && y0 <= window.innerHeight || y1 >= 0 && y1 <= window.innerHeight) { // if in browser window
             drawStroke(x0, y0, x1, y1, line.lineWidth, line.color);
         }
-        let limitScroll = tilingArrLength() <= 2 ? 0 : (2000 * (tilingArrLength() - 2) )
-        if (line.y0  <= limitScroll) {
+        let limitScroll = tilingArrLength() <= 2 ? 0 : (2000 * (tilingArrLength() - 2))
+        if (line.y0 <= limitScroll) {
             drawings.splice(i, 1)
         }
         // (1450 * (tilingArrLength() - 2) + window.innerHeight - 5))
+    }
+    for (let i = 0; i < drawings.length; i++) {
+        const point = drawings[i];
+        let x0 = toScreen(point.x0, offsetX)
+        let y0 = toScreen(point.y0, offsetY)
+        if (y0 >= 0 && y0 <= window.innerHeight) { // if in browser window
+            drawStroke(x0, y0, point.lineWidth, point.color);
+        }
     }
 }
 
@@ -110,6 +132,6 @@ export function resetLineWidth() {
     lineWidth = 50;
 }
 
-export function getCurrColor(){
+export function getCurrColor() {
     return color
 }
