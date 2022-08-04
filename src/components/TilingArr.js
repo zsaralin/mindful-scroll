@@ -45,6 +45,8 @@ export function addToTilingArr() {
     tilingArr.push({tiling: tiling, edges: edges})
 
     const pathDict = drawTiling(-(xMin - (window.innerWidth - xMax)) / 2, yMaxArr.length > 0 ? yMaxArr[yMaxArr.length - 1] + (yMaxArr[yMaxArr.length - 1] - yMin) : -yMin + 75)
+    drawRandomShape(yMin, yMax, pathDict)
+
     // const [topVert, bottomVert] = tilingObject.findBottom(tiling, edges, yMin , yMax  , sumArray())
     // if (tilingArr.length === 1){
     //     nextVert = bottomVert;
@@ -60,7 +62,6 @@ export function addToTilingArr() {
         yMinArr.push(yMin)
         yMaxArr.push(yMax - yMin + 400)
     }
-
     pathArr.push(pathDict);
 }
 
