@@ -203,6 +203,17 @@ function App() {
         }
 
         if (event.touches.length >= 2) {
+            const touch0X = event.touches[0].pageX;
+            const touch0Y = event.touches[0].pageY;
+            const touch1X = event.touches[1].pageX;
+            const touch1Y = event.touches[1].pageY;
+            let colorCtx = document.getElementById('invis-canvas').getContext("2d");
+            // let s = colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().substring(0,5)
+            // console.log(s.substring(0,5))
+            if (colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().substring(0,5) !== '0,0,0' ||
+                colorCtx.getImageData(touch1X, touch1Y, 1, 1).data.toString().substring(0,5)){
+                removeLastPoint()
+            }
             removeLastPoint()
             singleTouch = false;
             doubleTouch = true;
