@@ -8,6 +8,7 @@ export function fillTile(x, y, invisCol, r2) {
     var tilingCanvas = document.getElementById('tiling-canvas');
     var tilingCtx = tilingCanvas.getContext('2d');
 
+    let activeIndex = activeTileArr.length;
     let currColor = getCurrColor();
     let currTiling = getCurrentPathDict(y)
     let currTile = currTiling['rgb(' + invisCol.slice(0, -4) + ')']
@@ -20,7 +21,7 @@ export function fillTile(x, y, invisCol, r2) {
         tilingCtx.fill(currTile)
         tilingCtx.stroke(currTile)
 
-        activeTileArr[activeTileArr.length] = ({path: currTile, color: currColor, r2: r2, x: x, y: y})
+        activeTileArr[activeIndex] = ({path: currTile, color: currColor, r2: r2, x: x, y: y})
         if (r2 > 1000) {
             clearInterval(fillCol)
             activeTileArr.shift()
