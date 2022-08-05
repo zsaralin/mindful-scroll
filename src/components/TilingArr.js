@@ -16,6 +16,7 @@ let nextVert;
 
 
 let fillTileArr = []
+
 export function sumArray() {
     // const yMaxSum = yMaxArr.reduce(
     //     (previousValue, currentValue) => previousValue + currentValue, 0);
@@ -87,14 +88,21 @@ export function redrawTilings(offsetY) {
         // tilingCtx.fillRect(50, yMinArr[i], 500, 9 )
     }
     for (let i =0;i<fillTileArr.length;i++){
-        // console.log('tile path ' + fillTileDict[i])
-        let object = fillTileArr[i]
         var tilingCanvas = document.getElementById('tiling-canvas');
         var tilingCtx = tilingCanvas.getContext('2d');
+        // console.log('tile path ' + fillTileDict[i])
+        let object = fillTileArr[i]
         tilingCtx.fillStyle = object.color
         tilingCtx.fill(new Path2D(object.path))
         tilingCtx.stroke(new Path2D(object.path))
-        tilingCtx.closePath()
+        tilingCtx.closePath() }
+    if (activeTile){
+            var grd = tilingCtx.createRadialGradient(activeTile.x, activeTile.y, 25, activeTile.x , activeTile.y , activeTile.r2);
+            grd.addColorStop(0, activeTile.color);
+            grd.addColorStop(.5, "white");
+            tilingCtx.fillStyle = grd
+            tilingCtx.fill(new Path2D(activeTile.path))
+            tilingCtx.stroke(new Path2D(activeTile.path))
     }
 }
 
@@ -112,6 +120,7 @@ function drawRandomShape(yMin, yMax, pathDict) {
     pathDict['255,0,0'] = shapePath;
 }
 
+let activeTile ;
 export function fillTile(x, y, invisCol, r2) {
     let currColor = getCurrColor();
     var tilingCanvas = document.getElementById('tiling-canvas');
@@ -126,13 +135,26 @@ export function fillTile(x, y, invisCol, r2) {
         tilingCtx.fillStyle = grd
         tilingCtx.fill(currTile)
         tilingCtx.stroke(currTile)
-        fillTileArr.pop()
-        fillTileArr.push(
-            {path: currTile,
-                color: currColor}
-        )
+        console.log(r2)
+        // if(r2> 26) fillTileArr.pop()
+        // fillTileArr.push(
+        //     {path: currTile,
+        //         color: currColor,
+        //         r2: r2, x: x, y: y
+        //     }
+        // )
+        activeTile = {path: currTile,
+                    color: currColor,
+                    r2: r2, x: x, y: y
+                }
         if (r2 > 1000){
             clearInterval(fillCol)
+            // fillTileArr.pop()
+            activeTile = null;
+            fillTileArr.push(
+                {path: currTile,
+                    color: currColor}
+            )
         }
     }, 10)
 }

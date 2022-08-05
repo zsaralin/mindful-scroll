@@ -225,12 +225,12 @@ export function fillTiling(pathDict, triangles, vertices) {
     var invisCan = document.getElementById('invis-canvas');
     var ctx = invisCan.getContext('2d');
 
-    tilingCtx.lineWidth = 25 + Math.sqrt(window.innerHeight * window.innerWidth) / 30
+    tilingCtx.lineWidth = 15 + Math.sqrt(window.innerHeight * window.innerWidth) / 30
     tilingCtx.lineJoin = "round";
     tilingCtx.lineCap = "round"
     tilingCtx.strokeStyle = '#000';
 
-    ctx.lineWidth = 25 + Math.sqrt(window.innerHeight * window.innerWidth) / 30
+    ctx.lineWidth = 15 + Math.sqrt(window.innerHeight * window.innerWidth) / 30
     ctx.lineJoin = "round";
     ctx.lineCap = "round"
 

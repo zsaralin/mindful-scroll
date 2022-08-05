@@ -3,7 +3,6 @@ import {getAbsArray} from './Audio.js'
 import {tilingArrLength} from "./TilingArr";
 
 let drawings = [];
-let points = []
 let lineWidth = 50;
 let shortPause;
 let longPause;
@@ -27,35 +26,18 @@ export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
     context.stroke();
 }
 
-export function drawPoint(x0, y0, theColor) {
-    let context = document.getElementById('canvas').getContext("2d");
-    context.lineCap = 'round'
-    context.lineJoin = 'round'
-    context.beginPath();
-    context.fillStyle = theColor ? theColor : color;
-    context.arc(x0, y0, 25, 0, 2 * Math.PI);
-    context.fill()
-}
-
-export function pushPoint(x0, y0, theColor) {
-    points.push({
-        x0: x0,
-        y0: y0,
-        color: theColor ? theColor : color,
-    })
-}
-
 export function removeLastPoint(x0, y0, x1, y1, offsetY) {
-    let lastP = points[points.length - 1]
+    if(drawings.length > 0){
+    let lastP = drawings[drawings.length - 1]
     console.log(`lastP ${lastP.x0} and ${lastP.y0}`)
     console.log(`oneTouch ${x0} and ${y0}`)
     console.log(`twoTouch ${x1} and ${y1}`)
     console.log(`offsetY ${offsetY}`)
     if (lastP.x0 === x0 && lastP.y0 === y0 + offsetY) {
-        points.pop();
-    } else if (lastP.x0 === x1 && lastP.y1 === y1 + offsetY) {
-        points.pop();
-    }
+        drawings.pop()
+    } else if (lastP.x1 === x1 && lastP.y1 === y1 + offsetY) {
+        drawings.pop();
+    }}
 }
 
 export function pushStroke(x0, y0, x1, y1) {
@@ -69,12 +51,12 @@ export function pushStroke(x0, y0, x1, y1) {
     })
 }
 
-export function redrawStrokes(offsetX, offsetY) {
+export function redrawStrokes(offsetY) {
     for (let i = 0; i < drawings.length; i++) {
         const line = drawings[i];
-        let x0 = toScreen(line.x0, offsetX)
+        let x0 = toScreen(line.x0, 0)
         let y0 = toScreen(line.y0, offsetY)
-        let x1 = toScreen(line.x1, offsetX)
+        let x1 = toScreen(line.x1, 0)
         let y1 = toScreen(line.y1, offsetY)
 
         if (y0 >= 0 && y0 <= window.innerHeight || y1 >= 0 && y1 <= window.innerHeight) { // if in browser window
@@ -85,14 +67,6 @@ export function redrawStrokes(offsetX, offsetY) {
             drawings.splice(i, 1)
         }
         // (1450 * (tilingArrLength() - 2) + window.innerHeight - 5))
-    }
-    for (let i = 0; i < points.length; i++) {
-        const point = points[i];
-        let x0 = toScreen(point.x0, offsetX)
-        let y0 = toScreen(point.y0, offsetY)
-        if (y0 >= 0 && y0 <= window.innerHeight) { // if in browser window
-            drawPoint(x0, y0, point.color);
-        }
     }
 }
 

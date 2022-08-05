@@ -18,12 +18,12 @@ import {
     sumArray,
     sumArrayPrev, fillTile,
 } from "./components/TilingArr";
-
-const FIFTH_WINDOW = window.innerHeight * 4 / 5;
-const TILING_WIDTH = 50; //stroke width of tiling
+import {doScroll, getOffsetY, startAutoScroll} from "./components/Scroll";
 
 function App() {
     const canvas = useRef();
+    let colorCtx;
+
     // mouse functions
     let leftMouseDown = false;
     let rightMouseDown = false;
@@ -40,51 +40,40 @@ function App() {
     // color of tile on invisible buffer canvas
     let invisCol;
 
-    // distance from origin
-    let offsetX = 0;
-    let offsetY = 0;
-
-    let autoScroll = false;
     let insidePoly = [] // number of points inside and outside polygon
 
     let expandTimer;
 
     function toTrueX(xScreen) {
-        return (xScreen) + offsetX;
+        return (xScreen) ;
     }
 
     function toTrueY(yScreen) {
+        let offsetY = getOffsetY()
         return (yScreen) + offsetY;
     }
 
+
     useEffect(() => {
         addToTilingArr()
-        redrawCanvas()
-    }, []);
-
-    function redrawCanvas() {
         const canvas = document.getElementById("canvas");
         const invisCanvas = document.getElementById("invis-canvas")
         const tilingCanvas = document.getElementById("tiling-canvas")
+
         // set the canvas to the size of the window
         canvas.width = invisCanvas.width = tilingCanvas.width = window.innerWidth;
         canvas.height = invisCanvas.height = tilingCanvas.height = window.innerHeight;
 
-        // canvas.getContext("2d").translate(0, -offsetY)
-        invisCanvas.getContext("2d").translate(0, -offsetY)
-        tilingCanvas.getContext("2d").translate(0, -offsetY)
-
-
-        redrawStrokes(offsetX, offsetY);
-        redrawTilings(offsetY);
-    }
+        colorCtx = invisCanvas.getContext("2d");
+        redrawTilings();
+    }, []);
 
     function onMouseDown(event) {
         // detect left clicks
         if (event.button === 0) {
             leftMouseDown = true;
             rightMouseDown = false;
-            const prevScaledX = toTrueX(prevCursorX);
+            const prevScaledX = prevCursorX;
             const prevScaledY = toTrueY(prevCursorY);
 
             stopColorChange()
@@ -115,7 +104,7 @@ function App() {
         // get mouse position
         cursorX = event.pageX;
         cursorY = event.pageY;
-        const scaledX = toTrueX(cursorX);
+        const scaledX = cursorX;
         const scaledY = toTrueY(cursorY);
         const prevScaledX = toTrueX(prevCursorX);
         const prevScaledY = toTrueY(prevCursorY);
@@ -131,36 +120,15 @@ function App() {
                 pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
                 drawStroke(prevCursorX, prevCursorY, cursorX, cursorY);
                 //scroll if drawing on bottom 1/5 part of page
-                if (!autoScroll && cursorY > FIFTH_WINDOW) {
-                    startAutoScroll();
-                }
+                startAutoScroll(cursorY);
+
                 insidePoly[0] += 1;
-                // if (Math.abs(mouseSpeed[0]) < 1 && Math.abs(mouseSpeed[1]) < 1) {
-                //     console.log('hello')
-                // setTimeout(horizExpandFn(prevScaledX, prevScaledY, invisCol), 0);
-                // }
             } else {
                 insidePoly[1] += 1;
             }
         }
         if (rightMouseDown) {
-            // move the screen
-            let limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - TILING_WIDTH)
-            if (offsetY - (cursorY - prevCursorY) >= limitScroll) {
-                offsetY -= (cursorY - prevCursorY);
-            } else {
-                offsetY = limitScroll
-            }
-            // console.log(`offsetY :  ${offsetY} sumArray : ${sumArray()-window.innerHeight*.5}`)
-            if (offsetY > (sumArray() - window.innerHeight)) {
-                addToTilingArr(offsetX, offsetY)
-            }
-            // console.log(`tiling length ${tilingArrLength()}`)
-            // console.log(` add to array ${window.innerHeight * (tilingArrLength()-1)}`)
-            // console.log('offset '  + offsetY)
-
-            redrawCanvas();
-            if (autoScroll) endAutoScroll()
+            doScroll(cursorY, prevCursorY)
         }
         prevCursorX = cursorX;
         prevCursorY = cursorY;
@@ -194,8 +162,8 @@ function App() {
 
             setInvisCol(touch0X, touch0Y)
             if (invisCol !== undefined && invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
-                pushPoint(scaledX, scaledY)
-                drawPoint(touch0X, touch0Y);
+                pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
+                drawStroke(touch0X, touch0Y, touch0X, touch0Y + 0.5);
                 expandTimer = setTimeout(fillTile, 3000, touch0X, touch0Y, invisCol, 25)
             }
 
@@ -207,13 +175,13 @@ function App() {
             const touch0Y = event.touches[0].pageY;
             const touch1X = event.touches[1].pageX;
             const touch1Y = event.touches[1].pageY;
-            let colorCtx = document.getElementById('invis-canvas').getContext("2d");
+            // let colorCtx = document.getElementById('invis-canvas').getContext("2d");
 
             // if (colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim().substring(0,5) !== '0,0,0' ||
             //     colorCtx.getImageData(touch1X, touch1Y, 1, 1).data.toString().trim().substring(0,5) !== '0,0,0' ){
             //     removeLastPoint()
             // }
-            removeLastPoint(touch0X, touch0Y, touch1X, touch1Y, offsetY)
+            removeLastPoint(touch0X, touch0Y, touch1X, touch1Y, getOffsetY())
 
             singleTouch = false;
             doubleTouch = true;
@@ -230,6 +198,7 @@ function App() {
         const touch0Y = event.touches[0].pageY;
         const prevTouch0X = prevTouches[0]?.pageX;
         const prevTouch0Y = prevTouches[0]?.pageY;
+        // let colorCtx = document.getElementById('invis-canvas').getContext("2d");
 
         const scaledX = toTrueX(touch0X);
         const scaledY = toTrueY(touch0Y);
@@ -238,6 +207,9 @@ function App() {
 
         clearTimeout(expandTimer)
         if (singleTouch) {
+            if(invisCol && invisCol === '0,0,0,0' && colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === '0,0,0,0'){
+                doScroll(touch0Y, prevTouch0Y)
+            }
             if (isMatchInvisCol(prevTouch0X, prevTouch0Y, touch0X, touch0Y)) {
                 insidePoly[0] += 1;
                 touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
@@ -247,9 +219,8 @@ function App() {
                 drawStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
                 // speed of stroke
                 changeAudio(touchSpeed)
-                if (!autoScroll && touch0Y > FIFTH_WINDOW) {
-                    startAutoScroll();
-                }
+                startAutoScroll(touch0Y);
+
                 // if (Math.abs(touchSpeed[0]) < 1 && Math.abs(touchSpeed[1]) < 1) {
                 //     expandTimer = setTimeout(fillTile, 3000, touch0X, touch0Y, invisCol, 25)
                 //
@@ -263,17 +234,7 @@ function App() {
         }
 
         if (doubleTouch) {
-            let limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - TILING_WIDTH)
-            if (offsetY - (touch0Y - prevTouch0Y) >= limitScroll) {
-                offsetY -= (touch0Y - prevTouch0Y);
-            } else {
-                offsetY = limitScroll
-            }
-            if (offsetY > (sumArray() - window.innerHeight)) {
-                addToTilingArr(offsetX, offsetY)
-            }
-            redrawCanvas();
-            if (autoScroll) endAutoScroll()
+            doScroll(touch0Y,prevTouch0Y)
         }
         prevTouches[0] = event.touches[0];
         prevTouches[1] = event.touches[1];
@@ -315,36 +276,18 @@ function App() {
         }, 100)
     }
 
-    function startAutoScroll() {
-        autoScroll = true;
-        let timesRun = 0;
-        autoScroll = setInterval(function () {
-            timesRun += 1;
-            offsetY += 1;
-            redrawCanvas()
-            if (timesRun === 60) {
-                endAutoScroll()
-            }
-        }, 100);
-    }
-
-    function endAutoScroll() {
-        clearInterval(autoScroll)
-        autoScroll = false;
-    }
-
     // color of tile on invisible buffer canvas
     function setInvisCol(cursorX, cursorY) {
-        let colorCtx = document.getElementById('invis-canvas').getContext("2d");
+        // let colorCtx = document.getElementById('invis-canvas').getContext("2d");
         let tempCol = colorCtx.getImageData(cursorX, cursorY, 1, 1).data
-        if (tempCol.toString() !== "0,0,0,255") {
+        if (tempCol.toString() !== "0,0,0,255") { //if not black
             invisCol = tempCol.toString()
         }
     }
 
     // true if current pixel matches color of invisible tile
     function isMatchInvisCol(prevX, prevY, currX, currY) {
-        let colorCtx = document.getElementById('invis-canvas').getContext("2d");
+        // let colorCtx = document.getElementById('invis-canvas').getContext("2d");
         if (colorCtx.getImageData(prevX, prevY, 1, 1).data.toString().trim() === '0,0,0,0') {
             return false; //only color within the tiles
         }
@@ -357,7 +300,6 @@ function App() {
 
     function sendAlert() {
         let ratio = insidePoly[1] / insidePoly[0]
-        console.log('reduce opac ' + reduceOpac)
         if (ratio > 1 ) {
             reduceOpacityFeedback()
             return 'Focus on drawing inside the lines'
@@ -367,53 +309,6 @@ function App() {
         }
         return ''
     }
-
-    function horizExpandFn(x, y, invisCol) {
-        if ((leftMouseDown && !rightMouseDown) || singleTouch) {
-            // var colorCan = document.getElementById('invis-canvas');
-            // const colorCtx = colorCan.getContext("2d");
-            //
-            // let lastDrawingX = drawings[drawings.length - 1]
-            // let lastDrawingY = drawings[drawings.length - 1]
-            fillTile(x, y, invisCol)
-
-            // expand outwards
-            // if (colorCtx.getImageData(lastDrawingX.x1 - ((lastDrawingX.lineWidth+5)/2), lastDrawingX.y1, 1, 1).data.toString().trim() === invisCol?.trim() &&
-            //     colorCtx.getImageData(lastDrawingX.x1 - ((lastDrawingX.lineWidth+5)/2), lastDrawingX.y1, 1, 1).data.toString().trim() === invisCol?.trim() &&
-            //         colorCtx.getImageData(lastDrawingX.x1, lastDrawingX.y1 + ((lastDrawingX.lineWidth+5)/2), 1, 1).data.toString().trim() === invisCol?.trim() &&
-            //             colorCtx.getImageData(lastDrawingX.x1, lastDrawingX.y1 - ((lastDrawingX.lineWidth+5)/2), 1, 1).data.toString().trim() === invisCol?.trim()
-            // ){
-            //     lastDrawingX.lineWidth += 5;
-            // }
-
-            // expand horizontally
-            // if (colorCtx.getImageData(lastDrawingX.x1 + 1, lastDrawingX.y1, 1, 1).data.toString().trim() === invisCol?.trim()) {
-            //     lastDrawingX.x1 = lastDrawingX.x1 + 1
-            // }
-            // if (colorCtx.getImageData(lastDrawingX.x0 - 1, lastDrawingX.y0, 1, 1).data.toString().trim() === invisCol?.trim()) {
-            //     lastDrawingX.x0 = lastDrawingX.x0 - 1;
-            // }
-
-            // expand vertically
-            // if (colorCtx.getImageData(lastDrawingY.x1, lastDrawingY.y1 + 5, 1, 1).data.toString().trim() === invisCol?.trim() ||
-            //     colorCtx.getImageData(lastDrawingY.x1, lastDrawingY.y1 - 3, 1, 1).data.toString().trim() === "0,0,0,255")
-            // {
-            //     lastDrawingY.y1 += 5;
-            // }
-            // if (colorCtx.getImageData(lastDrawingY.x0, lastDrawingY.y0 - 1, 1, 1).data.toString().trim() === invisCol?.trim() ||
-            //     colorCtx.getImageData(lastDrawingY.x0, lastDrawingY.y0 + 3, 1, 1).data.toString().trim() === "0,0,0,255")
-            // {
-            //     lastDrawingY.y0 -= 5;
-            // }
-
-            // drawings.push(lastDrawingX)
-
-            // setDrawings(drawings)
-            // redrawCanvas()
-            // setTimeout(horizExpandFn, 40);
-        }
-    };
-
 
     return (
         <div className="App">
