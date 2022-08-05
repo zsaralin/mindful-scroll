@@ -218,7 +218,7 @@ export function drawTiling(offsetX, offsetY) {
     return pathDict
 }
 
-export function fillTiling(pathDict, triangles, vertices) {
+export function fillTiling(pathDict) {
     var tilingCanvas = document.getElementById('tiling-canvas');
     var tilingCtx = tilingCanvas.getContext('2d');
     tilingCtx.fillStyle = "rgba(255, 255, 255, 0)"; //white transparent canvas
@@ -245,32 +245,6 @@ export function fillTiling(pathDict, triangles, vertices) {
         ctx.stroke(pathDict[p])
         ctx.closePath()
     }
-    // tilingCtx.fillStyle = 'blue'
-    // tilingCtx.fill(pathDict['rgb(0,255,255)'])
-    // tilingCtx.stroke(pathDict['rgb(0,255,255)'])
-
-
-    // tilingCtx.strokeStyle = 'red'
-    // tilingCtx.fillStyle = 'blue'
-    // if (triangles !== undefined) {
-    //     for (let i = 0; i < triangles.length; i += 3) {
-    //         var p0 = triangles[i];
-    //         var p1 = triangles[i + 1];
-    //         var p2 = triangles[i + 2];
-    //         tilingCtx.moveTo(vertices[p0][0], vertices[p0][1]);
-    //         if (Math.abs(vertices[p1][1] - vertices[p0][1]) > 22) {
-    //             tilingCtx.lineTo(vertices[p1][0], vertices[p1][1]);
-    //         }
-    //         if (Math.abs(vertices[p1][1] - vertices[p2][1]) > 22) {
-    //             tilingCtx.lineTo(vertices[p2][0], vertices[p2][1])
-    //         }
-    //         // tilingCtx.stroke();
-    //     }
-    // }
-    // for (let i = 0; i < vertices?.length; i++) {
-    //     tilingCtx.fillRect(vertices[i][0], vertices[i][1], 9, 9)
-    // }
-
 }
 
 function setYMin(yMin, y0, y1) {

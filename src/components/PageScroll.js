@@ -1,5 +1,6 @@
 import {addToTilingArr, redrawTilings, sumArray, sumArrayPrev, tilingArrLength} from "./TilingArr";
 import {redrawStrokes} from "./Stroke";
+import {redrawTiles} from "./FillTile";
 
 let offsetY = 0; //distance from origin
 let autoScroll = false;
@@ -58,5 +59,6 @@ function redrawCanvas() {
     tilingCanvas.getContext("2d").translate(0, -offsetY)
 
     redrawStrokes(offsetY);
+    redrawTiles()
     redrawTilings();
 }

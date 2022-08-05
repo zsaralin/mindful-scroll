@@ -9,16 +9,17 @@ import {
     stopColorChange,
     resetLineWidth,
     pushStroke,
-    setLineWidth, drawPoint, pushPoint, removeLastPoint
+    setLineWidth, removeLastStroke
 } from './components/Stroke'
 import {
     addToTilingArr,
     tilingArrLength,
     redrawTilings,
     sumArray,
-    sumArrayPrev, fillTile,
+    sumArrayPrev,
 } from "./components/TilingArr";
-import {doScroll, getOffsetY, startAutoScroll} from "./components/Scroll";
+import {doScroll, getOffsetY, startAutoScroll} from "./components/PageScroll";
+import {fillTile} from "./components/FillTile";
 
 function App() {
     const canvas = useRef();
@@ -79,7 +80,7 @@ function App() {
             stopColorChange()
 
             setInvisCol(prevCursorX, prevCursorY)
-            if (invisCol && invisCol.substring(0, 5) !== '0,0,0' && invisCol !== undefined) { //not white (outside tiling)
+            if (invisCol !== undefined && invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
                 pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY)
                 drawStroke(prevCursorX, prevCursorY, prevCursorX, prevCursorY);
                 expandTimer = setTimeout(fillTile, 3000, prevScaledX, prevScaledY, invisCol, 25)
@@ -175,13 +176,7 @@ function App() {
             const touch0Y = event.touches[0].pageY;
             const touch1X = event.touches[1].pageX;
             const touch1Y = event.touches[1].pageY;
-            // let colorCtx = document.getElementById('invis-canvas').getContext("2d");
-
-            // if (colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim().substring(0,5) !== '0,0,0' ||
-            //     colorCtx.getImageData(touch1X, touch1Y, 1, 1).data.toString().trim().substring(0,5) !== '0,0,0' ){
-            //     removeLastPoint()
-            // }
-            removeLastPoint(touch0X, touch0Y, touch1X, touch1Y, getOffsetY())
+            removeLastStroke(touch0X, touch0Y, touch1X, touch1Y, getOffsetY())
 
             singleTouch = false;
             doubleTouch = true;

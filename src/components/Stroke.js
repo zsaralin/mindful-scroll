@@ -26,13 +26,10 @@ export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
     context.stroke();
 }
 
-export function removeLastPoint(x0, y0, x1, y1, offsetY) {
+// removes mistake strokes during two-finger scroll
+export function removeLastStroke(x0, y0, x1, y1, offsetY) {
     if(drawings.length > 0){
     let lastP = drawings[drawings.length - 1]
-    console.log(`lastP ${lastP.x0} and ${lastP.y0}`)
-    console.log(`oneTouch ${x0} and ${y0}`)
-    console.log(`twoTouch ${x1} and ${y1}`)
-    console.log(`offsetY ${offsetY}`)
     if (lastP.x0 === x0 && lastP.y0 === y0 + offsetY) {
         drawings.pop()
     } else if (lastP.x1 === x1 && lastP.y1 === y1 + offsetY) {
@@ -75,7 +72,7 @@ function toScreen(point, offset) {
 }
 
 // changes color after a 2s pause, or changes hue slightly after a 500ms pause
-export function colorDelay(input) {
+export function colorDelay() {
     stopColorChange()
     var rgb = color.match(/\d+/g);
     var i = Math.floor(Math.random() * rgb.length)
@@ -103,11 +100,10 @@ export function stopColorChange() {
 export function setLineWidth(speedArr) {
     let speed = getAbsArray(speedArr)
     if ((speed[0] > 10 || speed[1] > 10) && lineWidth > 20) {
-        lineWidth -= 1;
+        lineWidth -= 3;
     } else if (lineWidth < 80) {
         lineWidth += 0.1;
     }
-    // return lineWidth;
 }
 
 export function resetLineWidth() {
