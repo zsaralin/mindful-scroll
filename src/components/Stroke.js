@@ -28,13 +28,14 @@ export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
 
 // removes mistake strokes during two-finger scroll
 export function removeLastStroke(x0, y0, x1, y1, offsetY) {
-    if(drawings.length > 0){
-    let lastP = drawings[drawings.length - 1]
-    if (lastP.x0 === x0 && lastP.y0 === y0 + offsetY) {
-        drawings.pop()
-    } else if (lastP.x1 === x1 && lastP.y1 === y1 + offsetY) {
-        drawings.pop();
-    }}
+    if (drawings.length > 0) {
+        let lastP = drawings[drawings.length - 1]
+        if (lastP.x0 === x0 && lastP.y0 === y0 + offsetY) {
+            drawings.pop()
+        } else if (lastP.x1 === x1 && lastP.y1 === y1 + offsetY) {
+            drawings.pop();
+        }
+    }
 }
 
 export function pushStroke(x0, y0, x1, y1) {
@@ -100,7 +101,8 @@ export function stopColorChange() {
 export function setLineWidth(speedArr) {
     let speed = getAbsArray(speedArr)
     if ((speed[0] > 10 || speed[1] > 10) && lineWidth > 20) {
-        lineWidth -= 3;
+        lineWidth -= 5
+        console.log(lineWidth)
     } else if (lineWidth < 80) {
         lineWidth += 0.1;
     }

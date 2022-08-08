@@ -83,7 +83,7 @@ function App() {
             if (invisCol !== undefined && invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
                 pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY)
                 drawStroke(prevCursorX, prevCursorY, prevCursorX, prevCursorY);
-                expandTimer = setTimeout(fillTile, 3000, prevScaledX, prevScaledY, invisCol, 25)
+                expandTimer = setTimeout(fillTile, 3000, prevScaledX, prevScaledY, invisCol , 25)
             }
         }
 
