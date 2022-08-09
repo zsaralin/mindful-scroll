@@ -208,6 +208,8 @@ function App() {
 
         clearTimeout(expandTimer)
         if (singleTouch) {
+            console.log('in here')
+
             if (invisCol && invisCol === '0,0,0,0' && colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === '0,0,0,0') {
                 doScroll(touch0Y, prevTouch0Y)
             }
@@ -219,11 +221,13 @@ function App() {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
                     drawShrinkingLine(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
                     reduceLineWidth()
-                } else if ((Math.abs(touchSpeed[0]) < 2 || Math.abs(touchSpeed[1]) < 2)) {
-                    expandTimer = setTimeout(fillTile, 150, scaledX, scaledY, invisCol, 25)
-                    pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
-                    drawStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
-                } else {
+                }
+                // else if ((Math.abs(touchSpeed[0]) < 2 || Math.abs(touchSpeed[1]) < 2)) {
+                //     expandTimer = setTimeout(fillTile, 150, scaledX, scaledY, invisCol, 25)
+                //     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                //     drawStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
+                // }
+                else {
                     setLineWidth(touchSpeed)
                     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
                     drawStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
