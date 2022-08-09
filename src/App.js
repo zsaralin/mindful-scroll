@@ -114,21 +114,20 @@ function App() {
             if (isMatchInvisCol(prevCursorX, prevCursorY, cursorX, cursorY)) {
                 // speed of stroke
                 mouseSpeed = [event.movementX, event.movementY]
-                if ((mouseSpeed[0] > 10 || mouseSpeed[1] > 10)) {
+                if ((Math.abs(mouseSpeed[0]) > 10 || Math.abs(mouseSpeed[1]) > 10)) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
                     drawShrinkingLine(prevCursorX, prevCursorY, cursorX, cursorY);
                     reduceLineWidth()
+                } else if ((Math.abs(mouseSpeed[0]) < 2 || Math.abs(mouseSpeed[1]) < 2)) {
+                    expandTimer = setTimeout(fillTile, 150, prevScaledX, prevScaledY, invisCol, 25)
+                    pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                    drawStroke(prevCursorX, prevCursorY, cursorX, cursorY);
                 } else {
                     setLineWidth(mouseSpeed)
                     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
                     drawStroke(prevCursorX, prevCursorY, cursorX, cursorY);
                 }
                 changeAudio(mouseSpeed)
-                // setLineWidth(mouseSpeed)
-                // add the line to our drawing history
-                // pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
-                // drawStroke(prevCursorX, prevCursorY, cursorX, cursorY);
-                //scroll if drawing on bottom 1/5 part of page
                 startAutoScroll(cursorY);
 
                 insidePoly[0] += 1;
@@ -172,7 +171,7 @@ function App() {
             if (invisCol !== undefined && invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 drawStroke(touch0X, touch0Y, touch0X, touch0Y + 0.5);
-                expandTimer = setTimeout(fillTile, 3000, touch0X, touch0Y, invisCol, 25)
+                expandTimer = setTimeout(fillTile, 1500, touch0X, touch0Y, invisCol, 25)
             }
 
             stopColorChange()
@@ -215,11 +214,15 @@ function App() {
             if (isMatchInvisCol(prevTouch0X, prevTouch0Y, touch0X, touch0Y)) {
                 insidePoly[0] += 1;
                 touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
-                if ((touchSpeed[0] > 10 || touchSpeed[1] > 10)) {
+                console.log(touchSpeed)
+                if ((Math.abs(touchSpeed[0]) > 10 || Math.abs(touchSpeed[1]) > 10)) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
                     drawShrinkingLine(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
                     reduceLineWidth()
-
+                } else if ((Math.abs(touchSpeed[0]) < 2 || Math.abs(touchSpeed[1]) < 2)) {
+                    expandTimer = setTimeout(fillTile, 150, touch0X, touch0Y, invisCol, 25)
+                    pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                    drawStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
                 } else {
                     setLineWidth(touchSpeed)
                     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)

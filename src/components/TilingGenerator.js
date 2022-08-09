@@ -369,12 +369,9 @@ export function makeRandomTiling() {
         edges.push(ej);
     }
     scale = getScaler(tiling)
-    list = [0, 0, (window.innerWidth/150) / scale, 9 / scale]
-    console.log('width : ' + window.innerWidth/150)
-    // let area = (window.innerWidth * window.innerHeight) / 50
+    list = [0, 0, (window.innerWidth/50) / scale, 9 / scale]
     let area = 3000;
     ST = [50 + scale * Math.sqrt(area), 0.0, 0.0, 0.0, 50 + scale * Math.sqrt(area), 0.0];
-    // ST = [1 * scale * (500 / 4), 0.0, 0.0, 0.0, (1 * scale) * (500 / 4), 0.0];
 
     currTiling = tiling;
     currEdges = edges;
