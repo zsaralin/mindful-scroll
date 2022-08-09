@@ -171,7 +171,7 @@ function App() {
             if (invisCol !== undefined && invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 drawStroke(touch0X, touch0Y, touch0X, touch0Y + 0.5);
-                expandTimer = setTimeout(fillTile, 1500, touch0X, touch0Y, invisCol, 25)
+                expandTimer = setTimeout(fillTile, 1500, scaledX, scaledY, invisCol, 25)
             }
 
             stopColorChange()
@@ -220,7 +220,7 @@ function App() {
                     drawShrinkingLine(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
                     reduceLineWidth()
                 } else if ((Math.abs(touchSpeed[0]) < 2 || Math.abs(touchSpeed[1]) < 2)) {
-                    expandTimer = setTimeout(fillTile, 150, touch0X, touch0Y, invisCol, 25)
+                    expandTimer = setTimeout(fillTile, 150, scaledX, scaledY, invisCol, 25)
                     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
                     drawStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
                 } else {
