@@ -10,7 +10,7 @@ function getScaler(tiling) {
     let t1 = tiling.getT1()
     let t2 = tiling.getT2()
     const B = Math.abs((t1.x * t2.y) - (t2.x * t1.y)) / (tiling.numAspects())
-    const A = 1.5
+    const A = 2.5
     return Math.sqrt(A / B)
 }
 
@@ -369,10 +369,10 @@ export function makeRandomTiling() {
         edges.push(ej);
     }
     scale = getScaler(tiling)
-    list = [0, 0, 4 / scale, 9 / scale]
-
+    list = [0, 0, (window.innerWidth/150) / scale, 9 / scale]
+    console.log('width : ' + window.innerWidth/150)
     // let area = (window.innerWidth * window.innerHeight) / 50
-    let area = 5000;
+    let area = 3000;
     ST = [50 + scale * Math.sqrt(area), 0.0, 0.0, 0.0, 50 + scale * Math.sqrt(area), 0.0];
     // ST = [1 * scale * (500 / 4), 0.0, 0.0, 0.0, (1 * scale) * (500 / 4), 0.0];
 
