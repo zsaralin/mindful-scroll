@@ -9,7 +9,7 @@ import {
     stopColorChange,
     resetLineWidth,
     pushStroke,
-    setLineWidth, removeLastStroke
+    setLineWidth, removeLastStroke, reduceLineWidth, drawShrinkingLine, pushShrinkingLine,
 } from './components/Stroke'
 import {
     addToTilingArr,
@@ -46,7 +46,7 @@ function App() {
     let expandTimer;
 
     function toTrueX(xScreen) {
-        return (xScreen) ;
+        return (xScreen);
     }
 
     function toTrueY(yScreen) {
@@ -81,9 +81,9 @@ function App() {
 
             setInvisCol(prevCursorX, prevCursorY)
             if (invisCol !== undefined && invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
-                pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY)
+                pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 drawStroke(prevCursorX, prevCursorY, prevCursorX, prevCursorY);
-                expandTimer = setTimeout(fillTile, 3000, prevScaledX, prevScaledY, invisCol , 25)
+                expandTimer = setTimeout(fillTile, 1500, prevScaledX, prevScaledY, invisCol, 25)
             }
         }
 
@@ -114,12 +114,20 @@ function App() {
             if (isMatchInvisCol(prevCursorX, prevCursorY, cursorX, cursorY)) {
                 // speed of stroke
                 mouseSpeed = [event.movementX, event.movementY]
-
+                if ((mouseSpeed[0] > 10 || mouseSpeed[1] > 10)) {
+                    pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
+                    drawShrinkingLine(prevCursorX, prevCursorY, cursorX, cursorY);
+                    reduceLineWidth()
+                } else {
+                    setLineWidth(mouseSpeed)
+                    pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                    drawStroke(prevCursorX, prevCursorY, cursorX, cursorY);
+                }
                 changeAudio(mouseSpeed)
-                setLineWidth(mouseSpeed)
+                // setLineWidth(mouseSpeed)
                 // add the line to our drawing history
-                pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
-                drawStroke(prevCursorX, prevCursorY, cursorX, cursorY);
+                // pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                // drawStroke(prevCursorX, prevCursorY, cursorX, cursorY);
                 //scroll if drawing on bottom 1/5 part of page
                 startAutoScroll(cursorY);
 
@@ -150,7 +158,6 @@ function App() {
         if (event.touches.length === 1) {
             singleTouch = true;
             doubleTouch = false;
-
             const touch0X = event.touches[0].pageX;
             const touch0Y = event.touches[0].pageY;
             const prevTouch0X = prevTouches[0]?.pageX;
@@ -202,16 +209,24 @@ function App() {
 
         clearTimeout(expandTimer)
         if (singleTouch) {
-            if(invisCol && invisCol === '0,0,0,0' && colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === '0,0,0,0'){
+            if (invisCol && invisCol === '0,0,0,0' && colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === '0,0,0,0') {
                 doScroll(touch0Y, prevTouch0Y)
             }
             if (isMatchInvisCol(prevTouch0X, prevTouch0Y, touch0X, touch0Y)) {
                 insidePoly[0] += 1;
                 touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
+                if ((touchSpeed[0] > 10 || touchSpeed[1] > 10)) {
+                    pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
+                    drawShrinkingLine(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
+                    reduceLineWidth()
 
-                setLineWidth(touchSpeed)
-                pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
-                drawStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
+                } else {
+                    setLineWidth(touchSpeed)
+                    pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                    drawStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
+                }
+                // setLineWidth(touchSpeed)
+
                 // speed of stroke
                 changeAudio(touchSpeed)
                 startAutoScroll(touch0Y);
@@ -229,7 +244,7 @@ function App() {
         }
 
         if (doubleTouch) {
-            doScroll(touch0Y,prevTouch0Y)
+            doScroll(touch0Y, prevTouch0Y)
         }
         prevTouches[0] = event.touches[0];
         prevTouches[1] = event.touches[1];
@@ -254,6 +269,7 @@ function App() {
     }
 
     let reduceOpac;
+
     function reduceOpacityFeedback() {
         let opacity = 0
         let increaseOpac = true;
@@ -295,7 +311,7 @@ function App() {
 
     function sendAlert() {
         let ratio = insidePoly[1] / insidePoly[0]
-        if (ratio > 1 ) {
+        if (ratio > 1) {
             reduceOpacityFeedback()
             return 'Focus on drawing inside the lines'
         } else if (ratio < 0.5 && insidePoly[0] !== 0) {

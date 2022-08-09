@@ -11,6 +11,15 @@ export function fillTile(x, y, invisCol) {
     let currColor = getCurrColor();
     let currTiling = getCurrentPathDict(y)
     let currTile = currTiling['rgb(' + invisCol.slice(0, -4) + ')']
+    let initFill = setInterval(function () {
+        r2++
+        fillActiveTile(x, y, currColor, r2, currTile)
+        // activeTileArr[activeIndex] = ({path: currTile, color: currColor, r2: r2, x: x, y: y})
+        if (r2 > 50) {
+            clearInterval(initFill)
+            // activeTileArr.shift()
+        }
+    }, 10)
 
     let fillCol = setInterval(function () {
         r2++
@@ -26,7 +35,7 @@ export function fillTile(x, y, invisCol) {
                 }
             )
         }
-    }, 10)
+    }, 20)
 }
 
 export function redrawTiles() {

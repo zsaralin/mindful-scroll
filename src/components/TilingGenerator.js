@@ -225,12 +225,14 @@ export function fillTiling(pathDict) {
     var invisCan = document.getElementById('invis-canvas');
     var ctx = invisCan.getContext('2d');
 
-    tilingCtx.lineWidth = 15 + Math.sqrt(window.innerHeight * window.innerWidth) / 30
+    // tilingCtx.lineWidth = 15 + Math.sqrt(window.innerHeight * window.innerWidth) / 30
+    tilingCtx.lineWidth = 40;
     tilingCtx.lineJoin = "round";
     tilingCtx.lineCap = "round"
     tilingCtx.strokeStyle = '#000';
 
-    ctx.lineWidth = 15 + Math.sqrt(window.innerHeight * window.innerWidth) / 30
+    // ctx.lineWidth = 15 + Math.sqrt(window.innerHeight * window.innerWidth) / 30
+    ctx.lineWidth = 40;
     ctx.lineJoin = "round";
     ctx.lineCap = "round"
 
@@ -265,7 +267,8 @@ function findBottom(tiling, edges, yMin, yMax, sumArray) {
 
     // console.log(`B is ${B} and num aspects is ${tiling.numAspects()}  and scale is ${scaler}`)
     // Define a world-to-screen transformation matrix that scales by 50x.
-    const ST = [1 * scaler * (window.innerHeight / 4), 0.0, 0.0, 0.0, (1 * scaler) * (window.innerWidth / 4), 0.0];
+    // const ST = [1 * scaler * (window.innerHeight / 4), 0.0, 0.0, 0.0, (1 * scaler) * (window.innerWidth / 4), 0.0];
+    const ST = [50,0,0,0,50,0]
     //*Math.sqrt(1500/(yMax-yMin))
 
     for (let i of tiling.fillRegionBounds(0, 0, 4 / scaler, 6 / scaler)) {
@@ -368,7 +371,8 @@ export function makeRandomTiling() {
     scale = getScaler(tiling)
     list = [0, 0, 4 / scale, 9 / scale]
 
-    let area = (window.innerWidth * window.innerHeight) / 50
+    // let area = (window.innerWidth * window.innerHeight) / 50
+    let area = 5000;
     ST = [50 + scale * Math.sqrt(area), 0.0, 0.0, 0.0, 50 + scale * Math.sqrt(area), 0.0];
     // ST = [1 * scale * (500 / 4), 0.0, 0.0, 0.0, (1 * scale) * (500 / 4), 0.0];
 

@@ -3,7 +3,9 @@ import {getAbsArray} from './Audio.js'
 import {tilingArrLength} from "./TilingArr";
 
 let drawings = [];
+
 let lineWidth = 50;
+// let endWidth;
 let shortPause;
 let longPause;
 let colorChange = 15;
@@ -14,7 +16,36 @@ export function getStrokeColor() {
     return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + 1 + ')';
 }
 
+function createShrinkingLine(x1, y1, x2, y2, lineWidth) {
+    let endWidth = lineWidth >= 30 ? lineWidth - 10: lineWidth;
+    // calculate direction vector of point 1 and 2
+    const directionVectorX = x2 - x1,
+        directionVectorY = y2 - y1;
+    // calculate angle of perpendicular vector
+    const perpendicularVectorAngle = Math.atan2(directionVectorY, directionVectorX) + Math.PI / 2;
+    // construct shape
+    const path = new Path2D();
+    path.arc(x1, y1, lineWidth / 2, perpendicularVectorAngle, perpendicularVectorAngle + Math.PI);
+    path.arc(x2, y2, endWidth / 2, perpendicularVectorAngle + Math.PI, perpendicularVectorAngle);
+    path.closePath();
+    return path;
+}
+
+export function drawShrinkingLine(x0, y0, x1, y1, theLineWidth, theColor) {
+    let context = document.getElementById('canvas').getContext("2d");
+    let line = createShrinkingLine(x0, y0, x1, y1, theLineWidth ? theLineWidth: lineWidth)
+    // lineWidth = lineWidth >= 25 ? lineWidth - 5: lineWidth;
+    context.fillStyle = theColor ? theColor : color;
+    context.fill(line);
+}
+
+export function reduceLineWidth(){
+    lineWidth = lineWidth >= 30 ? lineWidth - 10: lineWidth;
+}
+
+
 export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
+    // console.log(lineWidth)
     let context = document.getElementById('canvas').getContext("2d");
     context.lineCap = 'round'
     context.lineJoin = 'round'
@@ -45,7 +76,19 @@ export function pushStroke(x0, y0, x1, y1) {
         x1: x1,
         y1: y1,
         color: color,
-        lineWidth: lineWidth
+        lineWidth: lineWidth,
+    })
+}
+
+export function pushShrinkingLine(x0, y0, x1, y1) {
+    drawings.push({
+        x0: x0,
+        y0: y0,
+        x1: x1,
+        y1: y1,
+        color: color,
+        lineWidth: lineWidth,
+        endWidth: lineWidth - 5
     })
 }
 
@@ -56,13 +99,16 @@ export function redrawStrokes(offsetY) {
         let y0 = toScreen(line.y0, offsetY)
         let x1 = toScreen(line.x1, 0)
         let y1 = toScreen(line.y1, offsetY)
-
-        if (y0 >= 0 && y0 <= window.innerHeight || y1 >= 0 && y1 <= window.innerHeight) { // if in browser window
-            drawStroke(x0, y0, x1, y1, line.lineWidth, line.color);
-        }
-        let limitScroll = tilingArrLength() <= 2 ? 0 : (2000 * (tilingArrLength() - 2))
-        if (line.y0 <= limitScroll) {
-            drawings.splice(i, 1)
+        if (line.endWidth) {
+            drawShrinkingLine(x0, y0, x1, y1, line.lineWidth, line.color);
+        } else {
+            if (y0 >= 0 && y0 <= window.innerHeight || y1 >= 0 && y1 <= window.innerHeight) { // if in browser window
+                drawStroke(x0, y0, x1, y1, line.lineWidth, line.color);
+            }
+            let limitScroll = tilingArrLength() <= 2 ? 0 : (2000 * (tilingArrLength() - 2))
+            if (line.y0 <= limitScroll) {
+                drawings.splice(i, 1)
+            }
         }
         // (1450 * (tilingArrLength() - 2) + window.innerHeight - 5))
     }
@@ -98,18 +144,14 @@ export function stopColorChange() {
     clearTimeout(longPause)
 }
 
-export function setLineWidth(speedArr) {
-    let speed = getAbsArray(speedArr)
-    if ((speed[0] > 10 || speed[1] > 10) && lineWidth > 20) {
-        lineWidth -= 5
-        console.log(lineWidth)
-    } else if (lineWidth < 80) {
-        lineWidth += 0.1;
-    }
+export function setLineWidth() {
+    if (lineWidth < 80) {
+        lineWidth += 0.1; }
 }
 
 export function resetLineWidth() {
     lineWidth = 50;
+    // endWidth = 50;
 }
 
 export function getCurrColor() {
