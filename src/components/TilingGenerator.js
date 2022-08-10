@@ -131,6 +131,7 @@ export function drawTiling(offsetX, offsetY) {
     let pathDict = {}
     let colorIndex = 0
     let cols = fillColourArray(numTile + 1)
+    let pathDrawn = false;
     for (let i of currTiling.fillRegionBounds(list[0], list[1], list[2], list[3])) {
         let path = new Path2D()
         let start = true;
@@ -205,17 +206,10 @@ export function drawTiling(offsetX, offsetY) {
         if (outOfBounds === false) {
             pathDict[cols[colorIndex]] = path;
             colorIndex++;
+            pathDrawn = true;
         }
     }
-    // let shapePath = new Path2D()
-    // shapePath.moveTo(window.innerWidth/2 - 50, yMax  + 300  )
-    // shapePath.lineTo(window.innerWidth/2 - 50, yMax   + 400)
-    // shapePath.lineTo(window.innerWidth/2 + 50, yMax   + 400)
-    // shapePath.lineTo(window.innerWidth/2 + 50, yMax + 300)
-    // shapePath.lineTo(window.innerWidth/2 - 50 , yMax  + 300)
-    //
-    // pathDict[cols[colorIndex]] = shapePath;
-    return pathDict
+    return !pathDrawn ? false : pathDict //return false if no tile was drawn (i.e., no tile was within the bounds)
 }
 
 export function fillTiling(pathDict) {
@@ -257,74 +251,6 @@ function setYMin(yMin, y0, y1) {
 function setYMax(yMax, y0, y1) {
     if (yMax === null) return Math.max(y0, y1)
     return Math.max(Math.max(yMax, y0), y1)
-}
-
-function findBottom(tiling, edges, yMin, yMax, sumArray) {
-    const scaler = getScaler(tiling)
-
-    let topVerts = []; // top and bottom vertices of tiling
-    let bottomVerts = [];
-
-    // console.log(`B is ${B} and num aspects is ${tiling.numAspects()}  and scale is ${scaler}`)
-    // Define a world-to-screen transformation matrix that scales by 50x.
-    // const ST = [1 * scaler * (window.innerHeight / 4), 0.0, 0.0, 0.0, (1 * scaler) * (window.innerWidth / 4), 0.0];
-    const ST = [50,0,0,0,50,0]
-    //*Math.sqrt(1500/(yMax-yMin))
-
-    for (let i of tiling.fillRegionBounds(0, 0, 4 / scaler, 6 / scaler)) {
-        const T = mul(ST, i.T);
-        let start = true;
-        for (let si of tiling.shape()) {
-            const S = mul(T, si.T);
-            let seg = [mul(S, {x: 0.0, y: 0.0})];
-
-            if (si.shape != EdgeShape.I) {
-                const ej = edges[si.id];
-                seg.push(mul(S, ej[0]));
-                seg.push(mul(S, ej[1]));
-            }
-
-            seg.push(mul(S, {x: 1.0, y: 0.0}));
-
-            if (si.rev) {
-                seg = seg.reverse();
-            }
-
-            if (start) {
-                start = false;
-            }
-
-            if (seg.length == 2) {
-                if (seg[0].y < seg[1].y && seg[0].y <= yMin + (yMax - yMin) / 55) {
-                    topVerts.push([seg[0].x, seg[0].y + sumArray - yMin])
-                } else if (seg[0].y > seg[1].y && seg[1].y <= yMin + (yMax - yMin) / 55) {
-                    topVerts.push([seg[1].x, seg[1].y + sumArray - yMin])
-                }
-                if (seg[0].y > seg[1].y && seg[0].y >= yMax - (yMax - yMin) / 55) {
-                    bottomVerts.push([seg[0].x, seg[0].y + sumArray - yMin])
-                } else if (seg[0].y < seg[1].y && seg[1].y >= yMax - (yMax - yMin) / 55) {
-                    bottomVerts.push([seg[1].x, seg[1].y + sumArray - yMin])
-                }
-
-            } else {
-                if (seg[0].y < seg[3].y && seg[0].y <= yMin + (yMax - yMin) / 55) {
-                    topVerts.push([seg[0].x, seg[0].y + sumArray - yMin])
-
-                } else if (seg[0].y > seg[3].y && seg[3].y <= yMin + (yMax - yMin) / 55) {
-                    topVerts.push([seg[3].x, seg[3].y + sumArray - yMin])
-                }
-                if (seg[0].y > seg[3].y && seg[0].y >= yMax - (yMax - yMin) / 55) {
-                    bottomVerts.push([seg[0].x, seg[0].y + sumArray - yMin])
-
-                } else if (seg[0].y < seg[3].y && seg[3].y >= yMax - (yMax - yMin) / 55) {
-                    bottomVerts.push([seg[3].x, seg[3].y + sumArray - yMin])
-                }
-
-            }
-
-        }
-    }
-    return [topVerts, bottomVerts]
 }
 
 export function makeRandomTiling() {

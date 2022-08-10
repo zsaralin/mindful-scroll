@@ -41,7 +41,8 @@ function App() {
     // color of tile on invisible buffer canvas
     let invisCol;
 
-    let insidePoly = [] // number of points inside and outside polygon
+    let insidePoly = [0, 0] // number of points inside and outside polygon
+    let tooFast = false;
 
     let expandTimer;
 
@@ -111,6 +112,7 @@ function App() {
         const prevScaledY = toTrueY(prevCursorY);
         clearTimeout(expandTimer)
         if (leftMouseDown) {
+            insidePoly[0] += 1;
             if (isMatchInvisCol(prevCursorX, prevCursorY, cursorX, cursorY)) {
                 // speed of stroke
                 mouseSpeed = [event.movementX, event.movementY]
@@ -118,10 +120,7 @@ function App() {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
                     drawShrinkingLine(prevCursorX, prevCursorY, cursorX, cursorY);
                     reduceLineWidth()
-                } else if ((Math.abs(mouseSpeed[0]) < 2 || Math.abs(mouseSpeed[1]) < 2)) {
-                    expandTimer = setTimeout(fillTile, 150, prevScaledX, prevScaledY, invisCol, 25)
-                    pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
-                    drawStroke(prevCursorX, prevCursorY, cursorX, cursorY);
+                    tooFast = true;
                 } else {
                     setLineWidth(mouseSpeed)
                     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
@@ -129,8 +128,6 @@ function App() {
                 }
                 changeAudio(mouseSpeed)
                 startAutoScroll(cursorY);
-
-                insidePoly[0] += 1;
             } else {
                 insidePoly[1] += 1;
             }
@@ -208,42 +205,26 @@ function App() {
 
         clearTimeout(expandTimer)
         if (singleTouch) {
-            console.log('in here')
-
+            insidePoly[0] += 1;
+            // scroll when dragging on white space
             if (invisCol && invisCol === '0,0,0,0' && colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === '0,0,0,0') {
                 doScroll(touch0Y, prevTouch0Y)
             }
             if (isMatchInvisCol(prevTouch0X, prevTouch0Y, touch0X, touch0Y)) {
-                insidePoly[0] += 1;
                 touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
-                console.log(touchSpeed)
                 if ((Math.abs(touchSpeed[0]) > 10 || Math.abs(touchSpeed[1]) > 10)) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
                     drawShrinkingLine(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
                     reduceLineWidth()
-                }
-                // else if ((Math.abs(touchSpeed[0]) < 2 || Math.abs(touchSpeed[1]) < 2)) {
-                //     expandTimer = setTimeout(fillTile, 150, scaledX, scaledY, invisCol, 25)
-                //     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
-                //     drawStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
-                // }
-                else {
+                    tooFast = true;
+                } else {
                     setLineWidth(touchSpeed)
                     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
                     drawStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
                 }
-                // setLineWidth(touchSpeed)
-
                 // speed of stroke
                 changeAudio(touchSpeed)
                 startAutoScroll(touch0Y);
-
-                // if (Math.abs(touchSpeed[0]) < 1 && Math.abs(touchSpeed[1]) < 1) {
-                //     expandTimer = setTimeout(fillTile, 3000, touch0X, touch0Y, invisCol, 25)
-                //
-                // }
-                // expandTimer = setTimeout(horizExpandFn, 1500);
-                // }
 
             } else {
                 insidePoly[1] += 1;
@@ -270,9 +251,9 @@ function App() {
         clearTimeout(expandTimer)
         clearInterval(reduceOpac)
         document.getElementById("feedbackBar").style.color = 'rgba(0,0,0,0)'
-
-        document.getElementById("feedbackBar").innerHTML = sendAlert()
+        sendAlert()
         insidePoly = [0, 0]
+        tooFast = false;
     }
 
     let reduceOpac;
@@ -316,16 +297,27 @@ function App() {
         return false;
     }
 
-    function sendAlert() {
+    function generateAlert() {
         let ratio = insidePoly[1] / insidePoly[0]
-        if (ratio > 1) {
-            reduceOpacityFeedback()
+        if (tooFast) {
+            return 'Slow down'
+        } else if (ratio >= 1) {
             return 'Focus on drawing inside the lines'
         } else if (ratio < 0.5 && insidePoly[0] !== 0) {
-            reduceOpacityFeedback()
             return 'Keep it up!'
         }
         return ''
+    }
+
+    function sendAlert(){
+        let prevFeedback = document.getElementById("feedbackBar").innerHTML;
+        let returnFeedback = generateAlert()
+        if (prevFeedback === returnFeedback) {
+            document.getElementById("feedbackBar").innerHTML = ''
+        } else {
+            reduceOpacityFeedback()
+            document.getElementById("feedbackBar").innerHTML = returnFeedback
+        }
     }
 
     return (

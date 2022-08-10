@@ -5,15 +5,13 @@ import {tilingArrLength} from "./TilingArr";
 let drawings = [];
 
 let lineWidth = 50;
-// let endWidth;
 let shortPause;
 let longPause;
 let colorChange = 15;
 let color = getStrokeColor()
 
 export function getStrokeColor() {
-    var o = Math.round, r = Math.random, s = 255;
-    return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + 1 + ')';
+    return 'hsl(' + Math.ceil(360*Math.random()) + ',' + Math.floor((100-20+1) * Math.random() + 20) + '%,'  + Math.floor((90-20+1) * Math.random() + 20) + '%)'
 }
 
 function createShrinkingLine(x1, y1, x2, y2, lineWidth) {
@@ -118,24 +116,42 @@ function toScreen(point, offset) {
     return (point) - offset;
 }
 
+const toHSLObject = hslStr => {
+    const [hue, saturation, lightness] = hslStr.match(/\d+/g).map(Number);
+    return { hue, saturation, lightness };
+};
+
 // changes color after a 2s pause, or changes hue slightly after a 500ms pause
 export function colorDelay() {
     stopColorChange()
-    var rgb = color.match(/\d+/g);
-    var i = Math.floor(Math.random() * rgb.length)
-    if (parseInt(rgb[i]) + colorChange < 0) {
-        colorChange = 15;
-    } else if (parseInt(rgb[i]) + colorChange > 255) {
-        colorChange = -15;
+    let hsvArr = color.match(/\d+/g)
+    if (hsvArr[0] + colorChange < 0){
+        colorChange = 5;
+    } else if (hsvArr[0] + colorChange > 360) {
+        colorChange = -5;
     }
-    rgb[i] = parseInt(rgb[i]) + colorChange;
+    let hue = parseInt(hsvArr[0]) + colorChange;
     shortPause = setTimeout(function () {
-        color = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')'
+        color = 'hsl(' + hue + ',' + hsvArr[1] + '%,' + hsvArr[2] + '%)'
     }, 500);
-
     longPause = setTimeout(function () {
         color = getStrokeColor();
     }, 2000);
+    // var rgb = color.match(/\d+/g);
+    // var i = Math.floor(Math.random() * rgb.length)
+    // if (parseInt(rgb[i]) + colorChange < 0) {
+    //     colorChange = 15;
+    // } else if (parseInt(rgb[i]) + colorChange > 255) {
+    //     colorChange = -15;
+    // }
+    // rgb[i] = parseInt(rgb[i]) + colorChange;
+    // shortPause = setTimeout(function () {
+    //     color = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')'
+    // }, 500);
+    //
+    // longPause = setTimeout(function () {
+    //     color = getStrokeColor();
+    // }, 2000);
 }
 
 // triggered onMouseDown / onTouchStart

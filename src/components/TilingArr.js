@@ -1,7 +1,6 @@
-import {makeRandomTiling, getYBounds, drawTiling, fillTiling, getSegArr, getXBounds} from './TilingGenerator'
+import {makeRandomTiling, getYBounds, drawTiling, fillTiling, getXBounds} from './TilingGenerator'
 
 import {getRandomShape} from "./Shape";
-import {getCurrColor} from "./Stroke";
 
 let tilingArr = []
 let yMinArr = []
@@ -23,16 +22,24 @@ export function addToTilingArr() {
     let [yMin, yMax] = getYBounds(sumArray())
     let [xMin, xMax] = getXBounds()
 
+    let pathDict = drawTiling(-(xMin - (window.innerWidth - xMax)) / 2, yMaxArr.length > 0 ? yMaxArr[yMaxArr.length - 1] + (yMaxArr[yMaxArr.length - 1] - yMin) : -yMin + 75)
+    while (pathDict === false) {
+        x = makeRandomTiling()
+        tiling = x.tiling;
+        edges = x.edges;
+        [yMin, yMax] = getYBounds(sumArray());
+        [xMin, xMax] = getXBounds();
+        pathDict = drawTiling(-(xMin - (window.innerWidth - xMax)) / 2, yMaxArr.length > 0 ? yMaxArr[yMaxArr.length - 1] + (yMaxArr[yMaxArr.length - 1] - yMin) : -yMin + 75);
+    }
     tilingArr.push({tiling: tiling, edges: edges})
 
-    const pathDict = drawTiling(-(xMin - (window.innerWidth - xMax)) / 2, yMaxArr.length > 0 ? yMaxArr[yMaxArr.length - 1] + (yMaxArr[yMaxArr.length - 1] - yMin) : -yMin + 75)
     drawRandomShape(yMin, yMax, pathDict)
     if (yMaxArr.length > 0) {
         yMinArr.push(yMin + (yMaxArr[yMaxArr.length - 1] - yMin));
-        yMaxArr.push(yMax + (yMaxArr[yMaxArr.length - 1] - yMin) + 300)
+        yMaxArr.push(yMax + (yMaxArr[yMaxArr.length - 1] - yMin) + 400)
     } else {
         yMinArr.push(yMin)
-        yMaxArr.push(yMax - yMin + 400)
+        yMaxArr.push(yMax - yMin + 500)
     }
     pathArr.push(pathDict);
 }
