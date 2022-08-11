@@ -220,13 +220,13 @@ export function fillTiling(pathDict) {
     var ctx = invisCan.getContext('2d');
 
     // tilingCtx.lineWidth = 15 + Math.sqrt(window.innerHeight * window.innerWidth) / 30
-    tilingCtx.lineWidth = 40;
+    tilingCtx.lineWidth = 5;
     tilingCtx.lineJoin = "round";
     tilingCtx.lineCap = "round"
     tilingCtx.strokeStyle = '#000';
 
     // ctx.lineWidth = 15 + Math.sqrt(window.innerHeight * window.innerWidth) / 30
-    ctx.lineWidth = 40;
+    ctx.lineWidth = 5;
     ctx.lineJoin = "round";
     ctx.lineCap = "round"
 

@@ -5,7 +5,7 @@ import {getOffsetY} from "./PageScroll";
 
 let drawings = [];
 
-let lineWidth = 50;
+let lineWidth = 5;
 let shortPause;
 let longPause;
 let colorChange = 15;
@@ -183,7 +183,7 @@ export function setLineWidth() {
 }
 
 export function resetLineWidth() {
-    lineWidth = 50;
+    lineWidth = 5;
     // endWidth = 50;
 }
 
