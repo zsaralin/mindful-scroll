@@ -16,10 +16,11 @@ import {
     tilingArrLength,
     redrawTilings,
     sumArray,
-    sumArrayPrev,
+    sumArrayPrev, getCurrentPathDict, getShapeDimensions, getTilingIndex,
 } from "./components/TilingArr";
 import {doScroll, getOffsetY, startAutoScroll} from "./components/PageScroll";
 import {fillTile} from "./components/FillTile";
+import {shapeGlow} from "./ShapeGlow";
 
 function App() {
     const canvas = useRef();
@@ -81,9 +82,15 @@ function App() {
             stopColorChange()
 
             setInvisCol(prevCursorX, prevCursorY)
-            if (invisCol !== undefined && invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
+            console.log(invisCol)
+            if (invisCol !== undefined && colorCtx.getImageData(prevCursorX, prevCursorY, 1, 1).data.toString().trim() === invisCol?.trim() &&
+                invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
                 pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 drawStroke(prevCursorX, prevCursorY, prevCursorX, prevCursorY);
+
+                if (invisCol.substring(0, 5) !== '0,255,0') {
+                    shapeGlow(prevCursorY)
+                }
                 expandTimer = setTimeout(fillTile, 1500, prevScaledX, prevScaledY, invisCol, 25)
             }
         }
@@ -126,6 +133,9 @@ function App() {
                     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
                     drawStroke(prevCursorX, prevCursorY, cursorX, cursorY);
                 }
+                if (invisCol.substring(0, 5) !== '0,255,0') {
+                    shapeGlow(prevCursorY)
+                }
                 changeAudio(mouseSpeed)
                 startAutoScroll(cursorY);
             } else {
@@ -165,7 +175,7 @@ function App() {
             const prevScaledY = toTrueY(prevTouch0Y);
 
             setInvisCol(touch0X, touch0Y)
-            if (invisCol !== undefined && invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
+            if (invisCol !== undefined && colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === invisCol?.trim() && invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 drawStroke(touch0X, touch0Y, touch0X, touch0Y + 0.5);
                 expandTimer = setTimeout(fillTile, 1500, scaledX, scaledY, invisCol, 25)
@@ -309,7 +319,7 @@ function App() {
         return ''
     }
 
-    function sendAlert(){
+    function sendAlert() {
         let prevFeedback = document.getElementById("feedbackBar").innerHTML;
         let returnFeedback = generateAlert()
         if (prevFeedback === returnFeedback) {

@@ -6,6 +6,7 @@ let tilingArr = []
 let yMinArr = []
 let yMaxArr = []
 let pathArr = [] //array of path dict for each tiling
+let shapeDimensions = []
 
 export function sumArray() {
     return yMaxArr.length > 0 ? yMaxArr[yMaxArr.length - 1] : 0
@@ -34,6 +35,7 @@ export function addToTilingArr() {
     tilingArr.push({tiling: tiling, edges: edges})
 
     drawRandomShape(yMin, yMax, pathDict)
+
     if (yMaxArr.length > 0) {
         yMinArr.push(yMin + (yMaxArr[yMaxArr.length - 1] - yMin));
         yMaxArr.push(yMax + (yMaxArr[yMaxArr.length - 1] - yMin) + 400)
@@ -58,20 +60,31 @@ export function tilingArrLength() {
 
 function drawRandomShape(yMin, yMax, pathDict) {
     let shapePath;
+    console.log('length of path' + Object.values(pathDict)[0])
     if (yMaxArr.length > 0) {
         shapePath = getRandomShape(yMax + yMaxArr[yMaxArr.length - 1] - yMin)
+        shapeDimensions.push(yMax + yMaxArr[yMaxArr.length - 1] - yMin)
     } else {
         shapePath = getRandomShape(yMax - yMin + 75)
+        shapeDimensions.push(yMax - yMin + 75)
     }
-    pathDict['255,0,0'] = shapePath;
+    pathDict['rgb(0,255,0)'] = shapePath;
 }
 
-export function getCurrentPathDict(y) {
+export function getCurrentPathDict(i) {
+    return pathArr[i]
+}
+
+export function getTilingIndex(y) {
     for (let i = 0; i < tilingArrLength(); i++) {
         if (yMaxArr.length > 0 && y >= yMinArr[i] && y <= yMaxArr[i] + yMaxArr[i - 1] - yMinArr[i]) {
-            return pathArr[i];
+            return i
         } else if (y >= yMinArr[i] && y <= yMaxArr[i] - yMinArr[i] + 75) {
-            return pathArr[i];
+            return i
         }
     }
+}
+
+export function getShapeDimensions(i){
+    return shapeDimensions[i]
 }

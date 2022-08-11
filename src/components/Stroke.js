@@ -1,6 +1,7 @@
 import React from "react";
 import {getAbsArray} from './Audio.js'
-import {tilingArrLength} from "./TilingArr";
+import {getCurrentPathDict, sumArray, tilingArrLength} from "./TilingArr";
+import {getOffsetY} from "./PageScroll";
 
 let drawings = [];
 
@@ -43,7 +44,6 @@ export function reduceLineWidth(){
 
 
 export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
-    // console.log(lineWidth)
     let context = document.getElementById('canvas').getContext("2d");
     context.lineCap = 'round'
     context.lineJoin = 'round'
@@ -53,6 +53,23 @@ export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
     context.moveTo(x0, y0);
     context.lineTo(x1, y1);
     context.stroke();
+
+    // let offset = getOffsetY()
+    // let tilingCtx = document.getElementById('tiling-canvas').getContext("2d");
+    // let currTiling = getCurrentPathDict(y1 + offset)
+    // let currTile = currTiling['rgb(0,255,0)']
+    // tilingCtx.fillStyle = theColor ? theColor : color;
+    // tilingCtx.strokeStyle = 'yellow'
+    // // tilingCtx.fill((currTile))
+    // let col = context.getImageData(window.innerWidth/2 -75 + 25, 1100 - offset + 125 + 25,100, 100)
+    //
+    // // console.log(col.data.filter(v => v === 0).length/col.data.length )
+    // if (col.data.filter(v => v === 0).length/col.data.length === 0){
+    //     tilingCtx.fill(currTile)
+    //     tilingCtx.stroke(currTile)
+    // }
+    // tilingCtx.putImageData(col, 115,115)
+    // console.log(col.data.toString())
 }
 
 // removes mistake strokes during two-finger scroll
