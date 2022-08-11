@@ -20,10 +20,12 @@ export function addToTilingArr() {
     let x = makeRandomTiling()
     let tiling = x.tiling;
     let edges = x.edges
-    let [yMin, yMax] = getYBounds(sumArray())
+    let [yMin, yMax] = getYBounds()
+    yMin += sumArray(); yMax += sumArray();
     let [xMin, xMax] = getXBounds()
 
     let pathDict = drawTiling(-(xMin - (window.innerWidth - xMax)) / 2, yMaxArr.length > 0 ? yMaxArr[yMaxArr.length - 1] + (yMaxArr[yMaxArr.length - 1] - yMin) : -yMin + 75)
+
     while (pathDict === false) {
         x = makeRandomTiling()
         tiling = x.tiling;

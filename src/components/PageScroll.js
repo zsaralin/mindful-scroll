@@ -1,14 +1,14 @@
 import {addToTilingArr, redrawTilings, sumArray, sumArrayPrev, tilingArrLength} from "./TilingArr";
 import {redrawStrokes} from "./Stroke";
 import {redrawTiles} from "./FillTile";
+import {LINE_WIDTH} from "./ScaleConstants";
 
 let offsetY = 0; //distance from origin
 let autoScroll = false;
-const TILING_WIDTH = 50; //stroke width of tiling
 const FIFTH_WINDOW = window.innerHeight * 4 / 5;
 
 export function doScroll(currY, prevY) {
-    let limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - TILING_WIDTH)
+    let limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
     if (offsetY - (currY - prevY) >= limitScroll) {
         offsetY -= (currY - prevY);
     } else {

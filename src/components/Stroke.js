@@ -1,11 +1,12 @@
 import React from "react";
 import {getAbsArray} from './Audio.js'
-import {getCurrentPathDict, sumArray, tilingArrLength} from "./TilingArr";
+import {getCurrentPathDict, sumArray, sumArrayPrev, tilingArrLength} from "./TilingArr";
 import {getOffsetY} from "./PageScroll";
+import {LINE_WIDTH} from "./ScaleConstants";
 
 let drawings = [];
 
-let lineWidth = 5;
+let lineWidth = LINE_WIDTH
 let shortPause;
 let longPause;
 let colorChange = 15;
@@ -120,7 +121,7 @@ export function redrawStrokes(offsetY) {
             if (y0 >= 0 && y0 <= window.innerHeight || y1 >= 0 && y1 <= window.innerHeight) { // if in browser window
                 drawStroke(x0, y0, x1, y1, line.lineWidth, line.color);
             }
-            let limitScroll = tilingArrLength() <= 2 ? 0 : (2000 * (tilingArrLength() - 2))
+            let limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
             if (line.y0 <= limitScroll) {
                 drawings.splice(i, 1)
             }
@@ -183,7 +184,7 @@ export function setLineWidth() {
 }
 
 export function resetLineWidth() {
-    lineWidth = 5;
+    lineWidth = LINE_WIDTH;
     // endWidth = 50;
 }
 
