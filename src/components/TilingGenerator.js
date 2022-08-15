@@ -1,6 +1,7 @@
 import {mul, EdgeShape, tilingTypes, IsohedralTiling}
     from '../lib';
 import {LINE_WIDTH} from "./ScaleConstants";
+import {getBoundsTile} from "./TilingBounds";
 
 function generateRandomNum() {
     var num = Math.floor(81 * Math.random());
@@ -11,11 +12,11 @@ function getScaler(tiling) {
     let t1 = tiling.getT1()
     let t2 = tiling.getT2()
     const B = Math.abs((t1.x * t2.y) - (t2.x * t1.y)) / (tiling.numAspects())
-    const A = 2.5
+    const A = 5
     return Math.sqrt(A / B)
 }
 
-function fillColourArray() {
+function fillColourArray(segArr) {
     let numTile = segArr.length
     let cols = new Array(numTile) // colour array, numTile must be <= 765
     for (let i = 0; i < numTile; i++) {
@@ -31,12 +32,10 @@ function fillColourArray() {
 }
 
 let scale = 1;
-const ST = [50 + scale * Math.sqrt(3000), 0.0, 0.0, 0.0, 50 + scale * Math.sqrt(3000), 0.0];
-const list =  [0, 0, (window.innerWidth / 50) / scale, 9 / scale]
+const ST = [150 / scale, 0.0, 0.0, 0.0, 150 / scale, 0.0];
+const list = [0, 0, (window.innerWidth / 50) / scale, 9 / scale]
 
-let currTiling;
-let currEdges;
-let segArr; // array of paths for a tile
+// let segArr; // array of paths for a tile
 let tilingIndex;
 
 let transition1x = 1;
@@ -46,25 +45,18 @@ let transition2y = 1;
 
 let transition;
 
-let xMin;
-let xMax;
-let yMin;
-let yMax;
-
-let tileDimensions = []
-
-function setSegArr() {
-    segArr = []
-    for (let i of currTiling.fillRegionBounds(list[0], list[1], list[2], list[3])) {
+function getSegArr(tiling, edges) {
+    let segArr = []
+    for (let i of tiling.fillRegionBounds(list[0], list[1], list[2], list[3])) {
         const T = mul(ST, i.T);
         let outXBounds = false; // tile is outside width of window
         let pathSeg = [] //contains segments of a tile
-        for (let si of currTiling.shape()) {
+        for (let si of tiling.shape()) {
             const S = mul(T, si.T);
             let seg = [mul(S, {x: 0.0, y: 0.0})];
 
             if (si.shape != EdgeShape.I) {
-                const ej = currEdges[si.id];
+                const ej = edges[si.id];
                 seg.push(mul(S, ej[0]));
                 seg.push(mul(S, ej[1]));
                 if (tilingIndex !== 67) transition = 1;
@@ -74,7 +66,7 @@ function setSegArr() {
             if (si.rev) {
                 seg = seg.reverse();
             }
-            if ((seg.length == 2 && isOutsideXBounds(seg[0].x, seg[1].x)) || (seg.length > 2 && isOutsideXBounds(seg[0].x, seg[3].x))) {
+            if (isOutsideWindow(seg)) {
                 outXBounds = true;
             }
             pathSeg.push(seg)
@@ -83,76 +75,17 @@ function setSegArr() {
             segArr.push(pathSeg)
         }
     }
+    return segArr
 }
 
 function getRandomTransition() {
     return [0.98, 1.02][Math.floor(Math.random() * 2)]
 }
 
-export function getYBounds() {
-    tileDimensions = []
-    yMin = null;
-    yMax = null;
-
-    for (let i = 0; i < segArr.length; i++) {
-        let tile = segArr[i]
-        for (let j = 0; j < tile.length; j++) {
-            let tileYMin = null;
-            let tileYMax = null;
-            let seg = tile[j]
-            if (seg.length === 2) {
-                tileYMin = setYMin(tileYMin, seg[0].y, seg[1].y)
-                tileYMax = setYMax(tileYMax, seg[0].y, seg[1].y)
-            } else {
-                tileYMin = setYMin(tileYMin, seg[0].y, seg[3].y)
-                tileYMax = setYMax(tileYMax, seg[0].y, seg[3].y)
-            }
-            if (yMin === null || tileYMin < yMin) {
-                yMin = tileYMin;
-            }
-            if (yMax === null || tileYMax > yMax) {
-                yMax = tileYMax;
-            }
-            tileDimensions.push([tileYMin, tileYMax])
-        }
-    }
-    return [yMin, yMax]
-}
-
-export function getXBounds() {
-    let xMin = null;
-    let xMax = null;
-
-    for (let i = 0; i < segArr.length; i++) {
-        let tile = segArr[i]
-        for (let j = 0; j < tile.length; j++) {
-            let seg = tile[j]
-            if (seg.length === 2) {
-                xMin = setYMin(xMin, seg[0].x, seg[1].x)
-                xMax = setYMax(xMax, seg[0].x, seg[1].x)
-            } else {
-                xMin = setYMin(xMin, seg[0].x, seg[3].x)
-                xMax = setYMax(xMax, seg[0].x, seg[3].x)
-            }
-        }
-    }
-    return [xMin, xMax]
-}
-
-function isOutsideXBounds(x0, x1) { // returns true if tile is outside x bounds of screen
-    let rightEdge = (window.innerWidth - 50)
-    let leftEdge = 50;
-    if (x0 > leftEdge && x0 < rightEdge && x1 > leftEdge && x1 < rightEdge ) {
-        return false; // tile is inside x bounds of the screen
-    }
-    return true;
-}
-
-export function drawTiling(offsetX, offsetY) {
+export function drawTiling(segArr, offsetX, offsetY) {
     let pathDict = {}
     let colorIndex = 0
-    let cols = fillColourArray()
-    let pathDrawn = false;
+    let cols = fillColourArray(segArr)
     for (let i = 0; i < segArr.length; i++) { // for each tile in tiling
         let path = new Path2D()
         let start = true;
@@ -164,46 +97,51 @@ export function drawTiling(offsetX, offsetY) {
                 path.moveTo(seg[0].x + offsetX, seg[0].y + offsetY)
             }
             if (seg.length == 2) {
-                    path.lineTo((seg[0].x + seg[1].x) / 2 + offsetX, (seg[0].y + seg[1].y) / 2 * transition + offsetY);
-                    path.lineTo(seg[1].x + offsetX, seg[1].y + offsetY);
+                path.lineTo((seg[0].x + seg[1].x) / 2 + offsetX, (seg[0].y + seg[1].y) / 2 * transition + offsetY);
+                path.lineTo(seg[1].x + offsetX, seg[1].y + offsetY);
             } else {
-                    let midpointY = (seg[0].y + seg[3].y) / 2;
-                    let midpointX = (seg[0].x + seg[3].x) / 2;
+                let midpointY = (seg[0].y + seg[3].y) / 2;
+                let midpointX = (seg[0].x + seg[3].x) / 2;
 
-                    if (seg[1].y < midpointY) {
-                        transition1y = 1.04
-                    } else {
-                        transition1y = .96
-                    }
-                    if (seg[2].y < midpointY) {
-                        transition2y = 1.04
-                    } else {
-                        transition2y = .96
-                    }
-
-                    if (seg[1].x < midpointX) {
-                        transition1x = -0.03 * seg[1].y
-                    } else {
-                        transition1x = 0.03 * seg[1].y
-                    }
-                    if (seg[2].x < midpointX) {
-                        transition2x = -0.03 * seg[2].y
-                    } else {
-                        transition2x = 0.03 * seg[2].y
-                    }
-
-                    path.bezierCurveTo(
-                        seg[1].x + offsetX - transition1x, seg[1].y * transition1y + offsetY,
-                        seg[2].x + offsetX - transition2x, seg[2].y * transition2y + offsetY,
-                        seg[3].x + offsetX, seg[3].y + offsetY);
-
+                if (seg[1].y < midpointY) {
+                    transition1y = 1.04
+                } else {
+                    transition1y = .96
                 }
+                if (seg[2].y < midpointY) {
+                    transition2y = 1.04
+                } else {
+                    transition2y = .96
+                }
+
+                if (seg[1].x < midpointX) {
+                    transition1x = -0.03 * seg[1].y
+                } else {
+                    transition1x = 0.03 * seg[1].y
+                }
+                if (seg[2].x < midpointX) {
+                    transition2x = -0.03 * seg[2].y
+                } else {
+                    transition2x = 0.03 * seg[2].y
+                }
+
+                path.bezierCurveTo(
+                    seg[1].x + offsetX - transition1x, seg[1].y * transition1y + offsetY,
+                    seg[2].x + offsetX - transition2x, seg[2].y * transition2y + offsetY,
+                    seg[3].x + offsetX, seg[3].y + offsetY);
+
             }
-            pathDict[cols[colorIndex]] = path
-            colorIndex++;
-            pathDrawn = true;
         }
-    return !pathDrawn ? false : pathDict //return false if no tile was drawn (i.e., no tile was within the bounds)
+        // console.log(`tile : ${getBoundsTile(tile)}`)
+        let bounds = getBoundsTile(tile)
+        bounds[0] = bounds[0] + offsetX
+        bounds[1] = bounds[1] + offsetX
+        bounds[2] = bounds[2] + offsetY
+        bounds[3] = bounds[3] + offsetY
+        pathDict[cols[colorIndex]] = {path: path, tile: bounds}
+        colorIndex++;
+    }
+    return pathDict //return false if no tile was drawn (i.e., no tile was within the bounds)
 }
 
 export function fillTiling(pathDict) {
@@ -219,38 +157,36 @@ export function fillTiling(pathDict) {
     tilingCtx.strokeStyle = ctx.strokeStyle = '#000';
 
     for (let p in pathDict) {
-        tilingCtx.fill(pathDict[p])
-        tilingCtx.stroke(pathDict[p])
+        tilingCtx.fill(pathDict[p].path)
+        if (pathDict[p].tile !== undefined && blue) {
+            tilingCtx.strokeStyle = 'green'
+            tilingCtx.strokeRect(pathDict[p].tile[0], pathDict[p].tile[2], pathDict[p].tile[1] - pathDict[p].tile[0], pathDict[p].tile[3] - pathDict[p].tile[2])
+            // blue = false;
+        }
+        tilingCtx.strokeStyle = '#000';
+
+        tilingCtx.stroke(pathDict[p].path)
         tilingCtx.closePath()
         ctx.fillStyle = p
-        ctx.fill(pathDict[p])
-        ctx.stroke(pathDict[p])
+        ctx.fill(pathDict[p].path)
+        ctx.stroke(pathDict[p].path)
         ctx.closePath()
     }
 }
 
-function setYMin(yMin, y0, y1) {
-    if (yMin === null) return Math.min(y0, y1)
-    return Math.min(Math.min(yMin, y0), y1)
-}
-
-function setYMax(yMax, y0, y1) {
-    if (yMax === null) return Math.max(y0, y1)
-    return Math.max(Math.max(yMax, y0), y1)
-}
+let blue = true;
 
 export function makeRandomTiling() {
-    makeRandomTilingHelper()
-    while (segArr.length === 0){
-        makeRandomTilingHelper()
+    let segArr = makeRandomTilingHelper()
+    while (segArr.length === 0) {
+        segArr = makeRandomTilingHelper()
     }
-    scale = getScaler(currTiling)
     transition = getRandomTransition()
 
-    return {tiling: currTiling, edges: currEdges}
+    return segArr;
 }
 
-export function makeRandomTilingHelper(){
+export function makeRandomTilingHelper() {
     // Construct a tiling
     const tp = tilingTypes[generateRandomNum()];
     let tiling = new IsohedralTiling(tp);
@@ -261,6 +197,7 @@ export function makeRandomTilingHelper(){
         ps[i] += Math.random() * 0.1 - 0.05;
     }
     tiling.setParameters(ps);
+    scale = getScaler(tiling)
 
     let edges = [];
     for (let i = 0; i < tiling.numEdgeShapes(); ++i) {
@@ -280,8 +217,19 @@ export function makeRandomTilingHelper(){
         }
         edges.push(ej);
     }
-    currTiling = tiling;
-    currEdges = edges;
-    setSegArr()
+    return getSegArr(tiling, edges)
+
 }
+
+function isOutsideWindow(seg) { // returns true if tile is outside x bounds of screen
+    let x0 = seg[0].x;
+    let x1 = seg.length === 2 ? seg[1].x : seg[3].x
+    let rightEdge = (window.innerWidth - 50)
+    let leftEdge = 50;
+    if (x0 > leftEdge && x0 < rightEdge && x1 > leftEdge && x1 < rightEdge) {
+        return false; // tile is inside x bounds of the screen
+    }
+    return true;
+}
+
 

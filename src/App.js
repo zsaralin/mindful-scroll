@@ -20,7 +20,7 @@ import {
 } from "./components/TilingArr";
 import {doScroll, getOffsetY, startAutoScroll} from "./components/PageScroll";
 import {fillTile} from "./components/FillTile";
-import {shapeGlow} from "./ShapeGlow";
+import {shapeGlow} from "./components/ShapeGlow";
 
 function App() {
     const canvas = useRef();

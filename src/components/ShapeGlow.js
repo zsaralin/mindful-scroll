@@ -1,5 +1,5 @@
-import {getOffsetY} from "./components/PageScroll";
-import {getCurrentPathDict, getShapeDimensions, getTilingIndex} from "./components/TilingArr";
+import {getOffsetY} from "./PageScroll";
+import {getCurrentPathDict, getShapeDimensions, getTilingIndex} from "./TilingArr";
 
 export function shapeGlow(y) {
     let tilingCtx = document.getElementById('tiling-canvas').getContext("2d");
