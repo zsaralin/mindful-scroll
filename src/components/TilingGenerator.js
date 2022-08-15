@@ -2,6 +2,7 @@ import {mul, EdgeShape, tilingTypes, IsohedralTiling}
     from '../lib';
 import {LINE_WIDTH} from "./ScaleConstants";
 import {getBoundsTile} from "./TilingBounds";
+import {getStrokeColor} from "./Stroke";
 
 function generateRandomNum() {
     var num = Math.floor(81 * Math.random());
@@ -159,9 +160,9 @@ export function fillTiling(pathDict) {
     for (let p in pathDict) {
         tilingCtx.fill(pathDict[p].path)
         if (pathDict[p].tile !== undefined && blue) {
-            tilingCtx.strokeStyle = 'green'
-            tilingCtx.strokeRect(pathDict[p].tile[0], pathDict[p].tile[2], pathDict[p].tile[1] - pathDict[p].tile[0], pathDict[p].tile[3] - pathDict[p].tile[2])
-            // blue = false;
+            tilingCtx.strokeStyle = getStrokeColor()
+            tilingCtx.strokeRect(pathDict[p].tile[0] - 30, pathDict[p].tile[2] - 30, pathDict[p].tile[1] - pathDict[p].tile[0] + 60, pathDict[p].tile[3] - pathDict[p].tile[2] + 60)
+            blue = false;
         }
         tilingCtx.strokeStyle = '#000';
 

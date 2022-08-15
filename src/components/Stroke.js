@@ -1,6 +1,6 @@
 import React from "react";
 import {getAbsArray} from './Audio.js'
-import {getCurrentPathDict, sumArray, sumArrayPrev, tilingArrLength} from "./TilingArr";
+import {getCurrentPathDict, getTilingIndex, sumArray, sumArrayPrev, tilingArrLength} from "./TilingArr";
 import {getOffsetY} from "./PageScroll";
 import {LINE_WIDTH} from "./ScaleConstants";
 
@@ -13,11 +13,11 @@ let colorChange = 15;
 let color = getStrokeColor()
 
 export function getStrokeColor() {
-    return 'hsl(' + Math.ceil(360*Math.random()) + ',' + Math.floor((100-20+1) * Math.random() + 20) + '%,'  + Math.floor((90-20+1) * Math.random() + 20) + '%)'
+    return 'hsl(' + Math.ceil(360 * Math.random()) + ',' + Math.floor((100 - 20 + 1) * Math.random() + 20) + '%,' + Math.floor((90 - 20 + 1) * Math.random() + 20) + '%)'
 }
 
 function createShrinkingLine(x1, y1, x2, y2, lineWidth) {
-    let endWidth = lineWidth >= 30 ? lineWidth - 10: lineWidth;
+    let endWidth = lineWidth >= 30 ? lineWidth - 10 : lineWidth;
     // calculate direction vector of point 1 and 2
     const directionVectorX = x2 - x1,
         directionVectorY = y2 - y1;
@@ -33,14 +33,14 @@ function createShrinkingLine(x1, y1, x2, y2, lineWidth) {
 
 export function drawShrinkingLine(x0, y0, x1, y1, theLineWidth, theColor) {
     let context = document.getElementById('canvas').getContext("2d");
-    let line = createShrinkingLine(x0, y0, x1, y1, theLineWidth ? theLineWidth: lineWidth)
+    let line = createShrinkingLine(x0, y0, x1, y1, theLineWidth ? theLineWidth : lineWidth)
     // lineWidth = lineWidth >= 25 ? lineWidth - 5: lineWidth;
     context.fillStyle = theColor ? theColor : color;
     context.fill(line);
 }
 
-export function reduceLineWidth(){
-    lineWidth = lineWidth >= 30 ? lineWidth - 10: lineWidth;
+export function reduceLineWidth() {
+    lineWidth = lineWidth >= 30 ? lineWidth - 10 : lineWidth;
 }
 
 
@@ -55,6 +55,7 @@ export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
     context.lineTo(x1, y1);
     context.stroke();
 
+    // let currTile = currTiling['rgb(0,255,0)']
     // let offset = getOffsetY()
     // let tilingCtx = document.getElementById('tiling-canvas').getContext("2d");
     // let currTiling = getCurrentPathDict(y1 + offset)
@@ -71,6 +72,58 @@ export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
     // }
     // tilingCtx.putImageData(col, 115,115)
     // console.log(col.data.toString())
+}
+
+export function getFillRatio(y1, invisCol) {
+    let offset = getOffsetY()
+    let currTiling = getCurrentPathDict(getTilingIndex(y1 + offset))
+    let currTile = currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4).trim() + ')']
+
+    let ctx = document.getElementById('canvas').getContext("2d");
+    let invisCtx = document.getElementById('invis-canvas').getContext("2d");
+
+    let tileDim = currTile.tile
+
+    let fillRatio = [0, 0] // [filledPixels, totalPixels]
+    let startX = tileDim[0] - 30;
+    let startY = tileDim[2] - 30;
+    let endX = tileDim[1] + 30;
+    let endY = tileDim[3] + 30
+    for (let x = startX; x < endX; x++) {
+        for (let y = startY; y < endY; y++) {
+            if (invisCtx.getImageData(x, y, 1, 1).data.toString().trim() === invisCol?.trim()) {
+                fillRatio[1]++;
+                // if (ctx.getImageData(x, y, 1, 1).data.toString().trim() !== "0,0,0,0") {
+                //     console.log(hslToRgb(color).toString())
+                console.log('after + ' + ctx.getImageData(x, y, 1, 1).data.toString().trim().substring(0, ctx.getImageData(x, y, 1, 1).data.toString().trim().length - 4))
+                //     console.log('color '  + ctx.getImageData(x, y, 1, 1).data.toString().trim())
+                // }
+                // console.log(rgbToHsl(ctx.getImageData(x, y, 1, 1).data.toString().trim()))
+                if (ctx.getImageData(x, y, 1, 1).data.toString().trim().substring(-4) === hslToRgb(color).toString()) {
+                    fillRatio[0]++
+                }
+            }
+        }
+    }
+    if (fillRatio[0] / fillRatio[1] > .97) {
+        ctx.fill(currTile.path)
+    }
+    console.log(fillRatio[0] / fillRatio[1])
+}
+
+function strToArr(str){
+    str = str.substring(4, str.length - 1).replaceAll('%','')
+    return str.split(',').map(Number);
+}
+
+function hslToRgb(str){
+    let hsl = strToArr(str)
+    let h = hsl[0]; let s = hsl[1]/100; let l = hsl[2]/100
+    const k = n => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = n =>
+        l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    return [Math.round(255 * f(0)), Math.round(255 * f(8)), Math.round(255 * f(4))];
 }
 
 // removes mistake strokes during two-finger scroll
@@ -134,16 +187,11 @@ function toScreen(point, offset) {
     return (point) - offset;
 }
 
-const toHSLObject = hslStr => {
-    const [hue, saturation, lightness] = hslStr.match(/\d+/g).map(Number);
-    return { hue, saturation, lightness };
-};
-
 // changes color after a 2s pause, or changes hue slightly after a 500ms pause
 export function colorDelay() {
     stopColorChange()
     let hsvArr = color.match(/\d+/g)
-    if (hsvArr[0] + colorChange < 0){
+    if (hsvArr[0] + colorChange < 0) {
         colorChange = 5;
     } else if (hsvArr[0] + colorChange > 360) {
         colorChange = -5;
@@ -180,7 +228,8 @@ export function stopColorChange() {
 
 export function setLineWidth() {
     if (lineWidth < 80) {
-        lineWidth += 0.1; }
+        lineWidth += 0.1;
+    }
 }
 
 export function resetLineWidth() {

@@ -9,7 +9,13 @@ import {
     stopColorChange,
     resetLineWidth,
     pushStroke,
-    setLineWidth, removeLastStroke, reduceLineWidth, drawShrinkingLine, pushShrinkingLine,
+    setLineWidth,
+    removeLastStroke,
+    reduceLineWidth,
+    drawShrinkingLine,
+    pushShrinkingLine,
+    getTileDimensions,
+    getFillRatio,
 } from './components/Stroke'
 import {
     addToTilingArr,
@@ -82,7 +88,6 @@ function App() {
             stopColorChange()
 
             setInvisCol(prevCursorX, prevCursorY)
-            console.log(invisCol)
             if (invisCol !== undefined && colorCtx.getImageData(prevCursorX, prevCursorY, 1, 1).data.toString().trim() === invisCol?.trim() &&
                 invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
                 pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
@@ -123,13 +128,14 @@ function App() {
             if (isMatchInvisCol(prevCursorX, prevCursorY, cursorX, cursorY)) {
                 // speed of stroke
                 mouseSpeed = [event.movementX, event.movementY]
+
                 if ((Math.abs(mouseSpeed[0]) > 10 || Math.abs(mouseSpeed[1]) > 10)) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
                     drawShrinkingLine(prevCursorX, prevCursorY, cursorX, cursorY);
                     reduceLineWidth()
                     tooFast = true;
                 } else {
-                    setLineWidth(mouseSpeed)
+                    // setLineWidth(mouseSpeed)
                     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
                     drawStroke(prevCursorX, prevCursorY, cursorX, cursorY);
                 }
@@ -258,6 +264,7 @@ function App() {
         resetLineWidth()
         reduceAudio()
         colorDelay()
+        getFillRatio(cursorY, invisCol)
         clearTimeout(expandTimer)
         clearInterval(reduceOpac)
         document.getElementById("feedbackBar").style.color = 'rgba(0,0,0,0)'
