@@ -4,19 +4,13 @@ import {Helmet} from "react-helmet";
 import Music, {changeAudio, reduceAudio} from './components/Audio.js'
 import {
     drawStroke,
-    redrawStrokes,
-    colorDelay,
-    stopColorChange,
-    resetLineWidth,
-    pushStroke,
-    setLineWidth,
-    removeLastStroke,
-    reduceLineWidth,
-    drawShrinkingLine,
-    pushShrinkingLine,
-    getTileDimensions,
     getFillRatio,
-} from './components/Stroke'
+} from './components/Stroke/Stroke'
+import {drawShrinkingStroke} from './components/Stroke/ShrinkingStroke'
+import {stopColorChange, colorDelay} from './components/Stroke/StrokeColor'
+
+import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
+
 import {
     addToTilingArr,
     tilingArrLength,
@@ -27,6 +21,7 @@ import {
 import {doScroll, getOffsetY, startAutoScroll} from "./components/PageScroll";
 import {fillTile} from "./components/FillTile";
 import {shapeGlow} from "./components/ShapeGlow";
+import {reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
 
 function App() {
     const canvas = useRef();
@@ -90,6 +85,7 @@ function App() {
             setInvisCol(prevCursorX, prevCursorY)
             if (invisCol !== undefined && colorCtx.getImageData(prevCursorX, prevCursorY, 1, 1).data.toString().trim() === invisCol?.trim() &&
                 invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
+
                 pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 drawStroke(prevCursorX, prevCursorY, prevCursorX, prevCursorY);
 
@@ -128,10 +124,11 @@ function App() {
             if (isMatchInvisCol(prevCursorX, prevCursorY, cursorX, cursorY)) {
                 // speed of stroke
                 mouseSpeed = [event.movementX, event.movementY]
+                getFillRatio(cursorY, invisCol)
 
                 if ((Math.abs(mouseSpeed[0]) > 10 || Math.abs(mouseSpeed[1]) > 10)) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
-                    drawShrinkingLine(prevCursorX, prevCursorY, cursorX, cursorY);
+                    drawShrinkingStroke(prevCursorX, prevCursorY, cursorX, cursorY);
                     reduceLineWidth()
                     tooFast = true;
                 } else {
@@ -230,7 +227,7 @@ function App() {
                 touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
                 if ((Math.abs(touchSpeed[0]) > 10 || Math.abs(touchSpeed[1]) > 10)) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
-                    drawShrinkingLine(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
+                    drawShrinkingStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
                     reduceLineWidth()
                     tooFast = true;
                 } else {
@@ -264,7 +261,6 @@ function App() {
         resetLineWidth()
         reduceAudio()
         colorDelay()
-        getFillRatio(cursorY, invisCol)
         clearTimeout(expandTimer)
         clearInterval(reduceOpac)
         document.getElementById("feedbackBar").style.color = 'rgba(0,0,0,0)'
@@ -296,7 +292,7 @@ function App() {
     function setInvisCol(cursorX, cursorY) {
         // let colorCtx = document.getElementById('invis-canvas').getContext("2d");
         let tempCol = colorCtx.getImageData(cursorX, cursorY, 1, 1).data
-        if (tempCol.toString() !== "0,0,0,255") { //if not black
+        if (tempCol.toString() !== "0,0,0,255") { // invisCol will never be black (outline)
             invisCol = tempCol.toString()
         }
     }

@@ -1,5 +1,5 @@
 import {addToTilingArr, redrawTilings, sumArray, sumArrayPrev, tilingArrLength} from "./TilingArr";
-import {redrawStrokes} from "./Stroke";
+import {redrawStrokes} from "./Stroke/StrokeArr";
 import {redrawTiles} from "./FillTile";
 import {LINE_WIDTH} from "./ScaleConstants";
 

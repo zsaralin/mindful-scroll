@@ -1,5 +1,5 @@
-import {getCurrColor} from "./Stroke";
 import {getCurrentPathDict} from "./TilingArr";
+import {getCurrColor} from "./Stroke/StrokeColor";
 
 let activeTileArr = []; // semi coloured tiles (gradient)
 let fillTileArr = [] // fully coloured tiles

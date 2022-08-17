@@ -2,7 +2,7 @@ import {mul, EdgeShape, tilingTypes, IsohedralTiling}
     from '../lib';
 import {LINE_WIDTH} from "./ScaleConstants";
 import {getBoundsTile} from "./TilingBounds";
-import {getStrokeColor} from "./Stroke";
+import {getCurrColor} from "./Stroke/StrokeColor";
 
 function generateRandomNum() {
     var num = Math.floor(81 * Math.random());
@@ -33,8 +33,9 @@ function fillColourArray(segArr) {
 }
 
 let scale = 1;
-const ST = [150 / scale, 0.0, 0.0, 0.0, 150 / scale, 0.0];
-const list = [0, 0, (window.innerWidth / 50) / scale, 9 / scale]
+let ST ;
+let list;
+// const list = [0, 0, (window.innerWidth / 50) / scale, 9 / scale]
 
 // let segArr; // array of paths for a tile
 let tilingIndex;
@@ -48,6 +49,8 @@ let transition;
 
 function getSegArr(tiling, edges) {
     let segArr = []
+    ST  = [60*scale, 0.0, 0.0, 0.0, 60*scale, 0.0];
+    list =  [0, 0, (window.innerWidth / 50) / scale, 9 / scale]
     for (let i of tiling.fillRegionBounds(list[0], list[1], list[2], list[3])) {
         const T = mul(ST, i.T);
         let outXBounds = false; // tile is outside width of window
@@ -133,7 +136,6 @@ export function drawTiling(segArr, offsetX, offsetY) {
 
             }
         }
-        // console.log(`tile : ${getBoundsTile(tile)}`)
         let bounds = getBoundsTile(tile)
         bounds[0] = bounds[0] + offsetX
         bounds[1] = bounds[1] + offsetX
@@ -160,7 +162,7 @@ export function fillTiling(pathDict) {
     for (let p in pathDict) {
         tilingCtx.fill(pathDict[p].path)
         if (pathDict[p].tile !== undefined && blue) {
-            tilingCtx.strokeStyle = getStrokeColor()
+            tilingCtx.strokeStyle = getCurrColor()
             tilingCtx.strokeRect(pathDict[p].tile[0] - 30, pathDict[p].tile[2] - 30, pathDict[p].tile[1] - pathDict[p].tile[0] + 60, pathDict[p].tile[3] - pathDict[p].tile[2] + 60)
             blue = false;
         }
