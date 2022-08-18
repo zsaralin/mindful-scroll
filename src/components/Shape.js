@@ -5,10 +5,7 @@ function getRandomNum(min, max) {
 export function getRandomShape(currYMax) {
     let path = new Path2D()
     let dimension = []
-    // console.log(currYMax)
     let index = getRandomNum(0,15)
-    console.log(index)
-    // let index =14;
     if (index === 0) { //circle
         path.ellipse(window.innerWidth / 2, currYMax + 200, 100, 100, 0, 0, Math.PI * 2);
         dimension = [window.innerWidth / 2 - 100, window.innerWidth / 2 + 100, currYMax + 100, currYMax + 300]

@@ -1,13 +1,13 @@
-import {makeRandomTiling, drawTiling, fillTiling} from './TilingGenerator'
-
-import {getRandomShape} from "./Shape";
+import {makeRandomTiling, drawTiling} from './TilingGenerator'
+import {getTilingPathDict} from './TilingPathDict'
+import {getRandomShape} from "../Shape";
 import {getBoundsTiling} from "./TilingBounds";
+import {getOffsetY} from "../PageScroll";
 
 let tilingArr = []
 let yMinArr = []
 let yMaxArr = []
 let pathArr = [] //array of path dict for each tiling
-let shapeDimensions = []
 
 export function sumArray() {
     return yMaxArr.length > 0 ? yMaxArr[yMaxArr.length - 1] : 0
@@ -23,14 +23,15 @@ export function addToTilingArr() {
     yMin += sumArray();
     yMax += sumArray();
 
-    let pathDict = drawTiling(tiling, -(xMin - (window.innerWidth - xMax)) / 2, yMaxArr.length > 0 ? yMaxArr[yMaxArr.length - 1] + (yMaxArr[yMaxArr.length - 1] - yMin) : -yMin + 75)
+    let pathDict = getTilingPathDict(tiling, -(xMin - (window.innerWidth - xMax)) / 2,
+        yMaxArr.length > 0 ? yMaxArr[yMaxArr.length - 1] + (yMaxArr[yMaxArr.length - 1] - yMin) : -yMin + 75)
     tilingArr.push(tiling)
 
     drawRandomShape(yMin, yMax, pathDict)
 
     if (yMaxArr.length > 0) {
         yMinArr.push(yMin + (yMaxArr[yMaxArr.length - 1] - yMin));
-        yMaxArr.push(yMax + (yMaxArr[yMaxArr.length - 1] - yMin) + 400)
+        yMaxArr.push(yMax + (yMaxArr[yMaxArr.length - 1] - yMin) + 500)
     } else {
         yMinArr.push(yMin)
         yMaxArr.push(yMax - yMin + 500)
@@ -43,7 +44,7 @@ export function redrawTilings() {
     // let q = 0;
     for (let i = q; i < tilingArr.length; i++) {
         // for (let i = q; i < 1; i++) {
-        fillTiling(pathArr[i])
+        drawTiling(pathArr[i])
     }
 }
 
@@ -52,15 +53,14 @@ export function tilingArrLength() {
 }
 
 function drawRandomShape(yMin, yMax, pathDict) {
-    let shapePath; let dimension;
-    let y0;
-    console.log('length of path' + Object.values(pathDict)[0])
+
+    let shapePath;
+    let dimension;
+    // console.log('length of path' + Object.values(pathDict)[0])
     if (yMaxArr.length > 0) {
         [shapePath, dimension] = getRandomShape(yMax + yMaxArr[yMaxArr.length - 1] - yMin)
-        shapeDimensions.push(yMax + yMaxArr[yMaxArr.length - 1] - yMin)
     } else {
         [shapePath, dimension] = getRandomShape(yMax - yMin + 75)
-        shapeDimensions.push(yMax - yMin + 75)
     }
     pathDict['rgb(0,255,0)'] = {
         path: shapePath,
@@ -76,12 +76,14 @@ export function getTilingIndex(y) {
     for (let i = 0; i < tilingArrLength(); i++) {
         if (yMaxArr.length > 0 && y >= yMinArr[i] && y <= yMaxArr[i] + yMaxArr[i - 1] - yMinArr[i]) {
             return i
-        } else if (y >= yMinArr[i] && y <= yMaxArr[i] - yMinArr[i] + 75) {
+        } else if (y >= yMinArr[i] && y <= yMaxArr[i]) {
             return i
         }
     }
 }
 
-export function getShapeDimensions(i) {
-    return shapeDimensions[i]
+
+export function getTile(y1, invisCol) {
+    let currTiling = getCurrentPathDict(getTilingIndex(y1 + getOffsetY()))
+    return currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4).trim() + ')']
 }

@@ -1,27 +1,16 @@
 import './App.css';
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import Music, {changeAudio, reduceAudio} from './components/Audio.js'
-import {
-    drawStroke,
-    getFillRatio,
-} from './components/Stroke/Stroke'
+import {drawStroke} from './components/Stroke/Stroke'
 import {drawShrinkingStroke} from './components/Stroke/ShrinkingStroke'
 import {stopColorChange, colorDelay} from './components/Stroke/StrokeColor'
-
 import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
-
-import {
-    addToTilingArr,
-    tilingArrLength,
-    redrawTilings,
-    sumArray,
-    sumArrayPrev, getCurrentPathDict, getShapeDimensions, getTilingIndex,
-} from "./components/TilingArr";
+import {addToTilingArr, redrawTilings} from "./components/Tiling/TilingArr";
 import {doScroll, getOffsetY, startAutoScroll} from "./components/PageScroll";
-import {fillTile} from "./components/FillTile";
-import {shapeGlow} from "./components/ShapeGlow";
+import {watercolor} from "./components/Effects/Watercolor";
 import {reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
+import {completeTile, getFillRatio} from "./components/Effects/FillRatio";
 
 function App() {
     const canvas = useRef();
@@ -57,7 +46,6 @@ function App() {
         return (yScreen) + offsetY;
     }
 
-
     useEffect(() => {
         addToTilingArr()
         const canvas = document.getElementById("canvas");
@@ -87,12 +75,9 @@ function App() {
                 invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
 
                 pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
-                drawStroke(prevCursorX, prevCursorY, prevCursorX, prevCursorY);
+                drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
 
-                if (invisCol.substring(0, 5) !== '0,255,0') {
-                    shapeGlow(prevCursorY)
-                }
-                expandTimer = setTimeout(fillTile, 1500, prevScaledX, prevScaledY, invisCol, 25)
+                expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, invisCol, 25)
             }
         }
 
@@ -124,20 +109,19 @@ function App() {
             if (isMatchInvisCol(prevCursorX, prevCursorY, cursorX, cursorY)) {
                 // speed of stroke
                 mouseSpeed = [event.movementX, event.movementY]
-                getFillRatio(cursorY, invisCol)
+                if (getFillRatio(cursorY, invisCol) > 0.9){
+                    completeTile(cursorY, invisCol)
+                }
 
                 if ((Math.abs(mouseSpeed[0]) > 10 || Math.abs(mouseSpeed[1]) > 10)) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
-                    drawShrinkingStroke(prevCursorX, prevCursorY, cursorX, cursorY);
+                    drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY);
                     reduceLineWidth()
                     tooFast = true;
                 } else {
                     // setLineWidth(mouseSpeed)
-                    pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
-                    drawStroke(prevCursorX, prevCursorY, cursorX, cursorY);
-                }
-                if (invisCol.substring(0, 5) !== '0,255,0') {
-                    shapeGlow(prevCursorY)
+                    pushStroke(prevScaledX, prevScaledY, scaledX, scaledY);
+                    drawStroke(prevScaledX, prevScaledY, scaledX, scaledY);
                 }
                 changeAudio(mouseSpeed)
                 startAutoScroll(cursorY);
@@ -180,8 +164,8 @@ function App() {
             setInvisCol(touch0X, touch0Y)
             if (invisCol !== undefined && colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === invisCol?.trim() && invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
-                drawStroke(touch0X, touch0Y, touch0X, touch0Y + 0.5);
-                expandTimer = setTimeout(fillTile, 1500, scaledX, scaledY, invisCol, 25)
+                drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
+                expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, invisCol, 25)
             }
 
             stopColorChange()
@@ -225,15 +209,18 @@ function App() {
             }
             if (isMatchInvisCol(prevTouch0X, prevTouch0Y, touch0X, touch0Y)) {
                 touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
+                if (getFillRatio(touch0Y, invisCol) > 0.9){
+                    completeTile(touch0Y, invisCol)
+                }
                 if ((Math.abs(touchSpeed[0]) > 10 || Math.abs(touchSpeed[1]) > 10)) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
-                    drawShrinkingStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
+                    drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY);
                     reduceLineWidth()
                     tooFast = true;
                 } else {
-                    setLineWidth(touchSpeed)
+                    // setLineWidth(touchSpeed)
                     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
-                    drawStroke(prevTouch0X, prevTouch0Y, touch0X, touch0Y);
+                    drawStroke(prevScaledX, prevScaledY, scaledX, scaledY)
                 }
                 // speed of stroke
                 changeAudio(touchSpeed)
@@ -343,7 +330,8 @@ function App() {
             <Music/>
             <div className="wrapper">
                 <canvas ref={canvas} id="canvas"></canvas>
-                <canvas id="invis-canvas" style={{display: 'none'}}></canvas>
+                <canvas id="invis-canvas" style={{display: 'none'}}
+                ></canvas>
                 <canvas id="tiling-canvas" style={{display: ''}}
                         onMouseDown={onMouseDown}
                         onMouseUp={onMouseUp}

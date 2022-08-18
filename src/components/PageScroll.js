@@ -1,14 +1,16 @@
-import {addToTilingArr, redrawTilings, sumArray, sumArrayPrev, tilingArrLength} from "./TilingArr";
+import {addToTilingArr, redrawTilings, sumArray, sumArrayPrev, tilingArrLength} from "./Tiling/TilingArr";
 import {redrawStrokes} from "./Stroke/StrokeArr";
-import {redrawTiles} from "./FillTile";
+import {redrawTiles} from "./Effects/Watercolor";
 import {LINE_WIDTH} from "./ScaleConstants";
 
 let offsetY = 0; //distance from origin
 let autoScroll = false;
 const FIFTH_WINDOW = window.innerHeight * 4 / 5;
 
+export let limitScroll;
+
 export function doScroll(currY, prevY) {
-    let limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
+    limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
     if (offsetY - (currY - prevY) >= limitScroll) {
         offsetY -= (currY - prevY);
     } else {
@@ -57,8 +59,9 @@ function redrawCanvas() {
     // canvas.getContext("2d").translate(0, -offsetY)
     invisCanvas.getContext("2d").translate(0, -offsetY)
     tilingCanvas.getContext("2d").translate(0, -offsetY)
+    canvas.getContext("2d").translate(0, -offsetY)
 
-    redrawStrokes(offsetY);
+    redrawStrokes();
     redrawTiles()
     redrawTilings();
 }

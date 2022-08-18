@@ -1,1 +1,1 @@
-export const LINE_WIDTH = 50;
+export const LINE_WIDTH = 10;
