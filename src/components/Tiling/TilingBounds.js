@@ -18,17 +18,17 @@ export function getBoundsTiling(segArr) {
         if (yMax === null || tileYMax > yMax) {
             yMax = tileYMax;
         }
+    }
+
+    return [xMin, xMax, yMin, yMax]
 }
 
-return [xMin, xMax, yMin, yMax]
-}
-
-function setMin(min, p0, p1) {
+function getMin(min, p0, p1) {
     if (min === null) return Math.min(p0, p1)
     return Math.min(Math.min(min, p0), p1)
 }
 
-function setMax(max, p0, p1) {
+function getMax(max, p0, p1) {
     if (max === null) return Math.max(p0, p1)
     return Math.max(Math.max(max, p0), p1)
 }
@@ -41,15 +41,15 @@ export function getBoundsTile(tile) {
     for (let j = 0; j < tile.length; j++) {
         let seg = tile[j]
         if (seg.length === 2) {
-            tileXMin = setMin(tileXMin, seg[0].x, seg[1].x)
-            tileXMax = setMax(tileXMax, seg[0].x, seg[1].x)
-            tileYMin = setMin(tileYMin, seg[0].y, seg[1].y)
-            tileYMax = setMax(tileYMax, seg[0].y, seg[1].y)
+            tileXMin = getMin(tileXMin, seg[0].x, seg[1].x)
+            tileXMax = getMax(tileXMax, seg[0].x, seg[1].x)
+            tileYMin = getMin(tileYMin, seg[0].y, seg[1].y)
+            tileYMax = getMax(tileYMax, seg[0].y, seg[1].y)
         } else {
-            tileXMin = setMin(tileXMin, seg[0].x, seg[3].x)
-            tileXMax = setMax(tileXMax, seg[0].x, seg[3].x)
-            tileYMin = setMin(tileYMin, seg[0].y, seg[3].y)
-            tileYMax = setMax(tileYMax, seg[0].y, seg[3].y)
+            tileXMin = getMin(tileXMin, seg[0].x, seg[3].x)
+            tileXMax = getMax(tileXMax, seg[0].x, seg[3].x)
+            tileYMin = getMin(tileYMin, seg[0].y, seg[3].y)
+            tileYMax = getMax(tileYMax, seg[0].y, seg[3].y)
         }
     }
     return [tileXMin, tileXMax, tileYMin, tileYMax]

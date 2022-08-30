@@ -1,23 +1,22 @@
-import {getCurrentPathDict, getTile, getTilingIndex} from "../Tiling/TilingArr";
 import {getOffsetY} from "../PageScroll";
 import {getCurrColor} from "../Stroke/StrokeColor";
-import {pushCompleteTile} from "./Watercolor";
 
-export function getFillRatio(y1, invisCol) {
+let BB_PADDING = 30; // bounding box padding
+
+export function getFillRatio(currTile) {
     let ctx = document.getElementById('canvas').getContext("2d");
-    let invisCtx = document.getElementById('invis-canvas').getContext("2d");
-    let currTile = getTile(y1, invisCol)
     let tileDim = currTile.tile
 
     let fillRatio = [0, 0] // [filledPixels, totalPixels]
-    let startX = tileDim[0] - 30;
-    let startY = tileDim[2] - 30;
-    let endX = tileDim[1] + 30;
-    let endY = tileDim[3] + 30
+    let startX = tileDim[0] - BB_PADDING;
+    let startY = tileDim[2] - BB_PADDING;
+    let endX = tileDim[1] + BB_PADDING;
+    let endY = tileDim[3] + BB_PADDING
 
     for (let x = startX; x < endX; x = x + 10) {
         for (let y = startY; y < endY; y = y + 10) {
-            if (invisCtx.getImageData(x, y - getOffsetY(), 1, 1).data.toString().trim() === invisCol.trim()) {
+            if (ctx.isPointInPath(currTile.path, x, y - getOffsetY())){
+            // if (invisCtx.getImageData(x, y - getOffsetY(), 1, 1).data.toString().trim() === invisCol.trim()) {
                 fillRatio[1]++;
                 if (isColorMatch(ctx.getImageData(x, y - getOffsetY(), 1, 1).data, hslToRgb(getCurrColor()))) {
                     fillRatio[0]++
@@ -27,15 +26,6 @@ export function getFillRatio(y1, invisCol) {
     }
     return fillRatio[0] / fillRatio[1]
 }
-
-export function completeTile(y1, invisCol) {
-    let currTile = getTile(y1, invisCol)
-    let ctx = document.getElementById('canvas').getContext("2d");
-    ctx.fillStyle = getCurrColor()
-    ctx.fill(currTile.path)
-    pushCompleteTile(currTile.path, getCurrColor())
-}
-
 
 function isColorMatch(col0, col1) {
     let h0 = col0[0];

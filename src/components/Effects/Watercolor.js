@@ -1,9 +1,9 @@
 import {getTile} from "../Tiling/TilingArr";
 import {getCurrColor} from "../Stroke/StrokeColor";
 import {LINE_WIDTH} from "../ScaleConstants";
+import {pushCompleteTile} from "../../Tile/CompleteTile";
 
 let activeTileArr = []; // semi coloured tiles (gradient)
-let fillTileArr = [] // fully coloured tiles
 const ORIG_RADIUS = LINE_WIDTH;
 
 export function watercolor(x, y, invisCol, r2) {
@@ -27,22 +27,14 @@ export function watercolor(x, y, invisCol, r2) {
         if (r2 > 2000) {
             clearInterval(fillCol)
             activeTileArr.shift()
-            fillTileArr.push(
-                {
-                    path: currTile,
-                    color: currColor
-                }
-            )
+            pushCompleteTile(currTile, currColor)
         }
     }, 50)
 }
 
-export function redrawTiles() {
+export function redrawActiveTiles() {
     activeTileArr.forEach(activeTile => {
         fillActiveTile(activeTile.x, activeTile.y, activeTile.color, activeTile.r2, activeTile.path)
-    })
-    fillTileArr.forEach(tile => {
-        fillCompleteTile(tile)
     })
 }
 
@@ -55,18 +47,3 @@ function fillActiveTile(x, y, color, r2_, path) {
     ctx.fill((path))
 }
 
-function fillCompleteTile(tile) {
-    let tilingCtx = document.getElementById('canvas').getContext('2d');
-    tilingCtx.fillStyle = tile.color
-    tilingCtx.fill(new Path2D(tile.path))
-    tilingCtx.stroke(new Path2D(tile.path))
-    tilingCtx.closePath()
-}
-
-export function pushCompleteTile(tile, color){
-    fillTileArr.push(
-        {
-            path: tile,
-            color: color
-        }
-    )}

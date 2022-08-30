@@ -21,13 +21,16 @@ export function pushShrinkingLine(x0, y0, x1, y1) {
 }
 
 // removes mistake strokes during two-finger scroll
-export function removeLastStroke(x0, y0, x1, y1, offsetY) {
+export function removeLastStroke(touch0, touch1, offsetY) {
+    const x0 = touch0.pageX;
+    const y0 = touch0.pageY;
+    const x1 = touch1.pageX;
+    const y1 = touch1.pageY;
     if (strokeArr.length > 0) {
         let lastP = strokeArr[strokeArr.length - 1]
-        if (lastP.x0 === x0 && lastP.y0 === y0 + offsetY) {
+        if ((lastP.x0 === x0 && lastP.y0 === y0 + offsetY) ||
+            ((lastP.x1 === x1 && lastP.y1 === y1 + offsetY))) {
             strokeArr.pop()
-        } else if (lastP.x1 === x1 && lastP.y1 === y1 + offsetY) {
-            strokeArr.pop();
         }
     }
 }

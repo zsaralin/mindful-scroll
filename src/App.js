@@ -6,15 +6,19 @@ import {drawStroke} from './components/Stroke/Stroke'
 import {drawShrinkingStroke} from './components/Stroke/ShrinkingStroke'
 import {stopColorChange, colorDelay} from './components/Stroke/StrokeColor'
 import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
-import {addToTilingArr, redrawTilings} from "./components/Tiling/TilingArr";
+import {addToTilingArr, getTile, redrawTilings} from "./components/Tiling/TilingArr";
 import {doScroll, getOffsetY, startAutoScroll} from "./components/PageScroll";
 import {watercolor} from "./components/Effects/Watercolor";
 import {reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
-import {completeTile, getFillRatio} from "./components/Effects/FillRatio";
+import {getFillRatio} from "./components/Effects/FillRatio";
+import {FILL_RATIO} from "./components/ScaleConstants";
+import {completeTile} from "./Tile/CompleteTile";
 
 function App() {
     const canvas = useRef();
-    let colorCtx;
+    let ctx;
+    let invisCol; // color of tile on invisible buffer canvas
+    let currTile;
 
     // mouse functions
     let leftMouseDown = false;
@@ -30,20 +34,14 @@ function App() {
     let prevCursorY;
 
     // color of tile on invisible buffer canvas
-    let invisCol;
 
     let insidePoly = [0, 0] // number of points inside and outside polygon
     let tooFast = false;
 
     let expandTimer;
 
-    function toTrueX(xScreen) {
-        return (xScreen);
-    }
-
-    function toTrueY(yScreen) {
-        let offsetY = getOffsetY()
-        return (yScreen) + offsetY;
+    function toTrueY(y) {
+        return (y) + getOffsetY();
     }
 
     useEffect(() => {
@@ -55,8 +53,8 @@ function App() {
         // set the canvas to the size of the window
         canvas.width = invisCanvas.width = tilingCanvas.width = window.innerWidth;
         canvas.height = invisCanvas.height = tilingCanvas.height = window.innerHeight;
+        ctx = document.getElementById('invis-canvas').getContext("2d");
 
-        colorCtx = invisCanvas.getContext("2d");
         redrawTilings();
     }, []);
 
@@ -70,17 +68,19 @@ function App() {
 
             stopColorChange()
 
-            setInvisCol(prevCursorX, prevCursorY)
-            if (invisCol !== undefined && colorCtx.getImageData(prevCursorX, prevCursorY, 1, 1).data.toString().trim() === invisCol?.trim() &&
-                invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
+            invisCol = ctx.getImageData(cursorX, cursorY, 1, 1).data.toString()
+            currTile = getTile(prevCursorY, invisCol)
 
+            if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevCursorY)) {
                 pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
 
                 expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, invisCol, 25)
+                if (getFillRatio(currTile) > FILL_RATIO){
+                    completeTile(currTile)
+                }
             }
         }
-
 
         // detect right clicks
         if (event.button === 2) {
@@ -101,16 +101,16 @@ function App() {
         cursorY = event.pageY;
         const scaledX = cursorX;
         const scaledY = toTrueY(cursorY);
-        const prevScaledX = toTrueX(prevCursorX);
+        const prevScaledX = prevCursorX;
         const prevScaledY = toTrueY(prevCursorY);
+
         clearTimeout(expandTimer)
         if (leftMouseDown) {
             insidePoly[0] += 1;
-            if (isMatchInvisCol(prevCursorX, prevCursorY, cursorX, cursorY)) {
-                // speed of stroke
-                mouseSpeed = [event.movementX, event.movementY]
-                if (getFillRatio(cursorY, invisCol) > 0.9){
-                    completeTile(cursorY, invisCol)
+            if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevCursorY) && ctx.isPointInPath(currTile.path, cursorX, cursorY)) {
+                mouseSpeed = [event.movementX, event.movementY] // speed of stroke
+                if (getFillRatio(currTile) > FILL_RATIO) {
+                    completeTile(currTile)
                 }
 
                 if ((Math.abs(mouseSpeed[0]) > 10 || Math.abs(mouseSpeed[1]) > 10)) {
@@ -156,28 +156,25 @@ function App() {
             const prevTouch0X = prevTouches[0]?.pageX;
             const prevTouch0Y = prevTouches[0]?.pageY;
 
-            const scaledX = toTrueX(touch0X);
+            const scaledX = touch0X;
             const scaledY = toTrueY(touch0Y);
-            const prevScaledX = toTrueX(prevTouch0X);
-            const prevScaledY = toTrueY(prevTouch0Y);
 
-            setInvisCol(touch0X, touch0Y)
-            if (invisCol !== undefined && colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === invisCol?.trim() && invisCol.substring(0, 5) !== '0,0,0') { //not white (outside tiling)
+            invisCol = ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString()
+            currTile = getTile(touch0Y, invisCol)
+            if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, invisCol, 25)
+                if (getFillRatio(currTile) > FILL_RATIO) {
+                    completeTile(currTile)
+                }
             }
 
             stopColorChange()
         }
 
         if (event.touches.length >= 2) {
-            const touch0X = event.touches[0].pageX;
-            const touch0Y = event.touches[0].pageY;
-            const touch1X = event.touches[1].pageX;
-            const touch1Y = event.touches[1].pageY;
-            removeLastStroke(touch0X, touch0Y, touch1X, touch1Y, getOffsetY())
-
+            removeLastStroke(event.touches[0], event.touches[1], getOffsetY())
             singleTouch = false;
             doubleTouch = true;
         }
@@ -193,24 +190,26 @@ function App() {
         const touch0Y = event.touches[0].pageY;
         const prevTouch0X = prevTouches[0]?.pageX;
         const prevTouch0Y = prevTouches[0]?.pageY;
-        // let colorCtx = document.getElementById('invis-canvas').getContext("2d");
+        // let ctx = document.getElementById('invis-canvas').getContext("2d");
 
-        const scaledX = toTrueX(touch0X);
+        const scaledX = touch0X;
         const scaledY = toTrueY(touch0Y);
-        const prevScaledX = toTrueX(prevTouch0X);
+        const prevScaledX = prevTouch0X;
         const prevScaledY = toTrueY(prevTouch0Y);
 
         clearTimeout(expandTimer)
         if (singleTouch) {
             insidePoly[0] += 1;
+
             // scroll when dragging on white space
-            if (invisCol && invisCol === '0,0,0,0' && colorCtx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === '0,0,0,0') {
+            if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === '0,0,0,0') {
                 doScroll(touch0Y, prevTouch0Y)
             }
-            if (isMatchInvisCol(prevTouch0X, prevTouch0Y, touch0X, touch0Y)) {
+
+            if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y) && ctx.isPointInPath(currTile.path, touch0X, touch0Y)){
                 touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
-                if (getFillRatio(touch0Y, invisCol) > 0.9){
-                    completeTile(touch0Y, invisCol)
+                if (getFillRatio(currTile) > FILL_RATIO) {
+                    completeTile(currTile)
                 }
                 if ((Math.abs(touchSpeed[0]) > 10 || Math.abs(touchSpeed[1]) > 10)) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
@@ -273,28 +272,6 @@ function App() {
                 clearInterval(reduceOpac)
             }
         }, 100)
-    }
-
-    // color of tile on invisible buffer canvas
-    function setInvisCol(cursorX, cursorY) {
-        // let colorCtx = document.getElementById('invis-canvas').getContext("2d");
-        let tempCol = colorCtx.getImageData(cursorX, cursorY, 1, 1).data
-        if (tempCol.toString() !== "0,0,0,255") { // invisCol will never be black (outline)
-            invisCol = tempCol.toString()
-        }
-    }
-
-    // true if current pixel matches color of invisible tile
-    function isMatchInvisCol(prevX, prevY, currX, currY) {
-        // let colorCtx = document.getElementById('invis-canvas').getContext("2d");
-        if (colorCtx.getImageData(prevX, prevY, 1, 1).data.toString().trim() === '0,0,0,0') {
-            return false; //only color within the tiles
-        }
-        if (colorCtx.getImageData(prevX, prevY, 1, 1).data.toString().trim() === invisCol?.trim()
-            && colorCtx.getImageData(currX, currY, 1, 1).data.toString().trim() === invisCol?.trim()) {
-            return true;
-        }
-        return false;
     }
 
     function generateAlert() {
