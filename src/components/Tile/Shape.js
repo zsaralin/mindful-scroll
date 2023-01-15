@@ -1,3 +1,10 @@
+import {LINE_WIDTH} from "../Constants";
+import {getCurrColor} from "../Stroke/StrokeColor";
+
+var activePath;
+var activeColor;
+var activeWidth;
+
 function getRandomNum(min, max) {
     return Math.floor(Math.random() * (max - min) + min)
 }
@@ -5,7 +12,7 @@ function getRandomNum(min, max) {
 export function getRandomShape(currYMax) {
     let path = new Path2D()
     let dimension = []
-    let index = getRandomNum(0,15)
+    let index = getRandomNum(0, 15)
     if (index === 0) { //circle
         path.ellipse(window.innerWidth / 2, currYMax + 200, 100, 100, 0, 0, Math.PI * 2);
         dimension = [window.innerWidth / 2 - 100, window.innerWidth / 2 + 100, currYMax + 100, currYMax + 300]
@@ -107,5 +114,59 @@ export function getRandomShape(currYMax) {
         dimension = [window.innerWidth / 2 - 115, window.innerWidth / 2 + 115, currYMax + 125, currYMax + 275]
     }
     return [path, dimension];
-
 }
+
+
+export function shapeGlow(currTile) {
+    let changeWidth = 0;
+    let changeVal = 3;
+    let currColor = getCurrColor()
+    let increaseGlow = setInterval(function () {
+        changeWidth += changeVal;
+        shapeGlowHelper(currTile, currColor, changeWidth)
+        if (changeWidth > 25) {
+            changeVal = -(changeVal)
+        } if (changeWidth === 0){
+            clearInterval(increaseGlow)
+        }
+    }, 100)
+}
+
+function shapeGlowHelper(currTile, currColor, changeWidth){
+    let ctx = document.getElementById('canvas').getContext('2d');
+
+    // erase previous glow
+    let origWidth = ctx.lineWidth
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 90
+    ctx.stroke(currTile.path)
+    ctx.lineWidth = origWidth;
+
+    ctx.strokeStyle = currColor.slice(0, -1) + ',.6)' // change transparency of glow
+    // ctx.strokeStyle = '#FFFF99'
+    ctx.lineWidth += changeWidth;
+    ctx.stroke(currTile.path);
+
+    ctx.fillStyle = currColor
+    ctx.fill(currTile.path)
+    ctx.lineWidth = LINE_WIDTH;
+    ctx.strokeStyle = 'black'
+    ctx.stroke(currTile.path)
+
+    activePath = currTile
+    activeColor = currColor.slice(0, -1) + ',.6)' // change transparency of glow
+    // activeColor = '#FFFF99'
+    activeWidth = ctx.lineWidth ;
+}
+
+/* on auto page scroll */
+export function redrawGlow() {
+    if (activePath !== undefined){
+        let ctx = document.getElementById('canvas').getContext('2d');
+        ctx.strokeStyle = activeColor
+        ctx.lineWidth = activeWidth ;
+        ctx.stroke(activePath.path)
+        ctx.lineWidth = LINE_WIDTH;
+        ctx.strokeStyle = 'black'
+        ctx.stroke(activePath.path)
+    }}

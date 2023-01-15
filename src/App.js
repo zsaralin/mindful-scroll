@@ -11,8 +11,10 @@ import {doScroll, getOffsetY, startAutoScroll} from "./components/PageScroll";
 import {watercolor} from "./components/Effects/Watercolor";
 import {reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
 import {getFillRatio} from "./components/Effects/FillRatio";
-import {FILL_RATIO} from "./components/ScaleConstants";
-import {completeTile} from "./Tile/CompleteTile";
+import {FILL_RATIO, SHAPE_COLOR} from "./components/Constants";
+import {completeTile} from "./components/Tile/CompleteTile";
+import {gsap} from "gsap";
+import {shapeGlow} from "./components/Tile/Shape";
 
 function App() {
     const canvas = useRef();
@@ -70,15 +72,17 @@ function App() {
 
             invisCol = ctx.getImageData(cursorX, cursorY, 1, 1).data.toString()
             currTile = getTile(prevCursorY, invisCol)
-
             if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevCursorY)) {
                 pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
 
-                expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, invisCol, 25)
-                if (getFillRatio(currTile) > FILL_RATIO){
+                expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
+                if (getFillRatio(currTile) > FILL_RATIO) {
                     completeTile(currTile)
-                }
+                    if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
+                        shapeGlow(currTile)
+                    }
+                    }
             }
         }
 
@@ -111,6 +115,9 @@ function App() {
                 mouseSpeed = [event.movementX, event.movementY] // speed of stroke
                 if (getFillRatio(currTile) > FILL_RATIO) {
                     completeTile(currTile)
+                    if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
+                        shapeGlow(currTile)
+                    }
                 }
 
                 if ((Math.abs(mouseSpeed[0]) > 10 || Math.abs(mouseSpeed[1]) > 10)) {
@@ -158,15 +165,17 @@ function App() {
 
             const scaledX = touch0X;
             const scaledY = toTrueY(touch0Y);
-
             invisCol = ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString()
             currTile = getTile(touch0Y, invisCol)
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
-                expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, invisCol, 25)
+                expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
                 if (getFillRatio(currTile) > FILL_RATIO) {
                     completeTile(currTile)
+                    if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
+                        shapeGlow(currTile)
+                    }
                 }
             }
 
@@ -190,7 +199,6 @@ function App() {
         const touch0Y = event.touches[0].pageY;
         const prevTouch0X = prevTouches[0]?.pageX;
         const prevTouch0Y = prevTouches[0]?.pageY;
-        // let ctx = document.getElementById('invis-canvas').getContext("2d");
 
         const scaledX = touch0X;
         const scaledY = toTrueY(touch0Y);
@@ -206,10 +214,13 @@ function App() {
                 doScroll(touch0Y, prevTouch0Y)
             }
 
-            if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y) && ctx.isPointInPath(currTile.path, touch0X, touch0Y)){
+            if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y) && ctx.isPointInPath(currTile.path, touch0X, touch0Y)) {
                 touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
                 if (getFillRatio(currTile) > FILL_RATIO) {
                     completeTile(currTile)
+                    if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
+                        shapeGlow(currTile)
+                    }
                 }
                 if ((Math.abs(touchSpeed[0]) > 10 || Math.abs(touchSpeed[1]) > 10)) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
@@ -249,7 +260,6 @@ function App() {
         colorDelay()
         clearTimeout(expandTimer)
         clearInterval(reduceOpac)
-        document.getElementById("feedbackBar").style.color = 'rgba(0,0,0,0)'
         sendAlert()
         insidePoly = [0, 0]
         tooFast = false;
@@ -291,37 +301,38 @@ function App() {
         let returnFeedback = generateAlert()
         if (prevFeedback === returnFeedback) {
             document.getElementById("feedbackBar").innerHTML = ''
-        } else {
-            reduceOpacityFeedback()
+        } else if (returnFeedback !== '' && document.getElementById("feedbackBar").style.opacity === '0') {
             document.getElementById("feedbackBar").innerHTML = returnFeedback
+            gsap.to("#feedbackBar", {opacity: 1, duration: 2, delay: 0})
+            gsap.to("#feedbackBar", {opacity: 0, duration: 2, delay: 2})
         }
     }
 
-    return (
-        <div className="App">
-            <Helmet>
-                <meta name="viewport"
-                      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-            </Helmet>
-            <div id="feedbackBar"></div>
-            <Music/>
-            <div className="wrapper">
-                <canvas ref={canvas} id="canvas"></canvas>
-                <canvas id="invis-canvas" style={{display: 'none'}}
-                ></canvas>
-                <canvas id="tiling-canvas" style={{display: ''}}
-                        onMouseDown={onMouseDown}
-                        onMouseUp={onMouseUp}
-                        onMouseOut={onMouseUp}
-                        onMouseMove={onMouseMove}
-                        onTouchStart={onTouchStart}
-                        onTouchEnd={onTouchEnd}
-                        onTouchCancel={onTouchEnd}
-                        onTouchMove={onTouchMove}
-                ></canvas>
-            </div>
+return (
+    <div className="App">
+        <Helmet>
+            <meta name="viewport"
+                  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+        </Helmet>
+        <div id="feedbackBar"></div>
+        <Music/>
+        <div className="wrapper">
+            <canvas ref={canvas} id="canvas"></canvas>
+            <canvas id="invis-canvas" style={{display: 'none'}}
+            ></canvas>
+            <canvas id="tiling-canvas" style={{display: ''}}
+                    onMouseDown={onMouseDown}
+                    onMouseUp={onMouseUp}
+                    onMouseOut={onMouseUp}
+                    onMouseMove={onMouseMove}
+                    onTouchStart={onTouchStart}
+                    onTouchEnd={onTouchEnd}
+                    onTouchCancel={onTouchEnd}
+                    onTouchMove={onTouchMove}
+            ></canvas>
         </div>
-    );
+    </div>
+);
 }
 
 export default App;

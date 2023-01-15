@@ -16,8 +16,8 @@ export function getFillRatio(currTile) {
     for (let x = startX; x < endX; x = x + 10) {
         for (let y = startY; y < endY; y = y + 10) {
             if (ctx.isPointInPath(currTile.path, x, y - getOffsetY())){
-            // if (invisCtx.getImageData(x, y - getOffsetY(), 1, 1).data.toString().trim() === invisCol.trim()) {
                 fillRatio[1]++;
+                // if pixel color matches curr color of stroke
                 if (isColorMatch(ctx.getImageData(x, y - getOffsetY(), 1, 1).data, hslToRgb(getCurrColor()))) {
                     fillRatio[0]++
                 }

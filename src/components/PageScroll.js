@@ -1,8 +1,9 @@
 import {addToTilingArr, redrawTilings, sumArray, sumArrayPrev, tilingArrLength} from "./Tiling/TilingArr";
 import {redrawStrokes} from "./Stroke/StrokeArr";
 import {redrawActiveTiles} from "./Effects/Watercolor";
-import {LINE_WIDTH} from "./ScaleConstants";
-import {redrawTiles} from "../Tile/CompleteTile";
+import {LINE_WIDTH} from "./Constants";
+import {redrawTiles} from "./Tile/CompleteTile";
+import {redrawGlow} from "./Tile/Shape";
 
 let offsetY = 0; //distance from origin
 let autoScroll = false;
@@ -63,7 +64,10 @@ function redrawCanvas() {
     canvas.getContext("2d").translate(0, -offsetY)
 
     redrawStrokes();
-    redrawActiveTiles()
+    redrawActiveTiles();
+    redrawGlow();
     redrawTiles()
     redrawTilings();
+
+
 }

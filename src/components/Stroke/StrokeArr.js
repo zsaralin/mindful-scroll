@@ -1,6 +1,4 @@
 import {getLineWidth} from "./StrokeWidth";
-import {sumArrayPrev, tilingArrLength} from "../Tiling/TilingArr";
-import {LINE_WIDTH} from "../ScaleConstants";
 import {drawStroke} from "./Stroke";
 import {drawShrinkingStroke} from "./ShrinkingStroke";
 import {getCurrColor} from "./StrokeColor";

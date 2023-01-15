@@ -9,5 +9,6 @@
     background-color: white;
     text-align: center;
     z-index: 1;
-    color : rgba(0,0,0,0)
+    opacity : 0;
+    /*color: black;*/
 }

@@ -1,4 +1,4 @@
-import {getCurrColor} from "../components/Stroke/StrokeColor";
+import {getCurrColor} from "../Stroke/StrokeColor";
 
 let fillTileArr = [] // fully coloured tiles
 

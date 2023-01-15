@@ -1,4 +1,4 @@
-import {LINE_WIDTH} from "../ScaleConstants";
+import {LINE_WIDTH} from "../Constants";
 let strokeWidth = LINE_WIDTH
 
 export function setLineWidth() {

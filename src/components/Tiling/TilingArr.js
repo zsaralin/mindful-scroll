@@ -1,8 +1,9 @@
 import {makeRandomTiling, drawTiling} from './TilingGenerator'
 import {getTilingPathDict} from './TilingPathDict'
-import {getRandomShape} from "../Shape";
+import {getRandomShape} from "../Tile/Shape";
 import {getBoundsTiling} from "./TilingBounds";
 import {getOffsetY} from "../PageScroll";
+import {SHAPE_COLOR} from "../Constants";
 
 let tilingArr = []
 let yMinArr = []
@@ -53,16 +54,14 @@ export function tilingArrLength() {
 }
 
 function drawRandomShape(yMin, yMax, pathDict) {
-
     let shapePath;
     let dimension;
-    // console.log('length of path' + Object.values(pathDict)[0])
     if (yMaxArr.length > 0) {
         [shapePath, dimension] = getRandomShape(yMax + yMaxArr[yMaxArr.length - 1] - yMin)
     } else {
         [shapePath, dimension] = getRandomShape(yMax - yMin + 75)
     }
-    pathDict['rgb(0,255,0)'] = {
+    pathDict[SHAPE_COLOR] = {
         path: shapePath,
         tile: dimension
     };
@@ -85,5 +84,6 @@ export function getTilingIndex(y) {
 
 export function getTile(y1, invisCol) {
     let currTiling = getCurrentPathDict(getTilingIndex(y1 + getOffsetY()))
-    return currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4).trim() + ')']
+    console.log(invisCol.substring(0, invisCol.length - 4))
+    return currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
 }

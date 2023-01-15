@@ -1,6 +1,6 @@
 import {mul, EdgeShape, tilingTypes, IsohedralTiling}
     from '../../lib';
-import {LINE_WIDTH} from "../ScaleConstants";
+import {LINE_WIDTH} from "../Constants";
 import {getCurrColor} from "../Stroke/StrokeColor";
 
 function generateRandomNum() {
