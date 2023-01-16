@@ -2,9 +2,9 @@ import './App.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import Music, {changeAudio, reduceAudio} from './components/Audio.js'
-import {drawStroke} from './components/Stroke/Stroke'
+import {drawStroke, isFirstStroke} from './components/Stroke/Stroke'
 import {drawShrinkingStroke} from './components/Stroke/ShrinkingStroke'
-import {stopColorChange, colorDelay} from './components/Stroke/StrokeColor'
+import {stopColorChange, colorDelay, getCurrColor} from './components/Stroke/StrokeColor'
 import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
 import {addToTilingArr, getTile, redrawTilings} from "./components/Tiling/TilingArr";
 import {doScroll, getOffsetY, startAutoScroll} from "./components/PageScroll";
@@ -51,10 +51,11 @@ function App() {
         const canvas = document.getElementById("canvas");
         const invisCanvas = document.getElementById("invis-canvas")
         const tilingCanvas = document.getElementById("tiling-canvas")
+        const topCanvas = document.getElementById("top-canvas")
 
         // set the canvas to the size of the window
-        canvas.width = invisCanvas.width = tilingCanvas.width = window.innerWidth;
-        canvas.height = invisCanvas.height = tilingCanvas.height = window.innerHeight;
+        canvas.width = invisCanvas.width = tilingCanvas.width = topCanvas.width = window.innerWidth;
+        canvas.height = invisCanvas.height = tilingCanvas.height = topCanvas.height = window.innerHeight;
         ctx = document.getElementById('invis-canvas').getContext("2d");
 
         redrawTilings();
@@ -69,6 +70,7 @@ function App() {
             const prevScaledY = toTrueY(prevCursorY);
 
             stopColorChange()
+            hideColourPreview()
 
             invisCol = ctx.getImageData(cursorX, cursorY, 1, 1).data.toString()
             currTile = getTile(prevCursorY, invisCol)
@@ -82,7 +84,7 @@ function App() {
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
                     }
-                    }
+                }
             }
         }
 
@@ -109,8 +111,10 @@ function App() {
         const prevScaledY = toTrueY(prevCursorY);
 
         clearTimeout(expandTimer)
+
         if (leftMouseDown) {
             insidePoly[0] += 1;
+
             if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevCursorY) && ctx.isPointInPath(currTile.path, cursorX, cursorY)) {
                 mouseSpeed = [event.movementX, event.movementY] // speed of stroke
                 if (getFillRatio(currTile) > FILL_RATIO) {
@@ -135,18 +139,21 @@ function App() {
             } else {
                 insidePoly[1] += 1;
             }
-        }
-        if (rightMouseDown) {
+        } else if (rightMouseDown) {
             doScroll(cursorY, prevCursorY)
+        } else {
         }
         prevCursorX = cursorX;
         prevCursorY = cursorY;
     }
 
+    let colourInterval;
+
     function onMouseUp() {
         leftMouseDown = false;
         rightMouseDown = false;
         onStrokeEnd()
+        showColourPreview(cursorX, cursorY)
     }
 
     // touch functions
@@ -167,6 +174,9 @@ function App() {
             const scaledY = toTrueY(touch0Y);
             invisCol = ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString()
             currTile = getTile(touch0Y, invisCol)
+
+            hideColourPreview()
+
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
@@ -206,6 +216,8 @@ function App() {
         const prevScaledY = toTrueY(prevTouch0Y);
 
         clearTimeout(expandTimer)
+        hideColourPreview()
+
         if (singleTouch) {
             insidePoly[0] += 1;
 
@@ -252,6 +264,7 @@ function App() {
         singleTouch = false;
         doubleTouch = false;
         onStrokeEnd()
+        showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY)
     }
 
     function onStrokeEnd() {
@@ -263,6 +276,33 @@ function App() {
         sendAlert()
         insidePoly = [0, 0]
         tooFast = false;
+    }
+
+    function showColourPreview(x, y) {
+        let canvas = document.getElementById('top-canvas')
+        let context = canvas.getContext("2d");
+        gsap.to("#top-canvas", {opacity: 1, duration: 1, delay: 0})
+        // gsap.to("#feedbackBar", {opacity: 0, duration: 2, delay: 2})
+        colourInterval = setInterval(function () {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.beginPath();
+            context.arc(x + 80, y - 80, 50, 0, 2 * Math.PI, false);
+            context.fillStyle = getCurrColor();
+            context.fill();
+            context.lineWidth = 5;
+            context.strokeStyle = 'black';
+            context.stroke();
+        }, 50);
+    }
+
+    function hideColourPreview() {
+        clearInterval(colourInterval);
+        let canvas = document.getElementById('top-canvas')
+        let context = canvas.getContext("2d");
+        setTimeout(function() { context.clearRect(0, 0, canvas.width, canvas.height);; }, 500);
+        // context.clearRect(0, 0, canvas.width, canvas.height);
+
+        gsap.to("#top-canvas", {opacity: 0, duration: .5, delay: 0})
     }
 
     let reduceOpac;
@@ -308,31 +348,32 @@ function App() {
         }
     }
 
-return (
-    <div className="App">
-        <Helmet>
-            <meta name="viewport"
-                  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-        </Helmet>
-        <div id="feedbackBar"></div>
-        <Music/>
-        <div className="wrapper">
-            <canvas ref={canvas} id="canvas"></canvas>
-            <canvas id="invis-canvas" style={{display: 'none'}}
-            ></canvas>
-            <canvas id="tiling-canvas" style={{display: ''}}
-                    onMouseDown={onMouseDown}
-                    onMouseUp={onMouseUp}
-                    onMouseOut={onMouseUp}
-                    onMouseMove={onMouseMove}
-                    onTouchStart={onTouchStart}
-                    onTouchEnd={onTouchEnd}
-                    onTouchCancel={onTouchEnd}
-                    onTouchMove={onTouchMove}
-            ></canvas>
+    return (
+        <div className="App">
+            <Helmet>
+                <meta name="viewport"
+                      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+            </Helmet>
+            <div id="feedbackBar"></div>
+            <Music/>
+            <div className="wrapper">
+                <canvas ref={canvas} id="canvas"></canvas>
+                <canvas id="invis-canvas" style={{display: 'none'}}
+                ></canvas>
+                <canvas id="tiling-canvas" style={{display: ''}}
+                ></canvas>
+                <canvas id="top-canvas" style={{opacity: 0}}
+                        onMouseDown={onMouseDown}
+                        onMouseUp={onMouseUp}
+                        onMouseOut={onMouseUp}
+                        onMouseMove={onMouseMove}
+                        onTouchStart={onTouchStart}
+                        onTouchEnd={onTouchEnd}
+                        onTouchCancel={onTouchEnd}
+                        onTouchMove={onTouchMove}></canvas>
+            </div>
         </div>
-    </div>
-);
+    );
 }
 
 export default App;

@@ -47,6 +47,7 @@ export function redrawTilings() {
         // for (let i = q; i < 1; i++) {
         drawTiling(pathArr[i])
     }
+
 }
 
 export function tilingArrLength() {

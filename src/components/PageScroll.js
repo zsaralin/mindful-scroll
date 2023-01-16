@@ -65,9 +65,9 @@ function redrawCanvas() {
 
     redrawStrokes();
     redrawActiveTiles();
-    redrawGlow();
     redrawTiles()
     redrawTilings();
+    redrawGlow();
 
 
 }
