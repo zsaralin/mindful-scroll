@@ -4,6 +4,7 @@ import {getCurrColor} from "../Stroke/StrokeColor";
 var activePath;
 var activeColor;
 var activeWidth;
+var activeFillColor;
 
 function getRandomNum(min, max) {
     return Math.floor(Math.random() * (max - min) + min)
@@ -142,10 +143,15 @@ function shapeGlowHelper(currTile, currColor, changeWidth){
     ctx.stroke(currTile.path)
     ctx.lineWidth = origWidth;
 
-    ctx.strokeStyle = currColor.slice(0, -1) + ',.6)' // change transparency of glow
-    // ctx.strokeStyle = '#FFFF99'
+    ctx.strokeStyle = '#FFFF99'
     ctx.lineWidth += changeWidth;
     ctx.stroke(currTile.path);
+
+    // don't move code below or glow will be jittery
+    activePath = currTile
+    activeColor = '#FFFF99'
+    activeWidth = ctx.lineWidth ;
+    activeFillColor = currColor;
 
     ctx.fillStyle = currColor
     ctx.fill(currTile.path)
@@ -153,10 +159,7 @@ function shapeGlowHelper(currTile, currColor, changeWidth){
     ctx.strokeStyle = 'black'
     ctx.stroke(currTile.path)
 
-    activePath = currTile
-    activeColor = currColor.slice(0, -1) + ',.6)' // change transparency of glow
-    // activeColor = '#FFFF99'
-    activeWidth = ctx.lineWidth ;
+
 }
 
 /* on auto page scroll */
@@ -166,6 +169,9 @@ export function redrawGlow() {
         ctx.strokeStyle = activeColor
         ctx.lineWidth = activeWidth ;
         ctx.stroke(activePath.path)
+
+        ctx.fillStyle = activeFillColor
+        ctx.fill(activePath.path)
         ctx.lineWidth = LINE_WIDTH;
         ctx.strokeStyle = 'black'
         ctx.stroke(activePath.path)
