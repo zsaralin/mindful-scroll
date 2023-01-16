@@ -286,7 +286,16 @@ function App() {
         colourInterval = setInterval(function () {
             context.clearRect(0, 0, canvas.width, canvas.height);
             context.beginPath();
-            context.arc(x + 80, y - 80, 50, 0, 2 * Math.PI, false);
+            // context.arc(x + 80, y - 80, 50, 0, 2 * Math.PI, false);
+            context.beginPath();
+            context.moveTo(x, y);
+            context.bezierCurveTo(x - 40/2, y + 20/2, x - 40/2, y + 70/2, x + 60/2, y + 70/2);
+            context.bezierCurveTo(x + 80/2, y + 100/2, x + 150/2, y + 100/2, x + 170/2, y + 70/2);
+            context.bezierCurveTo(x + 250/2, y + 70/2, x + 250/2, y + 40/2, x + 220/2, y + 20/2);
+            context.bezierCurveTo(x + 260/2, y - 40/2, x + 200/2, y - 50/2, x + 170/2, y - 30/2);
+            context.bezierCurveTo(x + 150/2, y - 75/2, x + 80/2, y - 60/2, x + 80/2, y - 30/2);
+            context.bezierCurveTo(x + 30/2, y - 75/2, x - 20/2, y - 60/2, x, y);
+            context.closePath()
             context.fillStyle = getCurrColor();
             context.fill();
             context.lineWidth = 5;
