@@ -95,10 +95,15 @@ function App() {
         }
 
         // update the cursor coordinates
-        cursorX = event.pageX;
+        cursorX = event.pageX
         cursorY = event.pageY;
         prevCursorX = event.pageX;
         prevCursorY = event.pageY;
+
+        // cursorX = (event.pageX / 16) - (45 / 16) + 'rem'
+        // cursorY = (event.pageY / 16) - (45 / 16) + 'rem'
+        // prevCursorX = (event.pageX / 16) - (45 / 16) + 'rem'
+        // prevCursorY = (event.pageY / 16) - (45 / 16) + 'rem'
     }
 
     function onMouseMove(event) {
@@ -110,10 +115,16 @@ function App() {
         const prevScaledX = prevCursorX;
         const prevScaledY = toTrueY(prevCursorY);
 
+        if (cursorX <=0 || cursorY >= canvas.height){
+            return
+        }
         clearTimeout(expandTimer)
+
 
         if (leftMouseDown) {
             insidePoly[0] += 1;
+
+            showFeedback(cursorX, cursorY)
 
             if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevCursorY) && ctx.isPointInPath(currTile.path, cursorX, cursorY)) {
                 mouseSpeed = [event.movementX, event.movementY] // speed of stroke
@@ -150,10 +161,13 @@ function App() {
     let colourInterval;
 
     function onMouseUp() {
+        if(rightMouseDown == false){
+            showColourPreview(cursorX, cursorY);
+        }
         leftMouseDown = false;
         rightMouseDown = false;
         onStrokeEnd()
-        showColourPreview(cursorX, cursorY)
+        hideFeedback()
     }
 
     // touch functions
@@ -223,6 +237,7 @@ function App() {
 
             // scroll when dragging on white space
             if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === '0,0,0,0') {
+                doubleTouch = true;
                 doScroll(touch0Y, prevTouch0Y)
             }
 
@@ -253,7 +268,7 @@ function App() {
             }
         }
 
-        if (doubleTouch) {
+        else if (doubleTouch) {
             doScroll(touch0Y, prevTouch0Y)
         }
         prevTouches[0] = event.touches[0];
@@ -261,10 +276,12 @@ function App() {
     }
 
     function onTouchEnd(event) {
+        if(!doubleTouch){
+            showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY)
+        }
         singleTouch = false;
         doubleTouch = false;
         onStrokeEnd()
-        showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY)
     }
 
     function onStrokeEnd() {
@@ -278,41 +295,67 @@ function App() {
         tooFast = false;
     }
 
-    function showColourPreview(x, y) {
-        let canvas = document.getElementById('top-canvas')
-        let context = canvas.getContext("2d");
-        gsap.to("#top-canvas", {opacity: 1, duration: 1, delay: 0})
-        // gsap.to("#feedbackBar", {opacity: 0, duration: 2, delay: 2})
-        colourInterval = setInterval(function () {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.beginPath();
-            // context.arc(x + 80, y - 80, 50, 0, 2 * Math.PI, false);
-            context.beginPath();
-            context.moveTo(x, y);
-            context.bezierCurveTo(x - 40/2, y + 20/2, x - 40/2, y + 70/2, x + 60/2, y + 70/2);
-            context.bezierCurveTo(x + 80/2, y + 100/2, x + 150/2, y + 100/2, x + 170/2, y + 70/2);
-            context.bezierCurveTo(x + 250/2, y + 70/2, x + 250/2, y + 40/2, x + 220/2, y + 20/2);
-            context.bezierCurveTo(x + 260/2, y - 40/2, x + 200/2, y - 50/2, x + 170/2, y - 30/2);
-            context.bezierCurveTo(x + 150/2, y - 75/2, x + 80/2, y - 60/2, x + 80/2, y - 30/2);
-            context.bezierCurveTo(x + 30/2, y - 75/2, x - 20/2, y - 60/2, x, y);
-            context.closePath()
-            context.fillStyle = getCurrColor();
-            context.fill();
-            context.lineWidth = 5;
-            context.strokeStyle = 'black';
-            context.stroke();
+    // function showColourPreview(x, y) {
+    //     let canvas = document.getElementById('top-canvas')
+    //     let context = canvas.getContext("2d");
+    //     context.clearRect(0, 0, canvas.width, canvas.height);
+    //     gsap.to("#top-canvas", {opacity: 1, duration:  1, delay: 0})
+    //
+    //     colourInterval = setInterval(function () {
+    //         context.beginPath();
+    //         // context.arc(x + 80, y - 80, 50, 0, 2 * Math.PI, false);
+    //         context.moveTo(x + 50, y - 50);
+    //         context.bezierCurveTo(x - 40/2 + 50, y + 20/1.5-50, x - 30/2+ 50, y + 50/1.5-50, x + 20/2+ 50, y + 50/1.5-50);
+    //         context.bezierCurveTo(x + 40/2+ 50, y + 90/1.5-50, x + 90/2+ 50, y + 90/1.5-50, x + 90/2+ 50, y + 65/1.5-50);
+    //         context.bezierCurveTo(x + 95/2+ 50, y + 100/1.5-50, x + 180/2+ 50, y + 100/1.5-50, x + 180/2+ 50, y + 60/1.5-50);
+    //         context.bezierCurveTo(x + 250/2+ 50, y + 70/1.5-50, x + 190/2+ 50, y + 10/1.5-50, x + 200/2+ 50, y + 20/1.5-50);
+    //         context.bezierCurveTo(x + 260/2+ 50, y - 40/1.5-50, x + 150/2+ 50, y - 30/1.5-50, x + 170/2+ 50, y - 30/1.5-50);
+    //         context.bezierCurveTo(x + 150/2+ 50, y - 75/1.5-50, x + 80/2+ 50, y - 70/1.5-50, x + 80/2+ 50, y - 40/1.5-50);
+    //         context.bezierCurveTo(x + 30/2+ 50, y - 75/1.5-50, x - 20/2+ 50, y - 30/1.5-50, x + 50, y - 50);
+    //
+    //         context.closePath()
+    //         context.fillStyle = getCurrColor();
+    //         context.fill();
+    //         context.lineWidth = 5;
+    //         context.strokeStyle = 'black';
+    //         context.stroke();
+    //
+    //     }, 50);
+    // }
+
+    function showColourPreview(x,y){
+        // const bubble2 = document.getElementsByClassName('thought')[1];
+        // bubble2.style.top = y-175+'px' ;
+        // bubble2.style.left = x+30 + 'px';
+
+        const bubble = document.getElementsByClassName('thought')[0];
+        bubble.style.top = y-175+'px' ;
+        bubble.style.left = x+30 + 'px';
+
+
+        gsap.to(".thought", {opacity: 1, duration:  1, delay: 0})
+        colourInterval = setInterval(function () {bubble.style.setProperty('--background-col', getCurrColor());
         }, 50);
+
     }
 
-    function hideColourPreview() {
-        clearInterval(colourInterval);
-        let canvas = document.getElementById('top-canvas')
-        let context = canvas.getContext("2d");
-        setTimeout(function() { context.clearRect(0, 0, canvas.width, canvas.height);; }, 500);
-        // context.clearRect(0, 0, canvas.width, canvas.height);
-
-        gsap.to("#top-canvas", {opacity: 0, duration: .5, delay: 0})
+    function hideColourPreview(){
+        gsap.to(".thought", {opacity: 0, duration:  1, delay: 0})
     }
+
+    // function hideColourPreview() {
+    //     clearInterval(colourInterval);
+    //     let canvas = document.getElementById('top-canvas')
+    //     let context = canvas.getContext("2d");
+    //     // if(colourPreview === true){
+    //     // context.clearRect(0, 0, canvas.width, canvas.height);
+    //     setTimeout(function() {
+    //         // context.clearRect(0, 0, canvas.width, canvas.height);
+    //         }, 500);
+    //     // context.clearRect(0, 0, canvas.width, canvas.height);
+    //
+    //     gsap.to("#top-canvas", {opacity: 0, duration: .5, delay: 0})
+    // }
 
     let reduceOpac;
 
@@ -331,6 +374,45 @@ function App() {
                 clearInterval(reduceOpac)
             }
         }, 100)
+    }
+
+    function showFeedback(x, y) {
+        if(firstMove){
+            gsap.to("#svg", {top: y - 120 + 'px', left: x + 50 + 'px', duration:  0, transition: '0s'})
+            firstMove = false;
+        }
+        // let canvas = document.getElementById('top-canvas')
+        // let context = canvas.getContext("2d");
+        // gsap.to("#top-canvas", {opacity: 1, duration:  1, delay: 0})
+        if (Math.abs(prevCursorX-x)>6 || Math.abs(prevCursorY-y)>6){
+        const circleSvg = document.getElementById('svg')
+        gsap.to("#svg", {opacity: 1, duration:  1, delay: 0, transition: 'top 2s, left 2s'})
+            circleSvg.style.top = y - 150 + 'px'
+            circleSvg.style.left = x + 80 + 'px'
+        }
+
+        // colourInterval = setTimeout(function () {
+        //     context.clearRect(0, 0, canvas.width, canvas.height);
+        //     context.beginPath();
+        //     context.arc(x + 80,y - 80, 50, 0, 2 * Math.PI, false);
+        //
+        //     context.closePath()
+        //     context.fillStyle = getCurrColor();
+        //     context.fill();
+        //     context.lineWidth = 5;
+        //     context.strokeStyle = 'black';
+        //     context.stroke();
+
+        // }, 1);
+    }
+    let firstMove = false;
+    function hideFeedback() {
+        // let canvas = document.getElementById('top-canvas')
+        // let context = canvas.getContext("2d");
+        // context.clearRect(0, 0, canvas.width, canvas.height);
+        // gsap.to("#top-canvas", {opacity: 1, duration:  1, delay: 0})
+        gsap.to("#svg", {opacity: 0, duration:  1, delay: 0})
+        firstMove = true;
     }
 
     function generateAlert() {
@@ -364,6 +446,10 @@ function App() {
                       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
             </Helmet>
             <div id="feedbackBar"></div>
+            <div className="thought"></div>
+            {/*<div className="thought" style={{transform: 'scale(1.7)', zIndex: -3}}></div>*/}
+
+            <div id="svg"></div>
             <Music/>
             <div className="wrapper">
                 <canvas ref={canvas} id="canvas"></canvas>
@@ -374,7 +460,6 @@ function App() {
                 <canvas id="top-canvas" style={{opacity: 0}}
                         onMouseDown={onMouseDown}
                         onMouseUp={onMouseUp}
-                        onMouseOut={onMouseUp}
                         onMouseMove={onMouseMove}
                         onTouchStart={onTouchStart}
                         onTouchEnd={onTouchEnd}
