@@ -177,6 +177,7 @@ function App() {
 
     function onTouchStart(event) {
         if (event.touches.length === 1) {
+
             singleTouch = true;
             doubleTouch = false;
             const touch0X = event.touches[0].pageX;
@@ -243,6 +244,8 @@ function App() {
 
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y) && ctx.isPointInPath(currTile.path, touch0X, touch0Y)) {
                 touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
+                showFeedback(touch0X, touch0Y)
+
                 if (getFillRatio(currTile) > FILL_RATIO) {
                     completeTile(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
@@ -279,6 +282,7 @@ function App() {
         if(!doubleTouch){
             showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY)
         }
+        hideFeedback()
         singleTouch = false;
         doubleTouch = false;
         onStrokeEnd()
@@ -328,19 +332,22 @@ function App() {
         // bubble2.style.top = y-175+'px' ;
         // bubble2.style.left = x+30 + 'px';
 
-        const bubble = document.getElementsByClassName('thought')[0];
-        bubble.style.top = y-175+'px' ;
-        bubble.style.left = x+30 + 'px';
+        const bubble = document.getElementsByClassName('burst')[0];
+        bubble.style.top = y-200+'px' ;
+        bubble.style.left = x+100 + 'px';
+        const bubble2 = document.getElementsByClassName('burst')[1];
+        bubble2.style.top = y-200+'px' ;
+        bubble2.style.left = x+100 + 'px';
 
 
-        gsap.to(".thought", {opacity: 1, duration:  1, delay: 0})
+        gsap.to(".burst", {opacity: 1, duration:  1, delay: 0})
         colourInterval = setInterval(function () {bubble.style.setProperty('--background-col', getCurrColor());
         }, 50);
 
     }
 
     function hideColourPreview(){
-        gsap.to(".thought", {opacity: 0, duration:  1, delay: 0})
+        gsap.to(".burst", {opacity: 0, duration:  1, delay: 0})
     }
 
     // function hideColourPreview() {
@@ -377,19 +384,26 @@ function App() {
     }
 
     function showFeedback(x, y) {
+        let circleSvg = document.getElementById('svg')
+
         if(firstMove){
-            gsap.to("#svg", {top: y - 120 + 'px', left: x + 50 + 'px', duration:  0, transition: '0s'})
+
+            circleSvg.style.transition = 'top 0s, left 0s'
+            circleSvg.style.top = y - 150 + 'px'
+            circleSvg.style.left = x + 80 + 'px'
+            // gsap.to("#svg", {top: y - 120 + 'px', left: x + 50 + 'px', duration:  0})
             firstMove = false;
         }
         // let canvas = document.getElementById('top-canvas')
         // let context = canvas.getContext("2d");
         // gsap.to("#top-canvas", {opacity: 1, duration:  1, delay: 0})
-        if (Math.abs(prevCursorX-x)>6 || Math.abs(prevCursorY-y)>6){
-        const circleSvg = document.getElementById('svg')
-        gsap.to("#svg", {opacity: 1, duration:  1, delay: 0, transition: 'top 2s, left 2s'})
+        // if (Math.abs(prevCursorX-x)>6 || Math.abs(prevCursorY-y)>6){
+        circleSvg = document.getElementById('svg')
+        circleSvg.style.transition = 'top 2s, left 2s'
+        gsap.to("#svg", {opacity: 1, duration:  1, delay: 0,})
             circleSvg.style.top = y - 150 + 'px'
             circleSvg.style.left = x + 80 + 'px'
-        }
+        // }
 
         // colourInterval = setTimeout(function () {
         //     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -448,6 +462,8 @@ function App() {
             <div id="feedbackBar"></div>
             <div className="thought"></div>
             {/*<div className="thought" style={{transform: 'scale(1.7)', zIndex: -3}}></div>*/}
+            <div class="burst" style={{zIndex: 2}}></div>
+            <div className="burst" style={{background: "black", transform: 'scale(1.15)'}}></div>
 
             <div id="svg"></div>
             <Music/>
