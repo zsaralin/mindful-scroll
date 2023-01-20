@@ -15,6 +15,9 @@ import {FILL_RATIO, SHAPE_COLOR} from "./components/Constants";
 import {completeTile} from "./components/Tile/CompleteTile";
 import {gsap} from "gsap";
 import {shapeGlow} from "./components/Tile/Shape";
+// import FormGroup from '@mui/material/FormGroup';
+// import FormControlLabel from '@mui/material/FormControlLabel';
+// import Switch from '@mui/material/Switch';
 
 function App() {
     const canvas = useRef();
@@ -28,6 +31,8 @@ function App() {
 
     let mouseSpeed = [];
     let touchSpeed = [];
+
+    let startX; let endX;
 
     // coordinates of our cursor
     let cursorX;
@@ -51,11 +56,10 @@ function App() {
         const canvas = document.getElementById("canvas");
         const invisCanvas = document.getElementById("invis-canvas")
         const tilingCanvas = document.getElementById("tiling-canvas")
-        const topCanvas = document.getElementById("top-canvas")
 
         // set the canvas to the size of the window
-        canvas.width = invisCanvas.width = tilingCanvas.width = topCanvas.width = window.innerWidth;
-        canvas.height = invisCanvas.height = tilingCanvas.height = topCanvas.height = window.innerHeight;
+        canvas.width = invisCanvas.width = tilingCanvas.width = window.innerWidth;
+        canvas.height = invisCanvas.height = tilingCanvas.height =  window.innerHeight;
         ctx = document.getElementById('invis-canvas').getContext("2d");
 
         redrawTilings();
@@ -71,6 +75,8 @@ function App() {
 
             stopColorChange()
             hideColourPreview()
+            showFeedback(cursorX, cursorY)
+            clearTimeout(expandTimer)
 
             invisCol = ctx.getImageData(cursorX, cursorY, 1, 1).data.toString()
             currTile = getTile(prevCursorY, invisCol)
@@ -80,11 +86,14 @@ function App() {
 
                 expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
                 if (getFillRatio(currTile) > FILL_RATIO) {
-                    completeTile(currTile)
+                    completeTile(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
                     }
                 }
+            }
+            else{
+                startX = cursorX;
             }
         }
 
@@ -115,7 +124,7 @@ function App() {
         const prevScaledX = prevCursorX;
         const prevScaledY = toTrueY(prevCursorY);
 
-        if (cursorX <=0 || cursorY >= canvas.height){
+        if (cursorX <= 0 || cursorY >= canvas.height) {
             return
         }
         clearTimeout(expandTimer)
@@ -124,12 +133,12 @@ function App() {
         if (leftMouseDown) {
             insidePoly[0] += 1;
 
-            showFeedback(cursorX, cursorY)
+            moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
 
             if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevCursorY) && ctx.isPointInPath(currTile.path, cursorX, cursorY)) {
                 mouseSpeed = [event.movementX, event.movementY] // speed of stroke
                 if (getFillRatio(currTile) > FILL_RATIO) {
-                    completeTile(currTile)
+                    completeTile(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
                     }
@@ -156,18 +165,21 @@ function App() {
         }
         prevCursorX = cursorX;
         prevCursorY = cursorY;
+
     }
 
     let colourInterval;
 
     function onMouseUp() {
-        if(rightMouseDown == false){
+        if (rightMouseDown == false) {
             showColourPreview(cursorX, cursorY);
         }
         leftMouseDown = false;
         rightMouseDown = false;
         onStrokeEnd()
         hideFeedback()
+
+        isSwiped(startX, cursorX)
     }
 
     // touch functions
@@ -177,7 +189,6 @@ function App() {
 
     function onTouchStart(event) {
         if (event.touches.length === 1) {
-
             singleTouch = true;
             doubleTouch = false;
             const touch0X = event.touches[0].pageX;
@@ -191,18 +202,20 @@ function App() {
             currTile = getTile(touch0Y, invisCol)
 
             hideColourPreview()
+            showFeedback(touch0X, touch0Y)
 
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
                 if (getFillRatio(currTile) > FILL_RATIO) {
-                    completeTile(currTile)
+                    completeTile(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
                     }
                 }
             }
+            else startX = touch0X
 
             stopColorChange()
         }
@@ -244,10 +257,10 @@ function App() {
 
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y) && ctx.isPointInPath(currTile.path, touch0X, touch0Y)) {
                 touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
-                showFeedback(touch0X, touch0Y)
+                moveFeedback(prevTouch0X, prevTouch0Y, touch0X, touch0Y)
 
                 if (getFillRatio(currTile) > FILL_RATIO) {
-                    completeTile(currTile)
+                    completeTile(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
                     }
@@ -269,9 +282,7 @@ function App() {
             } else {
                 insidePoly[1] += 1;
             }
-        }
-
-        else if (doubleTouch) {
+        } else if (doubleTouch) {
             doScroll(touch0Y, prevTouch0Y)
         }
         prevTouches[0] = event.touches[0];
@@ -279,13 +290,15 @@ function App() {
     }
 
     function onTouchEnd(event) {
-        if(!doubleTouch){
+        if (!doubleTouch) {
             showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY)
         }
         hideFeedback()
         singleTouch = false;
         doubleTouch = false;
         onStrokeEnd()
+
+        showControlPanel(startX, prevTouches[0]?.pageX)
     }
 
     function onStrokeEnd() {
@@ -327,27 +340,21 @@ function App() {
     //     }, 50);
     // }
 
-    function showColourPreview(x,y){
-        // const bubble2 = document.getElementsByClassName('thought')[1];
-        // bubble2.style.top = y-175+'px' ;
-        // bubble2.style.left = x+30 + 'px';
+    function showColourPreview(x, y) {
 
-        const bubble = document.getElementsByClassName('burst')[0];
-        bubble.style.top = y-200+'px' ;
-        bubble.style.left = x+100 + 'px';
-        const bubble2 = document.getElementsByClassName('burst')[1];
-        bubble2.style.top = y-200+'px' ;
-        bubble2.style.left = x+100 + 'px';
-
-
-        gsap.to(".burst", {opacity: 1, duration:  1, delay: 0})
-        colourInterval = setInterval(function () {bubble.style.setProperty('--background-col', getCurrColor());
-        }, 50);
+        // const bubble = document.getElementsByClassName('thought')[0];
+        // bubble.style.top = y - 200 + 'px';
+        // bubble.style.left = x + 100 + 'px';
+        //
+        // gsap.to(".thought", {opacity: 1, duration: 1, delay: 0})
+        // colourInterval = setInterval(function () {
+        //     bubble.style.setProperty('--background-col', getCurrColor());
+        // }, 50);
 
     }
 
-    function hideColourPreview(){
-        gsap.to(".burst", {opacity: 0, duration:  1, delay: 0})
+    function hideColourPreview() {
+        // gsap.to(".thought", {opacity: 0, duration: 1, delay: 0})
     }
 
     // function hideColourPreview() {
@@ -383,50 +390,30 @@ function App() {
         }, 100)
     }
 
-    function showFeedback(x, y) {
-        let circleSvg = document.getElementById('svg')
-
-        if(firstMove){
-
-            circleSvg.style.transition = 'top 0s, left 0s'
-            circleSvg.style.top = y - 150 + 'px'
-            circleSvg.style.left = x + 80 + 'px'
-            // gsap.to("#svg", {top: y - 120 + 'px', left: x + 50 + 'px', duration:  0})
-            firstMove = false;
-        }
-        // let canvas = document.getElementById('top-canvas')
-        // let context = canvas.getContext("2d");
-        // gsap.to("#top-canvas", {opacity: 1, duration:  1, delay: 0})
-        // if (Math.abs(prevCursorX-x)>6 || Math.abs(prevCursorY-y)>6){
-        circleSvg = document.getElementById('svg')
-        circleSvg.style.transition = 'top 2s, left 2s'
-        gsap.to("#svg", {opacity: 1, duration:  1, delay: 0,})
-            circleSvg.style.top = y - 150 + 'px'
-            circleSvg.style.left = x + 80 + 'px'
+    function moveFeedback(prevX, prevY, x, y) {
+        // if (Math.abs(prevX - x) > 15 || Math.abs(prevY - y) > 15) {
+        //     const circleSvg = document.getElementsByClassName('thought')[0];
+        //     circleSvg.style.transition = 'top 6s, left 6s'
+        //     gsap.to(".thought", {opacity: 1, duration: 1, delay: 0,})
+        //     circleSvg.style.top = y - 150 + 'px'
+        //     circleSvg.style.left = x + 80 + 'px'
         // }
-
-        // colourInterval = setTimeout(function () {
-        //     context.clearRect(0, 0, canvas.width, canvas.height);
-        //     context.beginPath();
-        //     context.arc(x + 80,y - 80, 50, 0, 2 * Math.PI, false);
-        //
-        //     context.closePath()
-        //     context.fillStyle = getCurrColor();
-        //     context.fill();
-        //     context.lineWidth = 5;
-        //     context.strokeStyle = 'black';
-        //     context.stroke();
-
-        // }, 1);
     }
-    let firstMove = false;
+
+    function showFeedback(x, y) {
+        // const circleSvg = document.getElementsByClassName('thought')[0];
+        // circleSvg.style.transition = '0s'
+        // circleSvg.style.top = y - 150 + 'px'
+        // circleSvg.style.left = x + 80 + 'px'
+        // gsap.to(".thought", {opacity: 1, duration: 1, delay: 0,})
+    }
+
     function hideFeedback() {
-        // let canvas = document.getElementById('top-canvas')
-        // let context = canvas.getContext("2d");
-        // context.clearRect(0, 0, canvas.width, canvas.height);
-        // gsap.to("#top-canvas", {opacity: 1, duration:  1, delay: 0})
-        gsap.to("#svg", {opacity: 0, duration:  1, delay: 0})
-        firstMove = true;
+        // const circleSvg = document.getElementsByClassName('thought')[0];
+        //
+        // colourInterval = setInterval(function () {
+        //     circleSvg.style.setProperty('--background-col', getCurrColor());
+        // }, 50);
     }
 
     function generateAlert() {
@@ -442,15 +429,33 @@ function App() {
     }
 
     function sendAlert() {
-        let prevFeedback = document.getElementById("feedbackBar").innerHTML;
+        let prevFeedback = document.getElementsByClassName('thought')[0].innerHTML;
         let returnFeedback = generateAlert()
         if (prevFeedback === returnFeedback) {
-            document.getElementById("feedbackBar").innerHTML = ''
-        } else if (returnFeedback !== '' && document.getElementById("feedbackBar").style.opacity === '0') {
-            document.getElementById("feedbackBar").innerHTML = returnFeedback
-            gsap.to("#feedbackBar", {opacity: 1, duration: 2, delay: 0})
-            gsap.to("#feedbackBar", {opacity: 0, duration: 2, delay: 2})
+            document.getElementsByClassName('thought')[0].innerHTML = ''
+        } else if (returnFeedback !== '') {
+            document.getElementsByClassName('thought')[0].innerHTML = returnFeedback
+            // gsap.to("#feedbackBar", {opacity: 1, duration: 2, delay: 0})
+            // gsap.to("#feedbackBar", {opacity: 0, duration: 2, delay: 2})
         }
+    }
+
+    function isSwiped(startX, endX){
+        if (startX < endX && startX < 20){
+            showControlPanel()
+        }
+    }
+
+    function hideControlPanel(){
+        const controlPanelBackground = document.getElementById("controlPanelBackground");
+        controlPanelBackground.style.display = 'none'
+        gsap.to("#controlPanel", {left: -window.innerWidth + 'px', duration:  1, delay: 0})
+    }
+
+    function showControlPanel(){
+        const controlPanelBackground = document.getElementById("controlPanelBackground");
+        controlPanelBackground.style.display = ''
+        gsap.to("#controlPanel", {left: 0 + 'px', duration:  1, delay: 0})
     }
 
     return (
@@ -459,12 +464,26 @@ function App() {
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
             </Helmet>
-            <div id="feedbackBar"></div>
-            <div className="thought"></div>
-            {/*<div className="thought" style={{transform: 'scale(1.7)', zIndex: -3}}></div>*/}
-            <div class="burst" style={{zIndex: 2}}></div>
-            <div className="burst" style={{background: "black", transform: 'scale(1.15)'}}></div>
+            <div id="controlPanel"  style = {{ //left: -window.innerWidth + 'px'}}>
+            }}>
+                <div style = {{ padding: '30px', fontSize: '1.5em'}}>Control Panel</div>
+                {/*<FormGroup>*/}
+                {/*    <FormControlLabel control={<Switch defaultChecked />} label="Label" />*/}
+                {/*    <FormControlLabel disabled control={<Switch />} label="Disabled" />*/}
+                {/*</FormGroup>*/}
+                {/*<div style = {{ padding: '5px 8px 10px 35px', fontSize: '1.2em', textAlign: 'left'}}>Line Width*/}
+                {/*<div style = {{ padding: '5px 8px 10px 35px', fontSize: '1.2em', textAlign: 'left'}}>Auto Page Scroll</div>*/}
+                {/*<div style = {{ padding: '5px 8px 10px 35px', fontSize: '1.2em', textAlign: 'left'}}>Auto Complete Tile</div>*/}
+                {/*<div style = {{ padding: '5px 8px 10px 35px', fontSize: '1.2em', textAlign: 'left'}}>Music</div>*/}
+                {/*<div style = {{ padding: '5px 8px 10px 35px', fontSize: '1.2em', textAlign: 'left'}}>Show Feedback</div>*/}
+                {/*<div style = {{ padding: '5px 8px 10px 35px', fontSize: '1.2em', textAlign: 'left'}}>Show Colour Preview</div>*/}
 
+            </div>
+            <div id="controlPanelBackground" onClick = {hideControlPanel}></div>
+
+            <div id="feedbackBar"></div>
+            <div className="thought" style={{transform: 'scale(.7)',}}> </div>
+            <div class="burst" style={{zIndex: 2}}></div>
             <div id="svg"></div>
             <Music/>
             <div className="wrapper">
@@ -472,15 +491,14 @@ function App() {
                 <canvas id="invis-canvas" style={{display: 'none'}}
                 ></canvas>
                 <canvas id="tiling-canvas" style={{display: ''}}
-                ></canvas>
-                <canvas id="top-canvas" style={{opacity: 0}}
                         onMouseDown={onMouseDown}
                         onMouseUp={onMouseUp}
                         onMouseMove={onMouseMove}
                         onTouchStart={onTouchStart}
                         onTouchEnd={onTouchEnd}
                         onTouchCancel={onTouchEnd}
-                        onTouchMove={onTouchMove}></canvas>
+                        onTouchMove={onTouchMove}
+                ></canvas>
             </div>
         </div>
     );

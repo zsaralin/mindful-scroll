@@ -1,7 +1,7 @@
 import {getTile} from "../Tiling/TilingArr";
 import {getCurrColor} from "../Stroke/StrokeColor";
 import {LINE_WIDTH} from "../Constants";
-import {pushCompleteTile} from "../Tile/CompleteTile";
+import {pushCompleteTile, redrawTiles} from "../Tile/CompleteTile";
 
 let activeTileArr = []; // semi coloured tiles (gradient)
 const ORIG_RADIUS = LINE_WIDTH;
