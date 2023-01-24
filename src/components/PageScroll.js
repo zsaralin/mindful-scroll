@@ -8,6 +8,7 @@ import {redrawGlow} from "./Tile/Shape";
 let offsetY = 0; //distance from origin
 let autoScroll = false;
 const FIFTH_WINDOW = window.innerHeight * 4 / 5;
+let autoScrollOn = true;
 
 export let limitScroll;
 
@@ -26,7 +27,7 @@ export function doScroll(currY, prevY) {
 }
 
 export function startAutoScroll(cursorY) {
-    if (!autoScroll && cursorY > FIFTH_WINDOW) {
+    if (!autoScroll && cursorY > FIFTH_WINDOW && autoScrollOn) {
         autoScroll = true;
         let timesRun = 0;
         autoScroll = setInterval(function () {
@@ -49,7 +50,7 @@ export function getOffsetY() {
     return offsetY
 }
 
-function redrawCanvas() {
+export function redrawCanvas() {
     const canvas = document.getElementById("canvas");
     const invisCanvas = document.getElementById("invis-canvas")
     const tilingCanvas = document.getElementById("tiling-canvas")
@@ -68,6 +69,8 @@ function redrawCanvas() {
     redrawTiles()
     redrawTilings();
     redrawGlow();
+}
 
-
+export function triggerScroll(){
+    autoScrollOn = !autoScrollOn
 }

@@ -1,23 +1,29 @@
 import './App.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
-import Music, {changeAudio, reduceAudio} from './components/Audio.js'
-import {drawStroke, isFirstStroke} from './components/Stroke/Stroke'
+import Music, {changeAudio, reduceAudio, triggerAudio} from './components/Audio.js'
+import {drawStroke} from './components/Stroke/Stroke'
 import {drawShrinkingStroke} from './components/Stroke/ShrinkingStroke'
 import {stopColorChange, colorDelay, getCurrColor} from './components/Stroke/StrokeColor'
 import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
 import {addToTilingArr, getTile, redrawTilings} from "./components/Tiling/TilingArr";
-import {doScroll, getOffsetY, startAutoScroll} from "./components/PageScroll";
+import {doScroll, getOffsetY, startAutoScroll, triggerScroll} from "./components/PageScroll";
 import {watercolor} from "./components/Effects/Watercolor";
-import {reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
+import {changeLineWidth, reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
 import {getFillRatio} from "./components/Effects/FillRatio";
 import {FILL_RATIO, SHAPE_COLOR} from "./components/Constants";
-import {completeTile} from "./components/Tile/CompleteTile";
+import {completeTile, triggerCompleteTile} from "./components/Tile/CompleteTile";
 import {gsap} from "gsap";
 import {shapeGlow} from "./components/Tile/Shape";
-// import FormGroup from '@mui/material/FormGroup';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import Switch from '@mui/material/Switch';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import {Stack, styled} from "@mui/material";
+import {SwitchProps} from "@mui/material/Switch";
+import SliderGrey from "./components/ControlPanel/SliderGrey";
+import ControlPanel, {hideControlPanel, showControlPanel} from "./components/ControlPanel/ControlPanel";
+import SwitchGrey, {IOSSwitch} from "./components/ControlPanel/SwitchGrey";
+
 
 function App() {
     const canvas = useRef();
@@ -32,7 +38,8 @@ function App() {
     let mouseSpeed = [];
     let touchSpeed = [];
 
-    let startX; let endX;
+    let startX;
+    let endX;
 
     // coordinates of our cursor
     let cursorX;
@@ -59,7 +66,7 @@ function App() {
 
         // set the canvas to the size of the window
         canvas.width = invisCanvas.width = tilingCanvas.width = window.innerWidth;
-        canvas.height = invisCanvas.height = tilingCanvas.height =  window.innerHeight;
+        canvas.height = invisCanvas.height = tilingCanvas.height = window.innerHeight;
         ctx = document.getElementById('invis-canvas').getContext("2d");
 
         redrawTilings();
@@ -72,7 +79,6 @@ function App() {
             rightMouseDown = false;
             const prevScaledX = prevCursorX;
             const prevScaledY = toTrueY(prevCursorY);
-
             stopColorChange()
             hideColourPreview()
             showFeedback(cursorX, cursorY)
@@ -91,8 +97,7 @@ function App() {
                         shapeGlow(currTile)
                     }
                 }
-            }
-            else{
+            } else {
                 startX = cursorX;
             }
         }
@@ -214,8 +219,7 @@ function App() {
                         shapeGlow(currTile)
                     }
                 }
-            }
-            else startX = touch0X
+            } else startX = touch0X
 
             stopColorChange()
         }
@@ -298,11 +302,11 @@ function App() {
         doubleTouch = false;
         onStrokeEnd()
 
-        showControlPanel(startX, prevTouches[0]?.pageX)
+        isSwiped(startX, prevTouches[0]?.pageX)
     }
 
     function onStrokeEnd() {
-        resetLineWidth()
+        // resetLineWidth()
         reduceAudio()
         colorDelay()
         clearTimeout(expandTimer)
@@ -440,22 +444,11 @@ function App() {
         }
     }
 
-    function isSwiped(startX, endX){
-        if (startX < endX && startX < 20){
+    function isSwiped(startX, endX) {
+        console.log(startX)
+        if (startX < endX && startX < 50) {
             showControlPanel()
         }
-    }
-
-    function hideControlPanel(){
-        const controlPanelBackground = document.getElementById("controlPanelBackground");
-        controlPanelBackground.style.display = 'none'
-        gsap.to("#controlPanel", {left: -window.innerWidth + 'px', duration:  1, delay: 0})
-    }
-
-    function showControlPanel(){
-        const controlPanelBackground = document.getElementById("controlPanelBackground");
-        controlPanelBackground.style.display = ''
-        gsap.to("#controlPanel", {left: 0 + 'px', duration:  1, delay: 0})
     }
 
     return (
@@ -464,26 +457,10 @@ function App() {
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
             </Helmet>
-            <div id="controlPanel"  style = {{ //left: -window.innerWidth + 'px'}}>
-            }}>
-                <div style = {{ padding: '30px', fontSize: '1.5em'}}>Control Panel</div>
-                {/*<FormGroup>*/}
-                {/*    <FormControlLabel control={<Switch defaultChecked />} label="Label" />*/}
-                {/*    <FormControlLabel disabled control={<Switch />} label="Disabled" />*/}
-                {/*</FormGroup>*/}
-                {/*<div style = {{ padding: '5px 8px 10px 35px', fontSize: '1.2em', textAlign: 'left'}}>Line Width*/}
-                {/*<div style = {{ padding: '5px 8px 10px 35px', fontSize: '1.2em', textAlign: 'left'}}>Auto Page Scroll</div>*/}
-                {/*<div style = {{ padding: '5px 8px 10px 35px', fontSize: '1.2em', textAlign: 'left'}}>Auto Complete Tile</div>*/}
-                {/*<div style = {{ padding: '5px 8px 10px 35px', fontSize: '1.2em', textAlign: 'left'}}>Music</div>*/}
-                {/*<div style = {{ padding: '5px 8px 10px 35px', fontSize: '1.2em', textAlign: 'left'}}>Show Feedback</div>*/}
-                {/*<div style = {{ padding: '5px 8px 10px 35px', fontSize: '1.2em', textAlign: 'left'}}>Show Colour Preview</div>*/}
-
-            </div>
-            <div id="controlPanelBackground" onClick = {hideControlPanel}></div>
-
+            <ControlPanel/>
             <div id="feedbackBar"></div>
-            <div className="thought" style={{transform: 'scale(.7)',}}> </div>
-            <div class="burst" style={{zIndex: 2}}></div>
+            <div className="thought" style={{transform: 'scale(.7)',}}></div>
+            <div className="burst" style={{zIndex: 2}}></div>
             <div id="svg"></div>
             <Music/>
             <div className="wrapper">

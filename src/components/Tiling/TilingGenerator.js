@@ -2,6 +2,8 @@ import {mul, EdgeShape, tilingTypes, IsohedralTiling}
     from '../../lib';
 import {LINE_WIDTH} from "../Constants";
 import {getCurrColor} from "../Stroke/StrokeColor";
+import {getTile} from "./TilingArr";
+import {getLineWidth} from "../Stroke/StrokeWidth";
 
 function generateRandomNum() {
     var num = Math.floor(81 * Math.random());
@@ -64,7 +66,7 @@ export function drawTiling(pathDict) {
     var invisCan = document.getElementById('invis-canvas');
     var ctx = invisCan.getContext('2d');
 
-    tilingCtx.lineWidth = ctx.lineWidth = LINE_WIDTH;
+    tilingCtx.lineWidth = ctx.lineWidth = getLineWidth();
     tilingCtx.lineJoin = tilingCtx.lineCap = ctx.lineJoin = ctx.lineCap = "round";
     tilingCtx.strokeStyle = ctx.strokeStyle = '#000';
 

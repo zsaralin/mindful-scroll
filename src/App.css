@@ -22,8 +22,8 @@
     text-align: center;
     z-index: 2;
     filter: drop-shadow(15px 0px 10px grey);
-    /*opacity : 0;*/
     color: black;
+    left: -45%
 }
 
 #controlPanelBackground{
@@ -33,6 +33,12 @@
     z-index: 1;
     top: -2px;
     opacity : 0;
+}
+
+#controlPanelRow{
+    display: flex;
+    padding-bottom: 15px;
+    justify-content: space-between;
 }
 
 #svg {
