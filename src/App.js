@@ -98,7 +98,7 @@ function App() {
                     }
                 }
             } else {
-                startX = cursorX;
+                startX = prevCursorX;
             }
         }
 
@@ -184,7 +184,8 @@ function App() {
         onStrokeEnd()
         hideFeedback()
 
-        isSwiped(startX, cursorX)
+        isSwiped(startX, prevCursorX)
+        startX = undefined
     }
 
     // touch functions
@@ -445,7 +446,7 @@ function App() {
     }
 
     function isSwiped(startX, endX) {
-        console.log(startX)
+        console.log(startX, endX)
         if (startX < endX && startX < 50) {
             showControlPanel()
         }

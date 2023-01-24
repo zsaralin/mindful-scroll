@@ -6,16 +6,18 @@ import {triggerScroll} from "../PageScroll";
 import {triggerCompleteTile} from "../Tile/CompleteTile";
 import SliderGrey from "./SliderGrey";
 import {changeLineWidth} from "../Stroke/StrokeWidth";
+import {LINE_WIDTH} from "../Constants";
+import {changeColourSpeed, triggerRandomColour} from "../Stroke/StrokeColor";
 
 export function hideControlPanel() {
     const controlPanelBackground = document.getElementById("controlPanelBackground");
-    controlPanelBackground.style.display = 'none'
+    controlPanelBackground.style.visibility  = 'hidden'
     gsap.to("#controlPanel", {left: -window.innerWidth + 'px', duration: 1, delay: 0})
 }
 
 export function showControlPanel() {
     const controlPanelBackground = document.getElementById("controlPanelBackground");
-    controlPanelBackground.style.display = ''
+    controlPanelBackground.style.visibility  = 'visible'
     gsap.to("#controlPanel", {left: '0px', duration: 1, delay: 0})
 }
 
@@ -30,8 +32,9 @@ export default function ControlPanel() {
                     <SwitchGrey name="Show Colour Preview" fn={triggerAudio}/>
                     <SwitchGrey name="Auto Page Scroll" fn={triggerScroll}/>
                     <SwitchGrey name="Auto Complete Tile" fn={triggerCompleteTile}/>
-                    <SliderGrey name="Line Width" fn={changeLineWidth}/>
-                    <SliderGrey name="Colour Change" fn={changeLineWidth}/>
+                    <SwitchGrey name="Random Colour Change" fn={triggerRandomColour}/>
+                    <SliderGrey name="Line Width" fn={changeLineWidth} default = {LINE_WIDTH} min = {5} max = {40}/>
+                    <SliderGrey name="Colour Change" fn={changeColourSpeed} default = {300} min = {100} max = {1000}/>
 
                 </FormGroup>
             </div>

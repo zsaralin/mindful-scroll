@@ -3,6 +3,8 @@ let shortPause;
 let longPause;
 
 let color = getStrokeColor()
+let speed = 300;
+let randomColour = true;
 
 export function getStrokeColor() {
     return 'hsl(' + Math.ceil(360 * Math.random()) + ',' + Math.floor((100 - 20 + 1) * Math.random() + 20) + '%,' + Math.floor((90 - 20 + 1) * Math.random() + 20) + '%)'
@@ -28,11 +30,11 @@ export function colorDelay() {
         }
         color = 'hsl(' + hue + ',' + hsvArr[1] + '%,' + hsvArr[2] + '%)'
         numIntervals++
-        if (numIntervals === 20){ // 6 seconds (6000)
+        if (numIntervals === 20 && randomColour){ // 6 seconds (6000)
             color = getStrokeColor();
             numIntervals = 0
         }
-    }, 300);
+    }, speed);
 }
 
 // triggered onMouseDown / onTouchStart
@@ -42,4 +44,16 @@ export function stopColorChange() {
 
 export function getCurrColor() {
     return color
+}
+
+export function changeColourSpeed(event: Event, newValue: number){
+    speed = newValue;
+    clearInterval(shortPause)
+    colorDelay()
+}
+
+export function triggerRandomColour(){
+    randomColour = !randomColour;
+    clearInterval(shortPause)
+    colorDelay()
 }

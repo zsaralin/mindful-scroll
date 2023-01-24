@@ -19,8 +19,8 @@ export default function SliderGrey(props) {
             <FormControlLabel style={{width:'50%', paddingRight: '10px'}} control={
             <ThemeProvider theme={theme}>
                 <Slider onChange={props.fn}
-                        defaultValue={LINE_WIDTH} max={35} min={5}
-                        color="primary" aria-label="Default" valueLabelDisplay="auto"/>
+                        defaultValue={props.default} max={props.max} min={props.min}
+                        color="primary" aria-label="Default"/>
             </ThemeProvider>}/></div>
 
 
