@@ -1,6 +1,7 @@
 import {useState} from "react";
 
 let audio = new Audio('https://audio.jukehost.co.uk/M8pzlNF3rdamYbcdo7cLg9b41gfwqC1b');
+let audioOn = true;
 
 export function getAbsArray(arr) {
     for (let i = 0; i < arr.length; i++) {
@@ -54,3 +55,29 @@ export function reduceAudio() {
     }, 200);
 }
 
+let volChange;
+
+function startVolume(){
+    volChange = setInterval(function () {
+        audio.volume += .1
+        if(audio.volume >= .2){
+            clearInterval(volChange)
+            return
+        }
+    }, 500);
+}
+function stopVolume(){
+    volChange = setInterval(function () {
+        audio.volume -= .1
+        if(audio.volume <=0){
+            clearInterval(volChange)
+            return
+        }
+    }, 500);
+}
+
+export function triggerAudio(){
+    clearInterval(volChange)
+    audioOn ? stopVolume(): startVolume()
+    audioOn = !audioOn
+}

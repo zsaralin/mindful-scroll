@@ -1,4 +1,6 @@
 import {LINE_WIDTH} from "../Constants";
+import {redrawTilings} from "../Tiling/TilingArr";
+import {redrawCanvas} from "../PageScroll";
 let strokeWidth = LINE_WIDTH
 
 export function setLineWidth() {
@@ -15,3 +17,8 @@ export function reduceLineWidth() {
 export function getLineWidth(){
     return strokeWidth;
 }
+
+export const changeLineWidth = (event: Event, newValue: number) => {
+    strokeWidth = newValue
+    redrawCanvas();
+};
