@@ -70,6 +70,7 @@ function App() {
         ctx = document.getElementById('invis-canvas').getContext("2d");
 
         redrawTilings();
+        hideControlPanel()
     }, []);
 
     function onMouseDown(event) {
