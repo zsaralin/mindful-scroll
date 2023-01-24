@@ -39,6 +39,7 @@
     display: flex;
     padding-bottom: 15px;
     justify-content: space-between;
+    width: 100%;
 }
 
 #svg {
