@@ -16,7 +16,7 @@ const theme = createTheme({
 export default function SliderGrey(props) {
     return (
         <div id="controlPanelRow">{props.name}
-            <FormControlLabel style={{width:'220px'}} control={
+            <FormControlLabel style={{width:'50%', paddingRight: '10px'}} control={
             <ThemeProvider theme={theme}>
                 <Slider onChange={props.fn}
                         defaultValue={LINE_WIDTH} max={35} min={5}

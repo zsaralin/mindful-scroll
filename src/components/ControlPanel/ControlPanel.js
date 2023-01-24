@@ -31,6 +31,8 @@ export default function ControlPanel() {
                     <SwitchGrey name="Auto Page Scroll" fn={triggerScroll}/>
                     <SwitchGrey name="Auto Complete Tile" fn={triggerCompleteTile}/>
                     <SliderGrey name="Line Width" fn={changeLineWidth}/>
+                    <SliderGrey name="Colour Change" fn={changeLineWidth}/>
+
                 </FormGroup>
             </div>
             <div id="controlPanelBackground" onClick={hideControlPanel}></div>

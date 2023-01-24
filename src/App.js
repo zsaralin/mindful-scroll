@@ -346,14 +346,14 @@ function App() {
 
     function showColourPreview(x, y) {
 
-        // const bubble = document.getElementsByClassName('thought')[0];
-        // bubble.style.top = y - 200 + 'px';
-        // bubble.style.left = x + 100 + 'px';
-        //
-        // gsap.to(".thought", {opacity: 1, duration: 1, delay: 0})
-        // colourInterval = setInterval(function () {
-        //     bubble.style.setProperty('--background-col', getCurrColor());
-        // }, 50);
+        const bubble = document.getElementsByClassName('thought')[0];
+        bubble.style.top = y - 200 + 'px';
+        bubble.style.left = x + 100 + 'px';
+
+        gsap.to(".thought", {opacity: 1, duration: 1, delay: 0})
+        colourInterval = setInterval(function () {
+            bubble.style.setProperty('--background-col', getCurrColor());
+        }, 50);
 
     }
 
