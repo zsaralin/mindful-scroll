@@ -23,6 +23,8 @@ import {SwitchProps} from "@mui/material/Switch";
 import SliderGrey from "./components/ControlPanel/SliderGrey";
 import ControlPanel, {hideControlPanel, showControlPanel} from "./components/ControlPanel/ControlPanel";
 import SwitchGrey, {IOSSwitch} from "./components/ControlPanel/SwitchGrey";
+import {findDir} from "./components/Effects/Pattern";
+import Bubble from "./Bubble";
 
 
 function App() {
@@ -38,8 +40,8 @@ function App() {
     let mouseSpeed = [];
     let touchSpeed = [];
 
-    let startX;
-    let endX;
+    let startX; let startY;
+    let endX; let endY;
 
     // coordinates of our cursor
     let cursorX;
@@ -100,6 +102,7 @@ function App() {
                 }
             } else {
                 startX = prevCursorX;
+                startY = prevCursorY;
             }
         }
 
@@ -186,7 +189,8 @@ function App() {
         hideFeedback()
 
         isSwiped(startX, prevCursorX)
-        startX = undefined
+        findDir(startX, startY, prevCursorX, prevCursorY)
+        startX = undefined; startY = undefined;
     }
 
     // touch functions
@@ -221,7 +225,10 @@ function App() {
                         shapeGlow(currTile)
                     }
                 }
-            } else startX = touch0X
+            } else {
+                startX = touch0X;
+                startY = touch0Y;
+            }
 
             stopColorChange()
         }
@@ -313,7 +320,7 @@ function App() {
         colorDelay()
         clearTimeout(expandTimer)
         clearInterval(reduceOpac)
-        sendAlert()
+        // sendAlert()
         insidePoly = [0, 0]
         tooFast = false;
     }
@@ -348,14 +355,14 @@ function App() {
 
     function showColourPreview(x, y) {
 
-        const bubble = document.getElementsByClassName('thought')[0];
-        bubble.style.top = y - 200 + 'px';
-        bubble.style.left = x + 100 + 'px';
-
-        gsap.to(".thought", {opacity: 1, duration: 1, delay: 0})
-        colourInterval = setInterval(function () {
-            bubble.style.setProperty('--background-col', getCurrColor());
-        }, 50);
+        // const bubble = document.getElementsByClassName('thought')[0];
+        // bubble.style.top = y - 200 + 'px';
+        // bubble.style.left = x + 100 + 'px';
+        //
+        // gsap.to(".thought", {opacity: 1, duration: 1, delay: 0})
+        // colourInterval = setInterval(function () {
+        //     bubble.style.setProperty('--background-col', getCurrColor());
+        // }, 50);
 
     }
 
@@ -461,8 +468,9 @@ function App() {
             </Helmet>
             <ControlPanel/>
             <div id="feedbackBar"></div>
-            <div className="thought" style={{transform: 'scale(.7)',}}></div>
-            <div className="burst" style={{zIndex: 2}}></div>
+            {/*<div className="thought" style={{transform: 'scale(.7)',}}></div>*/}
+            {/*<div className="cloud"></div>*/}
+{/*`            <Bubble/>*/}
             <div id="svg"></div>
             <Music/>
             <div className="wrapper">
