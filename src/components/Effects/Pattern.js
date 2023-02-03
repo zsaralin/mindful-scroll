@@ -32,5 +32,5 @@ export function findDir(startX, startY, endX, endY){
 
 function findSlope(startX, startY, endX, endY){
     let slope = (endX-startX)/(endY-startY)
-    console.log('slope :' + slope)
+    // console.log('slope :' + slope)
 }

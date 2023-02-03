@@ -11,7 +11,7 @@ export function getAbsArray(arr) {
 }
 
 export default function Music() {
-    const [intro, setIntro] = useState(true);
+    const [intro, setIntro] = useState(true); // do not remove useState
 
     function playMusic() {
         let playPromise = audio.play()
@@ -30,8 +30,8 @@ export default function Music() {
     return (
         <div className="introPage"
              onClick={playMusic}
-             style={{visibility: intro ? 'visible' : 'hidden'}}
-        > {intro ? "Click Anywhere to Start!" : ""} </div>
+             style={{visibility: intro ? 'visible' : 'hidden', }}
+        > {intro ? "click anywhere to start" : ""} </div>
     );
 };
 

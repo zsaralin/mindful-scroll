@@ -52,23 +52,26 @@ export function getOffsetY() {
 
 export function redrawCanvas() {
     const canvas = document.getElementById("canvas");
+    const fillCanvas = document.getElementById("fill-canvas")
     const invisCanvas = document.getElementById("invis-canvas")
     const tilingCanvas = document.getElementById("tiling-canvas")
 
     // set the canvas to the size of the window
-    canvas.width = invisCanvas.width = tilingCanvas.width = window.innerWidth;
-    canvas.height = invisCanvas.height = tilingCanvas.height = window.innerHeight;
-
+    // canvas.width = invisCanvas.width = tilingCanvas.width = fillCanvas.width = window.innerWidth;
+    // canvas.height = invisCanvas.height = tilingCanvas.height = fillCanvas.width = window.innerHeight;
+    //
+    // invisCanvas.getContext("2d").translate(0, -offsetY)
+    // tilingCanvas.getContext("2d").translate(0, -offsetY)
     // canvas.getContext("2d").translate(0, -offsetY)
-    invisCanvas.getContext("2d").translate(0, -offsetY)
-    tilingCanvas.getContext("2d").translate(0, -offsetY)
-    canvas.getContext("2d").translate(0, -offsetY)
-
-    redrawStrokes();
-    redrawActiveTiles();
-    redrawTiles()
-    redrawTilings();
-    redrawGlow();
+    // fillCanvas.getContext("2d").translate(0, -offsetY)
+    canvas.style.transform = `translate(0,-${offsetY}px)`;
+    fillCanvas.style.transform = `translate(0,-${offsetY}px)`;
+    tilingCanvas.style.transform = `translate(0,-${offsetY}px)`;
+    invisCanvas.style.transform = `translate(0,-${offsetY}px)`;
+    // redrawStrokes();
+    // redrawActiveTiles();
+    // redrawTilings();
+    // redrawGlow();
 }
 
 export function triggerScroll(){

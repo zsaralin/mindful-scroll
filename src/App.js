@@ -1,9 +1,10 @@
 import './App.css';
+import './components/Bubble/Bubble.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import Music, {changeAudio, reduceAudio, triggerAudio} from './components/Audio.js'
 import {drawStroke} from './components/Stroke/Stroke'
-import {drawShrinkingStroke} from './components/Stroke/ShrinkingStroke'
+import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/ShrinkingStroke'
 import {stopColorChange, colorDelay, getCurrColor} from './components/Stroke/StrokeColor'
 import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
 import {addToTilingArr, getTile, redrawTilings} from "./components/Tiling/TilingArr";
@@ -11,7 +12,7 @@ import {doScroll, getOffsetY, startAutoScroll, triggerScroll} from "./components
 import {watercolor} from "./components/Effects/Watercolor";
 import {changeLineWidth, reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
 import {getFillRatio} from "./components/Effects/FillRatio";
-import {FILL_RATIO, SHAPE_COLOR} from "./components/Constants";
+import {BUBBLE_DIST, FILL_RATIO, SHAPE_COLOR} from "./components/Constants";
 import {completeTile, triggerCompleteTile} from "./components/Tile/CompleteTile";
 import {gsap} from "gsap";
 import {shapeGlow} from "./components/Tile/Shape";
@@ -21,10 +22,16 @@ import Switch from '@mui/material/Switch';
 import {Stack, styled} from "@mui/material";
 import {SwitchProps} from "@mui/material/Switch";
 import SliderGrey from "./components/ControlPanel/SliderGrey";
-import ControlPanel, {hideControlPanel, showControlPanel} from "./components/ControlPanel/ControlPanel";
+import ControlPanel, {hideControlPanel, isPanelOn, showControlPanel} from "./components/ControlPanel/ControlPanel";
 import SwitchGrey, {IOSSwitch} from "./components/ControlPanel/SwitchGrey";
 import {findDir} from "./components/Effects/Pattern";
-import Bubble from "./Bubble";
+import Bubble, {
+    hideColourPreview, resetColourPreview,
+    showColourPreview,
+    toCloud,
+    toSpeech
+} from "./components/Bubble/Bubble";
+import Snap from 'snapsvg-cjs'
 
 
 function App() {
@@ -32,6 +39,7 @@ function App() {
     let ctx;
     let invisCol; // color of tile on invisible buffer canvas
     let currTile;
+    let prevTile;
 
     // mouse functions
     let leftMouseDown = false;
@@ -40,8 +48,10 @@ function App() {
     let mouseSpeed = [];
     let touchSpeed = [];
 
-    let startX; let startY;
-    let endX; let endY;
+    let startX;
+    let startY;
+    let endX;
+    let endY;
 
     // coordinates of our cursor
     let cursorX;
@@ -53,7 +63,6 @@ function App() {
 
     let insidePoly = [0, 0] // number of points inside and outside polygon
     let tooFast = false;
-
     let expandTimer;
 
     function toTrueY(y) {
@@ -65,15 +74,20 @@ function App() {
         const canvas = document.getElementById("canvas");
         const invisCanvas = document.getElementById("invis-canvas")
         const tilingCanvas = document.getElementById("tiling-canvas")
+        const fillCanvas = document.getElementById("fill-canvas")
+
 
         // set the canvas to the size of the window
-        canvas.width = invisCanvas.width = tilingCanvas.width = window.innerWidth;
-        canvas.height = invisCanvas.height = tilingCanvas.height = window.innerHeight;
+        canvas.width = invisCanvas.width = tilingCanvas.width = fillCanvas.width = window.innerWidth;
+        canvas.height = invisCanvas.height = tilingCanvas.height  = fillCanvas.height = window.innerHeight;
         ctx = document.getElementById('invis-canvas').getContext("2d");
 
         redrawTilings();
         hideControlPanel()
+
     }, []);
+
+    let hidePreviewInterval;
 
     function onMouseDown(event) {
         // detect left clicks
@@ -83,18 +97,21 @@ function App() {
             const prevScaledX = prevCursorX;
             const prevScaledY = toTrueY(prevCursorY);
             stopColorChange()
-            hideColourPreview()
-            showFeedback(cursorX, cursorY)
+
+            hidePreviewInterval = setTimeout(hideColourPreview, 1000)
+
+            // showFeedback(cursorX, cursorY)
             clearTimeout(expandTimer)
 
-            invisCol = ctx.getImageData(cursorX, cursorY, 1, 1).data.toString()
+            invisCol = ctx.getImageData(prevCursorX, prevCursorY, 1, 1).data.toString()
             currTile = getTile(prevCursorY, invisCol)
+            console.log('is it trueeee ? ' +  currTile)
             if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevCursorY)) {
                 pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
 
                 expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
-                if (getFillRatio(currTile) > FILL_RATIO) {
+                if (!currTile.filled && getFillRatio(currTile) > FILL_RATIO) {
                     completeTile(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
@@ -142,18 +159,19 @@ function App() {
         if (leftMouseDown) {
             insidePoly[0] += 1;
 
-            moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
+            // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
 
             if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevCursorY) && ctx.isPointInPath(currTile.path, cursorX, cursorY)) {
                 mouseSpeed = [event.movementX, event.movementY] // speed of stroke
-                if (getFillRatio(currTile) > FILL_RATIO) {
+                hideColourPreview()
+                if (!currTile.filled && getFillRatio(currTile) > FILL_RATIO) {
                     completeTile(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
                     }
                 }
 
-                if ((Math.abs(mouseSpeed[0]) > 10 || Math.abs(mouseSpeed[1]) > 10)) {
+                if ((Math.abs(mouseSpeed[0]) > 10 || Math.abs(mouseSpeed[1]) > 10) && isShrinkStroke()) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
                     drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY);
                     reduceLineWidth()
@@ -177,20 +195,26 @@ function App() {
 
     }
 
-    let colourInterval;
 
     function onMouseUp() {
-        if (rightMouseDown == false) {
-            showColourPreview(cursorX, cursorY);
+        isSwiped(startX, prevCursorX)
+
+        if (rightMouseDown == false) { // do not move colour preview when triggering control panel
+            if (!isPanelOn()) {
+                showColourPreview(cursorX, cursorY, prevTile !== currTile);
+                onStrokeEnd()
+            } else resetColourPreview()
         }
         leftMouseDown = false;
         rightMouseDown = false;
-        onStrokeEnd()
-        hideFeedback()
+        // onStrokeEnd()
+        // hideFeedback()
 
-        isSwiped(startX, prevCursorX)
+        // isSwiped(startX, prevCursorX)
         findDir(startX, startY, prevCursorX, prevCursorY)
-        startX = undefined; startY = undefined;
+        startX = undefined;
+        startY = undefined;
+
     }
 
     // touch functions
@@ -213,7 +237,7 @@ function App() {
             currTile = getTile(touch0Y, invisCol)
 
             hideColourPreview()
-            showFeedback(touch0X, touch0Y)
+            // showFeedback(touch0X, touch0Y)
 
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
@@ -278,7 +302,7 @@ function App() {
                         shapeGlow(currTile)
                     }
                 }
-                if ((Math.abs(touchSpeed[0]) > 10 || Math.abs(touchSpeed[1]) > 10)) {
+                if ((Math.abs(touchSpeed[0]) > 10 || Math.abs(touchSpeed[1]) > 10) && isShrinkStroke()) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
                     drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY);
                     reduceLineWidth()
@@ -304,9 +328,9 @@ function App() {
 
     function onTouchEnd(event) {
         if (!doubleTouch) {
-            showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY)
+            showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY, prevTile !== currTile)
         }
-        hideFeedback()
+        // hideFeedback()
         singleTouch = false;
         doubleTouch = false;
         onStrokeEnd()
@@ -315,74 +339,17 @@ function App() {
     }
 
     function onStrokeEnd() {
-        // resetLineWidth()
+        resetLineWidth()
         reduceAudio()
         colorDelay()
         clearTimeout(expandTimer)
         clearInterval(reduceOpac)
-        // sendAlert()
+        sendAlert()
         insidePoly = [0, 0]
         tooFast = false;
+        prevTile = currTile;
+        clearTimeout(hidePreviewInterval)
     }
-
-    // function showColourPreview(x, y) {
-    //     let canvas = document.getElementById('top-canvas')
-    //     let context = canvas.getContext("2d");
-    //     context.clearRect(0, 0, canvas.width, canvas.height);
-    //     gsap.to("#top-canvas", {opacity: 1, duration:  1, delay: 0})
-    //
-    //     colourInterval = setInterval(function () {
-    //         context.beginPath();
-    //         // context.arc(x + 80, y - 80, 50, 0, 2 * Math.PI, false);
-    //         context.moveTo(x + 50, y - 50);
-    //         context.bezierCurveTo(x - 40/2 + 50, y + 20/1.5-50, x - 30/2+ 50, y + 50/1.5-50, x + 20/2+ 50, y + 50/1.5-50);
-    //         context.bezierCurveTo(x + 40/2+ 50, y + 90/1.5-50, x + 90/2+ 50, y + 90/1.5-50, x + 90/2+ 50, y + 65/1.5-50);
-    //         context.bezierCurveTo(x + 95/2+ 50, y + 100/1.5-50, x + 180/2+ 50, y + 100/1.5-50, x + 180/2+ 50, y + 60/1.5-50);
-    //         context.bezierCurveTo(x + 250/2+ 50, y + 70/1.5-50, x + 190/2+ 50, y + 10/1.5-50, x + 200/2+ 50, y + 20/1.5-50);
-    //         context.bezierCurveTo(x + 260/2+ 50, y - 40/1.5-50, x + 150/2+ 50, y - 30/1.5-50, x + 170/2+ 50, y - 30/1.5-50);
-    //         context.bezierCurveTo(x + 150/2+ 50, y - 75/1.5-50, x + 80/2+ 50, y - 70/1.5-50, x + 80/2+ 50, y - 40/1.5-50);
-    //         context.bezierCurveTo(x + 30/2+ 50, y - 75/1.5-50, x - 20/2+ 50, y - 30/1.5-50, x + 50, y - 50);
-    //
-    //         context.closePath()
-    //         context.fillStyle = getCurrColor();
-    //         context.fill();
-    //         context.lineWidth = 5;
-    //         context.strokeStyle = 'black';
-    //         context.stroke();
-    //
-    //     }, 50);
-    // }
-
-    function showColourPreview(x, y) {
-
-        // const bubble = document.getElementsByClassName('thought')[0];
-        // bubble.style.top = y - 200 + 'px';
-        // bubble.style.left = x + 100 + 'px';
-        //
-        // gsap.to(".thought", {opacity: 1, duration: 1, delay: 0})
-        // colourInterval = setInterval(function () {
-        //     bubble.style.setProperty('--background-col', getCurrColor());
-        // }, 50);
-
-    }
-
-    function hideColourPreview() {
-        // gsap.to(".thought", {opacity: 0, duration: 1, delay: 0})
-    }
-
-    // function hideColourPreview() {
-    //     clearInterval(colourInterval);
-    //     let canvas = document.getElementById('top-canvas')
-    //     let context = canvas.getContext("2d");
-    //     // if(colourPreview === true){
-    //     // context.clearRect(0, 0, canvas.width, canvas.height);
-    //     setTimeout(function() {
-    //         // context.clearRect(0, 0, canvas.width, canvas.height);
-    //         }, 500);
-    //     // context.clearRect(0, 0, canvas.width, canvas.height);
-    //
-    //     gsap.to("#top-canvas", {opacity: 0, duration: .5, delay: 0})
-    // }
 
     let reduceOpac;
 
@@ -404,57 +371,52 @@ function App() {
     }
 
     function moveFeedback(prevX, prevY, x, y) {
-        // if (Math.abs(prevX - x) > 15 || Math.abs(prevY - y) > 15) {
-        //     const circleSvg = document.getElementsByClassName('thought')[0];
-        //     circleSvg.style.transition = 'top 6s, left 6s'
-        //     gsap.to(".thought", {opacity: 1, duration: 1, delay: 0,})
-        //     circleSvg.style.top = y - 150 + 'px'
-        //     circleSvg.style.left = x + 80 + 'px'
-        // }
+        if (Math.abs(prevX - x) > 15 || Math.abs(prevY - y) > 15) {
+            // bubble.style.transition = 'top 6s, left 6s'
+            gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0,})
+            // bubbleHelper(x,y)
+        }
     }
 
     function showFeedback(x, y) {
-        // const circleSvg = document.getElementsByClassName('thought')[0];
-        // circleSvg.style.transition = '0s'
-        // circleSvg.style.top = y - 150 + 'px'
-        // circleSvg.style.left = x + 80 + 'px'
+        // circle?.animate({ d: cloudPoints }, 1500, mina.easeout);
+        // bubble.style.transition = 'top 10s, left 10s'
+        // bubbleHelper(x,y)
         // gsap.to(".thought", {opacity: 1, duration: 1, delay: 0,})
     }
 
-    function hideFeedback() {
-        // const circleSvg = document.getElementsByClassName('thought')[0];
-        //
-        // colourInterval = setInterval(function () {
-        //     circleSvg.style.setProperty('--background-col', getCurrColor());
-        // }, 50);
-    }
+    let slowArr = ['slow', 'soften', 'release', 'calm', 'rest', 'ease', 'soothe', 'relax']
+    let goodArr = ['good', 'feel', 'grow', 'unwind', 'embrace', 'observe', 'reflect', ]
+    let focusArr = ['focus', 'notice', 'recognize', "concentrate", "center"]
+
+    let word = ''
 
     function generateAlert() {
         let ratio = insidePoly[1] / insidePoly[0]
         if (tooFast) {
-            return 'Slow down'
+            word = slowArr[Math.floor(Math.random() * slowArr.length)]
+            toSpeech(word)
         } else if (ratio >= 1) {
-            return 'Focus on drawing inside the lines'
+            toSpeech(focusArr[Math.floor(Math.random() * focusArr.length)])
         } else if (ratio < 0.5 && insidePoly[0] !== 0) {
-            return 'Keep it up!'
+            toCloud(goodArr[Math.floor(Math.random() * goodArr.length)])
         }
-        return ''
     }
 
     function sendAlert() {
-        let prevFeedback = document.getElementsByClassName('thought')[0].innerHTML;
-        let returnFeedback = generateAlert()
-        if (prevFeedback === returnFeedback) {
-            document.getElementsByClassName('thought')[0].innerHTML = ''
-        } else if (returnFeedback !== '') {
-            document.getElementsByClassName('thought')[0].innerHTML = returnFeedback
-            // gsap.to("#feedbackBar", {opacity: 1, duration: 2, delay: 0})
-            // gsap.to("#feedbackBar", {opacity: 0, duration: 2, delay: 2})
-        }
+        if (!isPanelOn()) generateAlert()
+        // let prevFeedback = document.getElementById('alert').innerHTML;
+        // let returnFeedback = generateAlert()
+        // document.getElementById('alert').innerHTML = returnFeedback
+
+        // if (prevFeedback === returnFeedback) {
+        //     document.getElementById('alert').innerHTML = ''
+        // } else if (returnFeedback !== '') {
+        //     document.getElementById('alert').innerHTML = returnFeedback
+        // }
     }
 
     function isSwiped(startX, endX) {
-        console.log(startX, endX)
         if (startX < endX && startX < 50) {
             showControlPanel()
         }
@@ -468,12 +430,10 @@ function App() {
             </Helmet>
             <ControlPanel/>
             <div id="feedbackBar"></div>
-            {/*<div className="thought" style={{transform: 'scale(.7)',}}></div>*/}
-            {/*<div className="cloud"></div>*/}
-{/*`            <Bubble/>*/}
-            <div id="svg"></div>
+            <div id="thought" style={{transform: 'scale(.7)',}}></div>
             <Music/>
             <div className="wrapper">
+                <canvas id="fill-canvas"></canvas>
                 <canvas ref={canvas} id="canvas"></canvas>
                 <canvas id="invis-canvas" style={{display: 'none'}}
                 ></canvas>
@@ -487,6 +447,7 @@ function App() {
                         onTouchMove={onTouchMove}
                 ></canvas>
             </div>
+            <Bubble/>
         </div>
     );
 }

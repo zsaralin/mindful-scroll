@@ -15,11 +15,14 @@
     "delaunay-fast": "^1.0.1",
     "gsap": "^3.11.0",
     "mathjs": "^10.6.4",
+    "mina": "^1.0.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-scripts": "5.0.1",
     "react-switch": "^7.0.0",
+    "snapsvg": "^0.5.1",
+    "snapsvg-cjs": "^0.0.6",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
