@@ -1,5 +1,6 @@
 import {getOffsetY} from "../PageScroll";
 import {getCurrColor} from "../Stroke/StrokeColor";
+import {getLineWidth} from "../Stroke/StrokeWidth";
 
 let BB_PADDING = 30; // bounding box padding
 
@@ -18,10 +19,14 @@ export function getFillRatio(currTile) {
             if (ctx.isPointInPath(currTile.path, x, y - getOffsetY())){
                 fillRatio[1]++;
                 // if pixel color matches curr color of stroke
-                if (isColorMatch(ctx.getImageData(x, y - getOffsetY(), 1, 1).data, hslToRgb(getCurrColor()))) {
-                    fillRatio[0]++
+                // if (isColorMatch(ctx.getImageData(x, y - getOffsetY(), 1, 1).data, hslToRgb(getCurrColor()))) {
+                //     fillRatio[0]++
+                // }
+                if (ctx.getImageData(x, y - getOffsetY(), 1, 1).data.toString() !== '0,0,0,0'){
+                        fillRatio[0]++
                 }
             }
+
         }
     }
     return fillRatio[0] / fillRatio[1]

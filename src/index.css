@@ -1,8 +1,6 @@
 body {
   overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Montserrat', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-touch-callout: none; /* Safari */
@@ -34,5 +32,10 @@ code {
   padding-top: 20%;
   background-color: white;
   z-index: 5;
+  font-size: 25px;
+  animation: move 6s ease infinite;
 }
 
+@keyframes move{
+  50% { transform: translateY(-30px); }
+}

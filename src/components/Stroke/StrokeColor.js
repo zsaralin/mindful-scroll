@@ -39,7 +39,7 @@ export function colorDelay() {
 
 // triggered onMouseDown / onTouchStart
 export function stopColorChange() {
-    clearInterval(shortPause)
+    clearInterval(shortPause);
 }
 
 export function getCurrColor() {

@@ -1,6 +1,8 @@
 import {getLineWidth} from "./StrokeWidth";
 import {getCurrColor} from "./StrokeColor";
 
+let shrinkStroke = true;
+
 export function drawShrinkingStroke(x0, y0, x1, y1, theLineWidth, theColor) {
     let context = document.getElementById('canvas').getContext("2d");
     let line = createShrinkingStroke(x0, y0, x1, y1, theLineWidth ? theLineWidth : getLineWidth())
@@ -21,4 +23,12 @@ function createShrinkingStroke(x1, y1, x2, y2, theLineWidth) {
     path.arc(x2, y2, endWidth / 2, perpendicularVectorAngle + Math.PI, perpendicularVectorAngle);
     path.closePath();
     return path;
+}
+
+export function triggerShrinkStroke(){
+    shrinkStroke = !shrinkStroke
+}
+
+export function isShrinkStroke(){
+    return shrinkStroke;
 }

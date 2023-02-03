@@ -83,6 +83,7 @@ export function getTilingIndex(y) {
 
 
 export function getTile(y1, invisCol) {
+    console.log(invisCol)
     if (invisCol) {
         let currTiling = getCurrentPathDict(getTilingIndex(y1 + getOffsetY()))
         return currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']

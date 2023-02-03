@@ -1,0 +1,23 @@
+:root {
+    --col: white;
+}
+
+svg {
+    position: absolute;
+    width: 73px;
+    height: 73px;
+    top: 30px; left: 30px;
+    /*background-color :blue; */
+    transition: opacity .5s linear, x 0s ease, y 0s ease;
+    filter: drop-shadow(0px 0px 10px black);
+}
+
+svg polyline,
+svg line,
+svg path {
+    fill: var(--col);
+    stroke: grey;
+    stroke-width: 2;
+    transition: 1s;
+}
+

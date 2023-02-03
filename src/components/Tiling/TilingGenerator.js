@@ -4,6 +4,7 @@ import {LINE_WIDTH} from "../Constants";
 import {getCurrColor} from "../Stroke/StrokeColor";
 import {getTile} from "./TilingArr";
 import {getLineWidth} from "../Stroke/StrokeWidth";
+import {getTileWidth} from "./TileWidth";
 
 function generateRandomNum() {
     var num = Math.floor(81 * Math.random());
@@ -66,8 +67,9 @@ export function drawTiling(pathDict) {
     var invisCan = document.getElementById('invis-canvas');
     var ctx = invisCan.getContext('2d');
 
-    tilingCtx.lineWidth = ctx.lineWidth = getLineWidth();
-    tilingCtx.lineJoin = tilingCtx.lineCap = ctx.lineJoin = ctx.lineCap = "round";
+    tilingCtx.lineWidth = getTileWidth();
+    ctx.lineWidth = tilingCtx.lineWidth/2
+        tilingCtx.lineJoin = tilingCtx.lineCap = ctx.lineJoin = ctx.lineCap = "round";
     tilingCtx.strokeStyle = ctx.strokeStyle = '#000';
 
     for (let p in pathDict) {
