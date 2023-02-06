@@ -4,13 +4,14 @@ import {getOffsetY} from "../PageScroll";
 import {getLineWidth} from "./StrokeWidth";
 import {getCurrColor} from "./StrokeColor";
 
+let context;
+
 export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
-    let context = document.getElementById('canvas').getContext("2d");
+    context = document.getElementById('canvas').getContext("2d", { alpha: false });
     drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context)
 
 }
 export function drawStrokeUnder(x0, y0, x1, y1, theLineWidth, theColor) {
-    let context = document.getElementById('fill-canvas').getContext("2d");
     drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context)
 }
 

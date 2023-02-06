@@ -79,8 +79,11 @@ function App() {
 
         // set the canvas to the size of the window
         canvas.width = invisCanvas.width = tilingCanvas.width = fillCanvas.width = window.innerWidth;
-        canvas.height = invisCanvas.height = tilingCanvas.height  = fillCanvas.height = window.innerHeight;
-        ctx = document.getElementById('invis-canvas').getContext("2d");
+        canvas.height = invisCanvas.height = tilingCanvas.height  = fillCanvas.height = window.innerHeight*3;
+
+        console.log('inner height ' + window.innerHeight*2)
+
+        ctx = document.getElementById('invis-canvas').getContext("2d", { alpha: false });
 
         redrawTilings();
         hideControlPanel()
@@ -103,10 +106,11 @@ function App() {
             // showFeedback(cursorX, cursorY)
             clearTimeout(expandTimer)
 
-            invisCol = ctx.getImageData(prevCursorX, prevCursorY, 1, 1).data.toString()
+            invisCol = ctx.getImageData(prevCursorX, prevScaledY, 1, 1).data.toString()
+
             currTile = getTile(prevCursorY, invisCol)
             console.log('is it trueeee ? ' +  currTile)
-            if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevCursorY)) {
+            if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevScaledY)) {
                 pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
 
@@ -161,7 +165,7 @@ function App() {
 
             // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
 
-            if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevCursorY) && ctx.isPointInPath(currTile.path, cursorX, cursorY)) {
+            if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevScaledY) && ctx.isPointInPath(currTile.path, cursorX, scaledY)) {
                 mouseSpeed = [event.movementX, event.movementY] // speed of stroke
                 hideColourPreview()
                 if (!currTile.filled && getFillRatio(currTile) > FILL_RATIO) {

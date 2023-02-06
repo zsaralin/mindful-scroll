@@ -63,7 +63,8 @@ function drawRandomShape(yMin, yMax, pathDict) {
     }
     pathDict[SHAPE_COLOR] = {
         path: shapePath,
-        tile: dimension
+        tile: dimension,
+        filled : false,
     };
 }
 
