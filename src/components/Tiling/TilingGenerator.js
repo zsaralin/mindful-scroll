@@ -68,8 +68,9 @@ export function drawTiling(pathDict) {
     var ctx = invisCan.getContext('2d');
 
     tilingCtx.lineWidth = getTileWidth();
-    ctx.lineWidth = tilingCtx.lineWidth/2
-        tilingCtx.lineJoin = tilingCtx.lineCap = ctx.lineJoin = ctx.lineCap = "round";
+    ctx.lineWidth = tilingCtx.lineWidth/2;
+
+    tilingCtx.lineJoin = tilingCtx.lineCap = ctx.lineJoin = ctx.lineCap = "round";
     tilingCtx.strokeStyle = ctx.strokeStyle = '#000';
 
     for (let p in pathDict) {

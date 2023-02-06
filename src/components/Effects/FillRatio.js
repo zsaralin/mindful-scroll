@@ -16,13 +16,13 @@ export function getFillRatio(currTile) {
 
     for (let x = startX; x < endX; x = x + 10) {
         for (let y = startY; y < endY; y = y + 10) {
-            if (ctx.isPointInPath(currTile.path, x, y - getOffsetY())){
+            if (ctx.isPointInPath(currTile.path, x, y)){
                 fillRatio[1]++;
                 // if pixel color matches curr color of stroke
                 // if (isColorMatch(ctx.getImageData(x, y - getOffsetY(), 1, 1).data, hslToRgb(getCurrColor()))) {
                 //     fillRatio[0]++
                 // }
-                if (ctx.getImageData(x, y - getOffsetY(), 1, 1).data.toString() !== '0,0,0,0'){
+                if (ctx.getImageData(x, y , 1, 1).data.toString() !== '0,0,0,0'){
                         fillRatio[0]++
                 }
             }

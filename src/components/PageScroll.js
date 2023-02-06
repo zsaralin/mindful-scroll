@@ -56,22 +56,34 @@ export function redrawCanvas() {
     const invisCanvas = document.getElementById("invis-canvas")
     const tilingCanvas = document.getElementById("tiling-canvas")
 
+    console.log('offset ' + offsetY)
+    if (offsetY > window.innerHeight*2){
+        canvas.height = invisCanvas.height = tilingCanvas.height = fillCanvas.height = window.innerHeight;
+    }
+    canvas.getContext("2d").clearRect(0,0,window.innerWidth, window.innerHeight);
+    invisCanvas.getContext("2d").clearRect(0,0,window.innerWidth, window.innerHeight);
+    tilingCanvas.getContext("2d").clearRect(0,0,window.innerWidth, window.innerHeight);
+    fillCanvas.getContext("2d").clearRect(0,0,window.innerWidth, window.innerHeight);
+
     // set the canvas to the size of the window
     // canvas.width = invisCanvas.width = tilingCanvas.width = fillCanvas.width = window.innerWidth;
-    // canvas.height = invisCanvas.height = tilingCanvas.height = fillCanvas.width = window.innerHeight;
+    // canvas.height = invisCanvas.height = tilingCanvas.height = fillCanvas.height = window.innerHeight;
     //
     // invisCanvas.getContext("2d").translate(0, -offsetY)
     // tilingCanvas.getContext("2d").translate(0, -offsetY)
     // canvas.getContext("2d").translate(0, -offsetY)
     // fillCanvas.getContext("2d").translate(0, -offsetY)
-    canvas.style.transform = `translate(0,-${offsetY}px)`;
-    fillCanvas.style.transform = `translate(0,-${offsetY}px)`;
-    tilingCanvas.style.transform = `translate(0,-${offsetY}px)`;
-    invisCanvas.style.transform = `translate(0,-${offsetY}px)`;
-    // redrawStrokes();
-    // redrawActiveTiles();
-    // redrawTilings();
-    // redrawGlow();
+
+    // canvas.style.transform = `translate(0,-${offsetY}px)`;
+    // fillCanvas.style.transform = `translate(0,-${offsetY}px)`;
+    // tilingCanvas.style.transform = `translate(0,-${offsetY}px)`;
+    // invisCanvas.style.transform = `translate(0,-${offsetY}px)`;
+
+
+    redrawStrokes();
+    redrawActiveTiles();
+    redrawTilings();
+    redrawGlow();
 }
 
 export function triggerScroll(){

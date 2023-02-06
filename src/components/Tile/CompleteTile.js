@@ -25,9 +25,9 @@ function fillCompleteTile(tile) {
     let ctx = document.getElementById('canvas').getContext('2d');
     let tileDim = tile.tile
     let startX = tileDim[0];
-    let startY = tileDim[2] - getOffsetY();
+    let startY = tileDim[2] ;
     let endX = tileDim[1];
-    let endY = tileDim[3] - getOffsetY();
+    let endY = tileDim[3] ;
     let fillColor = getCurrColor()
     let lineWidth = getLineWidth()
     for (let x = startX; x < endX; x = x + 2) {
