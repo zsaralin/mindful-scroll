@@ -10,12 +10,12 @@ document.oncontextmenu = function () {
 }
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-      <style>
-          @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');
-      </style>
+  // <React.StrictMode>
+  //     <style>
+  //         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');
+  //     </style>
     <App />
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

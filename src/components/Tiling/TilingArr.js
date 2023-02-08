@@ -10,6 +10,10 @@ let yMinArr = []
 let yMaxArr = []
 let pathArr = [] //array of path dict for each tiling
 
+export function getYMin() {
+    return yMinArr;
+}
+
 export function sumArray() {
     return yMaxArr.length > 0 ? yMaxArr[yMaxArr.length - 1] : 0
 }

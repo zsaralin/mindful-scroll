@@ -64,6 +64,11 @@ export function drawTiling(pathDict) {
     let tilingCtx = tilingCanvas.getContext('2d');
     tilingCtx.fillStyle = "rgba(255, 255, 255, 0)"; //white transparent canvas
 
+    let offCanvas = document.getElementById('off-canvas');
+
+    let offCtx = offCanvas.getContext('2d');
+    offCtx.fillStyle = "rgba(255, 255, 255, 0)"; //white transparent canvas
+
     var invisCan = document.getElementById('invis-canvas');
     var ctx = invisCan.getContext('2d');
 
@@ -73,10 +78,19 @@ export function drawTiling(pathDict) {
     tilingCtx.lineJoin = tilingCtx.lineCap = ctx.lineJoin = ctx.lineCap = "round";
     tilingCtx.strokeStyle = ctx.strokeStyle = '#000';
 
+    offCtx.lineJoin = offCtx.lineCap = "round"
+    offCtx.strokeStyle = '#000';
+    offCtx.lineWidth = tilingCtx.lineWidth
+
     for (let p in pathDict) {
-        tilingCtx.fill(pathDict[p].path)
-        tilingCtx.stroke(pathDict[p].path)
-        tilingCtx.closePath()
+        // tilingCtx.fill(pathDict[p].path)
+        // tilingCtx.stroke(pathDict[p].path)
+        // tilingCtx.closePath()
+
+        offCtx.fill(pathDict[p].path)
+        offCtx.stroke(pathDict[p].path)
+        offCtx.closePath()
+
         ctx.fillStyle = p
         ctx.fill(pathDict[p].path)
         ctx.stroke(pathDict[p].path)

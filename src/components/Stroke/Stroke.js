@@ -7,7 +7,7 @@ import {getCurrColor} from "./StrokeColor";
 let context;
 
 export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
-    context = document.getElementById('canvas').getContext("2d", { alpha: false });
+    context = document.getElementById('canvas').getContext("2d");
     drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context)
 
 }

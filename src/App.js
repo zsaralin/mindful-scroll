@@ -7,8 +7,15 @@ import {drawStroke} from './components/Stroke/Stroke'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/ShrinkingStroke'
 import {stopColorChange, colorDelay, getCurrColor} from './components/Stroke/StrokeColor'
 import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
-import {addToTilingArr, getTile, redrawTilings} from "./components/Tiling/TilingArr";
-import {doScroll, getOffsetY, startAutoScroll, triggerScroll} from "./components/PageScroll";
+import {addToTilingArr, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
+import {
+    doScroll,
+    getOffsetY,
+    redrawCanvas,
+    redrawCanvas2, setUpCanvas,
+    startAutoScroll,
+    triggerScroll
+} from "./components/PageScroll";
 import {watercolor} from "./components/Effects/Watercolor";
 import {changeLineWidth, reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
 import {getFillRatio} from "./components/Effects/FillRatio";
@@ -32,6 +39,7 @@ import Bubble, {
     toSpeech
 } from "./components/Bubble/Bubble";
 import Snap from 'snapsvg-cjs'
+import {drawTwoTiling, drawTwoTilings, getTile} from "./components/Tiling/Tiling2";
 
 
 function App() {
@@ -70,22 +78,22 @@ function App() {
     }
 
     useEffect(() => {
-        addToTilingArr()
+        // addToTilingArr()
         const canvas = document.getElementById("canvas");
         const invisCanvas = document.getElementById("invis-canvas")
         const tilingCanvas = document.getElementById("tiling-canvas")
         const fillCanvas = document.getElementById("fill-canvas")
-
+        const offCanvas = document.getElementById("off-canvas")
+        console.log('i fire once');
 
         // set the canvas to the size of the window
-        canvas.width = invisCanvas.width = tilingCanvas.width = fillCanvas.width = window.innerWidth;
-        canvas.height = invisCanvas.height = tilingCanvas.height  = fillCanvas.height = window.innerHeight*3;
+        canvas.width = invisCanvas.width = tilingCanvas.width = fillCanvas.width = offCanvas.width = window.innerWidth;
+        canvas.height = invisCanvas.height = tilingCanvas.height  = fillCanvas.height = offCanvas.height = window.innerHeight*9;
 
-        console.log('inner height ' + window.innerHeight*2)
+        ctx = document.getElementById('invis-canvas').getContext("2d");
 
-        ctx = document.getElementById('invis-canvas').getContext("2d", { alpha: false });
-
-        redrawTilings();
+        // redrawTilings();
+        setUpCanvas()
         hideControlPanel()
 
     }, []);
@@ -428,6 +436,9 @@ function App() {
 
     return (
         <div className="App">
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');
+            </style>
             <Helmet>
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
@@ -439,9 +450,11 @@ function App() {
             <div className="wrapper">
                 <canvas id="fill-canvas"></canvas>
                 <canvas ref={canvas} id="canvas"></canvas>
-                <canvas id="invis-canvas" style={{display: 'none'}}
+                <canvas id="invis-canvas" style={{display: 'none',}}
                 ></canvas>
-                <canvas id="tiling-canvas" style={{display: ''}}
+                <canvas id="off-canvas" style={{display: 'none', background: 'pink'}}
+                ></canvas>
+                <canvas id="tiling-canvas" style={{display: '', background: ''}}
                         onMouseDown={onMouseDown}
                         onMouseUp={onMouseUp}
                         onMouseMove={onMouseMove}
