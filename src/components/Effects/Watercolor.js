@@ -5,11 +5,16 @@ import {pushCompleteTile, redrawTiles} from "../Tile/CompleteTile";
 
 let activeTileArr = []; // semi coloured tiles (gradient)
 const ORIG_RADIUS = LINE_WIDTH;
+let initFill; let fillCol;
 
+export function stopWatercolor(){
+    clearInterval(initFill)
+    clearInterval(fillCol)
+}
 export function watercolor(x, y, r2, currTile) {
     let currColor = getCurrColor();
     currTile = currTile.path;
-    let initFill = setInterval(function () {
+    initFill = setInterval(function () {
         r2+=2
         fillActiveTile(x, y, currColor, r2, currTile)
         if (r2 > 50) {
@@ -17,7 +22,9 @@ export function watercolor(x, y, r2, currTile) {
         }
     }, 100)
 
-    let fillCol = setInterval(function () {
+    fillCol = setInterval(function () {
+        console.log('still going')
+
         r2+=5
         fillActiveTile(x, y, currColor, r2, currTile)
         activeTileArr[activeTileArr.length] = ({path: currTile, color: currColor, r2: r2, x: x, y: y})
