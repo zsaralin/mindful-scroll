@@ -47,7 +47,7 @@ export default function ControlPanel() {
                     <SwitchGrey name="Random Colour Change" fn={triggerRandomColour}/>
                     <SliderGrey name="Stroke Width" fn={changeLineWidth} default = {LINE_WIDTH} min = {5} max = {40}/>
                     <SliderGrey name="Tile Width" fn={changeTileWidth} default = {TILE_WIDTH} min = {5} max = {40}/>
-                    <SliderGrey name="Colour Change" fn={changeColourSpeed} default = {300} min = {100} max = {1000}/>
+                    <SliderGrey name="Colour Change" fn={changeColourSpeed} default = {-300} min = {-1000} max = {-100}/>
 
                 </FormGroup>
             </div>

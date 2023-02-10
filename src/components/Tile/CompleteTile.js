@@ -28,14 +28,14 @@ function fillCompleteTile(tile) {
     let startY = tileDim[2] ;
     let endX = tileDim[1];
     let endY = tileDim[3] ;
-    let fillColor = getCurrColor()
+    let fillColor = tile.firstCol;
     let lineWidth = getLineWidth()
-    for (let x = startX; x < endX; x = x + 2) {
-        for (let y = startY; y < endY; y = y + 2) {
+    for (let x = startX; x < endX; x = x + 1) {
+        for (let y = startY; y < endY; y = y + 1) {
             if (ctx.isPointInPath(tile.path, x, y)) {
                 if (ctx.getImageData(x, y, 1, 1).data.toString() == '0,0,0,0') {
-                    pushStrokeUnder(x, y , x, y, lineWidth, fillColor);
-                    drawStrokeUnder(x, y , x, y, lineWidth, fillColor);
+                    pushStrokeUnder(x, y , x, y, lineWidth , fillColor);
+                    drawStrokeUnder(x, y , x, y, lineWidth , fillColor);
                 } else {
                     fillColor = 'rgba(' + ctx.getImageData(x, y, 1, 1).data.toString() + ')'
                 }

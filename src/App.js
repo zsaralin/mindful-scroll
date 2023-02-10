@@ -58,8 +58,6 @@ function App() {
 
     let startX;
     let startY;
-    let endX;
-    let endY;
 
     // coordinates of our cursor
     let cursorX;
@@ -78,25 +76,21 @@ function App() {
     }
 
     useEffect(() => {
-        // addToTilingArr()
-        const canvas = document.getElementById("canvas");
-        const invisCanvas = document.getElementById("invis-canvas")
-        const tilingCanvas = document.getElementById("tiling-canvas")
-        const fillCanvas = document.getElementById("fill-canvas")
-        const offCanvas = document.getElementById("off-canvas")
-        console.log('i fire once');
+        const canvasIds = ['tiling-canvas','off-canvas', 'invis-canvas', 'canvas', 'fill-canvas'];
 
-        // set the canvas to the size of the window
-        canvas.width = invisCanvas.width = tilingCanvas.width = fillCanvas.width = offCanvas.width = window.innerWidth;
-        canvas.height = invisCanvas.height = tilingCanvas.height  = fillCanvas.height = offCanvas.height = window.innerHeight*9;
+        canvasIds.forEach(id => {
+            const canvas = document.getElementById(id);
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight *  9;
+        });
+        setUpCanvas()
 
         ctx = document.getElementById('invis-canvas').getContext("2d");
 
-        // redrawTilings();
-        setUpCanvas()
         hideControlPanel()
 
     }, []);
+
 
     let hidePreviewInterval;
 
@@ -109,7 +103,7 @@ function App() {
             const prevScaledY = toTrueY(prevCursorY);
             stopColorChange()
 
-            hidePreviewInterval = setTimeout(hideColourPreview, 1000)
+            if(isPanelOn()) hidePreviewInterval = setTimeout(hideColourPreview, 1000)
 
             // showFeedback(cursorX, cursorY)
             clearTimeout(expandTimer)
@@ -117,12 +111,11 @@ function App() {
             invisCol = ctx.getImageData(prevCursorX, prevScaledY, 1, 1).data.toString()
 
             currTile = getTile(prevCursorY, invisCol)
-            console.log('is it trueeee ? ' +  currTile)
             if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevScaledY)) {
                 pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
-
                 expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
+                if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
                 if (!currTile.filled && getFillRatio(currTile) > FILL_RATIO) {
                     completeTile(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
@@ -213,9 +206,11 @@ function App() {
 
         if (rightMouseDown == false) { // do not move colour preview when triggering control panel
             if (!isPanelOn()) {
+        //         console.log('h')
                 showColourPreview(cursorX, cursorY, prevTile !== currTile);
                 onStrokeEnd()
-            } else resetColourPreview()
+            }
+                //     /else resetColourPreview()
         }
         leftMouseDown = false;
         rightMouseDown = false;

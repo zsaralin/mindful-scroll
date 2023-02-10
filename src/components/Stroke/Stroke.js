@@ -12,12 +12,12 @@ export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
 
 }
 export function drawStrokeUnder(x0, y0, x1, y1, theLineWidth, theColor) {
+    context = document.getElementById('fill-canvas').getContext("2d");
     drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context)
 }
 
 function drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context) {
-    context.lineCap = 'round'
-    context.lineJoin = 'round'
+    context.lineCap = context.lineJoin = 'round'
     context.lineWidth = theLineWidth ? theLineWidth : getLineWidth();
     context.strokeStyle = theColor ? theColor : getCurrColor();
     context.beginPath();

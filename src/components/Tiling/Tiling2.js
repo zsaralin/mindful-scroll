@@ -66,7 +66,7 @@ function drawRandomShape(yMin, yMax, pathDict) {
 }
 
 function clearCanvas() {
-    const canvasIds = ['off-canvas', 'invis-canvas', 'canvas', 'fill-canvas'];
+    const canvasIds = ['off-canvas', 'tiling-canvas', 'invis-canvas', 'canvas', 'fill-canvas'];
 
     canvasIds.forEach(id => {
         const canvas = document.getElementById(id);
@@ -80,6 +80,17 @@ export function drawTwoTilings() {
     addTwoTilings()
     clearCanvas()
     pathArr.forEach(path => drawTiling(path));
+}
+
+export function refreshTilings(){
+    const canvasIds = ['off-canvas', 'tiling-canvas', 'invis-canvas', 'canvas', 'fill-canvas'];
+
+    canvasIds.forEach(id => {
+        const canvas = document.getElementById(id);
+        canvas.getContext("2d").clearRect(0, 0, window.innerWidth, window.innerHeight * 5);
+    });
+    pathArr.forEach(path => drawTiling(path));
+
 }
 
 

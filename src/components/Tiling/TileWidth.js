@@ -1,6 +1,7 @@
 import {TILE_WIDTH} from "../Constants";
-import {redrawCanvas} from "../PageScroll";
+import {redrawCanvas, refreshPage} from "../PageScroll";
 import {changeLineWidth} from "../Stroke/StrokeWidth";
+import {redrawTilings} from "./Tiling2";
 
 let tileWidth = TILE_WIDTH
 
@@ -10,5 +11,5 @@ export function getTileWidth(){
 
 export const changeTileWidth = (event: Event, newValue: number) => {
     tileWidth = newValue
-    redrawCanvas();
-};
+    // redrawCanvas();
+refreshPage()};
