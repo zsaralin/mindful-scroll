@@ -1,18 +1,5 @@
-import {
-    addToTilingArr,
-    getYMax,
-    getYMin,
-    redrawTilings,
-    sumArray,
-    sumArrayPrev,
-    tilingArrLength
-} from "./Tiling/TilingArr";
-import {redrawStrokes} from "./Stroke/StrokeArr";
-import {redrawActiveTiles} from "./Effects/Watercolor";
-import {LINE_WIDTH} from "./Constants";
-import {redrawTiles} from "./Tile/CompleteTile";
-import {redrawGlow} from "./Tile/Shape";
-import {addTwoTilings, drawTwoTilings, topSecondTiling} from "./Tiling/Tiling2";
+
+import {drawTwoTilings, refreshTilings, topSecondTiling} from "./Tiling/Tiling2";
 
 let offsetY = 0; //distance from origin
 let autoScroll = false;
@@ -21,6 +8,10 @@ let autoScrollOn = true;
 
 export let limitScroll = 0;
 
+export function refreshPage(){
+    refreshTilings()
+    copyToOnScreen(createOffscreenCanvas())
+}
 export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
     if (offsetY - (currY - prevY) >= limitScroll) {
@@ -92,11 +83,9 @@ export function redrawCanvas() {
     // console.log('offset ' + offsetY)
     if (offsetY > topSecondTiling()) {
         drawTwoTilings()
-        console.log('h')
         tilingCanvas.getContext("2d").clearRect(0, 0, window.innerWidth, window.innerHeight * 5);
         copyToOnScreen(createOffscreenCanvas())
         offsetY = 0;
-
     }
     // canvas.getContext("2d").clearRect(0,0,window.innerWidth, window.innerHeight);
     // invisCanvas.getContext("2d").clearRect(0,0,window.innerWidth, window.innerHeight);

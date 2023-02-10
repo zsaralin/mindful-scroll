@@ -47,7 +47,7 @@ export function getCurrColor() {
 }
 
 export function changeColourSpeed(event: Event, newValue: number){
-    speed = newValue;
+    speed = -newValue;
     clearInterval(shortPause)
     colorDelay()
 }

@@ -14,8 +14,8 @@ export function getFillRatio(currTile) {
     let endX = tileDim[1] + BB_PADDING;
     let endY = tileDim[3] + BB_PADDING
 
-    for (let x = startX; x < endX; x = x + 10) {
-        for (let y = startY; y < endY; y = y + 10) {
+    for (let x = startX; x < endX; x = x + 25) {
+        for (let y = startY; y < endY; y = y + 25) {
             if (ctx.isPointInPath(currTile.path, x, y)){
                 fillRatio[1]++;
                 // if pixel color matches curr color of stroke
