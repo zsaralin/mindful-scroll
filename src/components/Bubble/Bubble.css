@@ -4,12 +4,13 @@
 
 svg {
     position: absolute;
-    width: 73px;
-    height: 73px;
+    width: 150px;
+    height: 109px;
     top: 30px; left: 30px;
     /*background-color :blue; */
     transition: opacity .5s linear, x 0s ease, y 0s ease;
     filter: drop-shadow(0px 0px 10px black);
+    pointer-events: none;
 }
 
 svg polyline,

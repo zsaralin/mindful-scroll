@@ -2,34 +2,42 @@ import {getOffsetY} from "../PageScroll";
 import {getCurrColor} from "../Stroke/StrokeColor";
 import {getLineWidth} from "../Stroke/StrokeWidth";
 
-let BB_PADDING = 30; // bounding box padding
+let BB_PADDING = 35; // bounding box padding
+let isActive = false;
 
 export function getFillRatio(currTile) {
-    let ctx = document.getElementById('canvas').getContext("2d");
-    let tileDim = currTile.tile
+    if (!isActive) {
+        isActive = true;
 
-    let fillRatio = [0, 0] // [filledPixels, totalPixels]
-    let startX = tileDim[0] - BB_PADDING;
-    let startY = tileDim[2] - BB_PADDING;
-    let endX = tileDim[1] + BB_PADDING;
-    let endY = tileDim[3] + BB_PADDING
+        let ctx = document.getElementById('canvas').getContext("2d");
+        let tileDim = currTile.tile
 
-    for (let x = startX; x < endX; x = x + 25) {
-        for (let y = startY; y < endY; y = y + 25) {
-            if (ctx.isPointInPath(currTile.path, x, y)){
-                fillRatio[1]++;
-                // if pixel color matches curr color of stroke
-                // if (isColorMatch(ctx.getImageData(x, y - getOffsetY(), 1, 1).data, hslToRgb(getCurrColor()))) {
-                //     fillRatio[0]++
-                // }
-                if (ctx.getImageData(x, y , 1, 1).data.toString() !== '0,0,0,0'){
+        let fillRatio = [0, 0] // [filledPixels, totalPixels]
+        let startX = tileDim[0] - BB_PADDING;
+        let startY = tileDim[2] - BB_PADDING;
+        let endX = tileDim[1] + BB_PADDING;
+        let endY = tileDim[3] + BB_PADDING;
+
+        for (let x = startX; x < endX; x += 25) {
+            for (let y = startY; y < endY; y += 25) {
+                if (ctx.isPointInPath(currTile.path, x, y)) {
+                    fillRatio[1]++;
+                    // if pixel color matches curr color of stroke
+                    // if (isColorMatch(ctx.getImageData(x, y - getOffsetY(), 1, 1).data, hslToRgb(getCurrColor()))) {
+                    //     fillRatio[0]++
+                    // }
+                    if (ctx.getImageData(x, y, 1, 1).data.toString() !== '0,0,0,0') {
                         fillRatio[0]++
+                    }
                 }
             }
-
         }
+
+        isActive = false;
+        return fillRatio[0] / fillRatio[1]
+    } else {
+        return [0, 0]
     }
-    return fillRatio[0] / fillRatio[1]
 }
 
 function isColorMatch(col0, col1) {

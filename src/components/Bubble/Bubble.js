@@ -79,8 +79,8 @@ export function resetColourPreview(){
 
 export function toSpeech(s){
     circle?.animate({d: speechPoints}, 1500, mina.linear);
-    bubble.style.width = 140 + 'px'
-    bubble.style.height = 98 + 'px'
+    // bubble.style.width = 140 + 'px'
+    // bubble.style.height = 98 + 'px'
     startWhite = setTimeout(function () {
         pauseColourPreview()
     }, 1000);
@@ -91,15 +91,15 @@ export function toSpeech(s){
     endInterval = setTimeout(function () {
         circle?.animate({d: circlePoints}, 1500, mina.linear);
         gsap.to("#speech-text", {opacity: 0, duration: .5, delay: 0})
-        gsap.to("#bubble", {width: 73+'px', height: 73+'px', duration: 1, delay: 1.5})
+        // gsap.to("#bubble", {width: 73+'px', height: 73+'px', duration: 1, delay: 1.5})
         startColourPreview()
     }, 4000);
 }
 
 export function toCloud(s) {
     circle?.animate({d: cloudPoints}, 1500, mina.linear);
-    bubble.style.width = 150 + 'px' //change dimensions of bounding box
-    bubble.style.height = 109 + 'px'
+    // bubble.style.width = 150 + 'px' //change dimensions of bounding box
+    // bubble.style.height = 109 + 'px'
     startWhite = setTimeout(function () {
         pauseColourPreview()
     }, 1500);
@@ -110,7 +110,7 @@ export function toCloud(s) {
     endInterval = setTimeout(function () {
         circle?.animate({d: circlePoints}, 1500, mina.linear);
         gsap.to("#cloud-text", {opacity: 0, duration: .5, delay: 0})
-        gsap.to("#bubble", {width: 73+'px', height: 73+'px', duration: 1, delay: 1.5})
+        // gsap.to("#bubble", {width: 73+'px', height: 73+'px', duration: 1, delay: 1.5})
         startColourPreview()
     }, 4000);
 }

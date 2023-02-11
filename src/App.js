@@ -20,7 +20,7 @@ import {watercolor} from "./components/Effects/Watercolor";
 import {changeLineWidth, reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
 import {getFillRatio} from "./components/Effects/FillRatio";
 import {BUBBLE_DIST, FILL_RATIO, SHAPE_COLOR} from "./components/Constants";
-import {completeTile, triggerCompleteTile} from "./components/Tile/CompleteTile";
+import {completeTile, fillEachPixel, triggerCompleteTile} from "./components/Tile/CompleteTile";
 import {gsap} from "gsap";
 import {shapeGlow} from "./components/Tile/Shape";
 import FormGroup from '@mui/material/FormGroup';
@@ -117,7 +117,7 @@ function App() {
                 expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
                 if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
                 if (!currTile.filled && getFillRatio(currTile) > FILL_RATIO) {
-                    completeTile(currTile, getCurrColor())
+                    fillEachPixel(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
                     }
@@ -169,8 +169,9 @@ function App() {
             if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevScaledY) && ctx.isPointInPath(currTile.path, cursorX, scaledY)) {
                 mouseSpeed = [event.movementX, event.movementY] // speed of stroke
                 hideColourPreview()
+                if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
                 if (!currTile.filled && getFillRatio(currTile) > FILL_RATIO) {
-                    completeTile(currTile, getCurrColor())
+                    fillEachPixel(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
                     }
@@ -240,18 +241,21 @@ function App() {
 
             const scaledX = touch0X;
             const scaledY = toTrueY(touch0Y);
+
             invisCol = ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString()
             currTile = getTile(touch0Y, invisCol)
+            if(isPanelOn()) hidePreviewInterval = setTimeout(hideColourPreview, 1000)
+            stopColorChange()
 
-            hideColourPreview()
             // showFeedback(touch0X, touch0Y)
 
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
-                if (getFillRatio(currTile) > FILL_RATIO) {
-                    completeTile(currTile, getCurrColor())
+                if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
+                if (!currTile.filled && getFillRatio(currTile) > FILL_RATIO) {
+                    fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
                     }
@@ -261,7 +265,6 @@ function App() {
                 startY = touch0Y;
             }
 
-            stopColorChange()
         }
 
         if (event.touches.length >= 2) {
@@ -303,8 +306,8 @@ function App() {
                 touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
                 moveFeedback(prevTouch0X, prevTouch0Y, touch0X, touch0Y)
 
-                if (getFillRatio(currTile) > FILL_RATIO) {
-                    completeTile(currTile, getCurrColor())
+                if (!currTile.filled && getFillRatio(currTile) > FILL_RATIO) {
+                    fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
                     }
@@ -457,9 +460,11 @@ function App() {
                         onTouchEnd={onTouchEnd}
                         onTouchCancel={onTouchEnd}
                         onTouchMove={onTouchMove}
-                ></canvas>
+                >
+                </canvas>
+                <Bubble/>
+
             </div>
-            <Bubble/>
         </div>
     );
 }
