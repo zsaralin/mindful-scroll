@@ -243,7 +243,7 @@ function App() {
             const scaledY = toTrueY(touch0Y);
 
             invisCol = ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString()
-            currTile = getTile(touch0Y, invisCol)
+            currTile = getTile(prevTouch0Y, invisCol)
             if(isPanelOn()) hidePreviewInterval = setTimeout(hideColourPreview, 1000)
             stopColorChange()
 
