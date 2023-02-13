@@ -236,7 +236,7 @@ function App() {
     const prevTouches = [null, null]; // up to 2 touches
     let singleTouch = false;
     let doubleTouch = false;
-
+    let timerId;
     function onTouchStart(event) {
         if (event.touches.length === 1) {
             singleTouch = true;
@@ -320,7 +320,8 @@ function App() {
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y) && ctx.isPointInPath(currTile.path, touch0X, touch0Y)) {
                 moveFeedback(prevTouch0X, prevTouch0Y, touch0X, touch0Y)
 
-                ratio = getFillRatio(currTile)
+                // ratio = getFillRatio(currTile)
+                callRatio(currTile)
                 if (!currTile.filled && ratio > getFillMin()) {
                     fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
@@ -356,6 +357,14 @@ function App() {
         prevTouches[1] = event.touches[1];
     }
 
+    function callRatio(currTile){
+        timerId = setTimeout(function run() {
+            ratio = getFillRatio(currTile)
+            timerId = setTimeout(run, 2 * 1000);
+        }, 2 * 1000);
+
+    }
+
     function onTouchEnd(event) {
         if (!doubleTouch) {
             showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY, prevTile !== currTile)
@@ -364,6 +373,8 @@ function App() {
         singleTouch = false;
         doubleTouch = false;
         onStrokeEnd()
+
+        clearTimeout(timerId)
 
 
         isSwiped(startX, prevTouches[0]?.pageX)
