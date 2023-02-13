@@ -69,7 +69,8 @@ function drawRandomShape(yMin, yMax, pathDict) {
         path: shapePath,
         tile: dimension,
         filled : false,
-        firstCol : 'white'
+        firstCol : 'white',
+        inPath : 0
     };
 }
 

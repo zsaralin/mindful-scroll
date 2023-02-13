@@ -76,12 +76,12 @@ function App() {
     }
 
     useEffect(() => {
-        const canvasIds = ['tiling-canvas','off-canvas', 'invis-canvas', 'canvas', 'fill-canvas'];
+        const canvasIds = ['tiling-canvas', 'off-canvas', 'invis-canvas', 'canvas', 'fill-canvas'];
 
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight *  9;
+            canvas.height = window.innerHeight * 9;
         });
         setUpCanvas()
 
@@ -104,7 +104,7 @@ function App() {
             const prevScaledY = toTrueY(prevCursorY);
             stopColorChange()
 
-            if(isPanelOn()) hidePreviewInterval = setTimeout(hideColourPreview, 1000)
+            if (isPanelOn()) hidePreviewInterval = setTimeout(hideColourPreview, 1000)
 
             // showFeedback(cursorX, cursorY)
             clearTimeout(expandTimer)
@@ -116,7 +116,7 @@ function App() {
                 pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
-                if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
+                if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
 
                 if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
                     fillEachPixel(currTile, getCurrColor())
@@ -162,6 +162,7 @@ function App() {
         }
         clearTimeout(expandTimer)
 
+        mouseSpeed = [event.movementX, event.movementY] // speed of stroke
 
         if (leftMouseDown) {
             insidePoly[0] += 1;
@@ -169,9 +170,9 @@ function App() {
             // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
 
             if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevScaledY) && ctx.isPointInPath(currTile.path, cursorX, scaledY)) {
-                mouseSpeed = [event.movementX, event.movementY] // speed of stroke
+                // mouseSpeed = [event.movementX, event.movementY] // speed of stroke
                 hideColourPreview()
-                if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
+                if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
                 if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
                     fillEachPixel(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
@@ -195,7 +196,11 @@ function App() {
                 insidePoly[1] += 1;
             }
         } else if (rightMouseDown) {
-            doScroll(cursorY, prevCursorY)
+            if (Math.abs(mouseSpeed[1]) < 10) doScroll(cursorY, prevCursorY)
+            else{
+                tooFast = true;
+                sendAlert()
+            }
         } else {
         }
         prevCursorX = cursorX;
@@ -209,11 +214,11 @@ function App() {
 
         if (rightMouseDown == false) { // do not move colour preview when triggering control panel
             if (!isPanelOn()) {
-        //         console.log('h')
+                //         console.log('h')
                 showColourPreview(cursorX, cursorY, prevTile !== currTile);
                 onStrokeEnd()
             }
-                //     /else resetColourPreview()
+            //     /else resetColourPreview()
         }
         leftMouseDown = false;
         rightMouseDown = false;
@@ -246,7 +251,7 @@ function App() {
 
             invisCol = ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString()
             currTile = getTile(prevTouch0Y, invisCol)
-            if(isPanelOn()) hidePreviewInterval = setTimeout(hideColourPreview, 1000)
+            if (isPanelOn()) hidePreviewInterval = setTimeout(hideColourPreview, 1000)
             stopColorChange()
 
             // showFeedback(touch0X, touch0Y)
@@ -255,7 +260,7 @@ function App() {
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
-                if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
+                if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
                 ratio = getFillRatio(currTile)
                 console.log(ratio)
                 if (!currTile.filled && ratio > getFillMin()) {
@@ -297,21 +302,27 @@ function App() {
         clearTimeout(expandTimer)
         hideColourPreview()
 
+        touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
+
         if (singleTouch) {
             insidePoly[0] += 1;
 
             // scroll when dragging on white space
             if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === '0,0,0,0') {
-                doubleTouch = true;
-                doScroll(touch0Y, prevTouch0Y)
+                if (Math.abs(touchSpeed[1]) < 10) {
+                    doubleTouch = true;
+                    doScroll(touch0Y, prevTouch0Y);
+                } else {
+                    tooFast = true;
+                    sendAlert()
+                }
             }
 
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y) && ctx.isPointInPath(currTile.path, touch0X, touch0Y)) {
-                touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
                 moveFeedback(prevTouch0X, prevTouch0Y, touch0X, touch0Y)
 
                 ratio = getFillRatio(currTile)
-                console.log(ratio)
+                console.log('RATIO GIRRRL ' + ratio)
                 if (!currTile.filled && ratio > getFillMin()) {
                     fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
@@ -336,7 +347,12 @@ function App() {
                 insidePoly[1] += 1;
             }
         } else if (doubleTouch) {
-            doScroll(touch0Y, prevTouch0Y)
+            if (Math.abs(touchSpeed[1]) < 10) {
+                doScroll(touch0Y, prevTouch0Y);
+            } else {
+                tooFast = true;
+                sendAlert()
+            }
         }
         prevTouches[0] = event.touches[0];
         prevTouches[1] = event.touches[1];
@@ -350,6 +366,7 @@ function App() {
         singleTouch = false;
         doubleTouch = false;
         onStrokeEnd()
+
 
         isSwiped(startX, prevTouches[0]?.pageX)
     }
@@ -365,6 +382,7 @@ function App() {
         tooFast = false;
         prevTile = currTile;
         clearTimeout(hidePreviewInterval)
+
     }
 
     let reduceOpac;
@@ -402,7 +420,7 @@ function App() {
     }
 
     let slowArr = ['slow', 'soften', 'release', 'calm', 'rest', 'ease', 'soothe', 'relax']
-    let goodArr = ['good', 'feel', 'grow', 'unwind', 'embrace', 'observe', 'reflect', ]
+    let goodArr = ['good', 'feel', 'grow', 'unwind', 'embrace', 'observe', 'reflect',]
     let focusArr = ['focus', 'notice', 'recognize', "concentrate", "center"]
 
     let word = ''
