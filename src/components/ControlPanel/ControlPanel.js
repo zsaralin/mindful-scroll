@@ -10,7 +10,7 @@ import {FILL_RATIO, LINE_WIDTH, TILE_WIDTH} from "../Constants";
 import {changeColourSpeed, colorDelay, stopColorChange, triggerRandomColour} from "../Stroke/StrokeColor";
 import {changeTileWidth} from "../Tiling/TileWidth";
 import {triggerShrinkStroke} from "../Stroke/ShrinkingStroke";
-import {changeFillMin, changeFillRatio} from "../Effects/FillRatio";
+import {changeFillMin} from "../Effects/FillRatio";
 
 let panelOn = false;
 
@@ -37,13 +37,17 @@ export default function ControlPanel() {
     return (
         <div>
             <div id="controlPanel">
-                <div style={{padding: '30px', fontSize: '1.5em'}}>Control Panel</div>
-                <FormGroup style={{paddingLeft: '30px'}}>
+                <div style={{padding: '20px', fontSize: '1em'}}>Control Panel</div>
+                <FormGroup style={{paddingLeft: '25px', fontSize: '.9em'}}>
                     <SwitchGrey name="Music" fn={triggerAudio}/>
                     <SwitchGrey name="Show Feedback" fn={triggerAudio}/>
                     <SwitchGrey name="Show Colour Preview" fn={triggerAudio}/>
                     <SwitchGrey name="Auto Page Scroll" fn={triggerScroll}/>
                     <SwitchGrey name="Auto Complete Tile" fn={triggerCompleteTile}/>
+                    <SwitchGrey name="Fill First Colour" fn={triggerCompleteTile}/>
+                    <SwitchGrey name="Fill Last Colour" fn={triggerCompleteTile}/>
+                    <SwitchGrey name="Fill Colour Combination" fn={triggerCompleteTile}/>
+
                     <SwitchGrey name="Auto Stroke Width" fn={triggerShrinkStroke}/>
                     <SwitchGrey name="Random Colour Change" fn={triggerRandomColour}/>
                     <SliderGrey name="Stroke Width" fn={changeLineWidth} default = {LINE_WIDTH} min = {5} max = {40}/>

@@ -18,7 +18,7 @@ import {
 } from "./components/PageScroll";
 import {watercolor} from "./components/Effects/Watercolor";
 import {changeLineWidth, reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
-import {getFillMin, getFillRatio} from "./components/Effects/FillRatio";
+import {changeBool, getFillMin, getFillRatio} from "./components/Effects/FillRatio";
 import {BUBBLE_DIST, FILL_RATIO, SHAPE_COLOR} from "./components/Constants";
 import {completeTile, fillEachPixel, triggerCompleteTile} from "./components/Tile/CompleteTile";
 import {gsap} from "gsap";
@@ -321,7 +321,7 @@ function App() {
                 moveFeedback(prevTouch0X, prevTouch0Y, touch0X, touch0Y)
 
                 // ratio = getFillRatio(currTile)
-                callRatio(currTile)
+                if(currTile !== prevTile) {callRatio(currTile)}
                 if (!currTile.filled && ratio > getFillMin()) {
                     fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
