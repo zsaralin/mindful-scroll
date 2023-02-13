@@ -5,7 +5,7 @@ import {FILL_RATIO} from "../Constants";
 
 let BB_PADDING = 35; // bounding box padding
 let isActive = false;
-let fillRatio = FILL_RATIO
+let fillMin = FILL_RATIO
 
 export function getFillRatio(currTile) {
     if (!isActive) {
@@ -90,10 +90,10 @@ function hslToRgb(str) {
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
 
-export const changeFillRatio = (event: Event, newValue: number) => {
-    fillRatio = newValue
+export const changeFillMin = (event: Event, newValue: number) => {
+    fillMin = newValue
 };
 
-export function getFillRatio(){
-    return fillRatio
+export function getFillMin(){
+    return fillMin
 }

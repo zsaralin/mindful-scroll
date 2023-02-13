@@ -10,7 +10,7 @@ import {FILL_RATIO, LINE_WIDTH, TILE_WIDTH} from "../Constants";
 import {changeColourSpeed, colorDelay, stopColorChange, triggerRandomColour} from "../Stroke/StrokeColor";
 import {changeTileWidth} from "../Tiling/TileWidth";
 import {triggerShrinkStroke} from "../Stroke/ShrinkingStroke";
-import {changeFillRatio} from "../Effects/FillRatio";
+import {changeFillMin, changeFillRatio} from "../Effects/FillRatio";
 
 let panelOn = false;
 
@@ -49,7 +49,7 @@ export default function ControlPanel() {
                     <SliderGrey name="Stroke Width" fn={changeLineWidth} default = {LINE_WIDTH} min = {5} max = {40}/>
                     <SliderGrey name="Tile Width" fn={changeTileWidth} default = {TILE_WIDTH} min = {5} max = {40}/>
                     <SliderGrey name="Colour Change" fn={changeColourSpeed} default = {-300} min = {-1000} max = {-100}/>
-                    <SliderGrey name="Auto Fill Min Threshold" fn={changeFillRatio} default = {FILL_RATIO} min = {0} max = {.95}/>
+                    <SliderGrey name="Auto Fill Percentage" fn={changeFillMin} default = {FILL_RATIO} min = {0} max = {.95}/>
                 </FormGroup>
             </div>
             <div id="controlPanelBackground" onClick={hideControlPanel}></div>
