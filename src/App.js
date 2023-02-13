@@ -226,7 +226,7 @@ function App() {
         // hideFeedback()
 
         // isSwiped(startX, prevCursorX)
-        findDir(startX, startY, prevCursorX, prevCursorY)
+        // findDir(startX, startY, prevCursorX, prevCursorY)
         startX = undefined;
         startY = undefined;
 
@@ -262,7 +262,6 @@ function App() {
                 expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
                 if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
                 ratio = getFillRatio(currTile)
-                console.log(ratio)
                 if (!currTile.filled && ratio > getFillMin()) {
                     fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
@@ -322,7 +321,6 @@ function App() {
                 moveFeedback(prevTouch0X, prevTouch0Y, touch0X, touch0Y)
 
                 ratio = getFillRatio(currTile)
-                console.log('RATIO GIRRRL ' + ratio)
                 if (!currTile.filled && ratio > getFillMin()) {
                     fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
