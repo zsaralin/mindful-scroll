@@ -91,7 +91,7 @@ function hslToRgb(str) {
 }
 
 export const changeFillMin = (event: Event, newValue: number) => {
-    fillMin = newValue
+    fillMin = newValue/100
 };
 
 export function getFillMin(){

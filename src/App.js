@@ -18,7 +18,7 @@ import {
 } from "./components/PageScroll";
 import {watercolor} from "./components/Effects/Watercolor";
 import {changeLineWidth, reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
-import {getFillRatio} from "./components/Effects/FillRatio";
+import {getFillMin, getFillRatio} from "./components/Effects/FillRatio";
 import {BUBBLE_DIST, FILL_RATIO, SHAPE_COLOR} from "./components/Constants";
 import {completeTile, fillEachPixel, triggerCompleteTile} from "./components/Tile/CompleteTile";
 import {gsap} from "gsap";
@@ -118,7 +118,7 @@ function App() {
                 expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
                 if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
 
-                if (!currTile.filled && getFillRatio(currTile) > getFillRatio()) {
+                if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
                     fillEachPixel(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
@@ -172,7 +172,7 @@ function App() {
                 mouseSpeed = [event.movementX, event.movementY] // speed of stroke
                 hideColourPreview()
                 if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
-                if (!currTile.filled && getFillRatio(currTile) > getFillRatio()) {
+                if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
                     fillEachPixel(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
@@ -258,7 +258,7 @@ function App() {
                 if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
                 ratio = getFillRatio(currTile)
                 console.log(ratio)
-                if (!currTile.filled && ratio > getFillRatio()) {
+                if (!currTile.filled && ratio > getFillMin()) {
                     fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
@@ -312,7 +312,7 @@ function App() {
 
                 ratio = getFillRatio(currTile)
                 console.log(ratio)
-                if (!currTile.filled && ratio > getFillRatio()) {
+                if (!currTile.filled && ratio > getFillMin()) {
                     fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
