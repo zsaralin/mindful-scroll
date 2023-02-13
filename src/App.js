@@ -93,7 +93,7 @@ function App() {
 
 
     let hidePreviewInterval;
-    let ratio;
+    let ratio = 0;
 
     function onMouseDown(event) {
         // detect left clicks
@@ -321,7 +321,7 @@ function App() {
                 moveFeedback(prevTouch0X, prevTouch0Y, touch0X, touch0Y)
 
                 // ratio = getFillRatio(currTile)
-                if(currTile !== prevTile) {callRatio(currTile)}
+                if(ratio === 0) {ratio = callRatio(currTile)}
                 if (!currTile.filled && ratio > getFillMin()) {
                     fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
@@ -375,6 +375,7 @@ function App() {
         onStrokeEnd()
 
         clearTimeout(timerId)
+        ratio = 0;
 
 
         isSwiped(startX, prevTouches[0]?.pageX)
