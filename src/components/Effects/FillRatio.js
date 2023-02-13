@@ -7,23 +7,42 @@ let BB_PADDING = 35; // bounding box padding
 let isActive = false;
 let fillMin = FILL_RATIO
 
+function getTotalPixels(currTile) {
+    let ctx = document.getElementById('canvas').getContext("2d");
+    let tileDim = currTile.tile
+    let startX = tileDim[0] - BB_PADDING;
+    let startY = tileDim[2] - BB_PADDING;
+    let endX = tileDim[1] + BB_PADDING;
+    let endY = tileDim[3] + BB_PADDING;
+
+    for (let x = startX; x < endX; x += 25) {
+        for (let y = startY; y < endY; y += 25) {
+            if (ctx.isPointInPath(currTile.path, x, y)) {
+                currTile.inPath++;
+            }
+        }
+    }
+    return currTile.inPath
+}
+
 export function getFillRatio(currTile) {
     if (!isActive) {
         isActive = true;
-
         let ctx = document.getElementById('canvas').getContext("2d");
         let tileDim = currTile.tile
 
-        let fillRatio = [0, 0] // [filledPixels, totalPixels]
+        let fillRatio = [0, currTile.inPath == 0 ? getTotalPixels(currTile) : currTile.inPath] // [filledPixels, totalPixels]
+        console.log(fillRatio)
         let startX = tileDim[0] - BB_PADDING;
         let startY = tileDim[2] - BB_PADDING;
         let endX = tileDim[1] + BB_PADDING;
         let endY = tileDim[3] + BB_PADDING;
 
+
         for (let x = startX; x < endX; x += 25) {
             for (let y = startY; y < endY; y += 25) {
                 if (ctx.isPointInPath(currTile.path, x, y)) {
-                    fillRatio[1]++;
+                    // fillRatio[1]++;
                     // if pixel color matches curr color of stroke
                     // if (isColorMatch(ctx.getImageData(x, y - getOffsetY(), 1, 1).data, hslToRgb(getCurrColor()))) {
                     //     fillRatio[0]++
@@ -91,9 +110,9 @@ function hslToRgb(str) {
 }
 
 export const changeFillMin = (event: Event, newValue: number) => {
-    fillMin = newValue/100
+    fillMin = newValue / 100
 };
 
-export function getFillMin(){
+export function getFillMin() {
     return fillMin
 }
