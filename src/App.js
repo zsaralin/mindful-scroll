@@ -241,22 +241,24 @@ function App() {
         if (event.touches.length === 1) {
             singleTouch = true;
             doubleTouch = false;
-            const touch0X = event.touches[0].pageX;
-            const touch0Y = event.touches[0].pageY;
+            const touch0X = event.touches[0]?.pageX;
+            const touch0Y = event.touches[0]?.pageY;
             const prevTouch0X = prevTouches[0]?.pageX;
             const prevTouch0Y = prevTouches[0]?.pageY;
 
             const scaledX = touch0X;
             const scaledY = toTrueY(touch0Y);
 
-            invisCol = ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString()
-            currTile = getTile(prevTouch0Y, invisCol)
+            invisCol = ctx.getImageData(touch0X, scaledY, 1, 1).data.toString()
+            currTile = getTile(touch0Y, invisCol)
             if (isPanelOn()) hidePreviewInterval = setTimeout(hideColourPreview, 1000)
             stopColorChange()
 
             // showFeedback(touch0X, touch0Y)
 
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
+                console.log('touched')
+
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
@@ -288,6 +290,7 @@ function App() {
     }
 
     function onTouchMove(event) {
+        console.log('in here')
         const touch0X = event.touches[0].pageX;
         const touch0Y = event.touches[0].pageY;
         const prevTouch0X = prevTouches[0]?.pageX;
@@ -300,14 +303,20 @@ function App() {
 
         clearTimeout(expandTimer)
         hideColourPreview()
+        // let ctx2 = document.getElementById('canvas').getContext("2d");
+        //
+        // ctx2.fill(currTile?.path)
 
         touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
-
+        if(!invisCol){
+            invisCol = ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString()
+            currTile = getTile(prevTouch0Y, invisCol)
+        }
         if (singleTouch) {
             insidePoly[0] += 1;
 
             // scroll when dragging on white space
-            if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString().trim() === '0,0,0,0') {
+            if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(touch0X, scaledY, 1, 1).data.toString().trim() === '0,0,0,0') {
                 if (Math.abs(touchSpeed[1]) < 10) {
                     doubleTouch = true;
                     doScroll(touch0Y, prevTouch0Y);
@@ -317,7 +326,7 @@ function App() {
                 }
             }
 
-            if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y) && ctx.isPointInPath(currTile.path, touch0X, touch0Y)) {
+            if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevScaledY) && ctx.isPointInPath(currTile.path, touch0X, scaledY)) {
                 moveFeedback(prevTouch0X, prevTouch0Y, touch0X, touch0Y)
 
                 // ratio = getFillRatio(currTile)
