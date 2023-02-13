@@ -18,41 +18,46 @@ function getTotalPixels(currTile) {
     for (let x = startX; x < endX; x += 25) {
         for (let y = startY; y < endY; y += 25) {
             if (ctx.isPointInPath(currTile.path, x, y)) {
-                currTile.inPath++;
+                currTile.inPath.push([x,y])
             }
         }
     }
-    return currTile.inPath
+    // console.log(currTile.inPath)
+    return currTile.inPath.length
 }
 
 export function getFillRatio(currTile) {
     if (!isActive) {
         isActive = true;
         let ctx = document.getElementById('canvas').getContext("2d");
-        let tileDim = currTile.tile
+        // let tileDim = currTile.tile
 
-        let fillRatio = [0, currTile.inPath == 0 ? getTotalPixels(currTile) : currTile.inPath] // [filledPixels, totalPixels]
-        console.log(fillRatio)
-        let startX = tileDim[0] - BB_PADDING;
-        let startY = tileDim[2] - BB_PADDING;
-        let endX = tileDim[1] + BB_PADDING;
-        let endY = tileDim[3] + BB_PADDING;
+        let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixels(currTile) : currTile.inPath.length] // [filledPixels, totalPixels]
+        // console.log(fillRatio)
+        // let startX = tileDim[0] - BB_PADDING;
+        // let startY = tileDim[2] - BB_PADDING;
+        // let endX = tileDim[1] + BB_PADDING;
+        // let endY = tileDim[3] + BB_PADDING;
 
+        currTile.inPath.forEach(i =>{
+            if (ctx.getImageData(i[0], i[1], 1, 1).data.toString() !== '0,0,0,0') {
+                                fillRatio[0]++
+                            }})
 
-        for (let x = startX; x < endX; x += 25) {
-            for (let y = startY; y < endY; y += 25) {
-                if (ctx.isPointInPath(currTile.path, x, y)) {
-                    // fillRatio[1]++;
-                    // if pixel color matches curr color of stroke
-                    // if (isColorMatch(ctx.getImageData(x, y - getOffsetY(), 1, 1).data, hslToRgb(getCurrColor()))) {
-                    //     fillRatio[0]++
-                    // }
-                    if (ctx.getImageData(x, y, 1, 1).data.toString() !== '0,0,0,0') {
-                        fillRatio[0]++
-                    }
-                }
-            }
-        }
+        // for (let x = startX; x < endX; x += 25) {
+        //     for (let y = startY; y < endY; y += 25) {
+        //         if (ctx.isPointInPath(currTile.path, x, y)) {
+        //             // fillRatio[1]++;
+        //             // if pixel color matches curr color of stroke
+        //             // if (isColorMatch(ctx.getImageData(x, y - getOffsetY(), 1, 1).data, hslToRgb(getCurrColor()))) {
+        //             //     fillRatio[0]++
+        //             // }
+        //             if (ctx.getImageData(x, y, 1, 1).data.toString() !== '0,0,0,0') {
+        //                 fillRatio[0]++
+        //             }
+        //         }
+        //     }
+        // }
 
         isActive = false;
         return fillRatio[0] / fillRatio[1]
