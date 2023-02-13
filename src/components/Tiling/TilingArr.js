@@ -70,7 +70,7 @@ function drawRandomShape(yMin, yMax, pathDict) {
         tile: dimension,
         filled : false,
         firstCol : 'white',
-        inPath : 0
+        inPath : [],
     };
 }
 
