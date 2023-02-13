@@ -321,6 +321,8 @@ function App() {
                 moveFeedback(prevTouch0X, prevTouch0Y, touch0X, touch0Y)
 
                 // ratio = getFillRatio(currTile)
+                if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
+
                 if(ratio === 0) {ratio = callRatio(currTile)}
                 if (!currTile.filled && ratio > getFillMin()) {
                     fillEachPixel(currTile)
