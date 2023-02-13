@@ -1,6 +1,8 @@
 import {getOffsetY} from "../PageScroll";
 import {getCurrColor} from "../Stroke/StrokeColor";
 import {getLineWidth} from "../Stroke/StrokeWidth";
+import {useState} from "react";
+
 import {FILL_RATIO} from "../Constants";
 
 let BB_PADDING = 35; // bounding box padding

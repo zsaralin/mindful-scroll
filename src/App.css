@@ -39,7 +39,7 @@
 
 #controlPanelRow{
     display: flex;
-    padding-bottom: 15px;
+    padding-bottom: 8px;
     justify-content: space-between;
     width: 100%;
 }
