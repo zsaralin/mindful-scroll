@@ -47,9 +47,9 @@ export default function ControlPanel() {
                     <SwitchGrey name="Fill First Colour" fn={triggerCompleteTile}/>
                     <SwitchGrey name="Fill Last Colour" fn={triggerCompleteTile}/>
                     <SwitchGrey name="Fill Colour Combination" fn={triggerCompleteTile}/>
-
                     <SwitchGrey name="Auto Stroke Width" fn={triggerShrinkStroke}/>
                     <SwitchGrey name="Random Colour Change" fn={triggerRandomColour}/>
+                    <div style = {{paddingBottom:'8px'}}></div>
                     <SliderGrey name="Stroke Width" fn={changeLineWidth} default = {LINE_WIDTH} min = {5} max = {40}/>
                     <SliderGrey name="Tile Width" fn={changeTileWidth} default = {TILE_WIDTH} min = {5} max = {40}/>
                     <SliderGrey name="Colour Change" fn={changeColourSpeed} default = {-300} min = {-1000} max = {-100}/>
