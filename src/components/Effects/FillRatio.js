@@ -1,9 +1,11 @@
 import {getOffsetY} from "../PageScroll";
 import {getCurrColor} from "../Stroke/StrokeColor";
 import {getLineWidth} from "../Stroke/StrokeWidth";
+import {FILL_RATIO} from "../Constants";
 
 let BB_PADDING = 35; // bounding box padding
 let isActive = false;
+let fillRatio = FILL_RATIO
 
 export function getFillRatio(currTile) {
     if (!isActive) {
@@ -36,7 +38,7 @@ export function getFillRatio(currTile) {
         isActive = false;
         return fillRatio[0] / fillRatio[1]
     } else {
-        return [0, 0]
+        return 0
     }
 }
 
@@ -86,4 +88,12 @@ function hslToRgb(str) {
     }
 
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+export const changeFillRatio = (event: Event, newValue: number) => {
+    fillRatio = newValue
+};
+
+export function getFillRatio(){
+    return fillRatio
 }

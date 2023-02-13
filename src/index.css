@@ -24,12 +24,12 @@ code {
 
 .introPage {
   position: absolute;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   left: 0;
   top: 0;
   text-align: center;
-  padding-top: 20%;
+  padding-top: 40%;
   background-color: white;
   z-index: 5;
   font-size: 25px;

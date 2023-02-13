@@ -93,6 +93,7 @@ function App() {
 
 
     let hidePreviewInterval;
+    let ratio;
 
     function onMouseDown(event) {
         // detect left clicks
@@ -116,7 +117,8 @@ function App() {
                 drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
                 if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
-                if (!currTile.filled && getFillRatio(currTile) > FILL_RATIO) {
+
+                if (!currTile.filled && getFillRatio(currTile) > getFillRatio()) {
                     fillEachPixel(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
@@ -170,7 +172,7 @@ function App() {
                 mouseSpeed = [event.movementX, event.movementY] // speed of stroke
                 hideColourPreview()
                 if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
-                if (!currTile.filled && getFillRatio(currTile) > FILL_RATIO) {
+                if (!currTile.filled && getFillRatio(currTile) > getFillRatio()) {
                     fillEachPixel(currTile, getCurrColor())
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
@@ -254,7 +256,9 @@ function App() {
                 drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
                 if(currTile.firstCol === "white") currTile.firstCol = getCurrColor()
-                if (!currTile.filled && getFillRatio(currTile) > FILL_RATIO) {
+                ratio = getFillRatio(currTile)
+                console.log(ratio)
+                if (!currTile.filled && ratio > getFillRatio()) {
                     fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
@@ -306,7 +310,9 @@ function App() {
                 touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
                 moveFeedback(prevTouch0X, prevTouch0Y, touch0X, touch0Y)
 
-                if (!currTile.filled && getFillRatio(currTile) > FILL_RATIO) {
+                ratio = getFillRatio(currTile)
+                console.log(ratio)
+                if (!currTile.filled && ratio > getFillRatio()) {
                     fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
