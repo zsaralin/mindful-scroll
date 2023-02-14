@@ -15,7 +15,7 @@ import {
     redrawCanvas2, setUpCanvas,
     startAutoScroll,
     triggerScroll
-} from "./components/PageScroll";
+} from "./components/Scroll/PageScroll";
 import {watercolor} from "./components/Effects/Watercolor";
 import {changeLineWidth, reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
 import {changeBool, getFillMin, getFillRatio} from "./components/Effects/FillRatio";
@@ -40,6 +40,7 @@ import Bubble, {
 } from "./components/Bubble/Bubble";
 import Snap from 'snapsvg-cjs'
 import {drawTwoTiling, drawTwoTilings, getTile} from "./components/Tiling/Tiling2";
+import {isSlowScrollOn} from "./components/Scroll/SlowScroll";
 
 
 function App() {
@@ -88,7 +89,7 @@ function App() {
         ctx = document.getElementById('invis-canvas').getContext("2d");
 
         hideControlPanel()
-
+        console.log(window.innerWidth)
     }, []);
 
 
@@ -196,10 +197,10 @@ function App() {
                 insidePoly[1] += 1;
             }
         } else if (rightMouseDown) {
-            if (Math.abs(mouseSpeed[1]) < 10) doScroll(cursorY, prevCursorY)
+            if (Math.abs(mouseSpeed[1]) < 10 || !isSlowScrollOn()) doScroll(cursorY, prevCursorY);
             else{
-                tooFast = true;
-                sendAlert()
+                // tooFast = true;
+                // sendAlert()
             }
         } else {
         }
@@ -257,10 +258,12 @@ function App() {
             // showFeedback(touch0X, touch0Y)
 
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
-                console.log('touched')
-
+                if (event.touches[0].touchType === 'direct' ){
                 pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
-                drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
+                drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)}
+                if (event.touches[0].touchType === 'stylus' ){
+                    pushStroke(scaledX, scaledY, scaledX, scaledY)
+                    drawStroke(scaledX, scaledY, scaledX, scaledY)}
                 expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
                 if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
                 ratio = getFillRatio(currTile)
@@ -317,12 +320,12 @@ function App() {
 
             // scroll when dragging on white space
             if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(touch0X, scaledY, 1, 1).data.toString().trim() === '0,0,0,0') {
-                if (Math.abs(touchSpeed[1]) < 10) {
+                if (Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) {
                     doubleTouch = true;
                     doScroll(touch0Y, prevTouch0Y);
                 } else {
-                    tooFast = true;
-                    sendAlert()
+                    // tooFast = true;
+                    // sendAlert()
                 }
             }
 
@@ -358,11 +361,11 @@ function App() {
                 insidePoly[1] += 1;
             }
         } else if (doubleTouch) {
-            if (Math.abs(touchSpeed[1]) < 10) {
+            if (Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) {
                 doScroll(touch0Y, prevTouch0Y);
             } else {
-                tooFast = true;
-                sendAlert()
+                // tooFast = true;
+                // sendAlert()
             }
         }
         prevTouches[0] = event.touches[0];
@@ -448,13 +451,14 @@ function App() {
     let word = ''
 
     function generateAlert() {
-        let ratio = insidePoly[1] / insidePoly[0]
+        console.log('hi')
+        let insideRatio = insidePoly[1] / insidePoly[0]
         if (tooFast) {
             word = slowArr[Math.floor(Math.random() * slowArr.length)]
             toSpeech(word)
-        } else if (ratio >= 1) {
+        } else if (insideRatio >= 1) {
             toSpeech(focusArr[Math.floor(Math.random() * focusArr.length)])
-        } else if (ratio < 0.5 && insidePoly[0] !== 0) {
+        } else if (insideRatio < 0.5 && insidePoly[0] !== 0) {
             toCloud(goodArr[Math.floor(Math.random() * goodArr.length)])
         }
     }

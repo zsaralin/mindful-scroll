@@ -5,6 +5,7 @@ import {getCurrColor} from "../Stroke/StrokeColor";
 import {getTile} from "./TilingArr";
 import {getLineWidth} from "../Stroke/StrokeWidth";
 import {getTileWidth} from "./TileWidth";
+import {getYPadding} from "./TilingSize";
 
 function generateRandomNum() {
     var num = Math.floor(81 * Math.random());
@@ -60,41 +61,27 @@ function getSegArr(tiling, edges) {
 }
 
 export function drawTiling(pathDict) {
-    let tilingCanvas = document.getElementById('tiling-canvas');
-    let tilingCtx = tilingCanvas.getContext('2d');
-    tilingCtx.fillStyle = "rgba(255, 255, 255, 0)"; //white transparent canvas
+    let tilingCtx = document.getElementById('tiling-canvas').getContext('2d');
+    let offCtx = document.getElementById('off-canvas').getContext('2d');
+    tilingCtx.fillStyle = offCtx.fillStyle = "transparent";
 
-    let offCanvas = document.getElementById('off-canvas');
+    var invisCtx = document.getElementById('invis-canvas').getContext('2d');
 
-    let offCtx = offCanvas.getContext('2d');
-    offCtx.fillStyle = "rgba(255, 255, 255, 0)"; //white transparent canvas
+    tilingCtx.lineWidth = offCtx.lineWidth = getTileWidth();
+    invisCtx.lineWidth = tilingCtx.lineWidth / 2;
 
-    var invisCan = document.getElementById('invis-canvas');
-    var ctx = invisCan.getContext('2d');
-
-    tilingCtx.lineWidth = getTileWidth();
-    ctx.lineWidth = tilingCtx.lineWidth/2;
-
-    tilingCtx.lineJoin = tilingCtx.lineCap = ctx.lineJoin = ctx.lineCap = "round";
-    tilingCtx.strokeStyle = ctx.strokeStyle = '#000';
-
-    offCtx.lineJoin = offCtx.lineCap = "round"
-    offCtx.strokeStyle = '#000';
-    offCtx.lineWidth = tilingCtx.lineWidth
+    tilingCtx.lineJoin = tilingCtx.lineCap = invisCtx.lineJoin = invisCtx.lineCap = offCtx.lineJoin = offCtx.lineCap = "round";
+    tilingCtx.strokeStyle = invisCtx.strokeStyle = offCtx.strokeStyle = '#000';
 
     for (let p in pathDict) {
-        // tilingCtx.fill(pathDict[p].path)
-        // tilingCtx.stroke(pathDict[p].path)
-        // tilingCtx.closePath()
-
         offCtx.fill(pathDict[p].path)
         offCtx.stroke(pathDict[p].path)
         offCtx.closePath()
 
-        ctx.fillStyle = p
-        ctx.fill(pathDict[p].path)
-        ctx.stroke(pathDict[p].path)
-        ctx.closePath()
+        invisCtx.fillStyle = p
+        invisCtx.fill(pathDict[p].path)
+        invisCtx.stroke(pathDict[p].path)
+        invisCtx.closePath()
     }
 }
 
@@ -146,8 +133,8 @@ export function makeRandomTilingHelper() {
 function isOutsideWindow(seg) { // returns true if tile is outside x bounds of screen
     let x0 = seg[0].x;
     let x1 = seg.length === 2 ? seg[1].x : seg[3].x
-    let rightEdge = (window.innerWidth - 50)
-    let leftEdge = 50;
+    let rightEdge = (window.innerWidth - getYPadding())
+    let leftEdge = getYPadding()
     if (x0 > leftEdge && x0 < rightEdge && x1 > leftEdge && x1 < rightEdge) {
         return false; // tile is inside x bounds of the screen
     }

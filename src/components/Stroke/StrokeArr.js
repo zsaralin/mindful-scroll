@@ -2,7 +2,7 @@ import {getLineWidth} from "./StrokeWidth";
 import {drawStroke, drawStrokeUnder} from "./Stroke";
 import {drawShrinkingStroke} from "./ShrinkingStroke";
 import {getCurrColor} from "./StrokeColor";
-import {limitScroll} from "../PageScroll";
+import {limitScroll} from "../Scroll/PageScroll";
 
 let strokeArr = []
 let strokeArrUnder = []

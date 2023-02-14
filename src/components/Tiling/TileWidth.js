@@ -1,5 +1,5 @@
 import {TILE_WIDTH} from "../Constants";
-import {redrawCanvas, refreshPage} from "../PageScroll";
+import {redrawCanvas, refreshPage} from "../Scroll/PageScroll";
 import {changeLineWidth} from "../Stroke/StrokeWidth";
 import {redrawTilings} from "./Tiling2";
 

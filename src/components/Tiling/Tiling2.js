@@ -2,7 +2,7 @@ import {makeRandomTiling, drawTiling} from './TilingGenerator'
 import {getTilingPathDict} from './TilingPathDict'
 import {getRandomShape} from "../Tile/Shape";
 import {getBoundsTiling} from "./TilingBounds";
-import {getOffsetY} from "../PageScroll";
+import {getOffsetY} from "../Scroll/PageScroll";
 import {SHAPE_COLOR} from "../Constants";
 import {getCurrentPathDict, getTilingIndex, sumArray, tilingArrLength} from "./TilingArr";
 import {stopWatercolor} from "../Effects/Watercolor";
@@ -23,7 +23,7 @@ export function topSecondTiling() { //top of second tiling
 function helperTiling(t) {
     let pathDict;
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
-    offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
+    offsetX = -(xMin - (window.innerWidth - xMax)) / 2 ;
 
     if (!tiling2) {
         offsetY = -yMin + TOP_SPACE;
@@ -91,7 +91,9 @@ export function refreshTilings(){
         const canvas = document.getElementById(id);
         canvas.getContext("2d").clearRect(0, 0, window.innerWidth, window.innerHeight * 5);
     });
-    pathArr.forEach(path => drawTiling(path));
+    // pathArr.forEach(path => drawTiling(path));
+    tiling2 = undefined;
+    drawTwoTilings()
 
 }
 

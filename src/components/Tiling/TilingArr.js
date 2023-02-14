@@ -2,7 +2,7 @@ import {makeRandomTiling, drawTiling} from './TilingGenerator'
 import {getTilingPathDict} from './TilingPathDict'
 import {getRandomShape} from "../Tile/Shape";
 import {getBoundsTiling} from "./TilingBounds";
-import {getOffsetY} from "../PageScroll";
+import {getOffsetY} from "../Scroll/PageScroll";
 import {SHAPE_COLOR} from "../Constants";
 
 let tilingArr = []
@@ -28,7 +28,8 @@ export function addToTilingArr() {
     yMin += sumArray();
     yMax += sumArray();
 
-    let pathDict = getTilingPathDict(tiling, -(xMin - (window.innerWidth - xMax)) / 2,
+    let offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
+    let pathDict = getTilingPathDict(tiling, offsetX,
         yMaxArr.length > 0 ? yMaxArr[yMaxArr.length - 1] + (yMaxArr[yMaxArr.length - 1] - yMin) : -yMin + 75)
     tilingArr.push(tiling)
 
