@@ -290,7 +290,6 @@ function App() {
     }
 
     function onTouchMove(event) {
-        console.log('in here')
         const touch0X = event.touches[0].pageX;
         const touch0Y = event.touches[0].pageY;
         const prevTouch0X = prevTouches[0]?.pageX;

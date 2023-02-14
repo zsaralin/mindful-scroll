@@ -23,9 +23,15 @@ export function fillCurrTile(tile, color) {
     ctx.fill(tile.path)
 }
 
-export function fillFirstColour(tile){
+export function fillFirstColour(tile) {
     let ctx = document.getElementById('fill-canvas').getContext('2d');
     ctx.fillStyle = tile.firstCol
+    ctx.fill(tile.path)
+}
+
+export function fillLastColour(tile) {
+    let ctx = document.getElementById('fill-canvas').getContext('2d');
+    ctx.fillStyle = getCurrColor()
     ctx.fill(tile.path)
 }
 
@@ -40,20 +46,20 @@ export function fillEachPixel(tile) {
     let endX = tileDim[1] + PADDING;
     let endY = tileDim[3] + PADDING;
 
-    let fillColor = getFirstColor(tile)
+    let fillColor = getTopLeftCol(tile) // fill colour starts as first colour of top left corner
     fillFirstColour(tile)
-    for (let x = startX; x < endX; x = x + Math.ceil(width/2)) {
-        for (let y = startY; y < endY; y = y + Math.ceil(width/2)) {
-            if (ctx.isPointInPath(tile.path, x, y)) {
-                if (ctx.getImageData(x, y, 1, 1).data.toString() === '0,0,0,0') {
-                    pushStrokeUnder(x, y, x, y, width, fillColor);
-                    drawStrokeUnder(x, y, x, y, width, fillColor);
-                } else {
-                    fillColor = 'rgba(' + ctx.getImageData(x, y, 1, 1).data.toString() + ')'
-                }
-            }
+    // for (let x = startX; x < endX; x = x + Math.ceil(width / 2)) {
+    //     for (let y = startY; y < endY; y = y + Math.ceil(width / 2)) {
+    //         if (ctx.isPointInPath(tile.path, x, y)) {
+    tile.inPath.forEach(i => {
+        let x = i[0], y = i[1]
+        if (ctx.getImageData(x, y, 1, 1).data.toString() === '0,0,0,0') {
+            pushStrokeUnder(x, y, x, y, width, fillColor);
+            drawStrokeUnder(x, y, x, y, width, fillColor);
+        } else {
+            fillColor = 'rgba(' + ctx.getImageData(x, y, 1, 1).data.toString() + ')'
         }
-    }
+    })
 }
 
 export function pushCompleteTile(tile, color) {
@@ -77,25 +83,12 @@ export function triggerCompleteTile() {
     completeTileOn = !completeTileOn
 }
 
-function getFirstColor(tile) {
-
-    let tileDim = tile.tile
-
-    let startX = tileDim[0] - PADDING;
-    let startY = tileDim[2] - PADDING;
-    ;
-    let endX = tileDim[1] + PADDING;
-    let endY = tileDim[3] + PADDING;
+function getTopLeftCol(tile) {
     let ctx = document.getElementById('canvas').getContext('2d');
-
-    for (let x = startX; x < endX; x = x + 5) {
-        for (let y = startY; y < endY; y = y + 5) {
-            if (ctx.isPointInPath(tile.path, x, y)) {
-                if (ctx.getImageData(x, y, 1, 1).data.toString() !== '0,0,0,0') {
-                    console.log('rgba(' + ctx.getImageData(x, y, 1, 1).data.toString() + ')')
-                    return 'rgba(' + ctx.getImageData(x, y, 1, 1).data.toString() + ')'
-                }
-            }
+    tile.inPath.forEach(i => {
+        let x = i[0], y = i[1]
+        if (ctx.getImageData(x, y, 1, 1).data.toString() !== '0,0,0,0') {
+            return 'rgba(' + ctx.getImageData(x, y, 1, 1).data.toString() + ')'
         }
-    }
+    })
 }
