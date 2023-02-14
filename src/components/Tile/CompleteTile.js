@@ -54,8 +54,8 @@ export function fillEachPixel(tile) {
     tile.inPath.forEach(i => {
         let x = i[0], y = i[1]
         if (ctx.getImageData(x, y, 1, 1).data.toString() === '0,0,0,0') {
-            pushStrokeUnder(x, y, x, y, width, fillColor);
-            drawStrokeUnder(x, y, x, y, width, fillColor);
+            pushStrokeUnder(x, y, x, y+.5, width, fillColor);
+            drawStrokeUnder(x, y, x, y+.5, width, fillColor);
         } else {
             fillColor = 'rgba(' + ctx.getImageData(x, y, 1, 1).data.toString() + ')'
         }
