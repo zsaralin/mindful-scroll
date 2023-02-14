@@ -16,8 +16,8 @@ function getTotalPixels(currTile) {
     let endX = tileDim[1] + BB_PADDING;
     let endY = tileDim[3] + BB_PADDING;
 
-    for (let x = startX; x < endX; x += 25) {
-        for (let y = startY; y < endY; y += 25) {
+    for (let x = startX; x < endX; x += 5) {
+        for (let y = startY; y < endY; y += 5) {
             if (ctx.isPointInPath(currTile.path, x, y)) {
                 currTile.inPath.push([x, y])
             }
