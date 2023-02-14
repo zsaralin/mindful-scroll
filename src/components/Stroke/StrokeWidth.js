@@ -1,6 +1,6 @@
 import {LINE_WIDTH} from "../Constants";
 import {redrawTilings} from "../Tiling/TilingArr";
-import {redrawCanvas} from "../PageScroll";
+import {redrawCanvas} from "../Scroll/PageScroll";
 let strokeWidth = LINE_WIDTH;
 let tempWidth = LINE_WIDTH;
 

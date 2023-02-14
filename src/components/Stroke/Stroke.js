@@ -1,6 +1,6 @@
 import React from "react";
 import {getCurrentPathDict, getTilingIndex} from "../Tiling/TilingArr";
-import {getOffsetY} from "../PageScroll";
+import {getOffsetY} from "../Scroll/PageScroll";
 import {getLineWidth} from "./StrokeWidth";
 import {getCurrColor} from "./StrokeColor";
 

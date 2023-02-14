@@ -1,4 +1,4 @@
-import {getOffsetY} from "../PageScroll";
+import {getOffsetY} from "../Scroll/PageScroll";
 import {getCurrColor} from "../Stroke/StrokeColor";
 import {getLineWidth} from "../Stroke/StrokeWidth";
 import {useState} from "react";

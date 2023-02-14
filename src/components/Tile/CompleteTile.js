@@ -1,6 +1,6 @@
 import {getCurrColor} from "../Stroke/StrokeColor";
 import {redrawTilings} from "../Tiling/TilingArr";
-import {getOffsetY} from "../PageScroll";
+import {getOffsetY} from "../Scroll/PageScroll";
 import {getLineWidth} from "../Stroke/StrokeWidth";
 import {pushStroke, pushStrokeUnder} from "../Stroke/StrokeArr";
 import {drawStroke, drawStrokeUnder} from "../Stroke/Stroke";

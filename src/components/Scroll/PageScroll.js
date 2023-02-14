@@ -1,10 +1,11 @@
 
-import {drawTwoTilings, refreshTilings, topSecondTiling} from "./Tiling/Tiling2";
+import {drawTwoTilings, refreshTilings, topSecondTiling} from "../Tiling/Tiling2";
 
 let offsetY = 0; //distance from origin
 let autoScroll = false;
 const FIFTH_WINDOW = window.innerHeight * 4 / 5;
 let autoScrollOn = true;
+
 
 export let limitScroll = 0;
 
@@ -16,7 +17,6 @@ export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
     if (offsetY - (currY - prevY) >= limitScroll) {
         offsetY -= (currY - prevY);
-        console.log('off ' + offsetY)
         redrawCanvas();
 
     } else {
@@ -135,3 +135,4 @@ export function redrawCanvas2() {
     // }
 
 }
+
