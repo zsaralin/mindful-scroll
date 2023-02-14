@@ -23,7 +23,7 @@ function getTotalPixels(currTile) {
             }
         }
     }
-    // console.log(currTile.inPath)
+    console.log(currTile.inPath)
     return currTile.inPath.length
 }
 
@@ -58,7 +58,7 @@ export function getFillRatio(currTile) {
     //         }
     //     }
     // }
-
+    console.log(fillRatio[0] / fillRatio[1])
     return fillRatio[0] / fillRatio[1]
 }
 

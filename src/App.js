@@ -289,6 +289,7 @@ function App() {
 
     }
 
+    let firstMove = false;
     function onTouchMove(event) {
         const touch0X = event.touches[0].pageX;
         const touch0Y = event.touches[0].pageY;
@@ -330,8 +331,9 @@ function App() {
 
                 // ratio = getFillRatio(currTile)
                 if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
-
-                if(ratio === 0) {ratio = callRatio(currTile)}
+                if(firstMove === false) {
+                    firstMove = true;
+                    callRatio(currTile)}
                 if (!currTile.filled && ratio > getFillMin()) {
                     fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
@@ -368,10 +370,11 @@ function App() {
     }
 
     function callRatio(currTile){
-        timerId = setTimeout(function run() {
+        clearInterval(timerId)
+
+        timerId =  setInterval(function() {
             ratio = getFillRatio(currTile)
-            timerId = setTimeout(run, 2 * 1000);
-        }, 2 * 1000);
+        }, 500);
 
     }
 
@@ -383,10 +386,6 @@ function App() {
         singleTouch = false;
         doubleTouch = false;
         onStrokeEnd()
-
-        clearTimeout(timerId)
-        ratio = 0;
-
 
         isSwiped(startX, prevTouches[0]?.pageX)
     }
@@ -402,6 +401,9 @@ function App() {
         tooFast = false;
         prevTile = currTile;
         clearTimeout(hidePreviewInterval)
+        clearInterval(timerId)
+        ratio = 0;
+        firstMove = false;
 
     }
 
