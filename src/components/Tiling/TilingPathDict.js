@@ -1,5 +1,6 @@
 import {getBoundsTile} from "./TilingBounds";
 import {tilingIndex} from "./TilingGenerator";
+import {EdgeShape, IsohedralTiling, tilingTypes} from "../../lib";
 
 const SQUARE_INDEX  = 67
 let transition1x = 1;
@@ -83,3 +84,4 @@ function fillColourArray(numTile) {
     }
     return cols
 }
+

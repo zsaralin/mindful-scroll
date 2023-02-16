@@ -57,6 +57,7 @@ function getSegArr(tiling, edges) {
             segArr.push(pathSeg)
         }
     }
+    segArr.t = tiling; segArr.e = edges;
     return segArr
 }
 
@@ -86,19 +87,27 @@ export function drawTiling(pathDict) {
 }
 
 
-export function makeRandomTiling() {
-    let segArr = makeRandomTilingHelper()
+export function makeRandomTiling(t) { //add tiling here option
+    // if(t){
+    //     return makeRandomTilingHelper(t)
+    // }
+    let segArr = makeRandomTilingHelper(t ? t: '')
     while (segArr.length === 0) {
         segArr = makeRandomTilingHelper()
     }
     return segArr;
 }
 
-export function makeRandomTilingHelper() {
+export function makeRandomTilingHelper(t) {
+    let tiling;
     // Construct a tiling
+    if (t){
+        scale = getScaler(t.t)
+        return getSegArr(t.t, t.e)
+    }
     tilingIndex = generateRandomNum()
     const tp = tilingTypes[tilingIndex];
-    let tiling = new IsohedralTiling(tp);
+     tiling = new IsohedralTiling(tp);
 
     // Randomize the tiling vertex parameters
     let ps = tiling.getParameters();
@@ -142,3 +151,8 @@ function isOutsideWindow(seg) { // returns true if tile is outside x bounds of s
 }
 
 
+export function makeTilingHelper(tiling, edges) {
+    scale = getScaler(tiling)
+    return getSegArr(tiling, edges)
+
+}

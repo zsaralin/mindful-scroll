@@ -12,6 +12,8 @@ let nextTop; // top of next tiling
 const SPACE = 500; // space between tilings
 const TOP_SPACE = 75;
 let pathArr = [] //array of path dict for each tiling
+let tilingArr = [] //array of tilings
+
 let offsetX, offsetY;
 let tiling2;
 let xMin, xMax, yMin, yMax;
@@ -33,13 +35,15 @@ function helperTiling(t) {
 
     pathDict = getTilingPathDict(t, offsetX, offsetY);
     pathArr.push(pathDict);
+
+    tilingArr.push(t)
 }
 
-export function addTwoTilings() {
+export function addTwoTilings(oldTilingArr) {
     pathArr = []
-
+    tilingArr = []
     if (!tiling2) {
-        let tiling1 = makeRandomTiling();
+        let tiling1 = makeRandomTiling(oldTilingArr ? oldTilingArr[0]: '');
         helperTiling(tiling1);
         drawRandomShape(yMin, yMax, pathArr[0]);
         thisBottom = yMax + offsetY + SPACE
@@ -47,10 +51,12 @@ export function addTwoTilings() {
     } else { // use information from second tiling
         let pathDict = getTilingPathDict(tiling2, offsetX, -yMin);
         pathArr.push(pathDict);
+        tilingArr.push(tiling2)
+
         drawRandomShape(yMin, yMax, pathArr[0])
         thisBottom = yMax - yMin + SPACE
     }
-    tiling2 = makeRandomTiling();
+    tiling2 = makeRandomTiling(oldTilingArr ? oldTilingArr[1]: '');
     helperTiling(tiling2)
     nextTop = thisBottom //top of curr tiling is bottom of tilingBottom
 }
@@ -78,24 +84,23 @@ function clearCanvas() {
     stopWatercolor();
 }
 
-export function drawTwoTilings() {
-    addTwoTilings()
-    clearCanvas()
+export function drawTwoTilings(tilingArr) {
+    clearCanvas() // prob should change this
+    addTwoTilings(tilingArr)
     pathArr.forEach(path => drawTiling(path));
 }
 
 export function refreshTilings(){
-    const canvasIds = ['off-canvas', 'tiling-canvas', 'invis-canvas', 'canvas', 'fill-canvas'];
-
-    canvasIds.forEach(id => {
-        const canvas = document.getElementById(id);
-        canvas.getContext("2d").clearRect(0, 0, window.innerWidth, window.innerHeight * 5);
-    });
-    // pathArr.forEach(path => drawTiling(path));
+    clearCanvas()
     tiling2 = undefined;
     drawTwoTilings()
-
 }
+
+export function refreshTilings2(){
+    clearCanvas()
+    tiling2 = undefined;
+    drawTwoTilings(tilingArr)}
+
 
 
 export function getTilingIndex2(y) {

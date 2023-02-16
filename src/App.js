@@ -17,7 +17,13 @@ import {
     triggerScroll
 } from "./components/Scroll/PageScroll";
 import {watercolor} from "./components/Effects/Watercolor";
-import {changeLineWidth, reduceLineWidth, resetLineWidth, setLineWidth} from "./components/Stroke/StrokeWidth";
+import {
+    changeLineWidth,
+    getLineWidth,
+    reduceLineWidth,
+    resetLineWidth,
+    setLineWidth
+} from "./components/Stroke/StrokeWidth";
 import {changeBool, getFillMin, getFillRatio} from "./components/Effects/FillRatio";
 import {BUBBLE_DIST, FILL_RATIO, SHAPE_COLOR} from "./components/Constants";
 import {completeTile, fillEachPixel, triggerCompleteTile} from "./components/Tile/CompleteTile";
@@ -89,7 +95,6 @@ function App() {
         ctx = document.getElementById('invis-canvas').getContext("2d");
 
         hideControlPanel()
-        console.log(window.innerWidth)
     }, []);
 
 
@@ -98,6 +103,8 @@ function App() {
 
     function onMouseDown(event) {
         // detect left clicks
+        let r = getLineWidth() / 2
+
         if (event.button === 0) {
             leftMouseDown = true;
             rightMouseDown = false;
@@ -138,10 +145,10 @@ function App() {
         }
 
         // update the cursor coordinates
-        cursorX = event.pageX
-        cursorY = event.pageY;
-        prevCursorX = event.pageX;
-        prevCursorY = event.pageY;
+        cursorX = event.pageX - r
+        cursorY = event.pageY - r;
+        prevCursorX = event.pageX - r;
+        prevCursorY = event.pageY - r;
 
         // cursorX = (event.pageX / 16) - (45 / 16) + 'rem'
         // cursorY = (event.pageY / 16) - (45 / 16) + 'rem'
@@ -151,8 +158,9 @@ function App() {
 
     function onMouseMove(event) {
         // get mouse position
-        cursorX = event.pageX;
-        cursorY = event.pageY;
+        let r = getLineWidth() / 2
+        cursorX = event.pageX - r;
+        cursorY = event.pageY - r;
         const scaledX = cursorX;
         const scaledY = toTrueY(cursorY);
         const prevScaledX = prevCursorX;
@@ -197,8 +205,20 @@ function App() {
                 insidePoly[1] += 1;
             }
         } else if (rightMouseDown) {
-            if (Math.abs(mouseSpeed[1]) < 10 || !isSlowScrollOn()) doScroll(cursorY, prevCursorY);
-            else{
+            // let d = prevCursorY - 1
+
+            if (Math.abs(mouseSpeed[1]) < 10 || !isSlowScrollOn()) {
+                if(d<window.innerHeight/340) {
+                    doScroll(cursorY, prevCursorY);
+                }
+            } else {
+                doScroll(prevCursorY - d, prevCursorY);
+                if (d > 0) {
+                    d -= .5*d
+                }
+                else {
+                    d = 0
+                }
                 // tooFast = true;
                 // sendAlert()
             }
@@ -209,6 +229,7 @@ function App() {
 
     }
 
+    let d = window.innerHeight / 340;
 
     function onMouseUp() {
         isSwiped(startX, prevCursorX)
@@ -225,9 +246,10 @@ function App() {
         rightMouseDown = false;
         // onStrokeEnd()
         // hideFeedback()
-
         // isSwiped(startX, prevCursorX)
         // findDir(startX, startY, prevCursorX, prevCursorY)
+        d = window.innerHeight / 340;
+
         startX = undefined;
         startY = undefined;
 
@@ -238,6 +260,7 @@ function App() {
     let singleTouch = false;
     let doubleTouch = false;
     let timerId;
+
     function onTouchStart(event) {
         if (event.touches.length === 1) {
             singleTouch = true;
@@ -258,12 +281,14 @@ function App() {
             // showFeedback(touch0X, touch0Y)
 
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
-                if (event.touches[0].touchType === 'direct' ){
-                pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
-                drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)}
-                if (event.touches[0].touchType === 'stylus' ){
+                if (event.touches[0].touchType === 'direct') {
+                    pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
+                    drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
+                }
+                if (event.touches[0].touchType === 'stylus') {
                     pushStroke(scaledX, scaledY, scaledX, scaledY)
-                    drawStroke(scaledX, scaledY, scaledX, scaledY)}
+                    drawStroke(scaledX, scaledY, scaledX, scaledY)
+                }
                 expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
                 if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
                 ratio = getFillRatio(currTile)
@@ -293,6 +318,7 @@ function App() {
     }
 
     let firstMove = false;
+
     function onTouchMove(event) {
         const touch0X = event.touches[0].pageX;
         const touch0Y = event.touches[0].pageY;
@@ -311,7 +337,7 @@ function App() {
         // ctx2.fill(currTile?.path)
 
         touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
-        if(!invisCol){
+        if (!invisCol) {
             invisCol = ctx.getImageData(touch0X, touch0Y, 1, 1).data.toString()
             currTile = getTile(prevTouch0Y, invisCol)
         }
@@ -322,8 +348,15 @@ function App() {
             if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(touch0X, scaledY, 1, 1).data.toString().trim() === '0,0,0,0') {
                 if (Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) {
                     doubleTouch = true;
-                    doScroll(touch0Y, prevTouch0Y);
+                    if(d<window.innerHeight/340)      doScroll(touch0Y, prevTouch0Y);
                 } else {
+                        doScroll(prevTouch0Y - d, prevTouch0Y);
+                        if (d > 0) {
+                            d -= .1*d
+                        }
+                        else {
+                            d = 0
+                        }
                     // tooFast = true;
                     // sendAlert()
                 }
@@ -334,9 +367,10 @@ function App() {
 
                 // ratio = getFillRatio(currTile)
                 if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
-                if(firstMove === false) {
+                if (firstMove === false) {
                     firstMove = true;
-                    callRatio(currTile)}
+                    callRatio(currTile)
+                }
                 if (!currTile.filled && ratio > getFillMin()) {
                     fillEachPixel(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
@@ -362,8 +396,15 @@ function App() {
             }
         } else if (doubleTouch) {
             if (Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) {
-                doScroll(touch0Y, prevTouch0Y);
+                if(d<window.innerHeight/340)  doScroll(touch0Y, prevTouch0Y);
             } else {
+                    doScroll(prevTouch0Y - d, prevTouch0Y);
+                    if (d > 0) {
+                        d -= .1*d
+                    }
+                    else {
+                        d = 0
+                    }
                 // tooFast = true;
                 // sendAlert()
             }
@@ -372,10 +413,10 @@ function App() {
         prevTouches[1] = event.touches[1];
     }
 
-    function callRatio(currTile){
+    function callRatio(currTile) {
         clearInterval(timerId)
 
-        timerId =  setInterval(function() {
+        timerId = setInterval(function () {
             ratio = getFillRatio(currTile)
         }, 500);
 
@@ -389,7 +430,7 @@ function App() {
         singleTouch = false;
         doubleTouch = false;
         onStrokeEnd()
-
+        d = window.innerHeight / 340
         isSwiped(startX, prevTouches[0]?.pageX)
     }
 
@@ -407,7 +448,6 @@ function App() {
         clearInterval(timerId)
         ratio = 0;
         firstMove = false;
-
     }
 
     let reduceOpac;
