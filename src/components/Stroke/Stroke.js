@@ -20,9 +20,8 @@ function drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context) {
     context.lineCap = context.lineJoin = 'round'
     context.lineWidth = theLineWidth ? theLineWidth : getLineWidth();
     context.strokeStyle = theColor ? theColor : getCurrColor();
-    let r = getLineWidth()/2 // radius of line width
     context.beginPath();
-    context.moveTo(x0 - r, y0 - r);
-    context.lineTo(x1 -r , y1 - r);
+    context.moveTo(x0, y0);
+    context.lineTo(x1, y1);
     context.stroke();
 }

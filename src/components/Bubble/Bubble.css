@@ -2,7 +2,7 @@
     --col: white;
 }
 
-svg {
+#bubble {
     position: absolute;
     width: 150px;
     height: 109px;
@@ -13,9 +13,9 @@ svg {
     pointer-events: none;
 }
 
-svg polyline,
-svg line,
-svg path {
+#bubble polyline,
+#bubble line,
+#bubble path {
     fill: var(--col);
     stroke: grey;
     stroke-width: 2;

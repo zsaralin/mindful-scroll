@@ -1,5 +1,5 @@
 
-import {drawTwoTilings, refreshTilings, topSecondTiling} from "../Tiling/Tiling2";
+import {drawTwoTilings, refreshTilings, refreshTilings2, topSecondTiling} from "../Tiling/Tiling2";
 
 let offsetY = 0; //distance from origin
 let autoScroll = false;
@@ -10,9 +10,10 @@ let autoScrollOn = true;
 export let limitScroll = 0;
 
 export function refreshPage(){
-    refreshTilings()
-    copyToOnScreen(createOffscreenCanvas())
+    refreshTilings2()
+    copyToOnScreen(document.getElementById('off-canvas'));
 }
+
 export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
     if (offsetY - (currY - prevY) >= limitScroll) {
@@ -53,17 +54,6 @@ export function getOffsetY() {
     return offsetY
 }
 
-function createOffscreenCanvas() {
-    var offScreenCanvas = document.getElementById('off-canvas');
-    // offScreenCanvas.style.transform = `translate(0,-${offsetY}px)`;
-
-    // offScreenCanvas.width = window.innerWidth;
-    var context = offScreenCanvas.getContext("2d");
-    // context.style.backgroundColor = 'orange'; //set fill color
-    // context.fillRect(10, 10, 200, 200);
-    return offScreenCanvas; //return canvas element
-}
-
 function copyToOnScreen(offScreenCanvas) {
     var onScreenContext = document.getElementById('tiling-canvas').getContext('2d');
     onScreenContext.drawImage(offScreenCanvas, 0, 0);
@@ -71,7 +61,7 @@ function copyToOnScreen(offScreenCanvas) {
 
 export function setUpCanvas(){
     drawTwoTilings()
-    copyToOnScreen(createOffscreenCanvas())
+    copyToOnScreen(document.getElementById('off-canvas'));
 }
 
 export function redrawCanvas() {
@@ -79,32 +69,16 @@ export function redrawCanvas() {
     const fillCanvas = document.getElementById("fill-canvas")
     const invisCanvas = document.getElementById("invis-canvas")
     const tilingCanvas = document.getElementById("tiling-canvas")
-
-    // console.log('offset ' + offsetY)
     if (offsetY > topSecondTiling()) {
         drawTwoTilings()
         tilingCanvas.getContext("2d").clearRect(0, 0, window.innerWidth, window.innerHeight * 5);
-        copyToOnScreen(createOffscreenCanvas())
+        copyToOnScreen(document.getElementById('off-canvas'));
         offsetY = 0;
     }
-    // canvas.getContext("2d").clearRect(0,0,window.innerWidth, window.innerHeight);
-    // invisCanvas.getContext("2d").clearRect(0,0,window.innerWidth, window.innerHeight);
-    // tilingCanvas.getContext("2d").clearRect(0,0,window.innerWidth, window.innerHeight);
-    // fillCanvas.getContext("2d").clearRect(0,0,window.innerWidth, window.innerHeight);
 
-    // set the canvas to the size of the window
-    // canvas.width = invisCanvas.width = tilingCanvas.width = fillCanvas.width = window.innerWidth;
-    // canvas.height = invisCanvas.height = tilingCanvas.height = fillCanvas.height = window.innerHeight;
-    //
-    // invisCanvas.getContext("2d").translate(0, -offsetY)
-    // tilingCanvas.getContext("2d").translate(0, -offsetY)
-    // canvas.getContext("2d").translate(0, -offsetY)
-    // fillCanvas.getContext("2d").translate(0, -offsetY)
-
-    canvas.style.transform = `translate(0,-${offsetY}px)`;
-    fillCanvas.style.transform = `translate(0,-${offsetY}px)`;
-    tilingCanvas.style.transform = `translate(0,-${offsetY}px)`;
-    invisCanvas.style.transform = `translate(0,-${offsetY}px)`;
+    [canvas, fillCanvas, tilingCanvas, invisCanvas].forEach(canvas => {
+        canvas.style.transform = `translate(0,-${offsetY}px)`;
+    });
 
 
     // redrawStrokes();
@@ -122,7 +96,7 @@ export function redrawCanvas2() {
     const tilingCanvas = document.getElementById("tiling-canvas")
 
     // tilingCanvas.getContext("2d").clearRect(0,0,window.innerWidth, window.innerHeight*9);
-    copyToOnScreen(createOffscreenCanvas())
+    copyToOnScreen(document.getElementById('off-canvas'));
 
     // const tilingCanvas = document.getElementById("tiling-canvas")
 
