@@ -25,7 +25,7 @@ import {
     setLineWidth
 } from "./components/Stroke/StrokeWidth";
 import {changeBool, getFillMin, getFillRatio} from "./components/Effects/FillRatio";
-import {BUBBLE_DIST, FILL_RATIO, SHAPE_COLOR} from "./components/Constants";
+import {BUBBLE_DIST, FILL_RATIO, SCROLL_DIST, SHAPE_COLOR} from "./components/Constants";
 import {completeTile, fillEachPixel, triggerCompleteTile} from "./components/Tile/CompleteTile";
 import {gsap} from "gsap";
 import {shapeGlow} from "./components/Tile/Shape";
@@ -72,6 +72,7 @@ function App() {
     let prevCursorX;
     let prevCursorY;
 
+    let d;
     // color of tile on invisible buffer canvas
 
     let insidePoly = [0, 0] // number of points inside and outside polygon
@@ -95,6 +96,8 @@ function App() {
         ctx = document.getElementById('invis-canvas').getContext("2d");
 
         hideControlPanel()
+        d = SCROLL_DIST
+
     }, []);
 
 
@@ -205,19 +208,11 @@ function App() {
                 insidePoly[1] += 1;
             }
         } else if (rightMouseDown) {
-            // let d = prevCursorY - 1
-
-            if (Math.abs(mouseSpeed[1]) < 10 || !isSlowScrollOn() && (d===window.innerHeight/170)) {
+            if ((Math.abs(mouseSpeed[1]) < 10 || !isSlowScrollOn()) && d === SCROLL_DIST) {
                 doScroll(cursorY, prevCursorY);
             } else {
+                d > 0 ? d -= .03 * d : d = 0
                 doScroll(prevCursorY - d, prevCursorY);
-                console.log(d)
-                if (d > 0) {
-                    d -= .5*d
-                }
-                else {
-                    d = 0
-                }
                 // tooFast = true;
                 // sendAlert()
             }
@@ -228,7 +223,6 @@ function App() {
 
     }
 
-    let d = window.innerHeight / 170;
 
     function onMouseUp() {
         isSwiped(startX, prevCursorX)
@@ -247,7 +241,7 @@ function App() {
         // hideFeedback()
         // isSwiped(startX, prevCursorX)
         // findDir(startX, startY, prevCursorX, prevCursorY)
-        d = window.innerHeight / 170;
+        d = SCROLL_DIST
 
         startX = undefined;
         startY = undefined;
@@ -345,17 +339,12 @@ function App() {
 
             // scroll when dragging on white space
             if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(touch0X, scaledY, 1, 1).data.toString().trim() === '0,0,0,0') {
-                if (Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) {
+                if ((Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) && d === SCROLL_DIST) {
                     doubleTouch = true;
-                    if(d<window.innerHeight/170)      doScroll(touch0Y, prevTouch0Y);
+                    doScroll(touch0Y, prevTouch0Y);
                 } else {
-                        doScroll(prevTouch0Y - d, prevTouch0Y);
-                        if (d > 0) {
-                            d -= .1*d
-                        }
-                        else {
-                            d = 0
-                        }
+                    d > 0 ? d -= .03 * d : d = 0
+                    doScroll(prevTouch0Y - d, prevTouch0Y);
                     // tooFast = true;
                     // sendAlert()
                 }
@@ -394,16 +383,12 @@ function App() {
                 insidePoly[1] += 1;
             }
         } else if (doubleTouch) {
-            if (Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) {
-                if(d<window.innerHeight/170)  doScroll(touch0Y, prevTouch0Y);
+            if ((Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) && d === SCROLL_DIST) {
+                doScroll(touch0Y, prevTouch0Y);
             } else {
-                    doScroll(prevTouch0Y - d, prevTouch0Y);
-                    if (d > 0) {
-                        d -= .1*d
-                    }
-                    else {
-                        d = 0
-                    }
+                d > 0 ? d -= .03 * d : d = 0
+                doScroll(prevTouch0Y - d, prevTouch0Y);
+
                 // tooFast = true;
                 // sendAlert()
             }
@@ -429,7 +414,7 @@ function App() {
         singleTouch = false;
         doubleTouch = false;
         onStrokeEnd()
-        d = window.innerHeight / 340
+        d = SCROLL_DIST
         isSwiped(startX, prevTouches[0]?.pageX)
     }
 

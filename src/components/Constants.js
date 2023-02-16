@@ -4,3 +4,5 @@ export const TILE_WIDTH = 25;
 export const FILL_RATIO = .7;
 export const SHAPE_COLOR = 'rgb(0,255,0)';
 export const BUBBLE_DIST = 200
+
+export const SCROLL_DIST = window.innerHeight/170
