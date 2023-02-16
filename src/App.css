@@ -26,8 +26,9 @@
     background-color: white;
     text-align: center;
     z-index: 2;
-    filter: drop-shadow(15px 0px 10px grey);
     color: black;
+    filter: drop-shadow(15px 0px 10px grey);
+
 }
 
 #controlPanelBackground{
