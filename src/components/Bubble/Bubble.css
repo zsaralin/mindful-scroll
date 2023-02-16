@@ -9,8 +9,8 @@
     top: 30px; left: 30px;
     /*background-color :blue; */
     transition: opacity .5s linear, x 0s ease, y 0s ease;
-    filter: drop-shadow(0px 0px 10px black);
     pointer-events: none;
+    filter: drop-shadow(0px 0px 10px black);
 }
 
 #bubble polyline,
