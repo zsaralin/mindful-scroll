@@ -207,12 +207,11 @@ function App() {
         } else if (rightMouseDown) {
             // let d = prevCursorY - 1
 
-            if (Math.abs(mouseSpeed[1]) < 10 || !isSlowScrollOn()) {
-                if(d<window.innerHeight/340) {
-                    doScroll(cursorY, prevCursorY);
-                }
+            if (Math.abs(mouseSpeed[1]) < 10 || !isSlowScrollOn() && (d===window.innerHeight/170)) {
+                doScroll(cursorY, prevCursorY);
             } else {
                 doScroll(prevCursorY - d, prevCursorY);
+                console.log(d)
                 if (d > 0) {
                     d -= .5*d
                 }
@@ -229,7 +228,7 @@ function App() {
 
     }
 
-    let d = window.innerHeight / 340;
+    let d = window.innerHeight / 170;
 
     function onMouseUp() {
         isSwiped(startX, prevCursorX)
@@ -248,7 +247,7 @@ function App() {
         // hideFeedback()
         // isSwiped(startX, prevCursorX)
         // findDir(startX, startY, prevCursorX, prevCursorY)
-        d = window.innerHeight / 340;
+        d = window.innerHeight / 170;
 
         startX = undefined;
         startY = undefined;
@@ -348,7 +347,7 @@ function App() {
             if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(touch0X, scaledY, 1, 1).data.toString().trim() === '0,0,0,0') {
                 if (Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) {
                     doubleTouch = true;
-                    if(d<window.innerHeight/340)      doScroll(touch0Y, prevTouch0Y);
+                    if(d<window.innerHeight/170)      doScroll(touch0Y, prevTouch0Y);
                 } else {
                         doScroll(prevTouch0Y - d, prevTouch0Y);
                         if (d > 0) {
@@ -396,7 +395,7 @@ function App() {
             }
         } else if (doubleTouch) {
             if (Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) {
-                if(d<window.innerHeight/340)  doScroll(touch0Y, prevTouch0Y);
+                if(d<window.innerHeight/170)  doScroll(touch0Y, prevTouch0Y);
             } else {
                     doScroll(prevTouch0Y - d, prevTouch0Y);
                     if (d > 0) {
