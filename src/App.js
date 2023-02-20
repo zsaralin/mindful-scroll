@@ -25,7 +25,7 @@ import {
     setLineWidth
 } from "./components/Stroke/StrokeWidth";
 import {changeBool, getFillMin, getFillRatio} from "./components/Effects/FillRatio";
-import {BUBBLE_DIST, FILL_RATIO, SCROLL_DIST, SHAPE_COLOR} from "./components/Constants";
+import {BUBBLE_DIST, FILL_RATIO, SCROLL_DELTA, SCROLL_DIST, SHAPE_COLOR} from "./components/Constants";
 import {completeTile, fillEachPixel, triggerCompleteTile} from "./components/Tile/CompleteTile";
 import {gsap} from "gsap";
 import {shapeGlow} from "./components/Tile/Shape";
@@ -124,13 +124,14 @@ function App() {
 
             currTile = getTile(prevCursorY, invisCol)
             if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevScaledY)) {
-                pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
+                pushStroke(prevCursorX, prevCursorY, prevCursorX, prevCursorY);
                 drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
+                // console.log('in here')
                 expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
                 if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
 
                 if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
-                    fillEachPixel(currTile, getCurrColor())
+                    completeTile(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
                     }
@@ -161,7 +162,7 @@ function App() {
 
     function onMouseMove(event) {
         // get mouse position
-        let r = getLineWidth() / 2
+        let r =  getLineWidth() / 2
         cursorX = event.pageX - r;
         cursorY = event.pageY - r;
         const scaledX = cursorX;
@@ -186,7 +187,7 @@ function App() {
                 hideColourPreview()
                 if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
                 if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
-                    fillEachPixel(currTile, getCurrColor())
+                    completeTile(currTile)
                     if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
                         shapeGlow(currTile)
                     }
@@ -195,7 +196,6 @@ function App() {
                 if ((Math.abs(mouseSpeed[0]) > 10 || Math.abs(mouseSpeed[1]) > 10) && isShrinkStroke()) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
                     drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY);
-                    reduceLineWidth()
                     tooFast = true;
                 } else {
                     // setLineWidth(mouseSpeed)
@@ -211,8 +211,13 @@ function App() {
             if ((Math.abs(mouseSpeed[1]) < 10 || !isSlowScrollOn()) && d === SCROLL_DIST) {
                 doScroll(cursorY, prevCursorY);
             } else {
-                d > 0 ? d -= .03 * d : d = 0
-                doScroll(prevCursorY - d, prevCursorY);
+                if ( cursorY <= prevCursorY){
+                d > 0 ? d -= SCROLL_DELTA * d : d = 0
+                doScroll(prevCursorY - d, prevCursorY);}
+                else{
+                    d > 0 ? d -= SCROLL_DELTA * d : d = 0
+                    doScroll(prevCursorY + d, prevCursorY);
+                }
                 // tooFast = true;
                 // sendAlert()
             }
@@ -343,7 +348,7 @@ function App() {
                     doubleTouch = true;
                     doScroll(touch0Y, prevTouch0Y);
                 } else {
-                    d > 0 ? d -= .03 * d : d = 0
+                    d > 0 ? d -= SCROLL_DELTA * d : d = 0
                     doScroll(prevTouch0Y - d, prevTouch0Y);
                     // tooFast = true;
                     // sendAlert()
@@ -368,7 +373,6 @@ function App() {
                 if ((Math.abs(touchSpeed[0]) > 10 || Math.abs(touchSpeed[1]) > 10) && isShrinkStroke()) {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
                     drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY);
-                    reduceLineWidth()
                     tooFast = true;
                 } else {
                     // setLineWidth(touchSpeed)
@@ -386,9 +390,8 @@ function App() {
             if ((Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) && d === SCROLL_DIST) {
                 doScroll(touch0Y, prevTouch0Y);
             } else {
-                d > 0 ? d -= .03 * d : d = 0
+                d > 0 ? d -= SCROLL_DELTA * d : d = 0
                 doScroll(prevTouch0Y - d, prevTouch0Y);
-
                 // tooFast = true;
                 // sendAlert()
             }
@@ -475,7 +478,6 @@ function App() {
     let word = ''
 
     function generateAlert() {
-        console.log('hi')
         let insideRatio = insidePoly[1] / insidePoly[0]
         if (tooFast) {
             word = slowArr[Math.floor(Math.random() * slowArr.length)]
@@ -520,11 +522,11 @@ function App() {
             <div id="thought" style={{transform: 'scale(.7)',}}></div>
             <Music/>
             <div className="wrapper">
-                <canvas id="fill-canvas"></canvas>
+                <canvas  id="fill-canvas" ></canvas>
                 <canvas ref={canvas} id="canvas"></canvas>
                 <canvas id="invis-canvas" style={{display: 'none',}}
                 ></canvas>
-                <canvas id="off-canvas" style={{display: 'none', background: 'pink'}}
+                <canvas id="off-canvas" style={{display: 'none', background: ''}}
                 ></canvas>
                 <canvas id="tiling-canvas" style={{display: '', background: ''}}
                         onMouseDown={onMouseDown}

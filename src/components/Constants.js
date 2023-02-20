@@ -6,3 +6,4 @@ export const SHAPE_COLOR = 'rgb(0,255,0)';
 export const BUBBLE_DIST = 200
 
 export const SCROLL_DIST = window.innerHeight/170
+export const SCROLL_DELTA = .03

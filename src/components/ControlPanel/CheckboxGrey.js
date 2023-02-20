@@ -26,7 +26,7 @@ export default function CheckboxGrey(props) {
         <div id="controlPanelRow">{props.name}
             <ThemeProvider theme={theme}>
             <RadioGroup defaultValue="Combination" style={{display: 'flex', flexDirection: 'row'}}>
-                <FormControlLabel control={<Radio defaultChecked/>} label="Combination"
+                <FormControlLabel control={<Radio/>} label="Combination"
                                   sx={{'& .MuiSvgIcon-root': {fontSize: 15}}}
                                   onChange={props.fn} value="Combination"
                 />

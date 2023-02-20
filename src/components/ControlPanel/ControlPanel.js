@@ -11,9 +11,10 @@ import {changeColourSpeed, colorDelay, stopColorChange, triggerRandomColour} fro
 import {changeTileWidth} from "../Tiling/TileWidth";
 import {triggerShrinkStroke} from "../Stroke/ShrinkingStroke";
 import {changeFillMin} from "../Effects/FillRatio";
-import {triggerSlowScroll} from "../Scroll/SlowScroll";
+import {isSlowScrollOn, triggerSlowScroll} from "../Scroll/SlowScroll";
 import {changeTilingSize} from "../Tiling/TilingSize";
 import CheckboxGrey from "./CheckboxGrey";
+import {SwitchGreyUnchecked, SwitchGreyChecked} from "./SwitchGrey";
 
 let panelOn = false;
 
@@ -42,14 +43,14 @@ export default function ControlPanel() {
             <div id="controlPanel">
                 <div style={{padding: '20px', fontSize: '1em'}}>Control Panel</div>
                 <FormGroup style={{paddingLeft: '25px', fontSize: '.9em'}}>
-                    <SwitchGrey name="Music" fn={triggerAudio}/>
-                    <SwitchGrey name="Show Feedback" fn={triggerAudio}/>
-                    <SwitchGrey name="Show Colour Preview" fn={triggerAudio}/>
-                    <SwitchGrey name="Auto Page Scroll" fn={triggerScroll}/>
-                    <SwitchGrey name="Auto Complete Tile" fn={triggerCompleteTile}/>
-                    <SwitchGrey name="Auto Stroke Width" fn={triggerShrinkStroke}/>
-                    <SwitchGrey name="Random Colour Change" fn={triggerRandomColour}/>
-                    <SwitchGrey name="Slow Page Scroll" fn={triggerSlowScroll}/>
+                    <SwitchGreyChecked name="Music" fn={triggerAudio} />
+                    <SwitchGreyChecked name="Show Feedback" fn={triggerAudio} />
+                    <SwitchGreyChecked name="Show Colour Preview" fn={triggerAudio} />
+                    <SwitchGreyChecked name="Auto Page Scroll" fn={triggerScroll}/>
+                    <SwitchGreyChecked name="Auto Complete Tile" fn={triggerCompleteTile} />
+                    <SwitchGreyUnchecked name="Auto Stroke Width" fn={triggerShrinkStroke} />
+                    <SwitchGreyChecked name="Random Colour Change" fn={triggerRandomColour} />
+                    <SwitchGreyUnchecked name="Slow Page Scroll" fn={triggerSlowScroll} />
                     <div style = {{paddingBottom:'8px'}}></div>
                     <SliderGrey name="Stroke Width" fn={changeLineWidth} default = {LINE_WIDTH} min = {5} max = {40}/>
                     <SliderGrey name="Tile Outline Width" fn={changeTileWidth} default = {TILE_WIDTH} min = {5} max = {40}/>
