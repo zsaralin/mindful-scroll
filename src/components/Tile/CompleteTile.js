@@ -5,34 +5,41 @@ import {getLineWidth} from "../Stroke/StrokeWidth";
 import {pushStroke, pushStrokeUnder} from "../Stroke/StrokeArr";
 import {drawStroke, drawStrokeUnder} from "../Stroke/Stroke";
 import {getTileWidth} from "../Tiling/TileWidth";
+import {pushCompleteTile} from "./CompleteTileArr";
 
 let fillTileArr = [] // fully coloured tiles
 let completeTileOn = true;
 
 const PADDING = 35 // account for curves that go past the vertex points (startX, startY,...)
 
-export function redrawTiles() {
-    fillTileArr.forEach(tile => {
-        fillFirstColour(tile)
-    })
-}
-
 export function fillCurrTile(tile, color) {
     let ctx = document.getElementById('fill-canvas').getContext('2d');
     ctx.fillStyle = color ? color : tile.color
     ctx.fill(tile.path)
+    tile.filled = true;
+    pushCompleteTile(tile.path, color)
+
 }
 
 export function fillFirstColour(tile) {
-    let ctx = document.getElementById('fill-canvas').getContext('2d');
+    let ctx = document.getElementById('canvas').getContext('2d');
     ctx.fillStyle = tile.firstCol
-    ctx.fill(tile.path)
+    // ctx.fill(tile.path)
+        ctx.fill(tile.path);
+        // ctx.fill(tile.path)
+        console.log('hi')
+        tile.filled = true;
+        pushCompleteTile(tile.path, tile.firstCol)
 }
 
 export function fillLastColour(tile) {
     let ctx = document.getElementById('fill-canvas').getContext('2d');
-    ctx.fillStyle = getCurrColor()
+    let currCol = ctx.fillStyle = getCurrColor()
     ctx.fill(tile.path)
+    tile.filled = true;
+    tile.firstCol = currCol
+    pushCompleteTile(tile.path, currCol)
+
 }
 
 export function fillEachPixel(tile) {
@@ -41,41 +48,24 @@ export function fillEachPixel(tile) {
     let width = getTileWidth()
     let tileDim = tile.tile
 
-    let startX = tileDim[0] - PADDING;
-    let startY = tileDim[2] - PADDING;
-    let endX = tileDim[1] + PADDING;
-    let endY = tileDim[3] + PADDING;
-
     let fillColor = getTopLeftCol(tile) // fill colour starts as first colour of top left corner
     fillFirstColour(tile)
-    // for (let x = startX; x < endX; x = x + Math.ceil(width / 2)) {
-    //     for (let y = startY; y < endY; y = y + Math.ceil(width / 2)) {
-    //         if (ctx.isPointInPath(tile.path, x, y)) {
     tile.inPath.forEach(i => {
         let x = i[0], y = i[1]
         if (ctx.getImageData(x, y, 1, 1).data.toString() === '0,0,0,0') {
-            pushStrokeUnder(x, y, x, y+.5, width, fillColor);
-            drawStrokeUnder(x, y, x, y+.5, width, fillColor);
+            pushStrokeUnder(x, y, x, y + .5, width, fillColor);
+            drawStrokeUnder(x, y, x, y + .5, width, fillColor);
         } else {
             fillColor = 'rgba(' + ctx.getImageData(x, y, 1, 1).data.toString() + ')'
         }
     })
 }
 
-export function pushCompleteTile(tile, color) {
-    fillTileArr.push(
-        {
-            path: tile,
-            color: color
-        }
-    )
-}
 
-export function completeTile(currTile, color) {
+export function completeTile(currTile) {
     if (completeTileOn) {
-        pushCompleteTile(currTile.path, color)
-        redrawTilings()
-        fillFirstColour(currTile, color)
+        // redrawTilings()
+        fillFirstColour(currTile)
     }
 }
 
@@ -91,4 +81,7 @@ function getTopLeftCol(tile) {
             return 'rgba(' + ctx.getImageData(x, y, 1, 1).data.toString() + ')'
         }
     })
+}
+
+export class redrawCompleteTiles {
 }

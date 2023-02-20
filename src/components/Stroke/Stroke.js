@@ -6,14 +6,14 @@ import {getCurrColor} from "./StrokeColor";
 
 let context;
 
-export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor) {
+export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor, offset) {
     context = document.getElementById('canvas').getContext("2d");
-    drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context)
-
+    drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context, offset)
 }
-export function drawStrokeUnder(x0, y0, x1, y1, theLineWidth, theColor) {
+
+export function drawStrokeUnder(x0, y0, x1, y1, theLineWidth, theColor, offset) {
     context = document.getElementById('fill-canvas').getContext("2d");
-    drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context)
+    drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context, offset)
 }
 
 function drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context) {

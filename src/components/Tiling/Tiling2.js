@@ -6,6 +6,7 @@ import {getOffsetY} from "../Scroll/PageScroll";
 import {SHAPE_COLOR} from "../Constants";
 import {getCurrentPathDict, getTilingIndex, sumArray, tilingArrLength} from "./TilingArr";
 import {stopWatercolor} from "../Effects/Watercolor";
+import {redrawStrokes} from "../Stroke/StrokeArr";
 
 let thisBottom; // bottom of current tiling
 let nextTop; // top of next tiling
@@ -25,7 +26,7 @@ export function topSecondTiling() { //top of second tiling
 function helperTiling(t) {
     let pathDict;
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
-    offsetX = -(xMin - (window.innerWidth - xMax)) / 2 ;
+    offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
 
     if (!tiling2) {
         offsetY = -yMin + TOP_SPACE;
@@ -43,9 +44,9 @@ export function addTwoTilings(oldTilingArr) {
     pathArr = []
     tilingArr = []
     if (!tiling2) {
-        let tiling1 = makeRandomTiling(oldTilingArr ? oldTilingArr[0]: '');
+        let tiling1 = makeRandomTiling(oldTilingArr ? oldTilingArr[0] : '');
         helperTiling(tiling1);
-        drawRandomShape(yMin, yMax, pathArr[0]);
+        drawShape(yMin, yMax, pathArr[0], oldTilingArr ? [shapePath, dimension]: null);
         thisBottom = yMax + offsetY + SPACE
 
     } else { // use information from second tiling
@@ -53,54 +54,66 @@ export function addTwoTilings(oldTilingArr) {
         pathArr.push(pathDict);
         tilingArr.push(tiling2)
 
-        drawRandomShape(yMin, yMax, pathArr[0])
+        drawShape(yMin, yMax, pathArr[0])
         thisBottom = yMax - yMin + SPACE
     }
-    tiling2 = makeRandomTiling(oldTilingArr ? oldTilingArr[1]: '');
+    tiling2 = makeRandomTiling(oldTilingArr ? oldTilingArr[1] : '');
     helperTiling(tiling2)
     nextTop = thisBottom //top of curr tiling is bottom of tilingBottom
 }
 
-function drawRandomShape(yMin, yMax, pathDict) {
-    let shapePath, dimension;
-    [shapePath, dimension] = getRandomShape(!tiling2 ? yMax - yMin + TOP_SPACE : yMax - yMin + 40)
+let shapePath, dimension;
+function drawShape(yMin, yMax, pathDict, shape = null) {
+    if (shape == null) {
+        [shapePath, dimension] = getRandomShape(!tiling2 ? yMax - yMin + TOP_SPACE : yMax - yMin + 40);
+    }
     pathDict[SHAPE_COLOR] = {
         path: shapePath,
         tile: dimension,
         filled: false,
-        firstCol : 'white',
+        firstCol: 'white',
         inPath: [],
     };
 }
 
+// function drawShape(shapePath, dimension, pathDict) {
+//     pathDict[SHAPE_COLOR] = {
+//         path: shapePath,
+//         tile: dimension,
+//         filled: false,
+//         firstCol: 'white',
+//         inPath: [],
+//     };
+// }
+
 function clearCanvas() {
-    const canvasIds = ['off-canvas', 'tiling-canvas', 'invis-canvas', 'canvas', 'fill-canvas'];
+    const canvasIds = ['off-canvas', 'canvas', 'tiling-canvas', 'invis-canvas',];
 
     canvasIds.forEach(id => {
         const canvas = document.getElementById(id);
         canvas.getContext("2d").clearRect(0, 0, window.innerWidth, window.innerHeight * 5);
     });
 
-    stopWatercolor();
+    // stopWatercolor();
 }
 
 export function drawTwoTilings(tilingArr) {
-    clearCanvas() // prob should change this
+    clearCanvas();
     addTwoTilings(tilingArr)
     pathArr.forEach(path => drawTiling(path));
 }
 
-export function refreshTilings(){
+export function refreshTilings() {
     clearCanvas()
     tiling2 = undefined;
     drawTwoTilings()
 }
 
-export function refreshTilings2(){
+export function refreshTilings2() {
     clearCanvas()
     tiling2 = undefined;
-    drawTwoTilings(tilingArr)}
-
+    drawTwoTilings(tilingArr)
+}
 
 
 export function getTilingIndex2(y) {

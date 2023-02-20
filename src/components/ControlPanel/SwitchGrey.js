@@ -3,7 +3,7 @@ import Switch, {SwitchProps} from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 export const IOSSwitch = styled((props: SwitchProps) => (
-    <Switch defaultChecked focusVisibleClassName=".Mui-focusVisible" disableRipple {...props}/>
+    <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props}/>
 ))(({theme}) => ({
     width: 35,
     height: 19,
@@ -54,10 +54,17 @@ export const IOSSwitch = styled((props: SwitchProps) => (
     },
 }));
 
-export default function SwitchGrey(props) {
+export function SwitchGreyChecked(props) {
     return (
         <div id="controlPanelRow">{props.name}
-            <FormControlLabel control={<IOSSwitch onChange={props.fn}/>}/>
+            <FormControlLabel control={<IOSSwitch onChange={props.fn} defaultChecked />} />
+        </div>
+    );
+}
+export function SwitchGreyUnchecked(props) {
+    return (
+        <div id="controlPanelRow">{props.name}
+            <FormControlLabel control={<IOSSwitch onChange={props.fn} />} />
         </div>
     );
 }
