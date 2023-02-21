@@ -3,7 +3,7 @@ import FormGroup from "@mui/material/FormGroup";
 import SwitchGrey from "./SwitchGrey";
 import {triggerAudio} from "../Audio";
 import {triggerScroll} from "../Scroll/PageScroll";
-import {triggerCompleteTile} from "../Tile/CompleteTile";
+import {setfillType, triggerCompleteTile} from "../Tile/CompleteTile";
 import SliderGrey from "./SliderGrey";
 import {changeLineWidth} from "../Stroke/StrokeWidth";
 import {FILL_RATIO, LINE_WIDTH, TILE_WIDTH} from "../Constants";
@@ -58,7 +58,7 @@ export default function ControlPanel() {
                     <SliderGrey name="Auto Fill Percentage" fn={changeFillMin} default = {FILL_RATIO*100} min = {0} max = {95}/>
                     <SliderGrey name="Tiling Size" fn={changeTilingSize} default = {-50} min = {-window.innerWidth/3} max = {-50}/>
                     <div style = {{paddingBottom:'8px'}}></div>
-                    <CheckboxGrey name = "Fill Tile Colour" fn={triggerCompleteTile}/>
+                    <CheckboxGrey name = "Fill Tile Colour"/>
 
                 </FormGroup>
             </div>

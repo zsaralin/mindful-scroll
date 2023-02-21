@@ -12,6 +12,7 @@ let completeTileOn = true;
 
 const PADDING = 35 // account for curves that go past the vertex points (startX, startY,...)
 let internalOffset = 0;
+let fillType = "combination"
 
 export function setInternalOffset(input){
     internalOffset = input
@@ -27,10 +28,9 @@ export function fillCurrTile(tile, color) {
 }
 
 export function fillFirstColour(tile) {
-    let ctx = document.getElementById('canvas').getContext('2d');
+    let ctx = document.getElementById('fill-canvas').getContext('2d');
     ctx.fillStyle = tile.firstCol
     ctx.fill(tile.path);
-    console.log('hi')
     tile.filled = true;
     pushCompleteTile(tile.path, tile.firstCol)
 }
@@ -50,7 +50,7 @@ export function fillEachPixel(tile) {
     let ctx = document.getElementById('canvas').getContext('2d');
     let width = getTileWidth()
     let tileDim = tile.tile
-
+    console.log('hi')
     let fillColor = getTopLeftCol(tile) // fill colour starts as first colour of top left corner
     fillFirstColour(tile)
     tile.inPath.forEach(i => {
@@ -68,7 +68,11 @@ export function fillEachPixel(tile) {
 export function completeTile(currTile) {
     if (completeTileOn) {
         // redrawTilings()
-        fillFirstColour(currTile)
+        // fillFirstColour(currTile)
+        console.log('hiiiii')
+        if(fillType === "combination") fillEachPixel(currTile)
+        else if(fillType=== "first") fillFirstColour(currTile)
+        else if(fillType === "last") fillLastColour(currTile)
     }
 }
 
@@ -86,5 +90,7 @@ function getTopLeftCol(tile) {
     })
 }
 
-export class redrawCompleteTiles {
+export function setFillType(str){
+    console.log(fillType)
+    fillType = str
 }
