@@ -279,14 +279,19 @@ function App() {
             // showFeedback(touch0X, touch0Y)
 
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
-                if (event.touches[0].touchType === 'direct') {
-                    pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
-                    drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
-                }
-                if (event.touches[0].touchType === 'stylus') {
+                // if (event.touches[0].touchType === 'direct') {
+                //     pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
+                //     drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
+                // }
+                // if (event.touches[0].touchType === 'stylus') {
                     pushStroke(scaledX, scaledY, scaledX, scaledY)
                     drawStroke(scaledX, scaledY, scaledX, scaledY)
-                }
+                console.log('hi')
+                // }
+                // else{
+                    // pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
+                    // drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
+                // }
                 expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
                 if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
                 ratio = getFillRatio(currTile)
