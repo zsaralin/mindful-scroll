@@ -3,6 +3,7 @@ import {drawTwoTilings, refreshTilings, refreshTilings2, topSecondTiling} from "
 import {redrawStrokes, redrawStrokesNewPage} from "../Stroke/StrokeArr";
 import {redrawCompleteTiles} from "../Tile/CompleteTileArr";
 import {redrawActiveTiles} from "../Effects/Watercolor";
+import {setInternalOffset} from "../Tile/CompleteTile";
 
 let offsetY = 0; //distance from origin
 let autoScroll = false;
@@ -12,7 +13,7 @@ let autoScrollOn = true;
 
 export let limitScroll = 0;
 
-export function refreshPage(){
+export function refreshPage(){ // used when change tile width and size
     refreshTilings2()
     copyToOnScreen(document.getElementById('off-canvas'));
     redrawStrokes()
@@ -84,13 +85,20 @@ export function redrawCanvas() {
     const invisCanvas = document.getElementById("invis-canvas")
     const tilingCanvas = document.getElementById("tiling-canvas")
     if (offsetY > topSecondTiling() + 0) {
+        [tilingCanvas, invisCanvas, canvas, fillCanvas].forEach(canvas => {
+            canvas.style.transform = `translate(0,-${0}px)`;
+        });
         // console.log('generating new Page')
         drawTwoTilings()
         copyToOnScreen(document.getElementById('off-canvas'));
-        redrawStrokesNewPage()
+        redrawStrokesNewPage(offsetY)
         redrawCompleteTiles(offsetY)
-        redrawActiveTiles()
+        redrawActiveTiles(offsetY)
         offsetY = 0;
+        // [tilingCanvas, invisCanvas, canvas, fillCanvas].forEach(canvas => {
+        //     canvas.style.transform = `translate(0,-${offsetY}px)`;
+        // });
+
     }
     else {
         [tilingCanvas, invisCanvas, canvas, fillCanvas].forEach(canvas => {

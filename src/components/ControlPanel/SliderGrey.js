@@ -16,12 +16,14 @@ const theme = createTheme({
 export default function SliderGrey(props) {
     return (
         <div id="controlPanelRow">{props.name}
-            <FormControlLabel style={{width:'30%', paddingRight: '10px'}} control={
             <ThemeProvider theme={theme}>
+
+            <FormControlLabel style={{width:'30%', paddingRight: '10px'}} control={
                 <Slider onChange={props.fn}
                         defaultValue={props.default} max={props.max} min={props.min}
-                        color="primary" aria-label="Default" size = "small"/>
-            </ThemeProvider>}/></div>
+                       aria-label="Default" size = "small"/>
+            }/>
+            </ThemeProvider></div>
 
 
     );

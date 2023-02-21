@@ -11,8 +11,8 @@ const ORIG_RADIUS = LINE_WIDTH;
 let initFill;
 let fillCol;
 let numActiveTiles = -1;
-var count = 0;
-var fillRatio = 0; // Store the initial fill ratio
+
+let canvStr = 'canvas'
 
 export function stopWatercolor() {
     clearInterval(initFill)
@@ -25,10 +25,13 @@ export function watercolor(x, y, r2, currTile) {
     let currColor = getCurrColor();
     let currPath = currTile.path;
     numActiveTiles += 1;
+    var count = 0;
+    var fillRatio = 0; // Store the initial fill ratio
 
     initFill = setInterval(function () {
         r2 += 2
         fillActiveTile(x, y, currColor, r2, currPath)
+        activeTileArr[numActiveTiles] = ({tile: currTile, path: currPath, color: currColor, r2: r2, x: x, y: y, count: count, fillRatio : fillRatio})
         if (r2 > 50) {
             clearInterval(initFill)
         }
@@ -37,7 +40,7 @@ export function watercolor(x, y, r2, currTile) {
     fillCol = setInterval(function () {
         r2 += 5
         fillActiveTile(x, y, currColor, r2, currPath)
-        activeTileArr[numActiveTiles] = ({tile: currTile, path: currPath, color: currColor, r2: r2, x: x, y: y})
+        activeTileArr[numActiveTiles] = ({tile: currTile, path: currPath, color: currColor, r2: r2, x: x, y: y, count: count, fillRatio : fillRatio})
         if (fillRatio === 1) {
             count++; // Increment the counter variable
             if (count >= 100) {
@@ -47,13 +50,15 @@ export function watercolor(x, y, r2, currTile) {
                 fillCurrTile(currTile, currColor)
                 numActiveTiles--
             }
-        } else fillRatio = getFillRatio(currTile)
+        } else fillRatio = getFillRatio2(currTile)
 
     }, 50)
 
 }
 
-function continueWatercolor(activeTile){
+function continueWatercolor(activeTile) {
+    let count = activeTile.count
+    let fillRatio = activeTile.fillRatio
     let fillCol = setInterval(function () {
         activeTile.r2 += 5
         fillActiveTile(activeTile.x, activeTile.y, activeTile.color, activeTile.r2, activeTile.path)
@@ -66,26 +71,32 @@ function continueWatercolor(activeTile){
                 fillCurrTile(activeTile.path, activeTile.color)
                 numActiveTiles--
             }
-        } else fillRatio = getFillRatio(activeTile.tile)
+        } else fillRatio = getFillRatio2(activeTile.tile)
 
     }, 50)
 }
 
-export function redrawActiveTiles() {
-    let ctx = document.getElementById('canvas').getContext('2d');
+export function redrawActiveTiles(offsetY) {
+    let ctx = document.getElementById(canvStr).getContext('2d');
 
-    let offsetY = getOffsetY()
     stopWatercolor();
     // ctx.save();
-    console.log('len + ' + activeTileArr.length)
+    // console.log('len + ' + activeTileArr.length)
+    ctx.translate(0, -offsetY);
+
     activeTileArr.forEach(activeTile => {
+
+        // ctx.save()
+        fillActiveTile(activeTile.x, activeTile.y, activeTile.color, activeTile.r2, activeTile.path)
+
         ctx.translate(0, -offsetY);
 
         continueWatercolor(activeTile)
-        ctx.restore();
-
+        // ctx.restore();
         // fillActiveTile(activeTile.x, activeTile.y, activeTile.color, activeTile.r2, activeTile.path)
+
     })
+    ctx.restore();
 
     activeTileArr = []
 
@@ -93,7 +104,7 @@ export function redrawActiveTiles() {
 
 function fillActiveTile(x, y, color, r2_, path) {
     let off = 0//getOffsetY()
-    let ctx = document.getElementById('canvas').getContext('2d');
+    let ctx = document.getElementById(canvStr).getContext('2d');
     let grd = ctx.createRadialGradient(x, y + off, ORIG_RADIUS, x, y + off, r2_);
     grd.addColorStop(0, color);
     grd.addColorStop(.5, "white");

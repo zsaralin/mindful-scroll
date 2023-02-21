@@ -87,7 +87,7 @@ function drawShape(yMin, yMax, pathDict, shape = null) {
 // }
 
 function clearCanvas() {
-    const canvasIds = ['off-canvas', 'canvas', 'tiling-canvas', 'invis-canvas',];
+    const canvasIds = ['off-canvas', 'canvas', 'tiling-canvas', 'invis-canvas' ,'fill-canvas'];
 
     canvasIds.forEach(id => {
         const canvas = document.getElementById(id);
@@ -98,9 +98,13 @@ function clearCanvas() {
 }
 
 export function drawTwoTilings(tilingArr) {
-    clearCanvas();
+    clearCanvas()
+
     addTwoTilings(tilingArr)
+    clearCanvas();
+
     pathArr.forEach(path => drawTiling(path));
+
 }
 
 export function refreshTilings() {

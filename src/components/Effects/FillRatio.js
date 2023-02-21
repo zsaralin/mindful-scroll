@@ -27,7 +27,7 @@ function getTotalPixels(currTile) {
 }
 
 export function getFillRatio(currTile) {
-    let ctx = document.getElementById('canvas').getContext("2d");
+    let ctx = document.getElementById('canvas').getContext("2d")
     // let tileDim = currTile.tile
 
     let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixels(currTile) : currTile.inPath.length] // [filledPixels, totalPixels]

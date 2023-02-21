@@ -1,6 +1,6 @@
 import {getCurrColor} from "../Stroke/StrokeColor";
 import {redrawTilings} from "../Tiling/TilingArr";
-import {getOffsetY} from "../Scroll/PageScroll";
+import {getOffsetY, getTotOffset} from "../Scroll/PageScroll";
 import {getLineWidth} from "../Stroke/StrokeWidth";
 import {pushStroke, pushStrokeUnder} from "../Stroke/StrokeArr";
 import {drawStroke, drawStrokeUnder} from "../Stroke/Stroke";
@@ -11,6 +11,11 @@ let fillTileArr = [] // fully coloured tiles
 let completeTileOn = true;
 
 const PADDING = 35 // account for curves that go past the vertex points (startX, startY,...)
+let internalOffset = 0;
+
+export function setInternalOffset(input){
+    internalOffset = input
+}
 
 export function fillCurrTile(tile, color) {
     let ctx = document.getElementById('fill-canvas').getContext('2d');
@@ -24,12 +29,10 @@ export function fillCurrTile(tile, color) {
 export function fillFirstColour(tile) {
     let ctx = document.getElementById('canvas').getContext('2d');
     ctx.fillStyle = tile.firstCol
-    // ctx.fill(tile.path)
-        ctx.fill(tile.path);
-        // ctx.fill(tile.path)
-        console.log('hi')
-        tile.filled = true;
-        pushCompleteTile(tile.path, tile.firstCol)
+    ctx.fill(tile.path);
+    console.log('hi')
+    tile.filled = true;
+    pushCompleteTile(tile.path, tile.firstCol)
 }
 
 export function fillLastColour(tile) {
