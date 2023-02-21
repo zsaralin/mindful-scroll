@@ -280,8 +280,8 @@ function App() {
 
             if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
                 if (event.touches[0].touchType === 'direct') {
-                    pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
-                    drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
+                    pushStroke(prevTouch0X, toTrueY(prevTouch0Y), prevTouch0X, toTrueY(prevTouch0Y) + 0.5)
+                    drawStroke(prevTouch0X, toTrueY(prevTouch0Y), prevTouch0X, toTrueY(prevTouch0Y) + 0.5)
                 }
                 // if (event.touches[0].touchType === 'stylus') {
                 //     pushStroke(scaledX, scaledY, scaledX, scaledY)
