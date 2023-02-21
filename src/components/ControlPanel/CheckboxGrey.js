@@ -6,6 +6,7 @@ import {LINE_WIDTH} from "../Constants";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import {Box, Checkbox, FormControl, FormLabel, Radio, RadioGroup, Typography} from "@mui/material";
 import FormGroup from "@mui/material/FormGroup";
+import {setFillType, setfillType} from "../Tile/CompleteTile";
 
 const theme = createTheme({
     typography: {
@@ -27,16 +28,16 @@ export default function CheckboxGrey(props) {
             <ThemeProvider theme={theme}>
             <RadioGroup defaultValue="Combination" style={{display: 'flex', flexDirection: 'row'}}>
                 <FormControlLabel control={<Radio/>} label="Combination"
-                                  sx={{'& .MuiSvgIcon-root': {fontSize: 15}}}
-                                  onChange={props.fn} value="Combination"
+                                  sx={{'& .MuiSvgIcon-root': {fontSize: 15}}} value="Combination"
+                                  onChange={() => setFillType(props.label)}
                 />
                 <FormControlLabel  control={<Radio/>} label="First"
-                                  sx={{'& .MuiSvgIcon-root': {fontSize: 15}}}
-                                  onChange={props.fn} value="First"
+                                  sx={{'& .MuiSvgIcon-root': {fontSize: 15}}} value="First"
+                                  onChange={() => setFillType("first")}
                 />
                 <FormControlLabel  control={<Radio/>} label="Last"
-                                  sx={{'& .MuiSvgIcon-root': {fontSize: 15}}}
-                                  onChange={props.fn} value="Last"
+                                  sx={{'& .MuiSvgIcon-root': {fontSize: 15}}} value="Last"
+                                  onChange={() => setFillType("last")}
                 />
             </RadioGroup>
             </ThemeProvider>
