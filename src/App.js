@@ -282,10 +282,10 @@ function App() {
             // showFeedback(touch0X, touch0Y)
 
             if (currTile && ctx.isPointInPath(currTile.path, touch0X, touch0Y)) {
-                if (event.touches[0].touchType === 'direct') {
+                // if (event.touches[0].touchType === 'direct') {
                     pushStroke(touch0X, toTrueY(touch0Y), touch0X, toTrueY(touch0Y) + 0.5)
                     drawStroke(touch0X, toTrueY(touch0Y), touch0X, toTrueY(touch0Y) + 0.5)
-                }
+                // }
                 // if (event.touches[0].touchType === 'stylus') {
                 //     pushStroke(scaledX, scaledY, scaledX, scaledY)
                 //     drawStroke(scaledX, scaledY, scaledX, scaledY)

@@ -89,7 +89,7 @@ export function redrawActiveTiles(offsetY) {
         // ctx.save()
         fillActiveTile(activeTile.x, activeTile.y, activeTile.color, activeTile.r2, activeTile.path)
 
-        ctx.translate(0, -offsetY);
+        // ctx.translate(0, -offsetY);
 
         continueWatercolor(activeTile)
         // ctx.restore();
