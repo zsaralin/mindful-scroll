@@ -80,8 +80,7 @@ export function redrawStrokes() {
     }
 }
 
-export function redrawStrokesNewPage() {
-    let offsetY = getOffsetY()
+export function redrawStrokesNewPage(offsetY) {
     for (let i = 0; i < strokeArrUnder.length; i++) {
         const stroke = strokeArrUnder[i];
         drawStrokeUnder(stroke.x0, stroke.y0-offsetY, stroke.x1, stroke.y1-offsetY, stroke.lineWidth, stroke.color);

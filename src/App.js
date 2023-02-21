@@ -374,6 +374,8 @@ function App() {
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
                     drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY);
                     tooFast = true;
+                } else if((Math.abs(touchSpeed[0]) < 5 || Math.abs(touchSpeed[1]) < 5)){
+                    expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
                 } else {
                     // setLineWidth(touchSpeed)
                     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
@@ -523,7 +525,7 @@ function App() {
             <Music/>
             <div className="wrapper">
                 <canvas  id="fill-canvas" ></canvas>
-                <canvas ref={canvas} id="canvas"></canvas>
+                <canvas ref={canvas} id="canvas" ></canvas>
                 <canvas id="invis-canvas" style={{display: 'none',}}
                 ></canvas>
                 <canvas id="off-canvas" style={{display: 'none', background: ''}}
