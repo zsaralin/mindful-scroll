@@ -273,15 +273,18 @@ function App() {
 
             invisCol = ctx.getImageData(touch0X, scaledY, 1, 1).data.toString()
             currTile = getTile(touch0Y, invisCol)
+            // console.log(currTile)
+            // ctx.fillStyle = invisCol; ctx.fill(currTile.path)
+
             if (isPanelOn()) hidePreviewInterval = setTimeout(hideColourPreview, 1000)
             stopColorChange()
 
             // showFeedback(touch0X, touch0Y)
 
-            if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
+            if (currTile && ctx.isPointInPath(currTile.path, touch0X, touch0Y)) {
                 if (event.touches[0].touchType === 'direct') {
-                    pushStroke(prevTouch0X, toTrueY(prevTouch0Y), prevTouch0X, toTrueY(prevTouch0Y) + 0.5)
-                    drawStroke(prevTouch0X, toTrueY(prevTouch0Y), prevTouch0X, toTrueY(prevTouch0Y) + 0.5)
+                    pushStroke(touch0X, toTrueY(touch0Y), touch0X, toTrueY(touch0Y) + 0.5)
+                    drawStroke(touch0X, toTrueY(touch0Y), touch0X, toTrueY(touch0Y) + 0.5)
                 }
                 // if (event.touches[0].touchType === 'stylus') {
                 //     pushStroke(scaledX, scaledY, scaledX, scaledY)
