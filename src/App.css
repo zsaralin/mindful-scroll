@@ -3,7 +3,7 @@
 .App {
     touch-action: none;
     font-family: 'Montserrat', sans-serif;
-
+    -webkit-appearance: none;
 }
 
 

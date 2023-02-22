@@ -56,12 +56,12 @@ export function watercolor(x, y, r2, currTile) {
 
 }
 
-function continueWatercolor(activeTile) {
+function continueWatercolor(activeTile, offsetY) {
     let count = activeTile.count
     let fillRatio = activeTile.fillRatio
     let fillCol = setInterval(function () {
         activeTile.r2 += 5
-        fillActiveTile(activeTile.x, activeTile.y, activeTile.color, activeTile.r2, activeTile.path)
+        fillActiveTile(activeTile.x, activeTile.y, activeTile.color, activeTile.r2, activeTile.path, offsetY)
         if (fillRatio === 1) {
             count++; // Increment the counter variable
             if (count >= 100) {
@@ -82,34 +82,39 @@ export function redrawActiveTiles(offsetY) {
     stopWatercolor();
     // ctx.save();
     // console.log('len + ' + activeTileArr.length)
-    ctx.translate(0, -offsetY);
+    // ctx.translate(0, -offsetY);
 
     activeTileArr.forEach(activeTile => {
 
         // ctx.save()
-        fillActiveTile(activeTile.x, activeTile.y, activeTile.color, activeTile.r2, activeTile.path)
+        fillActiveTile(activeTile.x, activeTile.y, activeTile.color, activeTile.r2, activeTile.path, offsetY )
 
         // ctx.translate(0, -offsetY);
 
-        continueWatercolor(activeTile)
+        continueWatercolor(activeTile, offsetY)
         // ctx.restore();
         // fillActiveTile(activeTile.x, activeTile.y, activeTile.color, activeTile.r2, activeTile.path)
 
     })
-    ctx.restore();
+    // ctx.restore();
 
     activeTileArr = []
 
 }
 
-function fillActiveTile(x, y, color, r2_, path) {
-    let off = 0//getOffsetY()
+function fillActiveTile(x, y, color, r2_, path, off) {
+    // let off = 0//getOffsetY()
     let ctx = document.getElementById(canvStr).getContext('2d');
-    let grd = ctx.createRadialGradient(x, y + off, ORIG_RADIUS, x, y + off, r2_);
+    if(off)     ctx.translate(0, -off);
+
+    let grd = ctx.createRadialGradient(x, y, ORIG_RADIUS, x, y, r2_);
     grd.addColorStop(0, color);
     grd.addColorStop(.5, "white");
+
     ctx.fillStyle = grd
     ctx.fill(path)
+    if(off)     ctx.translate(0, +off);
+
 }
 
 export function getActiveTileArr() {
