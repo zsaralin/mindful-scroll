@@ -281,10 +281,10 @@ function App() {
 
             // showFeedback(touch0X, touch0Y)
 
-            if (currTile && ctx.isPointInPath(currTile.path, prevTouch0X, prevTouch0Y)) {
+            if (currTile && ctx.isPointInPath(currTile.path, touch0X, touch0Y)) {
                 // if (event.touches[0].touchType === 'direct') {
-                    pushStroke(prevTouch0X, toTrueY(prevTouch0Y), prevTouch0X, toTrueY(prevTouch0Y) + 0.5)
-                    drawStroke(prevTouch0X, toTrueY(prevTouch0Y), prevTouch0X, toTrueY(prevTouch0Y) + 0.5)
+                    pushStroke(touch0X, toTrueY(touch0Y), touch0X, toTrueY(touch0Y) + 0.5)
+                    drawStroke(touch0X, toTrueY(touch0Y), touch0X, toTrueY(touch0Y) + 0.5)
                 // }
                 // if (event.touches[0].touchType === 'stylus') {
                 //     pushStroke(scaledX, scaledY, scaledX, scaledY)
@@ -384,6 +384,8 @@ function App() {
                     tooFast = true;
                 } else if((Math.abs(touchSpeed[0]) < 5 || Math.abs(touchSpeed[1]) < 5)){
                     expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
+                    pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                    drawStroke(prevScaledX, prevScaledY, scaledX, scaledY)
                 } else {
                     // setLineWidth(touchSpeed)
                     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
