@@ -261,14 +261,14 @@ function App() {
 
     function onTouchStart(event) {
         if (event.touches.length === 1) {
-            // let r = getLineWidth() / 2
+            let r = getLineWidth() / 2
 
             singleTouch = true;
             doubleTouch = false;
-            const touch0X = event.touches[0]?.pageX ;
-            const touch0Y = event.touches[0]?.pageY ;
-            const prevTouch0X = prevTouches[0]?.pageX;
-            const prevTouch0Y = prevTouches[0]?.pageY;
+            const touch0X = event.touches[0]?.pageX -r;
+            const touch0Y = event.touches[0]?.pageY - r;
+            const prevTouch0X = prevTouches[0]?.pageX-r;
+            const prevTouch0Y = prevTouches[0]?.pageY-r;
 
             const scaledX = touch0X;
             const scaledY = toTrueY(touch0Y);
@@ -328,13 +328,13 @@ function App() {
     let firstMove = false;
 
     function onTouchMove(event) {
-        // let r = getLineWidth() / 2
+        let r = getLineWidth() / 2
 
 
-        const touch0X = event.touches[0].pageX;
-        const touch0Y = event.touches[0].pageY;
-        const prevTouch0X = prevTouches[0]?.pageX;
-        const prevTouch0Y = prevTouches[0]?.pageY;
+        const touch0X = event.touches[0].pageX-r;
+        const touch0Y = event.touches[0].pageY-r;
+        const prevTouch0X = prevTouches[0]?.pageX-r;
+        const prevTouch0Y = prevTouches[0]?.pageY-r;
 
         const scaledX = touch0X;
         const scaledY = toTrueY(touch0Y);
