@@ -30,3 +30,10 @@
     stroke: grey;
 }
 
+.speechR, .speechL{
+    x : 50%;
+    stroke: blue;
+    margin-left: 50%;
+    position: relative;
+
+}

@@ -74,13 +74,17 @@ function startColourPreview() {
 
 export function resetColourPreview() {
     gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0})
+
     startColourPreview()
     bubble.style.top = prevTop
     bubble.style.left = prevLeft
 }
 
-export function toSpeech(s) {
+export function toSpeech(str) {
+    s = Snap(bubble)
     let speechType = isRightHand() ? "#speechR" : "#speechL"
+    speech = s.select(speechType);
+    speechPoints = speech?.node.getAttribute('d');
 
     circle?.animate({d: speechPoints}, 1500, mina.linear);
     // bubble.style.width = 140 + 'px'
@@ -90,7 +94,7 @@ export function toSpeech(s) {
     }, 1000);
     startInterval = setTimeout(function () {
         gsap.to("#speech-text", {opacity: 1, duration: 1.3, delay: 0})
-        document.getElementById('speech-text').innerHTML = s
+        document.getElementById('speech-text').innerHTML = str
     }, 2000);
     endInterval = setTimeout(function () {
         circle?.animate({d: circlePoints}, 1500, mina.linear);
@@ -126,8 +130,6 @@ export function toCloud(s) {
 
 export default function Bubble() {
     useEffect(() => {
-        let speechType = isRightHand() ? "#speechR" : "#speechL"
-
         bubble = document.getElementById("bubble");
         s = Snap(bubble)
         circle = s.select('#circle');
@@ -147,8 +149,8 @@ export default function Bubble() {
     return (
         <svg id="bubble" opacity='0'> >
             <path id="circle" d=
-                "M0.646644 37.0756C0.646644 37.0756 0.341372 30.4141 4.13201 21.772C8.62059 13.2659 10.9493 10.4682 19.0804 5.53018C19.0804 5.53018 25.9721 1.43715 34.0092 0.79926C42.0462 0.161366 49.7471 3.60321 49.7471 3.60321C49.7471 3.60321 54.7211 5.43874 60.3166 10.0961C65.912 14.7534 69.0474 22.9032 69.0474 22.9032C69.0474 22.9032 72.0139 28.1425 71.431 38.8271C70.8481 49.5116 65.8174 55.5815 65.8174 55.5815C65.8174 55.5815 60.876 64.1765 49.9657 68.5885C40.4055 73.0712 31.1711 71.3336 31.1711 71.3336C31.1711 71.3336 18.0806 69.7505 9.36832 58.7461C0.674913 49.5442 0.646644 37.0756 0.646644 37.0756Z"
-                  opacity='1'/>
+                    "M35.0018 42.0981C35.0018 42.0981 35.8131 35.4792 40.9934 27.5912C46.8392 19.954 49.6023 17.5843 58.4438 14.0733C58.4438 14.0733 65.9222 11.1883 73.9529 11.9013C81.9836 12.6142 89.0017 17.2935 89.0017 17.2935C89.0017 17.2935 93.5995 19.9338 98.3388 25.46C103.078 30.9862 104.809 39.5451 104.809 39.5451C104.809 39.5451 106.859 45.2061 104.5 55.6434C102.142 66.0807 96.168 71.2253 96.168 71.2253C96.168 71.2253 89.8609 78.8747 78.3671 81.4031C68.1926 84.2267 59.3779 80.9717 59.3779 80.9717C59.3779 80.9717 46.7355 77.2252 39.9829 64.9206C32.9479 54.3964 35.0018 42.0981 35.0018 42.0981Z"
+                  opacity='1' />
             <path id="speechR" d=
                 "M1.00554 18.5C1.00554 18.5 0.00194168 1 25.0016 1C52.0016 0.999999 58.0019 1 58.0019 1C58.0019 1 73.1962 1 83.1981 1C93.2001 1 79.5 1 104.002 1C135.5 1 138.502 2.8184 138.502 25.5C138.502 43.3184 138.502 60 138.502 60C138.502 60 138.698 75.5 111.698 75.5C107.2 81 97.6981 94.6816 97.6981 94.6816C97.6981 94.6816 84.5019 75.5 83.1981 75.5C81.9865 75.5 21.6997 75.5 21.6997 75.5C21.6997 75.5 1.0046 74.5 1.00554 60C1.00607 52 1.00554 18.5 1.00554 18.5Z"
                   opacity='0'/>

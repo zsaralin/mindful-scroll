@@ -162,7 +162,7 @@ function App() {
 
     function onMouseMove(event) {
         // get mouse position
-        let r =  getLineWidth() / 2
+        let r = getLineWidth() / 2
         cursorX = event.pageX - r;
         cursorY = event.pageY - r;
         const scaledX = cursorX;
@@ -211,10 +211,10 @@ function App() {
             if ((Math.abs(mouseSpeed[1]) < 10 || !isSlowScrollOn()) && d === SCROLL_DIST) {
                 doScroll(cursorY, prevCursorY);
             } else {
-                if ( cursorY <= prevCursorY){
-                d > 0 ? d -= SCROLL_DELTA * d : d = 0
-                doScroll(prevCursorY - d, prevCursorY);}
-                else{
+                if (cursorY <= prevCursorY) {
+                    d > 0 ? d -= SCROLL_DELTA * d : d = 0
+                    doScroll(prevCursorY - d, prevCursorY);
+                } else {
                     d > 0 ? d -= SCROLL_DELTA * d : d = 0
                     doScroll(prevCursorY + d, prevCursorY);
                 }
@@ -261,10 +261,12 @@ function App() {
 
     function onTouchStart(event) {
         if (event.touches.length === 1) {
+            // let r = getLineWidth() / 2
+
             singleTouch = true;
             doubleTouch = false;
-            const touch0X = event.touches[0]?.pageX;
-            const touch0Y = event.touches[0]?.pageY;
+            const touch0X = event.touches[0]?.pageX ;
+            const touch0Y = event.touches[0]?.pageY ;
             const prevTouch0X = prevTouches[0]?.pageX;
             const prevTouch0Y = prevTouches[0]?.pageY;
 
@@ -283,8 +285,8 @@ function App() {
 
             if (currTile && ctx.isPointInPath(currTile.path, touch0X, touch0Y)) {
                 // if (event.touches[0].touchType === 'direct') {
-                    pushStroke(touch0X, toTrueY(touch0Y), touch0X, toTrueY(touch0Y) + 0.5)
-                    drawStroke(touch0X, toTrueY(touch0Y), touch0X, toTrueY(touch0Y) + 0.5)
+                pushStroke(touch0X, toTrueY(touch0Y), touch0X, toTrueY(touch0Y) + 0.5)
+                drawStroke(touch0X, toTrueY(touch0Y), touch0X, toTrueY(touch0Y) + 0.5)
                 // }
                 // if (event.touches[0].touchType === 'stylus') {
                 //     pushStroke(scaledX, scaledY, scaledX, scaledY)
@@ -292,8 +294,8 @@ function App() {
                 // console.log('hi')
                 // }
                 // else{
-                    // pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
-                    // drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
+                // pushStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
+                // drawStroke(scaledX, scaledY, scaledX, scaledY + 0.5)
                 // }
                 expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
                 if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
@@ -326,6 +328,9 @@ function App() {
     let firstMove = false;
 
     function onTouchMove(event) {
+        // let r = getLineWidth() / 2
+
+
         const touch0X = event.touches[0].pageX;
         const touch0Y = event.touches[0].pageY;
         const prevTouch0X = prevTouches[0]?.pageX;
@@ -378,183 +383,189 @@ function App() {
                         shapeGlow(currTile)
                     }
                 }
-                if ((Math.abs(touchSpeed[0]) > 10 || Math.abs(touchSpeed[1]) > 10) && isShrinkStroke()) {
+                if ((Math.abs(touchSpeed[0]) > 10 || Math.abs(touchSpeed[1]) > 10)){
+                    tooFast = true;
+                }
+                if(tooFast && isShrinkStroke()){
                     pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
                     drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY);
-                    tooFast = true;
-                } else if((Math.abs(touchSpeed[0]) < 5 || Math.abs(touchSpeed[1]) < 5)){
-                    expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
-                    pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
-                    drawStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                    // tooFast = true;
+                    // } else if((Math.abs(touchSpeed[0]) < 5 || Math.abs(touchSpeed[1]) < 5)){
+                    //     expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
+                    //     pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                    //     drawStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                    }
+                else
+                    {
+                        // setLineWidth(touchSpeed)
+                        expandTimer = setTimeout(watercolor, 1500, scaledX, scaledY, 25, currTile)
+                        pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                        drawStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                    }
+                    // speed of stroke
+                    changeAudio(touchSpeed)
+                    startAutoScroll(touch0Y);
+
                 } else {
-                    // setLineWidth(touchSpeed)
-                    pushStroke(prevScaledX, prevScaledY, scaledX, scaledY)
-                    drawStroke(prevScaledX, prevScaledY, scaledX, scaledY)
+                    insidePoly[1] += 1;
                 }
-                // speed of stroke
-                changeAudio(touchSpeed)
-                startAutoScroll(touch0Y);
-
-            } else {
-                insidePoly[1] += 1;
+            } else if (doubleTouch) {
+                if ((Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) && d === SCROLL_DIST) {
+                    doScroll(touch0Y, prevTouch0Y);
+                } else {
+                    d > 0 ? d -= SCROLL_DELTA * d : d = 0
+                    doScroll(prevTouch0Y - d, prevTouch0Y);
+                    // tooFast = true;
+                    // sendAlert()
+                }
             }
-        } else if (doubleTouch) {
-            if ((Math.abs(touchSpeed[1]) < 10 || !isSlowScrollOn()) && d === SCROLL_DIST) {
-                doScroll(touch0Y, prevTouch0Y);
-            } else {
-                d > 0 ? d -= SCROLL_DELTA * d : d = 0
-                doScroll(prevTouch0Y - d, prevTouch0Y);
-                // tooFast = true;
-                // sendAlert()
+            prevTouches[0] = event.touches[0];
+            prevTouches[1] = event.touches[1];
+        }
+
+        function callRatio(currTile) {
+            clearInterval(timerId)
+
+            timerId = setInterval(function () {
+                ratio = getFillRatio(currTile)
+            }, 500);
+
+        }
+
+        function onTouchEnd(event) {
+            if (!doubleTouch) {
+                showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY, prevTile !== currTile)
+            }
+            // hideFeedback()
+            singleTouch = false;
+            doubleTouch = false;
+            onStrokeEnd()
+            d = SCROLL_DIST
+            isSwiped(startX, prevTouches[0]?.pageX)
+        }
+
+        function onStrokeEnd() {
+            resetLineWidth()
+            reduceAudio()
+            colorDelay()
+            clearTimeout(expandTimer)
+            clearInterval(reduceOpac)
+            sendAlert()
+            insidePoly = [0, 0]
+            tooFast = false;
+            prevTile = currTile;
+            clearTimeout(hidePreviewInterval)
+            clearInterval(timerId)
+            ratio = 0;
+            firstMove = false;
+        }
+
+        let reduceOpac;
+
+        function reduceOpacityFeedback() {
+            let opacity = 0
+            let increaseOpac = true;
+            reduceOpac = setInterval(function () {
+                if (opacity < 1 && increaseOpac) {
+                    opacity = opacity + .1;
+                } else {
+                    increaseOpac = false;
+                    opacity = opacity - .1
+                }
+                document.getElementById("feedbackBar").style.color = 'rgba(0,0,0,' + opacity + ')'
+                if (opacity <= 0) {
+                    clearInterval(reduceOpac)
+                }
+            }, 100)
+        }
+
+        function moveFeedback(prevX, prevY, x, y) {
+            if (Math.abs(prevX - x) > 15 || Math.abs(prevY - y) > 15) {
+                // bubble.style.transition = 'top 6s, left 6s'
+                gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0,})
+                // bubbleHelper(x,y)
             }
         }
-        prevTouches[0] = event.touches[0];
-        prevTouches[1] = event.touches[1];
-    }
 
-    function callRatio(currTile) {
-        clearInterval(timerId)
-
-        timerId = setInterval(function () {
-            ratio = getFillRatio(currTile)
-        }, 500);
-
-    }
-
-    function onTouchEnd(event) {
-        if (!doubleTouch) {
-            showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY, prevTile !== currTile)
-        }
-        // hideFeedback()
-        singleTouch = false;
-        doubleTouch = false;
-        onStrokeEnd()
-        d = SCROLL_DIST
-        isSwiped(startX, prevTouches[0]?.pageX)
-    }
-
-    function onStrokeEnd() {
-        resetLineWidth()
-        reduceAudio()
-        colorDelay()
-        clearTimeout(expandTimer)
-        clearInterval(reduceOpac)
-        sendAlert()
-        insidePoly = [0, 0]
-        tooFast = false;
-        prevTile = currTile;
-        clearTimeout(hidePreviewInterval)
-        clearInterval(timerId)
-        ratio = 0;
-        firstMove = false;
-    }
-
-    let reduceOpac;
-
-    function reduceOpacityFeedback() {
-        let opacity = 0
-        let increaseOpac = true;
-        reduceOpac = setInterval(function () {
-            if (opacity < 1 && increaseOpac) {
-                opacity = opacity + .1;
-            } else {
-                increaseOpac = false;
-                opacity = opacity - .1
-            }
-            document.getElementById("feedbackBar").style.color = 'rgba(0,0,0,' + opacity + ')'
-            if (opacity <= 0) {
-                clearInterval(reduceOpac)
-            }
-        }, 100)
-    }
-
-    function moveFeedback(prevX, prevY, x, y) {
-        if (Math.abs(prevX - x) > 15 || Math.abs(prevY - y) > 15) {
-            // bubble.style.transition = 'top 6s, left 6s'
-            gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0,})
+        function showFeedback(x, y) {
+            // circle?.animate({ d: cloudPoints }, 1500, mina.easeout);
+            // bubble.style.transition = 'top 10s, left 10s'
             // bubbleHelper(x,y)
+            // gsap.to(".thought", {opacity: 1, duration: 1, delay: 0,})
         }
-    }
 
-    function showFeedback(x, y) {
-        // circle?.animate({ d: cloudPoints }, 1500, mina.easeout);
-        // bubble.style.transition = 'top 10s, left 10s'
-        // bubbleHelper(x,y)
-        // gsap.to(".thought", {opacity: 1, duration: 1, delay: 0,})
-    }
+        let slowArr = ['slow', 'soften', 'release', 'calm', 'rest', 'ease', 'soothe', 'relax']
+        let goodArr = ['good', 'feel', 'grow', 'unwind', 'embrace', 'observe', 'reflect',]
+        let focusArr = ['focus', 'notice', 'recognize', "concentrate", "center"]
 
-    let slowArr = ['slow', 'soften', 'release', 'calm', 'rest', 'ease', 'soothe', 'relax']
-    let goodArr = ['good', 'feel', 'grow', 'unwind', 'embrace', 'observe', 'reflect',]
-    let focusArr = ['focus', 'notice', 'recognize', "concentrate", "center"]
+        let word = ''
 
-    let word = ''
-
-    function generateAlert() {
-        let insideRatio = insidePoly[1] / insidePoly[0]
-        if (tooFast) {
-            word = slowArr[Math.floor(Math.random() * slowArr.length)]
-            toSpeech(word)
-        } else if (insideRatio >= 1) {
-            toSpeech(focusArr[Math.floor(Math.random() * focusArr.length)])
-        } else if (insideRatio < 0.5 && insidePoly[0] !== 0) {
-            toCloud(goodArr[Math.floor(Math.random() * goodArr.length)])
+        function generateAlert() {
+            let insideRatio = insidePoly[1] / insidePoly[0]
+            if (tooFast) {
+                word = slowArr[Math.floor(Math.random() * slowArr.length)]
+                toSpeech(word)
+            } else if (insideRatio >= 1) {
+                toSpeech(focusArr[Math.floor(Math.random() * focusArr.length)])
+            } else if (insideRatio < 0.5 && insidePoly[0] !== 0) {
+                toCloud(goodArr[Math.floor(Math.random() * goodArr.length)])
+            }
         }
-    }
 
-    function sendAlert() {
-        if (!isPanelOn()) generateAlert()
-        // let prevFeedback = document.getElementById('alert').innerHTML;
-        // let returnFeedback = generateAlert()
-        // document.getElementById('alert').innerHTML = returnFeedback
+        function sendAlert() {
+            if (!isPanelOn()) generateAlert()
+            // let prevFeedback = document.getElementById('alert').innerHTML;
+            // let returnFeedback = generateAlert()
+            // document.getElementById('alert').innerHTML = returnFeedback
 
-        // if (prevFeedback === returnFeedback) {
-        //     document.getElementById('alert').innerHTML = ''
-        // } else if (returnFeedback !== '') {
-        //     document.getElementById('alert').innerHTML = returnFeedback
-        // }
-    }
-
-    function isSwiped(startX, endX) {
-        if (startX < endX && startX < 50) {
-            showControlPanel()
+            // if (prevFeedback === returnFeedback) {
+            //     document.getElementById('alert').innerHTML = ''
+            // } else if (returnFeedback !== '') {
+            //     document.getElementById('alert').innerHTML = returnFeedback
+            // }
         }
-    }
 
-    return (
-        <div className="App">
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');
-            </style>
-            <Helmet>
-                <meta name="viewport"
-                      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-            </Helmet>
-            <ControlPanel/>
-            <div id="feedbackBar"></div>
-            <div id="thought" style={{transform: 'scale(.7)',}}></div>
-            <Music/>
-            <div className="wrapper">
-                <canvas  id="fill-canvas" ></canvas>
-                <canvas ref={canvas} id="canvas" ></canvas>
-                <canvas id="invis-canvas" style={{display: 'none',}}
-                ></canvas>
-                <canvas id="off-canvas" style={{display: 'none', background: ''}}
-                ></canvas>
-                <canvas id="tiling-canvas" style={{display: '', background: ''}}
-                        onMouseDown={onMouseDown}
-                        onMouseUp={onMouseUp}
-                        onMouseMove={onMouseMove}
-                        onTouchStart={onTouchStart}
-                        onTouchEnd={onTouchEnd}
-                        onTouchCancel={onTouchEnd}
-                        onTouchMove={onTouchMove}
-                >
-                </canvas>
-                <Bubble/>
+        function isSwiped(startX, endX) {
+            if (startX < endX && startX < 50) {
+                showControlPanel()
+            }
+        }
 
+        return (
+            <div className="App">
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');
+                </style>
+                <Helmet>
+                    <meta name="viewport"
+                          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+                </Helmet>
+                <ControlPanel/>
+                <div id="feedbackBar"></div>
+                <div id="thought" style={{transform: 'scale(.7)',}}></div>
+                <Music/>
+                <div className="wrapper">
+                    <canvas id="fill-canvas"></canvas>
+                    <canvas ref={canvas} id="canvas"></canvas>
+                    <canvas id="invis-canvas" style={{display: 'none',}}
+                    ></canvas>
+                    <canvas id="off-canvas" style={{display: 'none', background: ''}}
+                    ></canvas>
+                    <canvas id="tiling-canvas" style={{display: '', background: ''}}
+                            onMouseDown={onMouseDown}
+                            onMouseUp={onMouseUp}
+                            onMouseMove={onMouseMove}
+                            onTouchStart={onTouchStart}
+                            onTouchEnd={onTouchEnd}
+                            onTouchCancel={onTouchEnd}
+                            onTouchMove={onTouchMove}
+                    >
+                    </canvas>
+                    <Bubble/>
+
+                </div>
             </div>
-        </div>
-    );
-}
+        );
+    }
 
-export default App;
+    export default App;
