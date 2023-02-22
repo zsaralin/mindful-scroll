@@ -124,7 +124,7 @@ function App() {
 
             currTile = getTile(prevCursorY, invisCol)
             if (currTile && ctx.isPointInPath(currTile.path, prevCursorX, prevScaledY)) {
-                pushStroke(prevCursorX, prevCursorY, prevCursorX, prevCursorY);
+                pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
                 // console.log('in here')
                 expandTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
