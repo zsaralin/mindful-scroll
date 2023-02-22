@@ -5,7 +5,7 @@
 #bubble {
     position: absolute;
     width: 150px;
-    height: 109px;
+    height: 150px;
     top: 30px; left: 30px;
     /*background-color :blue; */
     transition: opacity .5s linear, x 0s ease, y 0s ease;
@@ -23,5 +23,10 @@
     stroke: grey;
     stroke-width: 2;
     transition: 1s;
+}
+
+#circlesL, #circlesR{
+    opacity: 0;
+    stroke: grey;
 }
 

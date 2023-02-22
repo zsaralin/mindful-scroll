@@ -7,6 +7,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import {Box, Checkbox, FormControl, FormLabel, Radio, RadioGroup, Typography} from "@mui/material";
 import FormGroup from "@mui/material/FormGroup";
 import {setFillType, setfillType} from "../Tile/CompleteTile";
+import {setHand} from "../Effects/Handedness";
 
 const theme = createTheme({
     typography: {
@@ -22,7 +23,7 @@ const theme = createTheme({
     },
 });
 
-export default function CheckboxGrey(props) {
+export function FillStyle(props) {
     return (
         <div id="controlPanelRow">{props.name}
             <ThemeProvider theme={theme}>
@@ -43,5 +44,23 @@ export default function CheckboxGrey(props) {
             </ThemeProvider>
         </div>
     );
+}
 
+export function Handedness(props) {
+    return (
+        <div id="controlPanelRow">{"Handedness"}
+            <ThemeProvider theme={theme}>
+                <RadioGroup defaultValue="right" style={{display: 'flex', flexDirection: 'row'}}>
+                    <FormControlLabel control={<Radio/>} label="Right"
+                                      sx={{'& .MuiSvgIcon-root': {fontSize: 15}}} value="right"
+                                      onChange={() => setHand(props.label)}
+                    />
+                    <FormControlLabel  control={<Radio/>} label="Left"
+                                       sx={{'& .MuiSvgIcon-root': {fontSize: 15}}} value="left"
+                                       onChange={() => setHand("left")}
+                    />
+                </RadioGroup>
+            </ThemeProvider>
+        </div>
+    );
 }

@@ -24,7 +24,10 @@ export function refreshPage(){ // used when change tile width and size
 
 export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
-    if (offsetY - (currY - prevY) >= limitScroll) {
+    if(isRedrawCanv) {
+        setTimeout(function(){doScroll()},500);
+    }
+    else if (offsetY - (currY - prevY) >= limitScroll) {
         offsetY -= (currY - prevY);
         totOffsetY -= currY - prevY
         redrawCanvas();
@@ -41,7 +44,6 @@ export function doScroll(currY, prevY) {
 
 export function startAutoScroll(cursorY) {
     if (!autoScroll && cursorY > FIFTH_WINDOW && autoScrollOn) {
-        console.log('h')
         autoScroll = true;
         let timesRun = 0;
         autoScroll = setInterval(function () {
@@ -79,15 +81,17 @@ export function setUpCanvas(){
 }
 
 let totOffsetY = 0;
+let isRedrawCanv = false;
 export function redrawCanvas() {
+    isRedrawCanv = true;
     const canvas = document.getElementById("canvas");
     const fillCanvas = document.getElementById("fill-canvas")
     const invisCanvas = document.getElementById("invis-canvas")
     const tilingCanvas = document.getElementById("tiling-canvas")
-    if (offsetY > topSecondTiling() + 0) {
-        [tilingCanvas, invisCanvas, canvas, fillCanvas].forEach(canvas => {
-            canvas.style.transform = `translate(0,-${0}px)`;
-        });
+    if (offsetY > topSecondTiling() - 200) {
+        // [tilingCanvas, invisCanvas, canvas, fillCanvas].forEach(canvas => {
+        //     canvas.style.transform = `translate(0,-${-200}px)`;
+        // });
         // console.log('generating new Page')
         drawTwoTilings()
         copyToOnScreen(document.getElementById('off-canvas'));
@@ -113,6 +117,7 @@ export function redrawCanvas() {
     // redrawActiveTiles();
     // redrawTilings();
     // redrawGlow();
+    isRedrawCanv = false;
 }
 
 export function triggerScroll() {

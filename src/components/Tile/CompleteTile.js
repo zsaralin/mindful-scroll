@@ -91,6 +91,5 @@ function getTopLeftCol(tile) {
 }
 
 export function setFillType(str){
-    console.log(fillType)
     fillType = str
 }

@@ -50,12 +50,12 @@ export function addTwoTilings(oldTilingArr) {
         thisBottom = yMax + offsetY + SPACE
 
     } else { // use information from second tiling
-        let pathDict = getTilingPathDict(tiling2, offsetX, -yMin);
+        let pathDict = getTilingPathDict(tiling2, offsetX, -yMin + 200);
         pathArr.push(pathDict);
         tilingArr.push(tiling2)
 
-        drawShape(yMin, yMax, pathArr[0])
-        thisBottom = yMax - yMin + SPACE
+        drawShape(yMin - 200, yMax, pathArr[0])
+        thisBottom = yMax - yMin + SPACE + 200
     }
     tiling2 = makeRandomTiling(oldTilingArr ? oldTilingArr[1] : '');
     helperTiling(tiling2)
