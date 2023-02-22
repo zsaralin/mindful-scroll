@@ -30,6 +30,7 @@
     color: black;
     -webkit-appearance: none;
     filter: drop-shadow(15px 0px 10px grey);
+    border-radius: 1vw;
 
 }
 
