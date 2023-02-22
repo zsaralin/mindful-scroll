@@ -28,6 +28,7 @@
     text-align: center;
     z-index: 2;
     color: black;
+    -webkit-appearance: none;
     filter: drop-shadow(15px 0px 10px grey);
 
 }
