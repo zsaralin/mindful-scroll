@@ -84,12 +84,19 @@ export function startScroll(ySpeed, prevCursorY, cursorY) {
     if ((ySpeed < 10 || !isSlowScrollOn()) && d === SCROLL_DIST) {
         doScroll(cursorY, prevCursorY);
     } else {
-        if (cursorY <= prevCursorY) {
+        if (cursorY < prevCursorY) {
             d > 0 ? d -= SCROLL_DELTA * d : d = 0
+            console.log('up d ' + d)
+
             doScroll(prevCursorY - d, prevCursorY);
-        } else {
+        } else if (cursorY > prevCursorY) {
             d > 0 ? d -= SCROLL_DELTA * d : d = 0
+            console.log('down d ' + d)
             doScroll(prevCursorY + d, prevCursorY);
         }
     }
+}
+
+export function endScroll(){
+    d = SCROLL_DIST
 }
