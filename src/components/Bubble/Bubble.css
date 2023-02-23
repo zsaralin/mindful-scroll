@@ -1,18 +1,19 @@
 :root {
     --col: white;
+
 }
 
 #bubble {
     position: absolute;
     -webkit-transform: translateZ(0);
-    transform: scale(.7);
+    /*transform: scale(.7);*/
+    display: block;
     width: 150px;
     height: 150px;
     top: 30px; left: 30px;
     /*background-color :blue; */
     transition: opacity .5s linear, x 0s ease, y 0s ease;
     pointer-events: none;
-    display: block;
     -webkit-appearance: none;
     filter: drop-shadow(0px 0px 10px black);
     border-radius: 1vw;
