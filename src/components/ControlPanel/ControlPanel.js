@@ -2,7 +2,6 @@ import {gsap} from "gsap";
 import FormGroup from "@mui/material/FormGroup";
 import SwitchGrey from "./SwitchGrey";
 import {triggerAudio} from "../Audio";
-import {triggerScroll} from "../Scroll/PageScroll";
 import {setfillType, triggerCompleteTile} from "../Tile/CompleteTile";
 import SliderGrey from "./SliderGrey";
 import {changeLineWidth} from "../Stroke/StrokeWidth";
@@ -15,6 +14,7 @@ import {isSlowScrollOn, triggerSlowScroll} from "../Scroll/SlowScroll";
 import {changeTilingSize} from "../Tiling/TilingSize";
 import {FillStyle, Handedness} from "./CheckboxGrey";
 import {SwitchGreyUnchecked, SwitchGreyChecked} from "./SwitchGrey";
+import {triggerScroll} from "../Scroll/AutoScroll";
 
 let panelOn = false;
 
@@ -29,7 +29,7 @@ export function hideControlPanel() {
 export function showControlPanel() {
     const controlPanelBackground = document.getElementById("controlPanelBackground");
     controlPanelBackground.style.visibility  = 'visible'
-    gsap.to("#controlPanel", {left: '0px', duration: 1, delay: 0})
+    gsap.to("#controlPanel", {left: 0 + 'px', duration: 1, delay: 0})
     panelOn = true;
 }
 
