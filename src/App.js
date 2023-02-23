@@ -10,7 +10,7 @@ import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stro
 import {addToTilingArr, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
 import {getOffsetY} from './components/Scroll/Offset'
 import {
-    doScroll,
+    doScroll, endScroll,
     redrawCanvas,
     redrawCanvas2, setUpCanvas, startScroll,
     triggerScroll
@@ -90,14 +90,15 @@ function App() {
     }, []);
 
 
-    function onStrokeStart(prevScaledX, prevScaledY) {
+    function onStrokeStart(prevScaledX, prevScaledY, x) {
         stopColorChange()
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
-        currTile = getTile(cursorY, invisCol)
+        currTile = getTile(x, invisCol)
 
         if (currTile && ctx.isPointInPath(currTile.path, prevScaledX, prevScaledY)) {
-            pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY + 0.5);
-            drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY + 0.5);
+
+            pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
+            drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile)
@@ -113,7 +114,7 @@ function App() {
         // scroll when dragging on white space
         if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(scaledX, scaledY, 1, 1).data.toString().trim() === '0,0,0,0') {
             doubleTouch = true; rightMouseDown = true;
-            startScroll(speed[1], prevCursorY, cursorY)
+            startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
         }
         if (currTile && ctx.isPointInPath(currTile.path, prevScaledX, prevScaledY) && ctx.isPointInPath(currTile.path, scaledX, scaledY)) {
             hideColourPreview()
@@ -141,7 +142,7 @@ function App() {
             rightMouseDown = false;
             const prevScaledX = prevCursorX;
             const prevScaledY = toTrueY(prevCursorY);
-            onStrokeStart(prevScaledX, prevScaledY)
+            onStrokeStart(prevScaledX, prevScaledY, cursorX)
         }
         // detect right clicks
         if (event.button === 2) {
@@ -186,10 +187,13 @@ function App() {
                 onStrokeEnd()
             }
         }
+
         startX = undefined;
         startY = undefined;
         leftMouseDown = false;
         rightMouseDown = false;
+        endScroll();
+
 
     }
 
@@ -210,7 +214,7 @@ function App() {
             const scaledX = touch0X;
             const scaledY = toTrueY(touch0Y);
 
-            onStrokeStart(scaledX, scaledY)
+            onStrokeStart(scaledX, scaledY, touch0X)
 
         }
         else if (event.touches.length >= 2) {
@@ -234,7 +238,6 @@ function App() {
 
     function onTouchMove(event) {
         let r = getLineWidth() / 2
-
 
         const touch0X = event.touches[0].pageX - r;
         const touch0Y = event.touches[0].pageY - r;
@@ -283,11 +286,14 @@ function App() {
                 onStrokeEnd()
             }
         }
+
         singleTouch = false;
         doubleTouch = false;
+        endScroll();
 
         startX = undefined;
         startY = undefined;
+
     }
 
     function onStrokeEnd() {
@@ -304,7 +310,6 @@ function App() {
         clearInterval(timerId)
         ratio = 0;
         firstMove = false;
-        d = SCROLL_DIST
     }
 
     let reduceOpac;
@@ -348,11 +353,14 @@ function App() {
     let word = ''
 
     function generateAlert() {
+        console.log('in speech')
+
         let insideRatio = insidePoly[1] / insidePoly[0]
+        console.log(insideRatio)
         if (tooFast) {
             word = slowArr[Math.floor(Math.random() * slowArr.length)]
             toSpeech(word)
-        } else if (insideRatio >= 1) {
+        } else if (insideRatio >= .6) {
             toSpeech(focusArr[Math.floor(Math.random() * focusArr.length)])
         } else if (insideRatio < 0.5 && insidePoly[0] !== 0) {
             toCloud(goodArr[Math.floor(Math.random() * goodArr.length)])
