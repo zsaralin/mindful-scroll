@@ -20,6 +20,7 @@
 
 #controlPanel{
     position: absolute;
+    left: -100vw;
     width: 35%;
     min-width: 400px;
     height: 110%;
@@ -40,7 +41,8 @@
     height: 110%;
     z-index: 1;
     top: -2px;
-    opacity : 0;
+    visibility: hidden
+    /*opacity : 0;*/
 }
 
 #controlPanelRow{

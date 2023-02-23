@@ -6,6 +6,8 @@ import {pushStroke, pushStrokeUnder} from "../Stroke/StrokeArr";
 import {drawStroke, drawStrokeUnder} from "../Stroke/Stroke";
 import {getTileWidth} from "../Tiling/TileWidth";
 import {pushCompleteTile} from "./CompleteTileArr";
+import {SHAPE_COLOR} from "../Constants";
+import {shapeGlow} from "./Shape";
 
 let fillTileArr = [] // fully coloured tiles
 let completeTileOn = true;
@@ -65,14 +67,14 @@ export function fillEachPixel(tile) {
 }
 
 
-export function completeTile(currTile) {
+export function completeTile(currTile, invisCol) {
     if (completeTileOn) {
-        // redrawTilings()
-        // fillFirstColour(currTile)
-        console.log('hiiiii')
         if(fillType === "combination") fillEachPixel(currTile)
         else if(fillType=== "first") fillFirstColour(currTile)
         else if(fillType === "last") fillLastColour(currTile)
+        if (`rgb(${invisCol.substring(0, 7)})` === SHAPE_COLOR) {
+            shapeGlow(currTile)
+        }
     }
 }
 

@@ -2,7 +2,7 @@ import {makeRandomTiling, drawTiling} from './TilingGenerator'
 import {getTilingPathDict} from './TilingPathDict'
 import {getRandomShape} from "../Tile/Shape";
 import {getBoundsTiling} from "./TilingBounds";
-import {getOffsetY} from "../Scroll/PageScroll";
+import {getOffsetY} from "../Scroll/Offset";
 import {SHAPE_COLOR} from "../Constants";
 
 let tilingArr = []

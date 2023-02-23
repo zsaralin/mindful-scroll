@@ -2,8 +2,8 @@ import {makeRandomTiling, drawTiling} from './TilingGenerator'
 import {getTilingPathDict} from './TilingPathDict'
 import {getRandomShape} from "../Tile/Shape";
 import {getBoundsTiling} from "./TilingBounds";
-import {getOffsetY} from "../Scroll/PageScroll";
-import {SHAPE_COLOR} from "../Constants";
+import {getOffsetY} from "../Scroll/Offset";
+import {SHAPE_COLOR, TOP_PAGE_SPACE} from "../Constants";
 import {getCurrentPathDict, getTilingIndex, sumArray, tilingArrLength} from "./TilingArr";
 import {stopWatercolor} from "../Effects/Watercolor";
 import {redrawStrokes} from "../Stroke/StrokeArr";
@@ -50,12 +50,12 @@ export function addTwoTilings(oldTilingArr) {
         thisBottom = yMax + offsetY + SPACE
 
     } else { // use information from second tiling
-        let pathDict = getTilingPathDict(tiling2, offsetX, -yMin + 200);
+        let pathDict = getTilingPathDict(tiling2, offsetX, -yMin + TOP_PAGE_SPACE);
         pathArr.push(pathDict);
         tilingArr.push(tiling2)
 
-        drawShape(yMin - 200, yMax, pathArr[0])
-        thisBottom = yMax - yMin + SPACE + 200
+        drawShape(yMin - TOP_PAGE_SPACE, yMax, pathArr[0])
+        thisBottom = yMax - yMin + SPACE + TOP_PAGE_SPACE
     }
     tiling2 = makeRandomTiling(oldTilingArr ? oldTilingArr[1] : '');
     helperTiling(tiling2)
@@ -86,7 +86,7 @@ function drawShape(yMin, yMax, pathDict, shape = null) {
 //     };
 // }
 
-function clearCanvas() {
+export function clearCanvas() {
     const canvasIds = ['off-canvas', 'canvas', 'tiling-canvas', 'invis-canvas' ,'fill-canvas'];
 
     canvasIds.forEach(id => {
