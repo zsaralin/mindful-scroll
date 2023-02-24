@@ -9,20 +9,14 @@ import {getOffsetY, setOffsetY} from "./Offset";
 import {isSlowScrollOn} from "./SlowScroll";
 import {getOffsetTop} from "@mui/material";
 
-let isRedrawCanv = false;
 
 export let limitScroll = 0;
 
 export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
-    if (isRedrawCanv) {
-        // setTimeout(function () {
-        //     doScroll()
-        // }, 500);
-    } else if (getOffsetY() - (currY - prevY) >= limitScroll) {
-        setOffsetY(getOffsetY()-(currY-prevY))
-        console.log(isRedrawCanv)
-        if(!isRedrawCanv) redrawCanvas();
+    if (getOffsetY() - (currY - prevY) >= limitScroll) {
+        setOffsetY(getOffsetY() - (currY - prevY))
+        redrawCanvas();
 
     } else {
         setOffsetY(limitScroll)
@@ -30,39 +24,27 @@ export function doScroll(currY, prevY) {
     if (isAutoScrollActive) endAutoScroll()
 }
 
-export function redrawCanvas() {
-    // isRedrawCanv = true;
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
+export const redrawCanvas = async () => {
     const canvas = document.getElementById("canvas");
     const fillCanvas = document.getElementById("fill-canvas")
     const invisCanvas = document.getElementById("invis-canvas")
     const tilingCanvas = document.getElementById("tiling-canvas")
     let offsetY = getOffsetY()
-    // console.log(offsetY)
-    if (offsetY > topSecondTiling() - TOP_PAGE_SPACE - 10) {
-        isRedrawCanv = true;
-        // setOffsetY(0)
-
-        // [tilingCanvas, invisCanvas, canvas, fillCanvas].forEach(canvas => {
-        //     canvas.style.transform = `translate(0,-${-200}px)`;
-        // });
+    if (offsetY > topSecondTiling() - TOP_PAGE_SPACE) {
+        await delay(0);
         drawTwoTilings()
         copyToOnScreen(document.getElementById('off-canvas'));
         redrawStrokesNewPage(offsetY)
         redrawCompleteTiles(offsetY)
         redrawActiveTiles(offsetY)
-
-        // [tilingCanvas, invisCanvas, canvas, fillCanvas].forEach(canvas => {
-        //     canvas.style.transform = `translate(0,-${0}px)`;
-        // });
         setOffsetY(0)
-        isRedrawCanv = false;
-
     } else {
-        [invisCanvas, canvas, fillCanvas, tilingCanvas, ].forEach(canvas => {
+        [invisCanvas, canvas, fillCanvas, tilingCanvas,].forEach(canvas => {
             canvas.style.transform = `translate(0,-${offsetY}px)`;
         });
     }
-    isRedrawCanv = false;
 }
 
 
@@ -100,6 +82,6 @@ export function startScroll(ySpeed, prevCursorY, cursorY) {
     }
 }
 
-export function endScroll(){
+export function endScroll() {
     d = SCROLL_DIST
 }
