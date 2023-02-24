@@ -202,9 +202,10 @@ function App() {
     let singleTouch = false;
     let doubleTouch = false;
     let timerId;
-
+    let angle = 0;
     function onTouchStart(event) {
         if (event.touches.length === 1) {
+            if(event.touches[0]?.touchType === "stylus") angle = event.touches[0].altitudeAngle;
             let r = getLineWidth() / 2
             singleTouch = true;
             doubleTouch = false;
@@ -388,6 +389,7 @@ function App() {
             </Helmet>
             <ControlPanel/>
             <div id="feedbackBar"></div>
+            <div style = {{position: "absolute", top: 0}}> {angle}</div>
             <div id="thought" style={{transform: 'scale(.7)',}}></div>
             <Music/>
             <div className="wrapper">
