@@ -97,8 +97,8 @@ function App() {
 
         if (currTile && ctx.isPointInPath(currTile.path, prevScaledX, prevScaledY)) {
 
-            pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY + .5);
-            drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY + .5);
+            pushStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY);
+            drawStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY);
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile)
@@ -204,11 +204,13 @@ function App() {
     let timerId;
     let angle = 0;
 
+    let touchType;
 
     function onTouchStart(event) {
+        touchType = event.touches[0]?.touchType;
         if (event.touches.length === 1) {
             if(event.touches[0]?.touchType === "stylus") {
-                angle = event.touches[0].rotationAngle;
+                angle = event.touches[0].azimuthAngle;
                 document.getElementById("angle").innerHTML = angle;
             }
             let r = getLineWidth() / 2
