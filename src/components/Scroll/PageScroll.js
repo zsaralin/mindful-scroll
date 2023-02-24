@@ -33,7 +33,7 @@ export const redrawCanvas = async () => {
     const tilingCanvas = document.getElementById("tiling-canvas")
     let offsetY = getOffsetY()
     if (offsetY > topSecondTiling() - TOP_PAGE_SPACE) {
-        await delay(0);
+        await delay(.2);
         drawTwoTilings()
         copyToOnScreen(document.getElementById('off-canvas'));
         redrawStrokesNewPage(offsetY)

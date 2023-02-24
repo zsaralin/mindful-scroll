@@ -208,7 +208,7 @@ function App() {
     function onTouchStart(event) {
         if (event.touches.length === 1) {
             if(event.touches[0]?.touchType === "stylus") {
-                angle = event.touches[0].altitudeAngle;
+                angle = event.touches[0].azimuthAngle;
                 document.getElementById("angle").innerHTML = angle;
             }
             let r = getLineWidth() / 2
@@ -220,7 +220,7 @@ function App() {
             const scaledX = touch0X;
             const scaledY = toTrueY(touch0Y);
 
-            onStrokeStart(scaledX, scaledY, touch0X)
+            onStrokeStart(scaledX, scaledY + .5, touch0X)
 
         }
         else if (event.touches.length >= 2) {
