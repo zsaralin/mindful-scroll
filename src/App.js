@@ -97,8 +97,8 @@ function App() {
 
         if (currTile && ctx.isPointInPath(currTile.path, prevScaledX, prevScaledY)) {
 
-            pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
-            drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY);
+            pushStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY + .5);
+            drawStroke(prevScaledX, prevScaledY, prevScaledX, prevScaledY + .5);
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile)
@@ -220,7 +220,7 @@ function App() {
             const scaledX = touch0X;
             const scaledY = toTrueY(touch0Y);
 
-            onStrokeStart(scaledX, scaledY + .5, touch0X)
+            onStrokeStart(scaledX, scaledY, touch0X)
 
         }
         else if (event.touches.length >= 2) {
