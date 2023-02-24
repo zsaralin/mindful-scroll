@@ -7,6 +7,7 @@ import {SCROLL_DELTA, SCROLL_DIST, TOP_PAGE_SPACE} from "../Constants";
 import {endAutoScroll, isAutoScrollActive} from "./AutoScroll";
 import {getOffsetY, setOffsetY} from "./Offset";
 import {isSlowScrollOn} from "./SlowScroll";
+import {getOffsetTop} from "@mui/material";
 
 let isRedrawCanv = false;
 
@@ -20,6 +21,7 @@ export function doScroll(currY, prevY) {
         // }, 500);
     } else if (getOffsetY() - (currY - prevY) >= limitScroll) {
         setOffsetY(getOffsetY()-(currY-prevY))
+        console.log(isRedrawCanv)
         if(!isRedrawCanv) redrawCanvas();
 
     } else {
@@ -35,8 +37,10 @@ export function redrawCanvas() {
     const invisCanvas = document.getElementById("invis-canvas")
     const tilingCanvas = document.getElementById("tiling-canvas")
     let offsetY = getOffsetY()
-    if (offsetY > topSecondTiling() - TOP_PAGE_SPACE) {
+    // console.log(offsetY)
+    if (offsetY > topSecondTiling() - TOP_PAGE_SPACE - 10) {
         isRedrawCanv = true;
+        // setOffsetY(0)
 
         // [tilingCanvas, invisCanvas, canvas, fillCanvas].forEach(canvas => {
         //     canvas.style.transform = `translate(0,-${-200}px)`;
@@ -47,15 +51,14 @@ export function redrawCanvas() {
         redrawCompleteTiles(offsetY)
         redrawActiveTiles(offsetY)
 
-        setOffsetY(0)
         // [tilingCanvas, invisCanvas, canvas, fillCanvas].forEach(canvas => {
-        //     canvas.style.transform = `translate(0,-${offsetY}px)`;
+        //     canvas.style.transform = `translate(0,-${0}px)`;
         // });
-
+        setOffsetY(0)
+        isRedrawCanv = false;
 
     } else {
-        console.log(offsetY ? offsetY : ' hi');
-        [tilingCanvas, invisCanvas, canvas, fillCanvas].forEach(canvas => {
+        [invisCanvas, canvas, fillCanvas, tilingCanvas, ].forEach(canvas => {
             canvas.style.transform = `translate(0,-${offsetY}px)`;
         });
     }
