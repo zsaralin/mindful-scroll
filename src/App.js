@@ -208,7 +208,7 @@ function App() {
     function onTouchStart(event) {
         if (event.touches.length === 1) {
             if(event.touches[0]?.touchType === "stylus") {
-                angle = event.touches[0].azimuthAngle;
+                angle = event.touches[0].rotationAngle;
                 document.getElementById("angle").innerHTML = angle;
             }
             let r = getLineWidth() / 2
