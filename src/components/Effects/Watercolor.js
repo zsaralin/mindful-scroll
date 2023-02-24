@@ -12,14 +12,13 @@ let initFill;
 let fillCol;
 let numActiveTiles = -1;
 
-let canvStr = 'canvas'
+let canvStr = 'fill-canvas'
 
 export function stopWatercolor() {
     clearInterval(initFill)
     clearInterval(fillCol)
 }
 
-// var count = 0;
 
 export function watercolor(x, y, r2, currTile) {
     let currColor = getCurrColor();

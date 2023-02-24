@@ -6,7 +6,7 @@
 #bubble {
     position: absolute;
     -webkit-transform: translateZ(0);
-    /*transform: scale(.7);*/
+    transform: scale(.7);
     display: block;
     width: 150px;
     height: 150px;
@@ -15,7 +15,7 @@
     transition: opacity .5s linear, x 0s ease, y 0s ease;
     pointer-events: none;
     -webkit-appearance: none;
-    filter: drop-shadow(0px 0px 10px black);
+    /*filter: drop-shadow(0px 0px 4px black);*/
     border-radius: 1vw;
 
 }
@@ -31,7 +31,10 @@
 
 #circlesL, #circlesR{
     opacity: 0;
+    stroke-width: 2;
     stroke: grey;
+    fill: white;
+    /*filter: drop-shadow(0px 0px 4px black);*/
 }
 
 .speechR, .speechL{
