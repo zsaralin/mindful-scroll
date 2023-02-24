@@ -115,7 +115,7 @@ export function toCloud(s) {
     }, 1500);
     startInterval = setTimeout(function () {
         gsap.to("#cloud-text", {opacity: 1, duration: 1.3, delay: 0})
-        gsap.to(cloudType, {opacity: 1, duration: 1.5, delay: 0})
+        gsap.to(cloudType, {opacity: 1, duration: 1, delay: 0})
         document.getElementById('cloud-text').innerHTML = s
     }, 2000);
     endInterval = setTimeout(function () {

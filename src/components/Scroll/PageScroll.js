@@ -15,12 +15,12 @@ export let limitScroll = 0;
 export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
     if (isRedrawCanv) {
-        setTimeout(function () {
-            doScroll()
-        }, 500);
+        // setTimeout(function () {
+        //     doScroll()
+        // }, 500);
     } else if (getOffsetY() - (currY - prevY) >= limitScroll) {
         setOffsetY(getOffsetY()-(currY-prevY))
-        redrawCanvas();
+        if(!isRedrawCanv) redrawCanvas();
 
     } else {
         setOffsetY(limitScroll)
@@ -29,13 +29,15 @@ export function doScroll(currY, prevY) {
 }
 
 export function redrawCanvas() {
-    isRedrawCanv = true;
+    // isRedrawCanv = true;
     const canvas = document.getElementById("canvas");
     const fillCanvas = document.getElementById("fill-canvas")
     const invisCanvas = document.getElementById("invis-canvas")
     const tilingCanvas = document.getElementById("tiling-canvas")
     let offsetY = getOffsetY()
     if (offsetY > topSecondTiling() - TOP_PAGE_SPACE) {
+        isRedrawCanv = true;
+
         // [tilingCanvas, invisCanvas, canvas, fillCanvas].forEach(canvas => {
         //     canvas.style.transform = `translate(0,-${-200}px)`;
         // });
@@ -50,12 +52,13 @@ export function redrawCanvas() {
         //     canvas.style.transform = `translate(0,-${offsetY}px)`;
         // });
 
+
     } else {
+        console.log(offsetY ? offsetY : ' hi');
         [tilingCanvas, invisCanvas, canvas, fillCanvas].forEach(canvas => {
             canvas.style.transform = `translate(0,-${offsetY}px)`;
         });
     }
-
     isRedrawCanv = false;
 }
 
@@ -86,12 +89,9 @@ export function startScroll(ySpeed, prevCursorY, cursorY) {
     } else {
         if (cursorY < prevCursorY) {
             d > 0 ? d -= SCROLL_DELTA * d : d = 0
-            console.log('up d ' + d)
-
             doScroll(prevCursorY - d, prevCursorY);
         } else if (cursorY > prevCursorY) {
             d > 0 ? d -= SCROLL_DELTA * d : d = 0
-            console.log('down d ' + d)
             doScroll(prevCursorY + d, prevCursorY);
         }
     }
