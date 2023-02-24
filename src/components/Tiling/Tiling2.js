@@ -101,9 +101,10 @@ export function drawTwoTilings(tilingArr) {
     clearCanvas()
 
     addTwoTilings(tilingArr)
-    clearCanvas();
+    // clearCanvas();
 
     pathArr.forEach(path => drawTiling(path));
+
 
 }
 
