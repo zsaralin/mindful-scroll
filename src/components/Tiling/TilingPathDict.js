@@ -1,6 +1,7 @@
 import {getBoundsTile} from "./TilingBounds";
 import {tilingIndex} from "./TilingGenerator";
 import {EdgeShape, IsohedralTiling, tilingTypes} from "../../lib";
+import { v4 as uuidv4 } from 'uuid';
 
 const SQUARE_INDEX  = 67
 let transition1x = 1;
@@ -65,7 +66,7 @@ export function getTilingPathDict(segArr, offsetX, offsetY) {
         bounds[1] = bounds[1] + offsetX
         bounds[2] = bounds[2] + offsetY
         bounds[3] = bounds[3] + offsetY
-        pathDict[cols[colorIndex]] = {path: path, tile: bounds, filled: false, firstCol: 'white', inPath: []}
+        pathDict[cols[colorIndex]] = {path: path, tile: bounds, filled: false, firstCol: 'white', inPath: [], id: uuidv4() }
         colorIndex++;
     }
     return pathDict //return false if no tile was drawn (i.e., no tile was within the bounds)

@@ -19,7 +19,6 @@ export function stopWatercolor() {
     clearInterval(fillCol)
 }
 
-
 export function watercolor(x, y, r2, currTile) {
     let currColor = getCurrColor();
     let currPath = currTile.path;

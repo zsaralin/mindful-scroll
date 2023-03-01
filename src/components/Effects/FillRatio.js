@@ -9,7 +9,6 @@ let BB_PADDING = 35; // bounding box padding
 let fillMin = FILL_RATIO
 
 function getTotalPixels(currTile) {
-    let ctx = document.getElementById('canvas').getContext("2d");
     let tileDim = currTile.tile
     let startX = tileDim[0] - BB_PADDING;
     let startY = tileDim[2] - BB_PADDING;
@@ -18,12 +17,19 @@ function getTotalPixels(currTile) {
 
     for (let x = startX; x < endX; x += 5) {
         for (let y = startY; y < endY; y += 5) {
-            if (ctx.isPointInPath(currTile.path, x, y)) {
+            if (isCircleInPath(currTile.path, x, y)) {
                 currTile.inPath.push([x, y])
             }
         }
     }
     return currTile.inPath.length
+}
+
+export function isCircleInPath(path,x,y){
+    let ctx = document.getElementById('canvas').getContext("2d");
+    let r = getLineWidth()/4
+    if(ctx.isPointInPath(path,x,y) && ctx.isPointInPath(path,x + r,y + r) && ctx.isPointInPath(path,x + r,y - r) && ctx.isPointInPath(path,x - r,y - r) && ctx.isPointInPath(path,x - r,y + r)) return true
+    return false
 }
 
 export function getFillRatio(currTile) {
@@ -100,13 +106,12 @@ function isColorMatch(col0, col1) {
     return false;
 }
 
-function hslStrToArr(str) {
-    str = str.substring(4, str.length - 1).replaceAll('%', '')
-    return str.split(',').map(Number);
+function hslStrToArr(hsl) {
+    return hsl.match(/\d+/g).map(Number);
 }
 
-function hslToRgb(str) {
-    let hsl = hslStrToArr(str)
+export function hsl2Rgb(hslStr) {
+    let hsl = hslStrToArr(hslStr)
     let h = hsl[0] / 360;
     let s = hsl[1] / 100;
     let l = hsl[2] / 100

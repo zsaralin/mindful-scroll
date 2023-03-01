@@ -12,9 +12,11 @@ import {triggerShrinkStroke} from "../Stroke/ShrinkingStroke";
 import {changeFillMin} from "../Effects/FillRatio";
 import {isSlowScrollOn, triggerSlowScroll} from "../Scroll/SlowScroll";
 import {changeTilingSize} from "../Tiling/TilingSize";
-import {FillStyle, Handedness} from "./CheckboxGrey";
+import {Handedness} from "./CheckboxGrey";
+import {FillStyle} from "./FillStyle"
 import {SwitchGreyUnchecked, SwitchGreyChecked} from "./SwitchGrey";
 import {triggerScroll} from "../Scroll/AutoScroll";
+import {FormControl, FormHelperText, MenuItem, Select} from "@mui/material";
 
 let panelOn = false;
 
@@ -58,9 +60,8 @@ export default function ControlPanel() {
                     <SliderGrey name="Auto Fill Percentage" fn={changeFillMin} default = {FILL_RATIO*100} min = {0} max = {95}/>
                     <SliderGrey name="Tiling Size" fn={changeTilingSize} default = {-50} min = {-window.innerWidth/3} max = {-50}/>
                     <div style = {{paddingBottom:'8px'}}></div>
-                    <FillStyle name = "Fill Tile Colour"/>
-                    <Handedness name = "Fill Tile Colour"/>
-
+                    <FillStyle name = "Fill Style"/>
+                    <Handedness name = "Handedness"/>
                 </FormGroup>
             </div>
             <div id="controlPanelBackground" onClick={hideControlPanel}></div>

@@ -10,7 +10,7 @@
     display: block;
     width: 150px;
     height: 150px;
-    top: 30px; left: 30px;
+    /*top: 30px; left: 30px;*/
     /*background-color :blue; */
     transition: opacity .5s linear, x 0s ease, y 0s ease;
     pointer-events: none;
@@ -38,9 +38,7 @@
 }
 
 .speechR, .speechL{
-    x : 50%;
     stroke: blue;
-    margin-left: 50%;
     position: relative;
 
 }

@@ -4,6 +4,7 @@ import {getRandomShape} from "../Tile/Shape";
 import {getBoundsTiling} from "./TilingBounds";
 import {getOffsetY} from "../Scroll/Offset";
 import {SHAPE_COLOR} from "../Constants";
+import { v4 as uuidv4 } from 'uuid';
 
 let tilingArr = []
 let yMinArr = []
@@ -72,6 +73,7 @@ function drawRandomShape(yMin, yMax, pathDict) {
         filled : false,
         firstCol : 'white',
         inPath : [],
+        id : uuidv4(),
     };
 }
 

@@ -23,8 +23,8 @@ const mina = window.mina;
 let prevTop;
 let prevLeft;
 
-export function showColourPreview(x, y, newTile) {
-    if (newTile) bubbleHelper(x, y)
+export function showColourPreview(x, y, newTile, handChange) {
+    if (newTile || handChange) bubbleHelper(x, y)
     // bubble.style.opacity = 0;
     gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0})
     startColourPreview()
@@ -51,12 +51,13 @@ export function hideColourPreview() {
 }
 
 function bubbleHelper(x, y) {
-    let newX = x - BUBBLE_DIST;
+    let xDist =  isRightHand() ? -125 : 10;
+    let newX = x + xDist
     let newY = y - BUBBLE_DIST;
     if (newX < 30) newX = 30;
     if (newX > window.innerWidth) newX = window.innerWidth;
     if (newY < 30) newY = 30;
-    bubble.style.top = newY + 'px';
+    bubble.style.top =  newY + 'px';
     bubble.style.left = newX + 'px';
 }
 
@@ -83,6 +84,7 @@ export function resetColourPreview() {
 export function toSpeech(str) {
     s = Snap(bubble)
     let speechType = isRightHand() ? "#speechR" : "#speechL"
+    console.log(speechType)
     speech = s.select(speechType);
     speechPoints = speech?.node.getAttribute('d');
 
@@ -156,7 +158,7 @@ export default function Bubble() {
                   opacity='0'/>
             <path id="speechL" d=
                 "M122 1C122 1 139.5 1.00024 139.5 15.5C139.5 25.0001 140.066 46.0038 139.5 55.5001C139.5 55.5001 138.001 75.0001 118 75.0001C97.9998 75.0001 58.4522 75.0001 58.4522 75.0001C58.4522 75.0001 50.9522 85.5 44.4522 94.5001C38.4522 85 30.4522 75.0001 30.4522 75.0001C30.4522 75.0001 24.4999 75.0001 16.0002 75.0001C1.00031 75.0001 1.00031 56.0001 1.00031 56.0001C1.00031 56.0001 0.99938 27 0.999395 15.5001C0.999395 -3.04591e-06 18.4999 1.00005 18.4999 1.00005C18.4999 1.00005 54.0005 1.0002 68.0004 1.00011C82.0002 1.00002 122 1 122 1Z"
-                  opacity='0'/>
+                   opacity='0'/>
             <text id="speech-text" x='71px' y='45px'></text>
             <path id="cloud" d=
                 "M105.5 8.49984C105.5 8.49984 116.5 8.49984 123.5 20.9999C139 20.9999 144.5 33.5 145.999 38.5002C145.999 38.5002 151 60 133.499 69.5003C135 80.5 125.999 90.0003 125.999 90.0003C125.999 90.0003 113 103.5 93.4991 95.0003C83 109.5 66.4991 107 66.4991 107C66.4991 107 50 106 40.4991 88.5001C6.99959 91 2.50013 66.9998 2.50013 66.9998C2.50013 66.9998 -8.00041 38.5002 25.0001 25.9998C27.4996 4.50026 51.9997 1.49988 51.9997 1.49988C51.9997 1.49988 73.4996 -2.99976 86.9998 11.4998C96.5 6.5 105.5 8.49984 105.5 8.49984Z"
