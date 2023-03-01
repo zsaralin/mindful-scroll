@@ -23,7 +23,7 @@ import {
     resetLineWidth,
     setLineWidth
 } from "./components/Stroke/StrokeWidth";
-import {changeBool, getFillMin, getFillRatio} from "./components/Effects/FillRatio";
+import {changeBool, getFillMin, getFillRatio, isCircleInPath} from "./components/Effects/FillRatio";
 import {BUBBLE_DIST, FILL_RATIO, SCROLL_DELTA, SCROLL_DIST, SHAPE_COLOR, SWIPE_THRESHOLD} from "./components/Constants";
 import {completeTile, fillEachPixel, triggerCompleteTile} from "./components/Tile/CompleteTile";
 import {gsap} from "gsap";
@@ -38,6 +38,8 @@ import Bubble, {
 import {getTile} from "./components/Tiling/Tiling2";
 import {isSlowScrollOn} from "./components/Scroll/SlowScroll";
 import {startAutoScroll} from "./components/Scroll/AutoScroll";
+import {getHandChange, handChanged, isRightHand, setHand, setHandChanged} from "./components/Effects/Handedness";
+import {addToUniqColDict} from "./components/Effects/RadialGradient";
 
 
 function App() {
@@ -72,6 +74,7 @@ function App() {
     let hidePreviewInterval;
     let ratio = 0;
 
+
     function toTrueY(y) {
         return (y) + getOffsetY();
     }
@@ -95,12 +98,12 @@ function App() {
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
         currTile = getTile(x, invisCol)
 
-        if (currTile && ctx.isPointInPath(currTile.path, prevScaledX, prevScaledY)) {
-
-            pushStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY);
+        if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY)) {
+            pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY);
             drawStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY);
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
+            addToUniqColDict(currTile, getCurrColor())
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile)
         } else {
             startX = prevCursorX;
@@ -116,15 +119,15 @@ function App() {
             doubleTouch = true; rightMouseDown = true;
             startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
         }
-        if (currTile && ctx.isPointInPath(currTile.path, prevScaledX, prevScaledY) && ctx.isPointInPath(currTile.path, scaledX, scaledY)) {
+        if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY) && isCircleInPath(currTile.path, scaledX, scaledY)) {
             hideColourPreview()
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile, invisCol)
             if ((isShrinkStroke() && (Math.abs(speed[0]) > 10 || Math.abs(speed[1]) > 10))) {
-                pushShrinkingLine(prevScaledX, prevScaledY, scaledX, scaledY);
+                pushShrinkingLine(currTile, prevScaledX, prevScaledY, scaledX, scaledY);
                 drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY);
                 tooFast = true;
             } else {
-                pushStroke(prevScaledX, prevScaledY, scaledX, scaledY);
+                pushStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY);
                 drawStroke(prevScaledX, prevScaledY, scaledX, scaledY);
             }
             changeAudio(mouseSpeed)
@@ -183,7 +186,7 @@ function App() {
         }
         if (rightMouseDown === false) { // do not move colour preview when triggering control panel
             if (!isPanelOn()) {
-                showColourPreview(cursorX, cursorY, prevTile !== currTile);
+                showColourPreview(cursorX, cursorY, prevTile !== currTile, getHandChange);
                 onStrokeEnd()
             }
         }
@@ -211,7 +214,15 @@ function App() {
         if (event.touches.length === 1) {
             if(event.touches[0]?.touchType === "stylus") {
                 angle = event.touches[0].azimuthAngle;
-                document.getElementById("angle").innerHTML = angle;
+                if(angle < 4.7 && angle > 1.5 && isRightHand()){ // left hand
+                    setHand("left")
+                    setHandChanged(true)
+                }
+                else if(angle >= 4.7 && angle <= 1.5 && !isRightHand()) {
+                    setHand('right')
+                    setHandChanged(true)
+                }
+                document.getElementById("angle").innerHTML = event.touches[0]["force"];
             }
             let r = getLineWidth() / 2
             singleTouch = true;
@@ -290,7 +301,7 @@ function App() {
         }
         if (!doubleTouch) {
             if (!isPanelOn()) {
-                showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY, prevTile !== currTile)
+                showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY, prevTile !== currTile, getHandChange())
                 onStrokeEnd()
             }
         }
@@ -318,6 +329,7 @@ function App() {
         clearInterval(timerId)
         ratio = 0;
         firstMove = false;
+        setHandChanged(false)
     }
 
     let reduceOpac;

@@ -4,6 +4,8 @@ import {getRandomShape} from "../Tile/Shape";
 import {getBoundsTiling} from "./TilingBounds";
 import {getOffsetY} from "../Scroll/Offset";
 import {SHAPE_COLOR, TOP_PAGE_SPACE} from "../Constants";
+import { v4 as uuidv4 } from 'uuid';
+
 import {getCurrentPathDict, getTilingIndex, sumArray, tilingArrLength} from "./TilingArr";
 import {stopWatercolor} from "../Effects/Watercolor";
 import {redrawStrokes} from "../Stroke/StrokeArr";
@@ -73,6 +75,7 @@ function drawShape(yMin, yMax, pathDict, shape = null) {
         filled: false,
         firstCol: 'white',
         inPath: [],
+        id : uuidv4()
     };
 }
 

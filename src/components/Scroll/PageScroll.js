@@ -1,5 +1,5 @@
 import {drawTwoTilings, refreshTilings, refreshTilings2, topSecondTiling} from "../Tiling/Tiling2";
-import {redrawStrokes, redrawStrokesNewPage} from "../Stroke/StrokeArr";
+import {redrawStrokes} from "../Stroke/StrokeArr";
 import {redrawCompleteTiles} from "../Tile/CompleteTileArr";
 import {redrawActiveTiles} from "../Effects/Watercolor";
 import {setInternalOffset} from "../Tile/CompleteTile";
@@ -8,6 +8,7 @@ import {endAutoScroll, isAutoScrollActive} from "./AutoScroll";
 import {getOffsetY, setOffsetY} from "./Offset";
 import {isSlowScrollOn} from "./SlowScroll";
 import {getOffsetTop} from "@mui/material";
+import {redrawBlur} from "../Effects/Blur";
 
 
 export let limitScroll = 0;
@@ -36,9 +37,10 @@ export const redrawCanvas = async () => {
         await delay(.2);
         drawTwoTilings()
         copyToOnScreen(document.getElementById('off-canvas'));
-        redrawStrokesNewPage(offsetY)
-        redrawCompleteTiles(offsetY)
-        redrawActiveTiles(offsetY)
+        redrawStrokes(offsetY)
+        // redrawCompleteTiles(offsetY)
+        // redrawActiveTiles(offsetY)
+        redrawBlur(offsetY)
         setOffsetY(0)
     } else {
         [invisCanvas, canvas, fillCanvas, tilingCanvas,].forEach(canvas => {
@@ -61,7 +63,7 @@ export function setUpCanvas() {
 export function refreshPage() { // used when change tile width and size
     refreshTilings2()
     copyToOnScreen(document.getElementById('off-canvas'));
-    redrawStrokes()
+    redrawStrokes(0)
     redrawCompleteTiles()
     redrawActiveTiles()
 }

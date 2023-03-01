@@ -53,7 +53,7 @@ export function Handedness(props) {
                 <RadioGroup defaultValue="right" style={{display: 'flex', flexDirection: 'row'}}>
                     <FormControlLabel control={<Radio/>} label="Right"
                                       sx={{'& .MuiSvgIcon-root': {fontSize: 15}}} value="right"
-                                      onChange={() => setHand(props.label)}
+                                      onChange={() => setHand("right")}
                     />
                     <FormControlLabel  control={<Radio/>} label="Left"
                                        sx={{'& .MuiSvgIcon-root': {fontSize: 15}}} value="left"

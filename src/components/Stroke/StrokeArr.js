@@ -1,15 +1,15 @@
 import {getLineWidth} from "./StrokeWidth";
-import {drawStroke, drawStrokeUnder} from "./Stroke";
+import {drawBlurryStroke, drawStroke, drawStrokeUnder} from "./Stroke";
 import {drawShrinkingStroke} from "./ShrinkingStroke";
 import {getCurrColor} from "./StrokeColor";
 import {getOffsetY, limitScroll} from "../Scroll/PageScroll";
 import {redrawActiveTiles} from "../Effects/Watercolor";
 
-let strokeArr = []
-let strokeArrUnder = []
+let strokeArr = {}
+let strokeArrUnder = {}
 
-export function pushShrinkingLine(x0, y0, x1, y1) {
-    strokeArr.push({
+export function pushShrinkingLine(tile, x0, y0, x1, y1) {
+    const newStroke = {
         x0: x0,
         y0: y0,
         x1: x1,
@@ -17,7 +17,9 @@ export function pushShrinkingLine(x0, y0, x1, y1) {
         color: getCurrColor(),
         lineWidth: getLineWidth(),
         endWidth: getLineWidth() - 5
-    })
+    }
+    strokeArr[tile.id] = strokeArr[tile.id] || [];
+    strokeArr[tile.id].push(newStroke);
 }
 
 // removes mistake strokes during two-finger scroll
@@ -36,70 +38,55 @@ export function removeLastStroke(touch0, touch1, offsetY) {
 }
 
 
-export function pushStroke(x0, y0, x1, y1) {
-    strokeArr.push({
-        x0: x0,
-        y0: y0,
-        x1: x1,
-        y1: y1,
+export function pushStroke(tile, x0, y0, x1, y1) {
+    const newStroke = {
+        x0,
+        y0,
+        x1,
+        y1,
         color: getCurrColor(),
         lineWidth: getLineWidth(),
-    })
+    };
+    strokeArr[tile.id] = strokeArr[tile.id] || [];
+    strokeArr[tile.id].push(newStroke);
 }
 
-export function pushStrokeUnder(x0, y0, x1, y1) {
-    strokeArrUnder.push({
-        x0: x0,
-        y0: y0,
-        x1: x1,
-        y1: y1,
+export function pushStrokeUnder(tile, x0, y0, x1, y1) {
+    const newStroke = {
+        x0,
+        y0,
+        x1,
+        y1,
         color: getCurrColor(),
         lineWidth: getLineWidth(),
-    })
+    };
+    strokeArrUnder[tile.id] = strokeArrUnder[tile.id] || [];
+    strokeArrUnder[tile.id].push(newStroke);
 }
 
-
-export function redrawStrokes() {
-    let offsetY = 0
-    for (let i = 0; i < strokeArrUnder.length; i++) {
-        const stroke = strokeArrUnder[i];
-        drawStrokeUnder(stroke.x0, stroke.y0-offsetY, stroke.x1, stroke.y1-offsetY, stroke.lineWidth, stroke.color);
-        if (stroke.y0 <= limitScroll) {
-            strokeArrUnder.splice(i, 1)
-        }
+export function redrawStrokes(offsetY) {
+    for (let tile in strokeArrUnder) {
+        let arr = strokeArrUnder[tile]
+        arr.forEach(stroke => {
+            drawStrokeUnder(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, stroke.lineWidth, stroke.color);
+        })
     }
-    for (let i = 0; i < strokeArr.length; i++) {
-        const stroke = strokeArr[i];
-        if (stroke.endWidth) {
-            drawShrinkingStroke(stroke.x0, stroke.y0- offsetY, stroke.x1, stroke.y1- offsetY, stroke.lineWidth, stroke.color);
-        }
-        else drawStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY , stroke.lineWidth, stroke.color);
-        if (stroke.y0 <= limitScroll) {
-            strokeArr.splice(i, 1)
-        }
+    for (let tile in strokeArr) {
+        let arr = strokeArr[tile]
+        arr.forEach(stroke => {
+            if (stroke.endWidth) {
+                drawShrinkingStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, stroke.lineWidth, stroke.color);
+            } else drawStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, stroke.lineWidth, stroke.color);
+        })
     }
-}
-
-export function redrawStrokesNewPage(offsetY) {
-    for (let i = 0; i < strokeArrUnder.length; i++) {
-        const stroke = strokeArrUnder[i];
-        drawStrokeUnder(stroke.x0, stroke.y0-offsetY, stroke.x1, stroke.y1-offsetY, stroke.lineWidth, stroke.color);
-        if (stroke.y0 <= limitScroll) {
-            strokeArrUnder.splice(i, 1)
-        }
-    }
-    for (let i = 0; i < strokeArr.length; i++) {
-        const stroke = strokeArr[i];
-        if (stroke.endWidth) {
-            drawShrinkingStroke(stroke.x0, stroke.y0- offsetY, stroke.x1, stroke.y1- offsetY, stroke.lineWidth, stroke.color);
-        }
-        else drawStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY , stroke.lineWidth, stroke.color);
-        if (stroke.y0 <= limitScroll) {
-            strokeArr.splice(i, 1)
-        }
-    }
-    strokeArr  = [];
+    strokeArr = [];
     strokeArrUnder = [];
 }
 
+export function getStrokeArr() {
+    return strokeArr;
+}
 
+export function getStrokeArrUnder() {
+    return strokeArrUnder;
+}
