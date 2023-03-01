@@ -181,7 +181,7 @@ function App() {
     }
 
     function onMouseUp() {
-        if (startX < prevCursorX && startX < SWIPE_THRESHOLD) {
+        if (startX < SWIPE_THRESHOLD) {
             showControlPanel()
         }
         if (rightMouseDown === false) { // do not move colour preview when triggering control panel
@@ -296,7 +296,7 @@ function App() {
     }
 
     function onTouchEnd(event) {
-        if (startX < prevTouches[0]?.pageX && startX < SWIPE_THRESHOLD) {
+        if (startX < SWIPE_THRESHOLD) {
             showControlPanel()
         }
         if (!doubleTouch) {
