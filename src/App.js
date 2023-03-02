@@ -39,7 +39,6 @@ import {getTile} from "./components/Tiling/Tiling2";
 import {isSlowScrollOn} from "./components/Scroll/SlowScroll";
 import {startAutoScroll} from "./components/Scroll/AutoScroll";
 import {getHandChange, handChanged, isRightHand, setHand, setHandChanged} from "./components/Effects/Handedness";
-import {addToUniqColDict} from "./components/Effects/RadialGradient";
 
 
 function App() {
@@ -103,7 +102,7 @@ function App() {
             drawStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY);
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
-            addToUniqColDict(currTile, getCurrColor())
+            // currTile.colors.push(getCurrColor())
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile)
         } else {
             startX = prevCursorX;
@@ -181,9 +180,6 @@ function App() {
     }
 
     function onMouseUp() {
-        if (startX < SWIPE_THRESHOLD) {
-            showControlPanel()
-        }
         if (rightMouseDown === false) { // do not move colour preview when triggering control panel
             if (!isPanelOn()) {
                 showColourPreview(cursorX, cursorY, prevTile !== currTile, getHandChange);
@@ -296,9 +292,6 @@ function App() {
     }
 
     function onTouchEnd(event) {
-        if (startX < SWIPE_THRESHOLD) {
-            showControlPanel()
-        }
         if (!doubleTouch) {
             if (!isPanelOn()) {
                 showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY, prevTile !== currTile, getHandChange())
@@ -391,25 +384,19 @@ function App() {
         if (!isPanelOn()) generateAlert()
     }
 
-    function isSwiped(startX, endX) {
-        if (startX < endX && startX < 50) {
-            showControlPanel()
-        }
-    }
 
     return (
         <div className="App">
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');
-            </style>
+            <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');</style>
             <Helmet>
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
             </Helmet>
+            <button id = "cp-button" onClick = {showControlPanel}></button>
             <ControlPanel/>
             <div id="feedbackBar"></div>
-            <div id = "angle" style = {{position: "absolute", top: 0}}> {angle}</div>
-            <div id="thought" style={{transform: 'scale(.7)',}}></div>
+            {/*<div id = "angle" style = {{position: "absolute", top: 0}}> {angle}</div>*/}
+            <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
             <div className="wrapper">
                 <canvas id="fill-canvas"></canvas>
