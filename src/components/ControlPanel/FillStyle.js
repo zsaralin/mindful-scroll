@@ -27,6 +27,7 @@ export function FillStyle(props) {
                 <option value={"blurFill"}>Blur/Fill</option>
                 <option value={"blur"}>Blur/No Fill</option>
                 <option value={"meanHue"}>Mean Hue</option>
+                <option value={"inverseMean"}>Inverse Mean Hue</option>
                 <option value={"radialGradient"}>Radial Gradient</option>
                 <option value={"diagGradient"}>Diagonal Gradient</option>
                 <option value={"horizGradient"}>Horizontal Gradient</option>

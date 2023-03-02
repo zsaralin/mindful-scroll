@@ -75,7 +75,8 @@ function drawShape(yMin, yMax, pathDict, shape = null) {
         filled: false,
         firstCol: 'white',
         inPath: [],
-        id : uuidv4()
+        id : uuidv4(),
+        colors: [],
     };
 }
 
