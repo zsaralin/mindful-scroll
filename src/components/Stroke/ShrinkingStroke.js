@@ -4,7 +4,7 @@ import {LINE_WIDTH} from "../Constants";
 
 let shrinkStroke = false;
 
-export function drawShrinkingStroke(x0, y0, x1, y1, theLineWidth, theColor) {
+export function drawShrinkingStroke(x0, y0, x1, y1, theColor, theLineWidth) {
     let context = document.getElementById('canvas').getContext("2d");
     let line = createShrinkingStroke(x0, y0, x1, y1, theLineWidth ? theLineWidth : getLineWidth())
     context.fillStyle = theColor ? theColor : getCurrColor();

@@ -4,7 +4,7 @@ import {getLineWidth} from "../Stroke/StrokeWidth";
 import {getTileWidth} from "../Tiling/TileWidth";
 import {getStrokeArr, getStrokeArrUnder, pushStrokeUnder, redrawBlurryStrokes} from "../Stroke/StrokeArr";
 import {drawStrokeUnder} from "../Stroke/Stroke";
-import {fillEachPixel, fillFirstColour} from "../Tile/CompleteTile";
+import {fillEachPixel} from "../Effects/FillGaps";
 
 let blurryArr = {}
 

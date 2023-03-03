@@ -5,6 +5,7 @@ import {pushCompleteTile, redrawTiles} from "../Tile/CompleteTileArr";
 import {getFillRatio, getFillRatio2} from "./FillRatio";
 import {fillCurrTile} from "../Tile/CompleteTile";
 import {getOffsetY, getTotOffset} from "../Scroll/PageScroll";
+import {fillTile} from "./FillTile";
 
 let activeTileArr = []; // semi coloured tiles (gradient)
 const ORIG_RADIUS = LINE_WIDTH;
@@ -45,7 +46,7 @@ export function watercolor(x, y, r2, currTile) {
                 clearInterval(fillCol)
                 activeTileArr.shift();
                 pushCompleteTile(currPath, currColor)
-                fillCurrTile(currTile, currColor)
+                fillTile(currTile, "input", currColor)
                 numActiveTiles--
             }
         } else fillRatio = getFillRatio2(currTile)
@@ -66,7 +67,7 @@ function continueWatercolor(activeTile, offsetY) {
                 clearInterval(fillCol)
                 activeTileArr.shift();
                 pushCompleteTile(activeTile.path, activeTile.color)
-                fillCurrTile(activeTile.path, activeTile.color)
+                fillTile(activeTile, "input", activeTile.color) // maybe activeTile.path
                 numActiveTiles--
             }
         } else fillRatio = getFillRatio2(activeTile.tile)

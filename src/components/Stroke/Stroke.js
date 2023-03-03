@@ -9,12 +9,12 @@ import {hsl2Rgb} from "../Effects/FillRatio";
 
 let context;
 
-export function drawStroke(x0, y0, x1, y1, theLineWidth, theColor, offset, context) {
+export function drawStroke(x0, y0, x1, y1, theColor, theLineWidth, offset, context) {
     context = context || document.getElementById('canvas').getContext("2d");
     drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context, offset)
 }
 
-export function drawStrokeUnder(x0, y0, x1, y1, theLineWidth, theColor, offset) {
+export function drawStrokeUnder(x0, y0, x1, y1, theColor, theLineWidth, offset) {
     context = document.getElementById('fill-canvas').getContext("2d");
     drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context, offset)
 }
@@ -45,4 +45,26 @@ export function drawBlurryStroke(x0, y0, x1, y1, theLineWidth, theColor, context
     context.fillStyle = radialGradient;
     context.fillRect(x0 - r, y0 - r, 150, 150);
     context.closePath();
+}
+
+export function drawClover(x0, y0, x1, y1, theColor, theLineWidth, offset, context) {
+    context = context || document.getElementById('canvas').getContext("2d");
+    let x =  Math.max(getLineWidth()/3, 5);
+    theLineWidth = Math.max(getLineWidth()/2, 5);
+    drawStrokeHelper(x0, y0 + x, x1, y1 + x, theLineWidth, theColor, context, offset)
+    drawStrokeHelper(x0, y0 - x, x1, y1 - x, theLineWidth, theColor, context, offset)
+    drawStrokeHelper(x0 + x, y0, x1 + x, y1, theLineWidth, theColor, context, offset)
+    drawStrokeHelper(x0 - x, y0, x1 - x, y1, theLineWidth, theColor, context, offset)
+}
+
+export function drawFlower(x0, y0, x1, y1, theColor, theLineWidth, offset, context) {
+    context = context || document.getElementById('canvas').getContext("2d");
+    let x =  Math.max(getLineWidth()/3, 5);
+    theLineWidth = Math.max(getLineWidth()/2, 5);
+    drawStrokeHelper(x0 -x/1.5, y0 + x*1.2, x1 - x/1.5, y1 + x*1.2, theLineWidth, theColor, context, offset)
+    drawStrokeHelper(x0 + x/1.5, y0 + x*1.2, x1 + x/1.5, y1 + x*1.2, theLineWidth, theColor, context, offset)
+
+    drawStrokeHelper(x0, y0 - x/1.3, x1, y1 - x/1.3, theLineWidth, theColor, context, offset)
+    drawStrokeHelper(x0 + x, y0, x1 + x, y1, theLineWidth, theColor, context, offset)
+    drawStrokeHelper(x0 - x, y0, x1 - x, y1, theLineWidth, theColor, context, offset)
 }
