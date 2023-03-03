@@ -23,6 +23,7 @@ export function FillStyle(props) {
             >
                 <option value={"first"}>First</option>
                 <option value={"last"}>Last</option>
+                <option value={"complem"}>Complementary Colour</option>
                 <option value={"combination"}>Combination</option>
                 <option value={"blurFill"}>Blur/Fill</option>
                 <option value={"blur"}>Blur/No Fill</option>
@@ -32,6 +33,8 @@ export function FillStyle(props) {
                 <option value={"diagGradient"}>Diagonal Gradient</option>
                 <option value={"horizGradient"}>Horizontal Gradient</option>
                 <option value={"vertGradient"}>Vertical Gradient</option>
+                <option value={"mostUsed"}>Most Used Colour</option>
+                <option value={"leastUsed"}>Least Used Colour</option>
 
             </NativeSelect>
         </FormControl>

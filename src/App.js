@@ -3,7 +3,7 @@ import './components/Bubble/Bubble.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import Music, {changeAudio, reduceAudio, triggerAudio} from './components/Audio.js'
-import {drawStroke} from './components/Stroke/Stroke'
+import {drawClover, drawFlower, drawStroke} from './components/Stroke/Stroke'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/ShrinkingStroke'
 import {stopColorChange, colorDelay, getCurrColor} from './components/Stroke/StrokeColor'
 import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
@@ -91,17 +91,16 @@ function App() {
         d = SCROLL_DIST
     }, []);
 
-
+    let currColor;
     function onStrokeStart(prevScaledX, prevScaledY, x) {
-        stopColorChange()
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
         currTile = getTile(x, invisCol)
-
+        currColor = getCurrColor()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY)) {
-            pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY);
-            drawStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY);
+            pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY, currColor);
+            drawStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY, currColor);
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
-            if (currTile.firstCol === "white") currTile.firstCol = getCurrColor()
+            if (currTile.firstCol === "white") currTile.firstCol = currColor
             // currTile.colors.push(getCurrColor())
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile)
         } else {
@@ -120,14 +119,17 @@ function App() {
         }
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY) && isCircleInPath(currTile.path, scaledX, scaledY)) {
             hideColourPreview()
-            if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile, invisCol)
+            if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
+                currTile.filled = true;
+                completeTile(currTile, invisCol)
+            }
             if ((isShrinkStroke() && (Math.abs(speed[0]) > 10 || Math.abs(speed[1]) > 10))) {
-                pushShrinkingLine(currTile, prevScaledX, prevScaledY, scaledX, scaledY);
-                drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY);
+                pushShrinkingLine(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor);
+                drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY, currColor);
                 tooFast = true;
             } else {
-                pushStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY);
-                drawStroke(prevScaledX, prevScaledY, scaledX, scaledY);
+                pushStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor);
+                drawStroke(prevScaledX, prevScaledY, scaledX, scaledY, currColor);
             }
             changeAudio(mouseSpeed)
             startAutoScroll(cursorY);
