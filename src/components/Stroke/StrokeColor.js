@@ -1,3 +1,4 @@
+
 let colorChange = 15;
 let shortPause;
 let longPause;
@@ -17,9 +18,14 @@ export function getRandomRGB() {
 export function colorDelay() {
     stopColorChange()
     let numIntervals = 0;
+    if(typeof color === "string" && color?.slice(0, 4) === 'rgba') {
+        const rgbValues = color.match(/\d+/g).slice(0, 3).map(Number);
+        const hslValues = rgbToHsl(...rgbValues);
+        color = `hsl(${Math.round(hslValues[0] * 360)}, ${Math.round(hslValues[1] * 100)}%, ${Math.round(hslValues[2] * 100)}%)`;
+    }
     shortPause = setInterval(function () {
         let hsvArr = color.match(/\d+/g)
-        colorChange = 10
+        colorChange = 5
         let hue = parseInt(hsvArr[0]) + colorChange;
         if (Math.abs(hue) > 360) {
             hue-= 360
@@ -52,4 +58,35 @@ export function triggerRandomColour(){
     randomColour = !randomColour;
     clearInterval(shortPause)
     colorDelay()
+}
+
+export function setCurrColor(col){
+    color = col
+    // const rgbValues = col.match(/\d+/g).slice(0, 3).map(Number);
+    // const hslValues = rgbToHsl(...rgbValues);
+    // color = `hsl(${Math.round(hslValues[0] * 360)}, ${Math.round(hslValues[1] * 100)}%, ${Math.round(hslValues[2] * 100)}%)`;
+    // console.log(color)
+}
+
+function rgbToHsl(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+
+    if (max == min) {
+        h = s = 0;
+    } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+
+    return [h, s, l];
 }

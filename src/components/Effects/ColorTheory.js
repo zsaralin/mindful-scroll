@@ -49,11 +49,10 @@ export function fillTileColors(tile) {
     })
 }
 
-function hslToRgb(h, s, l) {
+export function hslToRgb(h, s, l) {
     h /= 360;
     s /= 100;
     l /= 100;
-    console.log('HSLLLLL ' + h, s, l)
     let r, g, b;
 
     if (s === 0) {
@@ -79,7 +78,7 @@ function hslToRgb(h, s, l) {
     return {r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255)};
 }
 
-function rgbToHsl(r, g, b) {
+export function rgbToHsl(r, g, b) {
     r /= 255;
     g /= 255;
     b /= 255;

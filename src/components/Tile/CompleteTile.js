@@ -11,7 +11,7 @@ import {shapeGlow} from "./Shape";
 import {blurTile, fillAndBlur} from "../Effects/Blur";
 import {fillLinearGradient, fillRadialGradient,} from "../Effects/Gradient";
 import {fillTileColors} from "../Effects/ColorTheory";
-import {fillEachPixel, fillEachPixelInverse} from "../Effects/FillGaps";
+import {fillEachPixel, fillEachPixelInverse, fillInverseStrokes} from "../Effects/FillGaps";
 import {invert} from "../Effects/ColorTheory";
 
 let fillTileArr = [] // fully coloured tiles
@@ -29,7 +29,7 @@ export function completeTile(currTile, invisCol) {
     if (completeTileOn) {
         currTile.filled = true;
         fillTileColors(currTile)
-        fillEachPixelInverse(currTile)
+        fillInverseStrokes(currTile)
 
         // if (fillType === "combination") fillEachPixel(currTile)
         // else if (fillType === "first") fillFirstColour(currTile)

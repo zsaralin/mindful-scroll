@@ -6,13 +6,13 @@
 #bubble {
     position: absolute;
     -webkit-transform: translateZ(0);
-    transform: scale(.4);
+    transform: scale(.5);
     display: block;
     width: 150px;
     height: 150px;
     /*top: 30px; left: 30px;*/
     /*background-color :blue; */
-    transition: opacity .5s linear, x 0s ease, y 0s ease;
+    transition: opacity .5s linear, x 6s ease, y 6s ease;
     pointer-events: none;
     -webkit-appearance: none;
     /*filter: drop-shadow(0px 0px 4px black);*/

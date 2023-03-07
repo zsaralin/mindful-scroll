@@ -1,9 +1,10 @@
 import {getTileWidth} from "../Tiling/TileWidth";
-import {pushStrokeUnder, redrawTileStrokes, redrawTileStrokesI} from "../Stroke/StrokeArr";
+import {getStrokeArr, pushStrokeUnder, redrawTileStrokes, redrawTileStrokesI} from "../Stroke/StrokeArr";
 import {drawStrokeUnder} from "../Stroke/Stroke";
-import {invert} from "./ColorTheory";
+import {invert, invertHue} from "./ColorTheory";
 import {clearTile, fillTile} from "./FillTile";
 import {getOffsetY} from "../Scroll/Offset";
+import {getCurrColor, setCurrColor,} from "../Stroke/StrokeColor";
 
 export function fillEachPixel(tile) {
     let ctx = document.getElementById('canvas').getContext('2d');
@@ -23,24 +24,30 @@ export function fillEachPixel(tile) {
 
 export function fillEachPixelInverse(tile) {
     fillEachPixel(tile)
-    // let ctx = document.getElementById('canvas').getContext('2d');
-    // let width = getTileWidth()
-    // clearTile(tile)
-    // redrawTileStrokesI(tile, getOffsetY())
-    // let fillColor = invert(getTopLeftCol(tile)) // fill colour starts as first colour of top left corner
-    clearTile(tile)
-    redrawTileStrokesI(tile, getOffsetY())
+    clearTile(tile, invert(tile.firstCol))
+    redrawTileStrokesI(tile, getOffsetY(), invert)
     fillTile(tile, "firstI", true)
+}
 
-    // tile.inPath.forEach(i => {
-    //     let x = i[0], y = i[1]
-    //     if (ctx.getImageData(x, y, 1, 1).data.toString() === '0,0,0,0') {
-    //         pushStrokeUnder(tile, x, y, x, y + 2, (fillColor),  width);
-    //         drawStrokeUnder(x, y, x, y + 2, (fillColor), width);
-    //     } else {
-    //         fillColor = 'rgba(' + ctx.getImageData(x, y, 1, 1).data.toString() + ')'
-    //     }
-    // })
+export function fillEachPixelInverseHue(tile) {
+    fillEachPixel(tile)
+    clearTile(tile)
+    redrawTileStrokesI(tile, getOffsetY(), invertHue)
+    fillTile(tile, "firstIHue", true)
+}
+
+// redraw strokes to inverse colour, set background to currColour
+export function fillInverseStrokes(tile) {
+    // clearTile(tile)
+    let arr = getStrokeArr()[tile.id]
+    let lastColor = arr[arr.length-1].color
+    // let col = getCurrColor()
+    setCurrColor(invert(lastColor))
+
+    redrawTileStrokesI(tile, getOffsetY(), invert)
+    fillTile(tile, "input", true, lastColor)
+    // setCurrColor(invertHue(col))
+    // setCurrColor(invert(col))
 }
 
 function getTopLeftCol(tile) {
