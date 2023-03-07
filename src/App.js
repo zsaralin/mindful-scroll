@@ -30,7 +30,7 @@ import {gsap} from "gsap";
 import {shapeGlow} from "./components/Tile/Shape";
 import ControlPanel, {hideControlPanel, isPanelOn, showControlPanel} from "./components/ControlPanel/ControlPanel";
 import Bubble, {
-    hideColourPreview,
+    hideColourPreview, moveFeedback,
     showColourPreview,
     toCloud,
     toSpeech
@@ -92,13 +92,19 @@ function App() {
     }, []);
 
     let currColor;
+
     function onStrokeStart(prevScaledX, prevScaledY, x) {
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
         currTile = getTile(x, invisCol)
         currColor = getCurrColor()
+        stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY)) {
+            moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
+            sendMidAlert()
+
             pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY, currColor);
             drawStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY, currColor);
+
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
             // currTile.colors.push(getCurrColor())
@@ -111,13 +117,14 @@ function App() {
 
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed){
         insidePoly[0] += 1;
-        // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
+        currColor = getCurrColor();
         // scroll when dragging on white space
         if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(scaledX, scaledY, 1, 1).data.toString().trim() === '0,0,0,0') {
             doubleTouch = true; rightMouseDown = true;
             startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
         }
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY) && isCircleInPath(currTile.path, scaledX, scaledY)) {
+            moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
             hideColourPreview()
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
                 currTile.filled = true;
@@ -136,6 +143,14 @@ function App() {
         } else {
             insidePoly[1] += 1;
         }
+    }
+
+    let midId;
+    function sendMidAlert(){
+        midId = setInterval(function () {
+            console.log('hi')
+            sendAlert()
+        }, 1000);
     }
 
     function onMouseDown(event) {
@@ -322,6 +337,7 @@ function App() {
         prevTile = currTile;
         clearTimeout(hidePreviewInterval)
         clearInterval(timerId)
+        clearInterval(midId)
         ratio = 0;
         firstMove = false;
         setHandChanged(false)
@@ -346,13 +362,7 @@ function App() {
         }, 100)
     }
 
-    function moveFeedback(prevX, prevY, x, y) {
-        if (Math.abs(prevX - x) > 15 || Math.abs(prevY - y) > 15) {
-            // bubble.style.transition = 'top 6s, left 6s'
-            gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0,})
-            // bubbleHelper(x,y)
-        }
-    }
+
 
     function showFeedback(x, y) {
         // circle?.animate({ d: cloudPoints }, 1500, mina.easeout);
@@ -363,27 +373,44 @@ function App() {
 
     let slowArr = ['slow', 'soften', 'release', 'calm', 'rest', 'ease', 'soothe', 'relax']
     let goodArr = ['good', 'feel', 'grow', 'unwind', 'embrace', 'observe', 'reflect',]
-    let focusArr = ['focus', 'notice', 'recognize', "concentrate", "center"]
+    let focusArr = ['focus', 'notice', 'recognize', "center"]
 
     let word = ''
 
-    function generateAlert() {
-        console.log('in speech')
+    const delay = ms => new Promise(res => setTimeout(res, ms));
 
+    let sendingAlert = false;
+    async function generateAlert() {
+        console.log('in speech')
         let insideRatio = insidePoly[1] / insidePoly[0]
         console.log(insideRatio)
         if (tooFast) {
             word = slowArr[Math.floor(Math.random() * slowArr.length)]
             toSpeech(word)
+            sendingAlert = true;
         } else if (insideRatio >= .6) {
             toSpeech(focusArr[Math.floor(Math.random() * focusArr.length)])
+            sendingAlert = true;
         } else if (insideRatio < 0.5 && insidePoly[0] !== 0) {
             toCloud(goodArr[Math.floor(Math.random() * goodArr.length)])
+            sendingAlert = true;
         }
+        await delay(8000)
+        sendingAlert = false;
     }
 
-    function sendAlert() {
-        if (!isPanelOn()) generateAlert()
+    let alertInterval = 4//Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
+    let count = 0;
+    async function sendAlert() {
+        console.log('count ' + count)
+        if (!isPanelOn() && !sendingAlert) {
+            if (count === alertInterval) {
+                generateAlert();
+                alertInterval = 4//Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+                count = 0;
+            }
+            else count++
+        }
     }
 
 

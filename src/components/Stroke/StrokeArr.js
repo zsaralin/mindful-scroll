@@ -96,16 +96,20 @@ export function redrawTileStrokes(tile, offsetY) {
     })
 }
 
-export function redrawTileStrokesI(tile, offsetY) {
-    let fn = function invert(){};
+export function redrawTileStrokesI(tile, offsetY, invert) {
+    let invertFn  = invert
     let arr = strokeArrUnder[tile.id]
-        arr.forEach(stroke => {
-            drawStrokeUnder(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, invert(stroke.color),stroke.lineWidth);
+        arr?.forEach(stroke => {
+            drawStrokeUnder(stroke.x0, stroke.y0 , stroke.x1, stroke.y1 , invertFn(stroke.color),stroke.lineWidth);
         })
     arr = strokeArr[tile.id]
-    arr.forEach(stroke => {
+    arr?.forEach(stroke => {
         if (stroke.endWidth) {
-            drawShrinkingStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, invert(stroke.color),stroke.lineWidth)
-        } else drawStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, invert(stroke.color),stroke.lineWidth)
+            drawShrinkingStroke(stroke.x0, stroke.y0 , stroke.x1, stroke.y1 , invertFn(stroke.color),stroke.lineWidth)
+        } else {
+            drawStroke(stroke.x0, stroke.y0 , stroke.x1, stroke.y1 , invertFn(stroke.color),stroke.lineWidth)
+            console.log('STROKES REDDRAW ' + invertFn(stroke.color))
+        }
     })
 }
+
