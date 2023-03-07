@@ -122,7 +122,7 @@ function App() {
         currColor = getCurrColor();
         // scroll when dragging on white space
         if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(scaledX, scaledY, 1, 1).data.toString().trim() === '0,0,0,0') {
-            // doubleTouch = true; rightMouseDown = true;
+            doubleTouch = true; rightMouseDown = true;
             startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
         }
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY) && isCircleInPath(currTile.path, scaledX, scaledY)) {
