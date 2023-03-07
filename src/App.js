@@ -99,11 +99,13 @@ function App() {
         currColor = getCurrColor()
         stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY)) {
+            hideColourPreview()
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
+
             sendMidAlert()
 
-            pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY, currColor);
-            drawStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY, currColor);
+            pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "stylus" ? prevScaledY + .5: prevScaledY, currColor);
+            drawStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "stylus" ? prevScaledY + .5: prevScaledY, currColor);
 
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
@@ -125,7 +127,6 @@ function App() {
         }
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY) && isCircleInPath(currTile.path, scaledX, scaledY)) {
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
-            hideColourPreview()
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
                 currTile.filled = true;
                 completeTile(currTile, invisCol)
@@ -148,7 +149,6 @@ function App() {
     let midId;
     function sendMidAlert(){
         midId = setInterval(function () {
-            console.log('hi')
             sendAlert()
         }, 1000);
     }
@@ -399,14 +399,14 @@ function App() {
         sendingAlert = false;
     }
 
-    let alertInterval = 4//Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
+    let alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
     let count = 0;
     async function sendAlert() {
         console.log('count ' + count)
         if (!isPanelOn() && !sendingAlert) {
             if (count === alertInterval) {
                 generateAlert();
-                alertInterval = 4//Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+                alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
                 count = 0;
             }
             else count++
@@ -424,7 +424,7 @@ function App() {
             <button id = "cp-button" onClick = {showControlPanel}></button>
             <ControlPanel/>
             <div id="feedbackBar"></div>
-            {/*<div id = "angle" style = {{position: "absolute", top: 0}}> {angle}</div>*/}
+            <div id = "angle" style = {{position: "absolute", top: 0}}> {angle}</div>
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
             <div className="wrapper">

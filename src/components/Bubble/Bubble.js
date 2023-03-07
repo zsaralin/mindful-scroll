@@ -43,24 +43,40 @@ let isHiding = false;
 export async function hideColourPreview() {
     if (isHiding) return
     else if (!isHiding) {
-        isHiding = true;
         clearInterval(colourInterval)
-        document.getElementById('speech-text').innerHTML = ''
-        document.getElementById('cloud-text').innerHTML = ''
-        circle?.stop()
-        circle?.animate({d: circlePoints}, 100, mina.linear);
         clearTimeout(startWhite)
         clearTimeout(startInterval)
         clearTimeout(endInterval)
+        startColourPreview()
+        isHiding = true;
+
+        document.getElementById('speech-text').innerHTML = ''
+        document.getElementById('cloud-text').innerHTML = ''
+        circle?.stop()
+        gsap.killTweensOf(cloudType);
+
+        gsap.to(cloudType, {opacity: 0, duration: 0, delay: 0})
+        circle?.animate({d: circlePoints}, 100, mina.linear);
+
+
         console.log('hiding')
         gsap.to("#bubble", {opacity: 0, duration: 1, delay: 2})
 
         prevTop = bubble.style.top;
         prevLeft = bubble.style.left;
     }
-
 }
 
+function testFunc(){
+    gsap.to(cloudType, {opacity: 0, duration: 0, delay: 0})
+    // circle?.animate({d: circlePoints}, 100, mina.linear);
+
+    clearTimeout(startWhite)
+    clearTimeout(startInterval)
+    clearTimeout(endInterval)
+    console.log('hiding')
+    gsap.to("#bubble", {opacity: 0, duration: 1, delay: 2})
+}
 function bubbleHelper(x, y) {
     let xDist = isRightHand() ? -125 : 10;
     let newX = x + xDist
@@ -120,10 +136,12 @@ export function toSpeech(str) {
     }, 4000);
 }
 
+let cloudType = '#circlesR';
+
 export function toCloud(s) {
     gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0})
 
-    let cloudType = isRightHand() ? "#circlesR" : "#circlesL"
+    cloudType = isRightHand() ? "#circlesR" : "#circlesL"
     circle?.animate({d: cloudPoints}, 1500, mina.linear);
 
     // bubble.style.width = 150 + 'px' //change dimensions of bounding box
@@ -154,34 +172,12 @@ export const moveFeedback = async (prevX, prevY, x, y) => {
         return;
     } else if (!isMoving) {
         isMoving = true;
-        console.log('in ere')
-        isMoving = true;
         let loc = bubbleHelper(x, y)
-
-        // bubble.style.transition = 'top 6s, left 6s'
         let dist = sqrt((prevY - loc[1]) ** 2 + (prevX - loc[0]) ** 2)
-        console.log(dist)
         gsap.to("#bubble", {duration: dist/15, x: loc[0], y: loc[1]})
-        // bubble.style.top = loc[0]
-        // bubble.style.left = loc[1]
-        // isMoving = false;
         await delay(6000);
         isMoving = false;
     }
-    // else {
-    //     isMoving = false;
-    //     await delay(6000);
-    //
-    // }
-
-    // gsap.to("#bubble", {duration: 1, top: loc[1]})
-
-
-    // if (Math.abs(prevX - x) > 15 || Math.abs(prevY - y) > 15) {
-    // bubble.style.transition = 'top 6s, left 6s'
-    // gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0,})
-    // bubbleHelper(x,y)
-    // }
 }
 
 export default function Bubble() {
