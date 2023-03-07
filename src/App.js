@@ -104,8 +104,8 @@ function App() {
 
             sendMidAlert()
 
-            pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "stylus" ? prevScaledY + .5: prevScaledY, currColor);
-            drawStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "stylus" ? prevScaledY + .5: prevScaledY, currColor);
+            pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "stylus" || touchType === "direct" ? prevScaledY + .5: prevScaledY, currColor);
+            drawStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "stylus" || touchType === "direct" ? prevScaledY + .5: prevScaledY, currColor);
 
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
@@ -235,7 +235,7 @@ function App() {
                     setHand('right')
                     setHandChanged(true)
                 }
-                document.getElementById("angle").innerHTML = event.touches[0]["force"];
+                document.getElementById("angle").innerHTML = event.touches[0].force
             }
             let r = getLineWidth() / 2
             singleTouch = true;
