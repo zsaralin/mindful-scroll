@@ -12,7 +12,7 @@ const theme = createTheme({
             'Montserrat',
             'sans-serif'
         ].join(','),
-        fontSize: 15,
+        fontSize: 12,
     }
 });
 
