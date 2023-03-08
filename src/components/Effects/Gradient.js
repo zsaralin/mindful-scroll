@@ -57,7 +57,7 @@ function getSimilarColours(tile) {
         let temp = arr[i]
         returnArr[i].push(temp)
         for (let y = i + 1; y < arr.length; y++) {
-            if (isSimilar(temp, arr[y])) returnArr[i].push(arr[y])
+            if (isSimilar(temp, arr[y])) returnArr[i].push('rgba(' + arr[y].data +')')
         }
     }
     return returnArr.reduce((acc, curr) => curr.length > acc.length ? curr : acc, []);

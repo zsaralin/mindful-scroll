@@ -13,6 +13,7 @@ import {fillLinearGradient, fillRadialGradient,} from "../Effects/Gradient";
 import {fillTileColors} from "../Effects/ColorTheory";
 import {fillEachPixel, fillEachPixelInverse, fillInverseStrokes} from "../Effects/FillGaps";
 import {invert} from "../Effects/ColorTheory";
+import {fillTile} from "../Effects/FillTile";
 
 let fillTileArr = [] // fully coloured tiles
 let completeTileOn = true;
@@ -29,22 +30,22 @@ export function completeTile(currTile, invisCol) {
     if (completeTileOn) {
         currTile.filled = true;
         fillTileColors(currTile)
-        fillInverseStrokes(currTile)
 
-        // if (fillType === "combination") fillEachPixel(currTile)
-        // else if (fillType === "first") fillFirstColour(currTile)
-        // else if (fillType === "last") fillLastColour(currTile)
-        // else if (fillType === "complem") fillComplemCol(currTile)
-        // else if (fillType === "blur") blurTile(currTile)
-        // else if (fillType === "blurFill") fillAndBlur(currTile)
-        // else if (fillType === "meanHue") fillMeanHue(currTile)
-        // else if (fillType === "inverseMean") fillMeanHue(currTile)
-        // else if (fillType === "radialGradient") fillRadialGradient(currTile, true)
-        // else if (fillType === "diagGradient") fillLinearGradient(currTile, "diag")
-        // else if (fillType === "horizGradient") fillLinearGradient(currTile, "horiz")
-        // else if (fillType === "vertGradient") fillLinearGradient(currTile, "vert")
-        // else if (fillType === "mostUsed") fillLinearGradient(currTile, "mostUsed")
-        // else if (fillType === "leastUsed") fillLinearGradient(currTile, "leastUsed")
+        if (fillType === "combination") fillEachPixel(currTile)
+        else if (fillType === "first") fillTile(currTile, "first", false)
+        else if (fillType === "last") fillTile(currTile, "last", false)
+        else if (fillType === "complem") fillTile(currTile, "firstC", false)
+        else if (fillType === "blur") blurTile(currTile)
+        else if (fillType === "blurFill") fillAndBlur(currTile)
+        else if (fillType === "meanHue") fillTile(currTile, "meanHue", false)
+        else if (fillType === "inverseMean") fillTile(currTile, "meanHueI", false)
+        else if (fillType === "radialGradient") fillRadialGradient(currTile, true)
+        else if (fillType === "diagGradient") fillLinearGradient(currTile, "diag")
+        else if (fillType === "horizGradient") fillLinearGradient(currTile, "horiz")
+        else if (fillType === "vertGradient") fillLinearGradient(currTile, "vert")
+        else if (fillType === "mostUsed") fillTile(currTile, "most", false)
+        else if (fillType === "leastUsed") fillTile(currTile, "least", false)
+        else if (fillType === "inverseComb") fillInverseStrokes(currTile)
 
         if (`rgb(${invisCol?.substring(0, 7)})` === SHAPE_COLOR) {
             shapeGlow(currTile)
