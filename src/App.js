@@ -229,15 +229,18 @@ function App() {
         if (event.touches.length === 1) {
             if(event.touches[0]?.touchType === "stylus") {
                 angle = event.touches[0].azimuthAngle;
-                if(angle < 4.7 && angle > 1.5 && isRightHand()){ // left hand
+                if (angle < 4.7 && angle > 1.5 && isRightHand()) { // left hand
                     setHand("left")
                     setHandChanged(true)
-                }
-                else if(angle >= 4.7 && angle <= 1.5 && !isRightHand()) {
+                } else if (angle >= 4.7 && angle <= 1.5 && !isRightHand()) {
                     setHand('right')
                     setHandChanged(true)
                 }
-                document.getElementById("angle").innerHTML = event.touches[0]["force"]
+                if (event.touches && event.touches[0] && typeof event.touches[0]["force"] !== "undefined") {
+                    if (event.touches[0]["force"] > 0) {
+                        document.getElementById("angle").innerHTML = event.touches[0]["force"]
+                    }
+                }
             }
             let r = getLineWidth() / 2
             singleTouch = true;
