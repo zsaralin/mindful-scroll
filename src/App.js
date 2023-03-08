@@ -294,6 +294,11 @@ function App() {
 
         if (singleTouch) {
             onStrokeMove(prevScaledX,prevScaledY, scaledX,scaledY, touchSpeed)
+            if (event.touches && event.touches[0] && typeof event.touches[0]["force"] !== "undefined") {
+                if (event.touches[0]["force"] > 0) {
+                    document.getElementById("angle").innerHTML = event.touches[0]["force"]
+                }
+            }
         } else if (doubleTouch) {
             startScroll(Math.abs(touchSpeed[1]), prevTouch0Y, touch0Y)
         }
