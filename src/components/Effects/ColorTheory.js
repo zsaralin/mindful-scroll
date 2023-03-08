@@ -28,7 +28,7 @@ export function invert(col){
 }
 
 export function isSimilar(col0, col1) {
-    if (col0.slice(0, 3) === 'hsl') {
+    if (typeof col0 === "string" && col0.slice(0, 3) === 'hsl') {
         col0 = col0.match(/(\d+(\.\d+)?)/g).map(Number);
         col1 = col1.match(/(\d+(\.\d+)?)/g).map(Number);
     } else {

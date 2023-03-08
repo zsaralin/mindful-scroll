@@ -48,6 +48,8 @@ export function FillStyle(props) {
                 <option value={"vertGradient"}>Vertical Gradient</option>
                 <option value={"mostUsed"}>Most Used Colour</option>
                 <option value={"leastUsed"}>Least Used Colour</option>
+                <option value={"inverseComb"}>Inverse Combination</option>
+
 
             </NativeSelect>
         </FormControl>
