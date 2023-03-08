@@ -123,7 +123,7 @@ function App() {
         currColor = getCurrColor();
         // scroll when dragging on white space
         if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(scaledX, scaledY, 1, 1).data.toString().trim() === '0,0,0,0') {
-            // doubleTouch = true;
+            doubleTouch = true;
             // rightMouseDown = true;
             startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
         }
@@ -413,6 +413,7 @@ function App() {
     let count = 0;
     async function sendAlert() {
         if (!isPanelOn() && !sendingAlert) {
+            console.log('um')
             if (count === alertInterval) {
                 generateAlert();
                 alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
