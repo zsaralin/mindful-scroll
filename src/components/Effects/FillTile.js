@@ -25,6 +25,7 @@ export function fillTile(tile, str, under, inputCol){
     let canvStr = under ? 'fill-canvas' : 'canvas'
     let ctx = document.getElementById(canvStr).getContext('2d');
     let col = ctx.fillStyle = getCol(tile, str, inputCol)
+    console.log(col)
     ctx.fill(tile.path)
     tile.filled = true;
     pushCompleteTile(tile.path, col)

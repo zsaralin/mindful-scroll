@@ -43,8 +43,8 @@ export function completeTile(currTile, invisCol) {
         else if (fillType === "diagGradient") fillLinearGradient(currTile, "diag")
         else if (fillType === "horizGradient") fillLinearGradient(currTile, "horiz")
         else if (fillType === "vertGradient") fillLinearGradient(currTile, "vert")
-        else if (fillType === "mostUsed") fillTile(currTile, "most", false)
-        else if (fillType === "leastUsed") fillTile(currTile, "least", false)
+        else if (fillType === "mostUsed") fillTile(currTile, "most", true)
+        else if (fillType === "leastUsed") fillTile(currTile, "least", true)
         else if (fillType === "inverseComb") fillInverseStrokes(currTile)
 
         if (`rgb(${invisCol?.substring(0, 7)})` === SHAPE_COLOR) {

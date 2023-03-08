@@ -43,4 +43,5 @@ function getColorCounts(tile){
             colorCounts[color]++;
         }
     }
+    return colorCounts
 }

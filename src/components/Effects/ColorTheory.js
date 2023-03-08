@@ -123,8 +123,7 @@ export function meanHue(tile, colArr) {
     rgb.g = ~~(rgb.g / count);
     rgb.b = ~~(rgb.b / count);
 
-    return rgb;
-
+    return 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',1)'
 }
 
 export function complem(rgb) {
@@ -137,5 +136,4 @@ function HueShift(h, s) {
     h += s;
     while (h >= 360.0) h -= 360.0;
     while (h < 0.0) h += 360.0;
-    return h;
-}
+    return h;}
