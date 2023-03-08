@@ -25,10 +25,10 @@ function getTotalPixels(currTile) {
     return currTile.inPath.length
 }
 
-export function isCircleInPath(path,x,y){
+export function isCircleInPath(path, x, y, lineWidth) {
     let ctx = document.getElementById('canvas').getContext("2d");
-    let r = getLineWidth()/4
-    if(ctx.isPointInPath(path,x,y) && ctx.isPointInPath(path,x + r,y + r) && ctx.isPointInPath(path,x + r,y - r) && ctx.isPointInPath(path,x - r,y - r) && ctx.isPointInPath(path,x - r,y + r)) return true
+    let r = lineWidth ? lineWidth / 1.5 : getLineWidth() / 4
+    if (ctx.isPointInPath(path, x, y) && ctx.isPointInPath(path, x + r, y + r) && ctx.isPointInPath(path, x + r, y - r) && ctx.isPointInPath(path, x - r, y - r) && ctx.isPointInPath(path, x - r, y + r)) return true
     return false
 }
 
@@ -38,9 +38,8 @@ export function getFillRatio(currTile) {
 
     let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixels(currTile) : currTile.inPath.length] // [filledPixels, totalPixels]
     currTile.inPath.forEach(i => {
-        if (ctx.getImageData(i[0], i[1], 1, 1).data.toString() !== '0,0,0,0' && ctx.getImageData(i[0], i[1], 1, 1).data.toString() !== '255,255,255,255')
-         {
-             fillRatio[0]++
+        if (ctx.getImageData(i[0], i[1], 1, 1).data.toString() !== '0,0,0,0' && ctx.getImageData(i[0], i[1], 1, 1).data.toString() !== '255,255,255,255') {
+            fillRatio[0]++
         }
     })
     // for (let x = startX; x < endX; x += 25) {
@@ -69,8 +68,7 @@ export function getFillRatio2(currTile) {
     currTile.inPath.forEach(i => {
         // console.log(ctx.getImageData(i[0], i[1], 1, 1).data.toString() )
 
-        if (ctx.getImageData(i[0], i[1], 1, 1).data.toString() !== '0,0,0,0' && ctx.getImageData(i[0], i[1], 1, 1).data.toString() !== '255,255,255,255')
-        {
+        if (ctx.getImageData(i[0], i[1], 1, 1).data.toString() !== '0,0,0,0' && ctx.getImageData(i[0], i[1], 1, 1).data.toString() !== '255,255,255,255') {
             // console.log(ctx.getImageData(i[0], i[1], 1, 1).data.toString() )
             fillRatio[0]++
         }
