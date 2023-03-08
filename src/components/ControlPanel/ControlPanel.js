@@ -13,7 +13,7 @@ import {changeFillMin} from "../Effects/FillRatio";
 import {isSlowScrollOn, triggerSlowScroll} from "../Scroll/SlowScroll";
 import {changeTilingSize} from "../Tiling/TilingSize";
 import {Handedness} from "./CheckboxGrey";
-import {FillStyle} from "./FillStyle"
+import {DotStyle, FillStyle} from "./FillStyle"
 import {SwitchGreyUnchecked, SwitchGreyChecked} from "./SwitchGrey";
 import {triggerScroll} from "../Scroll/AutoScroll";
 import {FormControl, FormHelperText, MenuItem, Select} from "@mui/material";
@@ -41,10 +41,10 @@ export function isPanelOn(){
 
 export default function ControlPanel() {
     return (
-        <div>
+        <div >
             <div id="controlPanel">
                 <div style={{padding: '20px', fontSize: '1em'}}>Control Panel</div>
-                <FormGroup style={{paddingLeft: '25px', fontSize: '.9em'}}>
+                <FormGroup style={{paddingLeft: '25px', fontSize: '.9em', fontFamily : 'montserrat'}}>
                     <SwitchGreyChecked name="Music" fn={triggerAudio} />
                     <SwitchGreyChecked name="Show Feedback" fn={triggerAudio} />
                     <SwitchGreyChecked name="Show Colour Preview" fn={triggerAudio} />
@@ -61,6 +61,7 @@ export default function ControlPanel() {
                     <SliderGrey name="Tiling Size" fn={changeTilingSize} default = {-50} min = {-window.innerWidth/3} max = {-50}/>
                     <div style = {{paddingBottom:'8px'}}></div>
                     <FillStyle name = "Fill Style"/>
+                    <DotStyle name = "Dot Style"/>
                     <Handedness name = "Handedness"/>
                 </FormGroup>
             </div>

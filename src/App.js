@@ -3,7 +3,7 @@ import './components/Bubble/Bubble.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import Music, {changeAudio, reduceAudio, triggerAudio} from './components/Audio.js'
-import {drawClover, drawFlower, drawStroke} from './components/Stroke/Stroke'
+import {drawClover, drawFlower, drawGradientStroke, drawStroke} from './components/Stroke/Stroke'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/ShrinkingStroke'
 import {stopColorChange, colorDelay, getCurrColor} from './components/Stroke/StrokeColor'
 import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
@@ -39,6 +39,7 @@ import {getTile} from "./components/Tiling/Tiling2";
 import {isSlowScrollOn} from "./components/Scroll/SlowScroll";
 import {startAutoScroll} from "./components/Scroll/AutoScroll";
 import {getHandChange, handChanged, isRightHand, setHand, setHandChanged} from "./components/Effects/Handedness";
+import {startDot} from "./components/Stroke/DotType";
 
 
 function App() {
@@ -105,7 +106,7 @@ function App() {
             sendMidAlert()
 
             pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX,  touchType === "direct" ? prevScaledY + .5: prevScaledY, currColor);
-            drawStroke(prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY, currColor);
+            startDot(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5: prevScaledY, currColor);
 
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
@@ -122,7 +123,8 @@ function App() {
         currColor = getCurrColor();
         // scroll when dragging on white space
         if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(scaledX, scaledY, 1, 1).data.toString().trim() === '0,0,0,0') {
-            doubleTouch = true; rightMouseDown = true;
+            // doubleTouch = true;
+            // rightMouseDown = true;
             startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
         }
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY) && isCircleInPath(currTile.path, scaledX, scaledY)) {
@@ -235,7 +237,7 @@ function App() {
                     setHand('right')
                     setHandChanged(true)
                 }
-                document.getElementById("angle").innerHTML = event.touches[0].force
+                document.getElementById("angle").innerHTML = event.touches[0]["force"]
             }
             let r = getLineWidth() / 2
             singleTouch = true;
@@ -290,7 +292,7 @@ function App() {
         if (singleTouch) {
             onStrokeMove(prevScaledX,prevScaledY, scaledX,scaledY, touchSpeed)
         } else if (doubleTouch) {
-            startScroll(Math.abs(touchSpeed[1]), prevCursorY, cursorY)
+            startScroll(Math.abs(touchSpeed[1]), prevTouch0Y, touch0Y)
         }
         prevTouches[0] = event.touches[0];
         prevTouches[1] = event.touches[1];
@@ -402,7 +404,6 @@ function App() {
     let alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
     let count = 0;
     async function sendAlert() {
-        console.log('count ' + count)
         if (!isPanelOn() && !sendingAlert) {
             if (count === alertInterval) {
                 generateAlert();

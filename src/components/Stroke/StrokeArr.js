@@ -89,7 +89,7 @@ export function getStrokeArrUnder() {
 
 export function redrawTileStrokes(tile, offsetY) {
     let arr = strokeArr[tile.id]
-    arr.forEach(stroke => {
+    arr?.forEach(stroke => {
             if (stroke.endWidth) {
                 drawShrinkingStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, (stroke.color),stroke.lineWidth)
             } else drawStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, (stroke.color),stroke.lineWidth)
