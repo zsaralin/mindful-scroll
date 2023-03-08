@@ -35,13 +35,13 @@ export const redrawCanvas = async () => {
     let offsetY = getOffsetY()
     if (offsetY > topSecondTiling() - TOP_PAGE_SPACE) {
         // await delay(.5);
-        drawTwoTilings()
-        copyToOnScreen(document.getElementById('off-canvas'));
-        redrawStrokes(offsetY)
-        // redrawCompleteTiles(offsetY)
-        // redrawActiveTiles(offsetY)
-        redrawBlur(offsetY)
-        setOffsetY(0)
+        // drawTwoTilings()
+        // copyToOnScreen(document.getElementById('off-canvas'));
+        // redrawStrokes(offsetY)
+        // // redrawCompleteTiles(offsetY)
+        // // redrawActiveTiles(offsetY)
+        // redrawBlur(offsetY)
+        // setOffsetY(0)
     } else {
         [invisCanvas, canvas, fillCanvas, tilingCanvas,].forEach(canvas => {
             canvas.style.transform = `translate(0,-${offsetY}px)`;
