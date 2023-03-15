@@ -3,7 +3,7 @@ import {redrawTilings} from "../Tiling/TilingArr";
 import {getOffsetY, getTotOffset} from "../Scroll/PageScroll";
 import {getLineWidth} from "../Stroke/StrokeWidth";
 import {getStrokeArr, pushStroke, pushStrokeUnder, redrawBlurryStrokes, redrawStrokes} from "../Stroke/StrokeArr";
-import {drawStroke, drawStrokeUnder} from "../Stroke/Stroke";
+import {drawStroke, drawStrokeUnder} from "../Stroke/DrawStroke";
 import {getTileWidth} from "../Tiling/TileWidth";
 import {pushCompleteTile} from "./CompleteTileArr";
 import {SHAPE_COLOR} from "../Constants";

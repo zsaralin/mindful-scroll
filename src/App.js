@@ -3,7 +3,6 @@ import './components/Bubble/Bubble.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import Music, {changeAudio, reduceAudio, triggerAudio} from './components/Audio.js'
-import {drawClover, drawFlower, drawGradientStroke, drawStroke} from './components/Stroke/Stroke'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/ShrinkingStroke'
 import {stopColorChange, colorDelay, getCurrColor} from './components/Stroke/StrokeColor'
 import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
@@ -31,15 +30,20 @@ import {shapeGlow} from "./components/Tile/Shape";
 import ControlPanel, {hideControlPanel, isPanelOn, showControlPanel} from "./components/ControlPanel/ControlPanel";
 import Bubble, {
     hideColourPreview, moveFeedback,
-    showColourPreview,
-    toCloud,
-    toSpeech
+    showColourPreview, teleportFeedback,
+
 } from "./components/Bubble/Bubble";
 import {getTile} from "./components/Tiling/Tiling2";
 import {isSlowScrollOn} from "./components/Scroll/SlowScroll";
 import {startAutoScroll} from "./components/Scroll/AutoScroll";
 import {getHandChange, handChanged, isRightHand, setHand, setHandChanged} from "./components/Effects/Handedness";
-import {startDot} from "./components/Stroke/DotType";
+import {startDot} from "./components/Stroke/Dot/DotType";
+import {drawBlurryStroke, drawDiagonalLine} from "./components/Effects/Blur";
+import {startStroke} from "./components/Stroke/StrokeType";
+import {toCloud, toSpeech} from "./components/Bubble/ShapeChange";
+import {drawTransparentStroke, setDragging} from "./components/Stroke/TransparentStroke";
+import {drawStroke} from "./components/Stroke/DrawStroke";
+import {drawDottedStroke} from "./components/Stroke/DottedStroke";
 
 
 function App() {
@@ -80,16 +84,21 @@ function App() {
     }
 
     useEffect(() => {
-        const canvasIds = ['tiling-canvas', 'off-canvas', 'invis-canvas', 'canvas', 'fill-canvas'];
-
+        const canvasIds = ['tiling-canvas', 'off-canvas', 'invis-canvas', 'canvas', 'fill-canvas', 'top-canvas'];
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight * 9;
         });
+        for(let i = canvasIds.length - 1; i < canvasIds.length; i++){ // last three id in canvasIds
+            let id = canvasIds[i]
+            const ctx = document.getElementById(id).getContext("2d");
+            ctx.lineCap = ctx.lineJoin = "round"
+        }
         setUpCanvas()
         ctx = document.getElementById('invis-canvas').getContext("2d");
         d = SCROLL_DIST
+
     }, []);
 
     let currColor;
@@ -100,9 +109,8 @@ function App() {
         currColor = getCurrColor()
         stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY)) {
-            hideColourPreview()
+            // hideColourPreview(cursorX, cursorY)
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
-
             sendMidAlert()
 
             pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX,  touchType === "direct" ? prevScaledY + .5: prevScaledY, currColor);
@@ -128,7 +136,8 @@ function App() {
             startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
         }
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY) && isCircleInPath(currTile.path, scaledX, scaledY)) {
-            moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
+            hideColourPreview(cursorX, cursorY)
+            // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
                 currTile.filled = true;
                 completeTile(currTile, invisCol)
@@ -139,7 +148,7 @@ function App() {
                 tooFast = true;
             } else {
                 pushStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor);
-                drawStroke(prevScaledX, prevScaledY, scaledX, scaledY, currColor);
+                startStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor);
             }
             changeAudio(mouseSpeed)
             startAutoScroll(cursorY);
@@ -152,7 +161,7 @@ function App() {
     function sendMidAlert(){
         midId = setInterval(function () {
             sendAlert()
-        }, 1000);
+        }, 3000);
     }
 
     function onMouseDown(event) {
@@ -164,6 +173,7 @@ function App() {
             const prevScaledX = prevCursorX;
             const prevScaledY = toTrueY(prevCursorY);
             onStrokeStart(prevScaledX, prevScaledY, cursorX)
+            // console.log(prevScaledY)
         }
         // detect right clicks
         if (event.button === 2) {
@@ -351,6 +361,8 @@ function App() {
         ratio = 0;
         firstMove = false;
         setHandChanged(false)
+        setDragging(false)
+
     }
 
     let reduceOpac;
@@ -409,11 +421,10 @@ function App() {
         sendingAlert = false;
     }
 
-    let alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
+    let alertInterval =  Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
     let count = 0;
     async function sendAlert() {
         if (!isPanelOn() && !sendingAlert) {
-            console.log('um')
             if (count === alertInterval) {
                 generateAlert();
                 alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
@@ -438,13 +449,17 @@ function App() {
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
             <div className="wrapper">
-                <canvas id="fill-canvas"></canvas>
-                <canvas ref={canvas} id="canvas"></canvas>
-                <canvas id="invis-canvas" style={{display: 'none',}}
+                <canvas id="fill-canvas" ></canvas>
+                <canvas ref={canvas} id="canvas" ></canvas>
+                <div id="dots" ></div>
+                <canvas id="top-canvas" style={{display: '',}}></canvas>
+
+                <canvas id="invis-canvas" style={{display: '',}}
                 ></canvas>
+
                 <canvas id="off-canvas" style={{display: 'none', background: ''}}
                 ></canvas>
-                <canvas id="tiling-canvas" style={{display: '', background: ''}}
+                <canvas id="tiling-canvas" style={{display: '', background: '', zIndex: 2}}
                         onMouseDown={onMouseDown}
                         onMouseUp={onMouseUp}
                         onMouseMove={onMouseMove}
@@ -454,8 +469,8 @@ function App() {
                         onTouchMove={onTouchMove}
                 >
                 </canvas>
-                <Bubble/>
 
+                <Bubble/>
             </div>
         </div>
     );

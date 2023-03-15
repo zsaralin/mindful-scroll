@@ -4,7 +4,8 @@ import {setFillType} from "../Tile/CompleteTile";
 import {SelectChangeEvent} from "@mui/material";
 import * as React from 'react';
 import {ThemeProvider} from "@mui/material/styles";
-import {setDotType} from "../Stroke/DotType";
+import {setDotType} from "../Stroke/Dot/DotType";
+import {setStrokeType} from "../Stroke/StrokeType";
 
 const theme = createTheme({
     typography: {
@@ -12,7 +13,7 @@ const theme = createTheme({
             'Montserrat',
             'sans-serif'
         ].join(','),
-        fontSize: 12,
+        fontSize: 11,
     }
 });
 
@@ -80,7 +81,39 @@ export function DotStyle(props) {
                         <option value={"reg"} >Regular</option>
                         <option value={"clover"}>Clover</option>
                         <option value={"flower"}>Flower</option>
+                        <option value={"grad-pulse"}>Gradient Pulse</option>
                         <option value={"pulse"}>Pulse</option>
+                        <option value={"transparent"}>Transparent</option>
+                    </NativeSelect>
+                </FormControl>
+            </div>
+        </ThemeProvider>
+    );
+}
+
+export function StrokeStyle(props) {
+
+    const handleChange = (event: SelectChangeEvent) => {
+        setStrokeType(event.target.value.toString());
+    };
+
+    return (
+        <ThemeProvider theme={theme}>
+            <div id="controlPanelRow">{props.name}
+                <FormControl sx={{ m: 1, minWidth: 120}}>
+                    <NativeSelect
+                        defaultValue="combination"
+                        onChange={handleChange}
+                        inputProps={{
+                            name: 'age',
+                            id: 'uncontrolled-native',
+                        }}
+                    >
+                        <option value={"reg"} >Regular</option>
+                        <option value={"fuzzy"}>Fuzzy</option>
+                        <option value={"transparent"}>Transparent</option>
+                        <option value={"dotted"}>Dotted</option>
+
                     </NativeSelect>
                 </FormControl>
             </div>

@@ -5,8 +5,8 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 export const IOSSwitch = styled((props: SwitchProps) => (
     <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props}/>
 ))(({theme}) => ({
-    width: 35,
-    height: 19,
+    width: 31,
+    height: 15,
     padding: 0,
     right: '10px',
     '& .MuiSwitch-switchBase': {
@@ -41,8 +41,8 @@ export const IOSSwitch = styled((props: SwitchProps) => (
     },
     '& .MuiSwitch-thumb': {
         boxSizing: 'border-box',
-        width: 15,
-        height: 15,
+        width: 11,
+        height: 11,
     },
     '& .MuiSwitch-track': {
         borderRadius: 20 / 2,

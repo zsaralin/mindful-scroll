@@ -13,7 +13,7 @@ import {changeFillMin} from "../Effects/FillRatio";
 import {isSlowScrollOn, triggerSlowScroll} from "../Scroll/SlowScroll";
 import {changeTilingSize} from "../Tiling/TilingSize";
 import {Handedness} from "./CheckboxGrey";
-import {DotStyle, FillStyle} from "./FillStyle"
+import {DotStyle, Dropdown, FillStyle, StrokeStyle} from "./Dropdown"
 import {SwitchGreyUnchecked, SwitchGreyChecked} from "./SwitchGrey";
 import {triggerScroll} from "../Scroll/AutoScroll";
 import {FormControl, FormHelperText, MenuItem, Select} from "@mui/material";
@@ -61,6 +61,7 @@ export default function ControlPanel() {
                     <SliderGrey name="Tiling Size" fn={changeTilingSize} default = {-50} min = {-window.innerWidth/3} max = {-50}/>
                     <div style = {{paddingBottom:'8px'}}></div>
                     <FillStyle name = "Fill Style"/>
+                    <StrokeStyle name = "Stroke Style"/>
                     <DotStyle name = "Dot Style"/>
                     <Handedness name = "Handedness"/>
                 </FormGroup>

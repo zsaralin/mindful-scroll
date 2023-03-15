@@ -22,7 +22,7 @@ function getCol(tile, str, inputCol){
 }
 
 export function fillTile(tile, str, under, inputCol){
-    let canvStr = under ? 'fill-canvas' : 'canvas'
+    let canvStr = under ? 'fill-canvas' : 'top-canvas'
     let ctx = document.getElementById(canvStr).getContext('2d');
     let col = ctx.fillStyle = getCol(tile, str, inputCol)
     console.log(col)

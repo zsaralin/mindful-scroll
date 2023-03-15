@@ -18,7 +18,7 @@ export default function SliderGrey(props) {
         <div id="controlPanelRow">{props.name}
             <ThemeProvider theme={theme}>
 
-            <FormControlLabel style={{width:'30%', paddingRight: '10px'}} control={
+            <FormControlLabel style={{width:'30%', paddingRight: '10px', }} control={
                 <Slider onChange={props.fn}
                         defaultValue={props.default} max={props.max} min={props.min}
                        aria-label="Default" size = "small"/>
