@@ -1,0 +1,54 @@
+
+.grad-dot {
+    border-radius: 50%;
+    background : radial-gradient(rgba(var(--my-color), 1), rgba(var(--my-color), .7), transparent, transparent);
+    /*box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);*/
+    transform: scale(1);
+    animation: grad-pulse 4s linear infinite;
+    position: absolute;
+
+}
+
+.pulse-dot {
+    border-radius: 50%;
+    background : rgba(var(--my-color), 1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
+    transform: scale(1);
+    animation: pulse 3s infinite;
+    position: absolute;
+}
+
+@keyframes grad-pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.5);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+:root {
+    --my-color: 255, 0, 0;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(var(--my-color), 0.7);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(var(--my-color), 0);;
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(var(--my-color), 0);;
+    }
+}

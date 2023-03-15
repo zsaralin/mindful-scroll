@@ -1,5 +1,5 @@
 import {getLineWidth} from "./StrokeWidth";
-import {drawBlurryStroke, drawStroke, drawStrokeUnder} from "./Stroke";
+import {drawBlurryStroke, drawStroke, drawStrokeUnder} from "./DrawStroke";
 import {drawShrinkingStroke} from "./ShrinkingStroke";
 import {getCurrColor} from "./StrokeColor";
 import {getOffsetY, limitScroll} from "../Scroll/PageScroll";
@@ -79,14 +79,6 @@ export function redrawStrokes(offsetY) {
     strokeArrUnder = [];
 }
 
-export function getStrokeArr() {
-    return strokeArr;
-}
-
-export function getStrokeArrUnder() {
-    return strokeArrUnder;
-}
-
 export function redrawTileStrokes(tile, offsetY) {
     let arr = strokeArr[tile.id]
     arr?.forEach(stroke => {
@@ -108,8 +100,14 @@ export function redrawTileStrokesI(tile, offsetY, invert) {
             drawShrinkingStroke(stroke.x0, stroke.y0 , stroke.x1, stroke.y1 , invertFn(stroke.color),stroke.lineWidth)
         } else {
             drawStroke(stroke.x0, stroke.y0 , stroke.x1, stroke.y1 , invertFn(stroke.color),stroke.lineWidth)
-            console.log('STROKES REDDRAW ' + invertFn(stroke.color))
         }
     })
 }
 
+export function getStrokeArr() {
+    return strokeArr;
+}
+
+export function getStrokeArrUnder() {
+    return strokeArrUnder;
+}

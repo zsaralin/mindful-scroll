@@ -5,18 +5,21 @@
 
 #bubble {
     position: absolute;
-    -webkit-transform: translateZ(0);
-    transform: scale(.5);
+    /*-webkit-transform: translateZ(0);*/
+    transform-origin: top left;
+    transform: scale(.4);
     display: block;
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 180px;
+    top: 0; left: 0;
+
     /*top: 30px; left: 30px;*/
-    /*background-color :blue; */
-    transition: opacity .5s linear, x 6s ease, y 6s ease;
+    transition: opacity .5s linear, x 6s ease-in-out, y 6s ease-in-out;
     pointer-events: none;
     -webkit-appearance: none;
     /*filter: drop-shadow(0px 0px 4px black);*/
-    border-radius: 1vw;
+    /*border-radius: 1vw;*/
+    z-index: 3;
 
 }
 
@@ -24,10 +27,18 @@
 #bubble line,
 #bubble path {
     fill: var(--col);
-    stroke: grey;
-    stroke-width: 2;
+    /*stroke: white;*/
+    /*stroke-width: 10;*/
     transition: 1s;
+    paint-order: stroke;
 }
+
+#circle {
+    stroke : white;
+    stroke-width: 10;
+    paint-order: stroke;
+}
+
 
 #circlesL, #circlesR{
     opacity: 0;
@@ -38,7 +49,6 @@
 }
 
 .speechR, .speechL{
-    stroke: blue;
     position: relative;
 
 }

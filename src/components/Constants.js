@@ -3,7 +3,7 @@ export const TILE_WIDTH = 25;
 
 export const FILL_RATIO = .9;
 export const SHAPE_COLOR = 'rgb(0,255,0)';
-export const BUBBLE_DIST = 175
+export const BUBBLE_DIST = 150
 
 export const SCROLL_DIST = window.innerHeight/170
 export const SCROLL_DELTA = .03

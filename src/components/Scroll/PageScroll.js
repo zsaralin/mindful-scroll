@@ -9,6 +9,8 @@ import {getOffsetY, setOffsetY} from "./Offset";
 import {isSlowScrollOn} from "./SlowScroll";
 import {getOffsetTop} from "@mui/material";
 import {redrawBlur} from "../Effects/Blur";
+import {redrawTransparentStrokes} from "../Stroke/TransparentStroke";
+import {redrawDottedStrokes} from "../Stroke/DottedStroke";
 
 
 export let limitScroll = 0;
@@ -32,18 +34,24 @@ export const redrawCanvas = async () => {
     const fillCanvas = document.getElementById("fill-canvas")
     const invisCanvas = document.getElementById("invis-canvas")
     const tilingCanvas = document.getElementById("tiling-canvas")
+    const topCanvas = document.getElementById("top-canvas")
+
+    const dots = document.getElementById("dots")
+
     let offsetY = getOffsetY()
     if (offsetY > topSecondTiling() - TOP_PAGE_SPACE) {
         // await delay(.5);
         drawTwoTilings()
         copyToOnScreen(document.getElementById('off-canvas'));
         redrawStrokes(offsetY)
-        // redrawCompleteTiles(offsetY)
-        // redrawActiveTiles(offsetY)
+        redrawCompleteTiles(offsetY)
+        redrawActiveTiles(offsetY)
+        redrawTransparentStrokes(offsetY)
+        redrawDottedStrokes(offsetY)
         redrawBlur(offsetY)
         setOffsetY(0)
     } else {
-        [invisCanvas, canvas, fillCanvas, tilingCanvas,].forEach(canvas => {
+        [invisCanvas, canvas, fillCanvas, tilingCanvas, topCanvas, dots].forEach(canvas => {
             canvas.style.transform = `translate(0,-${offsetY}px)`;
         });
     }
