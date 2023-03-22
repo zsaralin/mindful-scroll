@@ -62,8 +62,12 @@ export function getTilingPathDict(segArr, offsetX, offsetY) {
             }
         }
         let bounds = getBoundsTile(tile);
-        [bounds[0], bounds[1]].forEach((bound, index) => bounds[index] += offsetX);
-        [bounds[2], bounds[3]].forEach((bound, index) => bounds[index] += offsetY);
+        // [bounds[0], bounds[1]].forEach((bound, index) => bounds[index] += offsetX);
+        // [bounds[2], bounds[3]].forEach((bound, index) => bounds[index] += offsetY);
+        bounds[0] = bounds[0] + offsetX
+        bounds[1] = bounds[1] + offsetX
+        bounds[2] = bounds[2] + offsetY
+        bounds[3] = bounds[3] + offsetY
         pathDict[cols[colorIndex]] = {path: path, bounds: bounds, filled: false, firstCol: 'white', inPath: [], id: uuidv4(), colors: [], segs : tile}
         colorIndex++;
     }

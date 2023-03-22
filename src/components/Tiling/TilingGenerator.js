@@ -84,6 +84,7 @@ export function drawTiling(pathDict) {
         invisCtx.stroke(pathDict[p].path)
         invisCtx.closePath()
     }
+    console.log('and thennnn ' + pathDict)
 }
 
 
