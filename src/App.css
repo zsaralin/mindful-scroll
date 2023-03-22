@@ -17,9 +17,9 @@
     opacity : 0;
     /*color: black;*/
 }
-#top-canvas{
-    z-index: 1;
-}
+/*#top-canvas{*/
+/*    z-index: 1;*/
+/*}*/
 #inner-div{
     z-index: 1; /*2 on top, 1 underneath*/
 }

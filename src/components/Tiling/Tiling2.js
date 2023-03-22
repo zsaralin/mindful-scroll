@@ -9,7 +9,14 @@ import { v4 as uuidv4 } from 'uuid';
 import {getCurrentPathDict, getTilingIndex, sumArray, tilingArrLength} from "./TilingArr";
 import {stopWatercolor} from "../Effects/Watercolor";
 import {redrawStrokes} from "../Stroke/StrokeArr";
-import {getNeighbouringTiles, getRowCol} from "./TilingProperties";
+import {
+    getAdjacentTiles, getGrid, getGrid2,
+    getNeighbouringTiles,
+    getNeighbourTiles, getOrienTiles,
+    getRowCol, getTileMiddle,
+    setMidpointDict
+} from "./TilingProperties";
+import {getRandomHSV} from "../Stroke/StrokeColor";
 
 let thisBottom; // bottom of current tiling
 let nextTop; // top of next tiling
@@ -27,7 +34,6 @@ export function topSecondTiling() { //top of second tiling
 }
 
 function helperTiling(t) {
-    let pathDict;
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
     offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
 
@@ -36,11 +42,12 @@ function helperTiling(t) {
     } else {
         offsetY = thisBottom - yMin;
     }
+    let tiling = {segArr: [], pathDict: {}, grid: []}
+    tiling.segArr = t
+    tiling.pathDict = getTilingPathDict(t, offsetX, offsetY);
+    tiling.grid = getGrid(tiling.pathDict)
+    pathArr.push(tiling);
 
-    pathDict = getTilingPathDict(t, offsetX, offsetY);
-    pathArr.push(pathDict);
-
-    tilingArr.push(t)
 
     // let [top, bottom, left, right] = getRowCol(pathDict)
     // for(let i = 0; i< left.length ; i++){
@@ -55,21 +62,23 @@ function helperTiling(t) {
     //     ctx.fillStyle = 'red'
     //     ctx.fill(tile.path)
     // }
-    // let neigh = getNeighbouringTiles( Object.values(pathDict)[0], pathDict);
+    // setMidpointDict(pathDict)
+    // let neigh = getOrienTiles(Object.values(pathDict)[15])
+    // let neigh = getGrid(pathDict)
+    // console.log('UMMM ' + neigh)
+    // let neigh = getNeighbouringTiles( Object.values(pathDict)[15], pathDict);
     // const ctx = document.getElementById('top-canvas').getContext("2d");
-    // // ctx.fillStyle = 'red'
-    // // ctx.fill(Object.values(pathDict)[0].path)
+    // ctx.fillStyle = 'red'
+    // ctx.fill(Object.values(pathDict)[0].path)
     // for(let i = 0; i< neigh.length ; i++){
-    //     let tile = neigh[i]
-    //     const ctx = document.getElementById('top-canvas').getContext("2d");
-    //     ctx.fillStyle = 'red'
-    //     ctx.fill(tile.path)
+        // let tile = neigh[i]
+        // const ctx = document.getElementById('top-canvas').getContext("2d");
+        // ctx.fillStyle = 'red'
+        // ctx.fill(tile?.path)
     // }
     // console.log(neigh.length)
     // ctx.fillStyle = 'yellow'
-    // ctx.fill(Object.values(pathDict)[0].path)
-
-
+    // ctx.fill(Object.values(pathDict)[15].path)
 }
 
 export function addTwoTilings(oldTilingArr) {
@@ -78,22 +87,28 @@ export function addTwoTilings(oldTilingArr) {
     if (!tiling2) {
         let tiling1 = makeRandomTiling(oldTilingArr ? oldTilingArr[0] : '');
         helperTiling(tiling1);
-        drawShape(yMin, yMax, pathArr[0], oldTilingArr ? [shapePath, dimension] : null);
+        drawShape(yMin, yMax, pathArr[0].pathDict, oldTilingArr ? [shapePath, dimension] : null);
         thisBottom = yMax + offsetY + SPACE
 
     } else { // use information from second tiling
-        let pathDict = getTilingPathDict(tiling2, offsetX, -yMin + TOP_PAGE_SPACE);
-        pathArr.push(pathDict);
-        tilingArr.push(tiling2)
-
-        drawShape(yMin - TOP_PAGE_SPACE, yMax, pathArr[0])
+        initTiling(tiling2)
+        drawShape(yMin - TOP_PAGE_SPACE, yMax, pathArr[0].pathDict)
         thisBottom = yMax - yMin + SPACE + TOP_PAGE_SPACE
     }
     tiling2 = makeRandomTiling(oldTilingArr ? oldTilingArr[1] : '');
+
     helperTiling(tiling2)
     nextTop = thisBottom //top of curr tiling is bottom of tilingBottom
-
 }
+
+function initTiling(segArr){
+    let tiling = {segArr: [], pathDict: {}, grid: []}
+    tiling.segArr = segArr
+    tiling.pathDict = getTilingPathDict(segArr, offsetX, -yMin + TOP_PAGE_SPACE);
+    tiling.grid = getGrid(tiling.pathDict)
+    pathArr.push(tiling);
+}
+
 let shapePath, dimension;
 function drawShape(yMin, yMax, pathDict, shape = null) {
     if (shape == null) {
@@ -127,9 +142,10 @@ export function clearCanvas() {
     canvasIds.forEach(id => {
         const canvas = document.getElementById(id);
         canvas.getContext("2d").clearRect(0, 0, window.innerWidth, window.innerHeight * 5);
-        if(id === 'fill-canvas' || id === "canvas" || id === "top-canvas"){
+        if(id === 'fill-canvas'  || id === "canvas" || id === "top-canvas"){
             let ctx = canvas.getContext("2d");
-            ctx.fillStyle = "white"
+            ctx.fillStyle = "transparent"
+            ctx.lineJoin = ctx.lineCap = "round"
         ctx.fillRect(0, 0, canvas.width, canvas.height )
         }
     });
@@ -143,8 +159,36 @@ export function drawTwoTilings(tilingArr) {
     addTwoTilings(tilingArr)
     // clearCanvas();
 
-    pathArr.forEach(path => drawTiling(path));
+    pathArr.forEach(tiling => {
+        drawTiling(tiling.pathDict)
+    });
+    console.log(pathArr.length)
 
+    // let neigh = getOrienTiles(Object.values(pathDict)[15])
+    // let pathDict = pathArr[0]
+    // if(pathArr.length === 2){
+    //     let pathDict = pathArr[0]
+
+        // let neigh = getGrid(pathDict)
+    // let neigh = getGrid(pathDict)
+    //
+    // // console.log('UMMM ' + neigh)
+    //
+    // for(let i=0;i<neigh.length;i++) {
+    //     let row = neigh[i]
+    //     const ctx = document.getElementById('top-canvas').getContext("2d");
+    //     ctx.fillStyle = getRandomHSV()
+    //     for (let j = 0; j < row.length -1; j+=2) {
+    //         let tile = getTileMiddle([row[j], row[j+1]])
+    //         tile.forEach(function(i) {
+    //             ctx.fill(i?.path)
+    //         });
+    //
+    //     }
+        // let tile = getTileMiddle(neigh[0])
+        // console.log(tile)
+        // ctx.fill(tile?.path)
+    // }
 
 }
 
@@ -175,7 +219,13 @@ export function getTilingIndex2(y) {
 
 export function getTile(y1, invisCol) {
     if (invisCol) {
-        let currTiling = pathArr[(getTilingIndex2(y1 + getOffsetY()))]
+        let currTiling = pathArr[(getTilingIndex2(y1 + getOffsetY()))].pathDict
         return currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
+    }
+}
+
+export function getTiling(y1, invisCol) {
+    if (invisCol) {
+        return pathArr[(getTilingIndex2(y1 + getOffsetY()))]
     }
 }

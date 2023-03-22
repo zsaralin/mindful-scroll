@@ -4,7 +4,7 @@ import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import Music, {changeAudio, reduceAudio, triggerAudio} from './components/Audio.js'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/ShrinkingStroke'
-import {stopColorChange, colorDelay, getCurrColor} from './components/Stroke/StrokeColor'
+import {stopColorChange, colorDelay, getCurrColor, getRandomHSV} from './components/Stroke/StrokeColor'
 import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
 import {addToTilingArr, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
 import {getOffsetY} from './components/Scroll/Offset'
@@ -33,7 +33,7 @@ import Bubble, {
     showColourPreview, teleportFeedback,
 
 } from "./components/Bubble/Bubble";
-import {getTile} from "./components/Tiling/Tiling2";
+import {getTile, getTiling} from "./components/Tiling/Tiling2";
 import {isSlowScrollOn} from "./components/Scroll/SlowScroll";
 import {startAutoScroll} from "./components/Scroll/AutoScroll";
 import {getHandChange, handChanged, isRightHand, setHand, setHandChanged} from "./components/Effects/Handedness";
@@ -44,6 +44,7 @@ import {toCloud, toSpeech} from "./components/Bubble/ShapeChange";
 import {drawTransparentStroke, setDragging} from "./components/Stroke/TransparentStroke";
 import {drawStroke} from "./components/Stroke/DrawStroke";
 import {drawDottedStroke} from "./components/Stroke/DottedStroke";
+import {getGrid, getOrienTiles, getTileMiddle, setMidpointDict} from "./components/Tiling/TilingProperties";
 
 
 function App() {
@@ -84,7 +85,7 @@ function App() {
     }
 
     useEffect(() => {
-        const canvasIds = ['tiling-canvas', 'off-canvas', 'invis-canvas', 'canvas', 'fill-canvas', 'top-canvas'];
+        const canvasIds = ['tiling-canvas', 'off-canvas', 'invis-canvas', 'canvas', 'fill-canvas', 'top-canvas',];
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
@@ -103,13 +104,17 @@ function App() {
 
     let currColor;
 
-    function onStrokeStart(prevScaledX, prevScaledY, x) {
+    function onStrokeStart(prevScaledX, prevScaledY, x, y) {
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
-        currTile = getTile(x, invisCol)
+        console.log(invisCol, prevScaledX, prevScaledY)
+        currTile = getTile(y, invisCol)
+        console.log(currTile)
         currColor = getCurrColor()
         stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY)) {
             // hideColourPreview(cursorX, cursorY)
+            // let bubble = document.getElementById("bubble");
+            // bubble.style.opacity = 0
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
             sendMidAlert()
 
@@ -118,8 +123,38 @@ function App() {
 
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
-            // currTile.colors.push(getCurrColor())
+            currTile.colors.push(getCurrColor())
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile)
+
+            let t = getTiling(y,invisCol)
+            // let [neigh, midpointDict] = t.grid
+            // for(let i=0;i<neigh.length;i++) {
+            //     let row = neigh[i]
+            //     const ctx = document.getElementById('top-canvas').getContext("2d");
+            //     ctx.fillStyle = getRandomHSV()
+            //     for (let j = 0; j < row.length - 1; j += 2) {
+            //         let tile = midpointDict[([row[j], row[j + 1]])]
+            //         tile.forEach(function (i) {
+            //             ctx.fill(i?.path)
+            //         });
+            //     }
+            // }
+            // let pathDict = t.pathDict;
+            // console.log(pathDict)
+            // let midpointDict = setMidpointDict(pathDict);
+            // let neigh = getOrienTiles(Object.values(pathDict)[15])
+            // for (let i=0;i<neigh.length;i++) {
+            //         let row = neigh[i]
+            //         const ctx = document.getElementById('top-canvas').getContext("2d");
+            //         ctx.fillStyle = getRandomHSV()
+            //         for (let j = 0; j < row.length - 1; j += 2) {
+            //             let tile = midpointDict[([row[j], row[j + 1]])]
+            //             tile.forEach(function (i) {
+            //                 ctx.fill(i?.path)
+            //             });
+            //         }
+            //     }
+
         } else {
             startX = prevCursorX;
             startY = prevCursorY;
@@ -172,7 +207,7 @@ function App() {
             rightMouseDown = false;
             const prevScaledX = prevCursorX;
             const prevScaledY = toTrueY(prevCursorY);
-            onStrokeStart(prevScaledX, prevScaledY, cursorX)
+            onStrokeStart(prevScaledX, prevScaledY, cursorX,cursorY)
             // console.log(prevScaledY)
         }
         // detect right clicks
@@ -261,7 +296,7 @@ function App() {
             const scaledX = touch0X;
             const scaledY = toTrueY(touch0Y);
 
-            onStrokeStart(scaledX, scaledY, touch0X)
+            onStrokeStart(scaledX, scaledY, touch0X, touch0Y)
 
         }
         else if (event.touches.length >= 2) {
@@ -449,17 +484,16 @@ function App() {
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
             <div className="wrapper">
+
                 <canvas id="fill-canvas" ></canvas>
                 <canvas ref={canvas} id="canvas" ></canvas>
                 <div id="dots" ></div>
                 <canvas id="top-canvas" style={{display: '',}}></canvas>
-
-                <canvas id="invis-canvas" style={{display: '',}}
+                <canvas id="off-canvas" style={{display: 'none', }}
                 ></canvas>
-
-                <canvas id="off-canvas" style={{display: 'none', background: ''}}
+                <canvas id="invis-canvas" style={{display: 'none',}}
                 ></canvas>
-                <canvas id="tiling-canvas" style={{display: '', background: '', zIndex: 2}}
+                <canvas id="tiling-canvas" style={{display: '', background: '',zIndex: 2 }}
                         onMouseDown={onMouseDown}
                         onMouseUp={onMouseUp}
                         onMouseMove={onMouseMove}
