@@ -83,7 +83,7 @@ function shuffleArray(array) {
 
 
 function getSimilarColours(tile) {
-    let arr = tile.colors
+    let arr = tile.allColors
     let returnArr = Array.from({length: tile.allColors.length}, () => []);
     for (let i = 0; i < arr.length; i++) {
         let temp = arr[i]
