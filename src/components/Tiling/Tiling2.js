@@ -10,13 +10,13 @@ import {getCurrentPathDict, getTilingIndex, sumArray, tilingArrLength} from "./T
 import {stopWatercolor} from "../Effects/Watercolor";
 import {redrawStrokes} from "../Stroke/StrokeArr";
 import {
-    getAdjacentTiles, getGrid, getGrid2,
+    getAdjTiles, getGrid, getGrid2,
     getNeighbouringTiles,
-    getNeighbourTiles, getOrienTiles,
-    getRowCol, getTileMiddle,
+    getNeighTiles, getOrienTiles,
+    getRowCol, getTileMiddle, getTilingProp, minMaxTile,
     setMidpointDict
 } from "./TilingProperties";
-import {getRandomHSV} from "../Stroke/StrokeColor";
+import {getRandomHSV} from "../Stroke/Color/StrokeColor";
 
 let thisBottom; // bottom of current tiling
 let nextTop; // top of next tiling
@@ -46,6 +46,11 @@ function helperTiling(t) {
     tiling.segArr = t
     tiling.pathDict = getTilingPathDict(t, offsetX, offsetY);
     tiling.grid = getGrid(tiling.pathDict)
+
+    const [midSeg, vert, orien] = getTilingProp(tiling.pathDict);
+    tiling.midSeg = midSeg;
+    tiling.vert = vert;
+    tiling.orien = orien;
     pathArr.push(tiling);
 
 
@@ -106,17 +111,25 @@ function initTiling(segArr){
     tiling.segArr = segArr
     tiling.pathDict = getTilingPathDict(segArr, offsetX, -yMin + TOP_PAGE_SPACE);
     tiling.grid = getGrid(tiling.pathDict)
+    tiling.minMaxWH = minMaxTile(tiling.pathDict)
+
+    const [midSeg, vert, orien] = getTilingProp(tiling.pathDict);
+    tiling.midSeg = midSeg;
+    tiling.vert = vert;
+    tiling.orien = orien;
     pathArr.push(tiling);
 }
 
 let shapePath, dimension;
 function drawShape(yMin, yMax, pathDict, shape = null) {
+    console.log(' LOOK IEEEE ' + pathDict)
     if (shape == null) {
         [shapePath, dimension] = getRandomShape(!tiling2 ? yMax - yMin + TOP_SPACE : yMax - yMin + 40);
     }
+    console.log(SHAPE_COLOR  + ' COLOR GIR')
     pathDict[SHAPE_COLOR] = {
         path: shapePath,
-        tile: dimension,
+        bounds: dimension,
         filled: false,
         firstCol: 'white',
         inPath: [],

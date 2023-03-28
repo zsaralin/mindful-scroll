@@ -1,6 +1,6 @@
 import {gsap} from "gsap";
 import {BUBBLE_DIST} from "../Constants";
-import {colorDelay, getCurrColor} from "../Stroke/StrokeColor";
+import {colorDelay, getCurrColor} from "../Stroke/Color/StrokeColor";
 import Snap from "snapsvg-cjs";
 import {useEffect} from "react";
 import {isRightHand} from "../Effects/Handedness";
@@ -29,6 +29,7 @@ let prevTop;
 let prevLeft;
 
 let isHiding = false;
+let dontShow = false;
 let cloudType = '#circlesR';
 
 export function setIsHiding(input) {
@@ -36,26 +37,26 @@ export function setIsHiding(input) {
 }
 
 export function showColourPreview(x, y, newTile, handChange) {
-    if(isHiding){
+    if (isMoving) {
+        dontShow = true;
         return
     }
-    if (newTile || handChange) {
+    if (bubble.style.opacity === 0 && (newTile || handChange)) {
         let loc = bubbleHelper(x, y)
-        bubble.style.x = loc[0] + 'px'
-        bubble.style.y = loc[1] + 'px'
+        gsap.to("#bubble", {
+            duration: 0, x: loc[0] + 'px', y: loc[1] + 'px', onComplete:
+            innerFunction
+        })
+        return
     }
-    bubble.style.opacity = 0;
-    if (!isMoving) {
-        gsap.killTweensOf("#bubble", "opacity");
+    // bubble.style.opacity = 0;
+    gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0, onComplete: startColourPreview})
+
+    function innerFunction() {
+        gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0, onComplete: startColourPreview})
     }
-    gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0, onComplete: console.log('hi')})
-    isHiding = false;
-    startColourPreview()
 }
 
-function test(){
-    gsap.killTweensOf("#bubble", "opacity")
-}
 
 export async function hideColourPreview(x, y) {
     if (isHiding || getIsChanging()) return
@@ -117,43 +118,41 @@ export function resetColourPreview() {
 let isMoving = false;
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-let target = []
 export const moveFeedback = async (prevX, prevY, x, y) => {
     if (isMoving) {
-        gsap.killTweensOf("#bubble", "x,y,opacity")
+        gsap.killTweensOf("#bubble")
     }
     isMoving = true;
-    let loc = target = bubbleHelper(x, y)
+    let loc = bubbleHelper(x, y)
     let dist = sqrt((prevY - loc[1]) ** 2 + (prevX - loc[0]) ** 2)
     gsap.to("#bubble", {
         duration: Math.round(dist / 15),
         x: loc[0] + 'px',
         y: loc[1] + 'px',
         ease: "power1.inOut",
-        onComplete() {
-            isMoving = false
-        }
     })
     gsap.to("#bubble", {
         duration: 1, delay: 1, opacity: 0, onComplete() {
-            moveHelper(x, y)
+            innerFunction(x, y)
         }
     })
-}
 
-function moveHelper(x, y) {
-    gsap.killTweensOf("#bubble", "x,y");
-    teleportFeedback(x, y)
-    showColourPreview()
-    // gsap.to("#bubble", {duration: 1, delay: 1, opacity: 1, onComplete: console.log('hu')})
+    function innerFunction(x, y) {
+            gsap.killTweensOf("#bubble", "x,y");
+
+            let loc = bubbleHelper(x, y)
+            gsap.to("#bubble", {duration: 0, delay: 1, x: loc[0] + 'px', y: loc[1] + 'px', onComplete: um})
+    }
+
+    function um() {
+        if(dontShow){
+        gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0, onComplete: isMoving = false})
+        dontShow = false;}
+        else isMoving = false;
+    }
 }
 
 export const teleportFeedback = async (x, y) => {
-    await delay(300);
-    gsap.killTweensOf("#bubble", "x,y");
-    let loc = bubbleHelper(x, y)
-    gsap.to("#bubble", {duration: 0, x: loc[0] + 'px', y: loc[1] + 'px'})
-    isHiding = false;
 
 }
 

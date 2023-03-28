@@ -1,10 +1,10 @@
-import {getCurrColor} from "../Stroke/StrokeColor";
-import {hsl2Rgb} from "./FillRatio";
+import {getCurrColor} from "../Stroke/Color/StrokeColor";
+import {hsl2Rgb} from "./FillTile/FillRatio";
 import {getLineWidth} from "../Stroke/StrokeWidth";
 import {getTileWidth} from "../Tiling/TileWidth";
 import {getStrokeArr, getStrokeArrUnder, pushStrokeUnder, redrawBlurryStrokes} from "../Stroke/StrokeArr";
 import {drawStroke, drawStrokeUnder} from "../Stroke/DrawStroke";
-import {fillEachPixel} from "../Effects/FillGaps";
+import {fillEachPixel} from "./FillTile/FillGaps";
 
 let blurryArr = {}
 

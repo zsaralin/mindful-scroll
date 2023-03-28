@@ -1,4 +1,4 @@
-import {getCurrColor} from "../Stroke/StrokeColor";
+import {getCurrColor} from "../Stroke/Color/StrokeColor";
 import {redrawTilings} from "../Tiling/TilingArr";
 import {getOffsetY, getTotOffset} from "../Scroll/PageScroll";
 import {getLineWidth} from "../Stroke/StrokeWidth";
@@ -9,11 +9,11 @@ import {pushCompleteTile} from "./CompleteTileArr";
 import {SHAPE_COLOR} from "../Constants";
 import {shapeGlow} from "./Shape";
 import {blurTile, fillAndBlur} from "../Effects/Blur";
-import {fillLinearGradient, fillRadialGradient,} from "../Effects/Gradient";
+import {ditherFill, fillLinearGradient, fillRadialGradient,} from "../Effects/Gradient";
 import {fillTileColors} from "../Effects/ColorTheory";
-import {fillEachPixel, fillEachPixelInverse, fillInverseStrokes} from "../Effects/FillGaps";
+import {fillEachPixel, fillEachPixelInverse, fillInverseStrokes} from "../Effects/FillTile/FillGaps";
 import {invert} from "../Effects/ColorTheory";
-import {fillTile} from "../Effects/FillTile";
+import {fillTile} from "../Effects/FillTile/FillTile";
 
 let fillTileArr = [] // fully coloured tiles
 let completeTileOn = true;
@@ -40,9 +40,10 @@ export function completeTile(currTile, invisCol) {
         else if (fillType === "meanHue") fillTile(currTile, "meanHue", false)
         else if (fillType === "inverseMean") fillTile(currTile, "meanHueI", false)
         else if (fillType === "radialGradient") fillRadialGradient(currTile, true)
-        else if (fillType === "diagGradient") fillLinearGradient(currTile, "diag")
+        else if (fillType === "diagGradient") ditherFill(currTile, "diag")
         else if (fillType === "horizGradient") fillLinearGradient(currTile, "horiz")
         else if (fillType === "vertGradient") fillLinearGradient(currTile, "vert")
+        else if (fillType === "dither") ditherFill(currTile)
         else if (fillType === "mostUsed") fillTile(currTile, "most", true)
         else if (fillType === "leastUsed") fillTile(currTile, "least", true)
         else if (fillType === "inverseComb") fillInverseStrokes(currTile)

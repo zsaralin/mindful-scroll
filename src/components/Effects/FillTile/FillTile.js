@@ -1,7 +1,7 @@
-import {pushCompleteTile} from "../Tile/CompleteTileArr";
-import {complem, invert, invertHue, meanHue} from "./ColorTheory";
-import {getCurrColor} from "../Stroke/StrokeColor";
-import {leastUsed, mostUsed} from "./CommonColours";
+import {pushCompleteTile} from "../../Tile/CompleteTileArr";
+import {complem, fillTileColors, invert, invertHue, meanHue} from "../ColorTheory";
+import {getCurrColor} from "../../Stroke/Color/StrokeColor";
+import {leastUsed, mostUsed} from "../CommonColours";
 
 function getCol(tile, str, inputCol){
     let tempCol;
@@ -22,6 +22,7 @@ function getCol(tile, str, inputCol){
 }
 
 export function fillTile(tile, str, under, inputCol){
+    fillTileColors(tile)
     let canvStr = under ? 'fill-canvas' : 'top-canvas'
     let ctx = document.getElementById(canvStr).getContext('2d');
     let col = ctx.fillStyle = getCol(tile, str, inputCol)

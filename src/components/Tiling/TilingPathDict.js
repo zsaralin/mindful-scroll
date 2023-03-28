@@ -68,7 +68,7 @@ export function getTilingPathDict(segArr, offsetX, offsetY) {
         bounds[1] = bounds[1] + offsetX
         bounds[2] = bounds[2] + offsetY
         bounds[3] = bounds[3] + offsetY
-        pathDict[cols[colorIndex]] = {path: path, bounds: bounds, filled: false, firstCol: 'white', inPath: [], id: uuidv4(), colors: [], segs : tile}
+        pathDict[cols[colorIndex]] = {path: path, bounds: bounds, filled: false, firstCol: 'white', inPath: [], id: uuidv4(), colors: [], allColors: [], segs : tile}
         colorIndex++;
     }
     return pathDict //return false if no tile was drawn (i.e., no tile was within the bounds)

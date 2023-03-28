@@ -1,7 +1,7 @@
 import {getBoundsTile, getBoundsTiling2} from "./TilingBounds";
 import {getTile} from "./Tiling2";
 import {drawStroke} from "../Stroke/DrawStroke";
-import {getRandomHSV} from "../Stroke/StrokeColor";
+import {getRandomHSV} from "../Stroke/Color/StrokeColor";
 
 export function getRowCol(pathDict) {
     let tilingBounds = getBoundsTiling2(pathDict)
@@ -31,31 +31,31 @@ export function getRowCol(pathDict) {
     return [topRow, bottomRow, leftCol, rightCol]
 }
 
-function minWidth(pathDict) {
-    let ansY;
-    let ansX;
+export function minMaxTile(pathDict) {
+    let minH;
+    let minW;
+    let maxH;
+    let maxW;
     for (let key in pathDict) {
         let tile = pathDict[key]
         let [xmin, xmax, ymin, ymax] = tile.bounds
         let newX = xmax - xmin
         let newY = ymax - ymin
-        if (!ansX || newX < ansX) ansX = newX
-        if (!ansY || newY < ansY) ansY = newY
+        if (!minW || newX < minW) minW = newX
+        if (!minH || newY < minH) minH = newY
+        if (!maxW || newX > maxW) maxW = newX
+        if (!maxH || newY > maxH) maxH = newY
     }
-    return [ansX, ansY]
+    return [Math.round(minW), Math.round(minH), Math.round(maxW), Math.round(maxH)]
 }
-
 
 export function getGrid(pathDict) {
     let middleDict = {}
+    let [minW, minH, maxW, maxH] = minMaxTile(pathDict)
     for (let key in pathDict) {
         let tile = pathDict[key]
-        let [xmin, xmax, ymin, ymax] = tile.bounds
-        let w = xmax - xmin
-        let h = ymax - ymin
-        let mid = [Math.floor(xmin + w / 2), Math.floor(ymin + h / 2)]
-        mid[1] = Math.floor(mid[1]/150) + 1
-        if(!middleDict[mid]) middleDict[mid] = []
+        let mid = getMidpoint(tile, maxW, maxH)
+        if (!middleDict[mid]) middleDict[mid] = []
         middleDict[mid].push(tile)
     }
     let points = Object.keys(middleDict)
@@ -66,52 +66,46 @@ export function getGrid(pathDict) {
     let outputDict = {};
     for (let i = 0; i < points.length; i++) {
         let [x, y] = points[i];
-        if(!outputDict[y]){
+        if (!outputDict[y]) {
             outputDict[y] = [];
         }
-            outputDict[y].push(x)
-            outputDict[y].push(y)
+        outputDict[y].push(x)
+        outputDict[y].push(y)
     }
 
     let outputArr = Object.values(outputDict);
+    // outputArr is an array of arrays, where all of the elements with the same y value are in the same array.
+    // ex: outputArr[0] = 178,180,391,180,604,180,817,180 (all the midpoints with 180 y value)
     return [outputArr, middleDict];
 }
 
+export function getMidpoint(tile){
+    let [xmin, xmax, ymin, ymax] = tile.bounds
+    let w = xmax - xmin
+    let h = ymax - ymin
+    let mid = [Math.floor(xmin + w / 2), Math.floor(ymin + h / 2)]
+    return mid
+}
 
-let midpointDict = {}
-let vertDict = {} //vertices
-let orienDict = {}
-
-export function setMidpointDict(pathDict) {
-    let midpointDict = {}
+export function getTilingProp(pathDict) { // returns tiling properties
+    let midSegDict = {} // middle of segment
+    let vertDict = {} // vertices
+    let orienDict = {} // orientation
 
     for (const key in pathDict) {
         const tile = pathDict[key]
         const segments = tile.segs;
         const distArr = []
-        for (let i = 0; i < segments.length; i++) {
+        for (let i = 0; i < segments?.length; i++) { // for each defined segment (does not include random shape)
             const seg = segments[i];
             let {x: x1, y: y1} = seg[0];
             let x2 = seg.length === 4 ? seg[3].x : seg[1].x;
             let y2 = seg.length === 4 ? seg[3].y : seg[1].y;
-            const midP = [Math.floor((x1 + x2) / 2), Math.floor((y1 + y2) / 2)];
-            if (!midpointDict[midP]) {
-                midpointDict[midP] = [];
-            }
-            midpointDict[midP].push(tile);
 
-            const vertArr = [Math.floor(x1 / 2) + 1, Math.floor(y1 / 2) + 1, Math.floor(x2 / 2) + 1, Math.floor(y2 / 2) + 1];
-            if (!vertDict[[vertArr[0], vertArr[1]]]) {
-                vertDict[[vertArr[0], vertArr[1]]] = [];
-            }
-            vertDict[[vertArr[0], vertArr[1]]].push(tile);
-            if (!vertDict[[vertArr[2], vertArr[3]]]) {
-                vertDict[[vertArr[2], vertArr[3]]] = [];
-            }
-            vertDict[[vertArr[2], vertArr[3]]].push(tile);
+            midSegDict = midSegHelper(midSegDict, x1, y1, x2, y2, tile)
+            vertDict = vertHelper(vertDict, x1, y1, x2, y2, tile)
 
             const normSeg = normalizeCurve(seg)
-
             for (let i = 0; i < normSeg.length; i++) {
                 distArr.push(Math.round(normSeg[i].x * 10) / 10)
                 distArr.push(Math.round(normSeg[i].y * 10) / 10)
@@ -122,26 +116,49 @@ export function setMidpointDict(pathDict) {
         }
         orienDict[distArr].push(tile);
     }
-    return midpointDict
+    return [midSegDict, vertDict, orienDict]
 }
 
-export function getAdjacentTiles(tile) {
+function midSegHelper(midSegDict, x1, y1, x2, y2, tile) {
+    const midP = [Math.floor((x1 + x2) / 2), Math.floor((y1 + y2) / 2)];
+    if (!midSegDict[midP]) {
+        midSegDict[midP] = [];
+    }
+
+    midSegDict[midP].push(tile);
+    return midSegDict
+}
+
+function vertHelper(vertDict, x1, y1, x2, y2, tile) {
+    const vertArr = [Math.floor(x1 / 2) + 1, Math.floor(y1 / 2) + 1, Math.floor(x2 / 2) + 1, Math.floor(y2 / 2) + 1];
+    if (!vertDict[[vertArr[0], vertArr[1]]]) {
+        vertDict[[vertArr[0], vertArr[1]]] = [];
+    }
+    vertDict[[vertArr[0], vertArr[1]]].push(tile);
+    if (!vertDict[[vertArr[2], vertArr[3]]]) {
+        vertDict[[vertArr[2], vertArr[3]]] = [];
+    }
+    vertDict[[vertArr[2], vertArr[3]]].push(tile);
+    return vertDict
+}
+
+export function getAdjTiles(tile, tiling) {
     let adjArr = []
     let segments = tile.segs // segments of tile
-    for (let i = 0; i < segments.length; i++) {
+    for (let i = 0; i < segments?.length; i++) {
         const seg1 = segments[i];
         const {x: x1, y: y1} = seg1[0];
         const x2 = seg1.length === 4 ? seg1[3].x : seg1[1].x;
         const y2 = seg1.length === 4 ? seg1[3].y : seg1[1].y;
         const midpoint1 = [Math.floor((x1 + x2) / 2), Math.floor((y1 + y2) / 2)]
-        midpointDict[midpoint1].forEach(value => {
+        tiling.midSeg[midpoint1].forEach(value => {
             adjArr.push(value);
         });
     }
     return adjArr
 }
 
-export function getNeighbourTiles(tile) {
+export function getNeighTiles(tile, tiling) {
     let neigh = []
     let segments1 = tile.segs // segments of tile
     for (let i = 0; i < segments1.length; i++) {
@@ -153,17 +170,17 @@ export function getNeighbourTiles(tile) {
         y1 = Math.floor(y1 / 2) + 1;
         x2 = Math.floor(x2 / 2) + 1;
         y2 = Math.floor(y2 / 2) + 1;
-        vertDict[[x1, y1]].forEach(value => {
+        tiling.vert[[x1, y1]].forEach(value => {
             neigh.push(value);
         });
-        vertDict[[x2, y2]].forEach(value => {
+        tiling.vert[[x2, y2]].forEach(value => {
             neigh.push(value);
         });
     }
     return neigh
 }
 
-export function getOrienTiles(tile) {
+export function getOrienTiles(tile, tiling) {
     let orien = []
     let segments = tile.segs // segments of tile
     let distArr = []
@@ -175,7 +192,7 @@ export function getOrienTiles(tile) {
             distArr.push(Math.round(normSeg[i].y * 10) / 10)
         }
     }
-    orien = orienDict[distArr]
+    orien = tiling.orien[distArr]
     return orien
 }
 

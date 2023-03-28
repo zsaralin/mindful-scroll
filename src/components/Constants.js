@@ -12,3 +12,5 @@ export const TOP_PAGE_SPACE = 150
 export const FIFTH_WINDOW = window.innerHeight * 4 / 5;
 
 export const SWIPE_THRESHOLD = window.innerWidth/12;
+
+export const TOP_CANV = 'fill-canvas'

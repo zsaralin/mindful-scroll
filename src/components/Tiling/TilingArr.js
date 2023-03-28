@@ -74,7 +74,8 @@ function drawRandomShape(yMin, yMax, pathDict) {
         firstCol : 'white',
         inPath : [],
         id : uuidv4(),
-        colors: []
+        colors: [],
+        allColors: [],
     };
 }
 

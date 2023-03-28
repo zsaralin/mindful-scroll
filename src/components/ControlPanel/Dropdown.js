@@ -1,5 +1,5 @@
 import {createTheme, FormControl, FormHelperText, MenuItem, NativeSelect, Select} from "@mui/material";
-import {changeColourSpeed} from "../Stroke/StrokeColor";
+import {changeColourSpeed} from "../Stroke/Color/StrokeColor";
 import {setFillType} from "../Tile/CompleteTile";
 import {SelectChangeEvent} from "@mui/material";
 import * as React from 'react';
@@ -47,6 +47,7 @@ export function FillStyle(props) {
                 <option value={"diagGradient"}>Diagonal Gradient</option>
                 <option value={"horizGradient"}>Horizontal Gradient</option>
                 <option value={"vertGradient"}>Vertical Gradient</option>
+                <option value={"dither"}>Dither</option>
                 <option value={"mostUsed"}>Most Used Colour</option>
                 <option value={"leastUsed"}>Least Used Colour</option>
                 <option value={"inverseComb"}>Inverse Combination</option>
