@@ -1,4 +1,5 @@
 import {fillTileColors, isSimilar} from "./ColorTheory";
+import image from './noise.png'
 
 export function fillRadialGradient(tile, similar) {
     let [xMin, xMax, yMin, yMax] = tile.bounds
@@ -52,8 +53,8 @@ export function ditherFill(tile, dir) {
         ctx.fillStyle = pattern;
         ctx.fill(tile.path)
     }
-    img.src = "https://grainy-gradients.vercel.app/noise.svg"
-    img.setAttribute('crossOrigin', '');
+    img.src = image
+    // img.setAttribute('crossOrigin', '');
 }
 
 function addColorStop(colors, grd) {
