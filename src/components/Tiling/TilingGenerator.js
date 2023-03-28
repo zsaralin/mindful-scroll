@@ -1,7 +1,7 @@
 import {mul, EdgeShape, tilingTypes, IsohedralTiling}
     from '../../lib';
 import {LINE_WIDTH} from "../Constants";
-import {getCurrColor} from "../Stroke/StrokeColor";
+import {getCurrColor} from "../Stroke/Color/StrokeColor";
 import {getTile} from "./TilingArr";
 import {getLineWidth} from "../Stroke/StrokeWidth";
 import {getTileWidth} from "./TileWidth";

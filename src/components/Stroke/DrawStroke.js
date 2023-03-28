@@ -2,8 +2,8 @@ import React from "react";
 import {getCurrentPathDict, getTilingIndex} from "../Tiling/TilingArr";
 import {getOffsetY} from "../Scroll/PageScroll";
 import {getLineWidth} from "./StrokeWidth";
-import {getCurrColor} from "./StrokeColor";
-import {hsl2Rgb, isCircleInPath} from "../Effects/FillRatio";
+import {getCurrColor} from "./Color/StrokeColor";
+import {hsl2Rgb, isCircleInPath} from "../Effects/FillTile/FillRatio";
 import {hslToRgb} from "../Effects/ColorTheory";
 
 

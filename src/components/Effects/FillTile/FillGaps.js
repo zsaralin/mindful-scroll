@@ -1,13 +1,13 @@
-import {getTileWidth} from "../Tiling/TileWidth";
-import {getStrokeArr, pushStrokeUnder, redrawTileStrokes, redrawTileStrokesI} from "../Stroke/StrokeArr";
-import {drawStrokeUnder} from "../Stroke/DrawStroke";
-import {invert, invertHue} from "./ColorTheory";
+import {getTileWidth} from "../../Tiling/TileWidth";
+import {getStrokeArr, pushStrokeUnder, redrawTileStrokes, redrawTileStrokesI} from "../../Stroke/StrokeArr";
+import {drawStrokeUnder} from "../../Stroke/DrawStroke";
+import {invert, invertHue} from "../ColorTheory";
 import {clearTile, fillTile} from "./FillTile";
-import {getOffsetY} from "../Scroll/Offset";
-import {getCurrColor, setCurrColor,} from "../Stroke/StrokeColor";
+import {getOffsetY} from "../../Scroll/Offset";
+import {getCurrColor, setCurrColor,} from "../../Stroke/Color/StrokeColor";
 
 export function fillEachPixel(tile) {
-    let ctx = document.getElementById('fill-canvas').getContext('2d');
+    let ctx = document.getElementById('top-canvas').getContext('2d');
     let width = getTileWidth()
     let fillColor = getTopLeftCol(tile) // fill colour starts as first colour of top left corner
     fillTile(tile, "first", true)

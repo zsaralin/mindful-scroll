@@ -1,5 +1,6 @@
 import {LINE_WIDTH} from "../Constants";
-import {getCurrColor} from "../Stroke/StrokeColor";
+import {getCurrColor} from "../Stroke/Color/StrokeColor";
+import {getTileWidth} from "../Tiling/TileWidth";
 
 var activePath;
 var activeColor;
@@ -137,7 +138,7 @@ function shapeGlowHelper(currTile, currColor, changeWidth){
     let ctx = document.getElementById('canvas').getContext('2d');
 
     // erase previous glow
-    let origWidth = ctx.lineWidth
+    let origWidth = getTileWidth()
     ctx.strokeStyle = "white";
     ctx.lineWidth = 90
     ctx.stroke(currTile.path)
@@ -155,7 +156,7 @@ function shapeGlowHelper(currTile, currColor, changeWidth){
 
     ctx.fillStyle = currColor
     ctx.fill(currTile.path)
-    ctx.lineWidth = LINE_WIDTH;
+    ctx.lineWidth = origWidth;
     ctx.strokeStyle = 'black'
     ctx.stroke(currTile.path)
 

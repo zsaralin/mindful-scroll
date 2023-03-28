@@ -1,7 +1,7 @@
 import {getLineWidth} from "./StrokeWidth";
 import {drawBlurryStroke, drawStroke, drawStrokeUnder} from "./DrawStroke";
 import {drawShrinkingStroke} from "./ShrinkingStroke";
-import {getCurrColor} from "./StrokeColor";
+import {getCurrColor} from "./Color/StrokeColor";
 import {getOffsetY, limitScroll} from "../Scroll/PageScroll";
 import {redrawActiveTiles} from "../Effects/Watercolor";
 import {invert, invertHue} from "../Effects/ColorTheory";

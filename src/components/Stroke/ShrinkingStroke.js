@@ -1,5 +1,5 @@
 import {getLineWidth, setLineWidth} from "./StrokeWidth";
-import {getCurrColor} from "./StrokeColor";
+import {getCurrColor} from "./Color/StrokeColor";
 import {LINE_WIDTH} from "../Constants";
 
 let shrinkStroke = false;
