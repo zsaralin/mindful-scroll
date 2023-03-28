@@ -40,7 +40,7 @@ export function completeTile(currTile, invisCol) {
         else if (fillType === "meanHue") fillTile(currTile, "meanHue", false)
         else if (fillType === "inverseMean") fillTile(currTile, "meanHueI", false)
         else if (fillType === "radialGradient") fillRadialGradient(currTile, true)
-        else if (fillType === "diagGradient") ditherFill(currTile, "diag")
+        else if (fillType === "diagGradient") fillLinearGradient(currTile, "diag")
         else if (fillType === "horizGradient") fillLinearGradient(currTile, "horiz")
         else if (fillType === "vertGradient") fillLinearGradient(currTile, "vert")
         else if (fillType === "dither") ditherFill(currTile)
