@@ -80,7 +80,7 @@ export function redrawStrokes(offsetY) {
 }
 
 export function redrawTileStrokes(tile, offsetY) {
-    let arr = strokeArr[tile.id]
+    let arr = strokeArr[tile]
     arr?.forEach(stroke => {
             if (stroke.endWidth) {
                 drawShrinkingStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, (stroke.color),stroke.lineWidth)
