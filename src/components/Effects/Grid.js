@@ -12,8 +12,7 @@ export function fillColumn(tile, t) {
 }
 
 export function fillCorners(t) {
-    let [rows, midpointDict] = t.grid
-    let corners = getCorners(rows, midpointDict)
+    let corners = getCorners(t)
     fillTileHelper(corners)
 }
 
@@ -71,7 +70,8 @@ export function getColumn(tile,t) {
     return column;
 }
 
-export function getCorners(rows, midpointDict) {
+export function getCorners(t) {
+    let [rows, midpointDict] = t.grid
     rows = rows.flat();
     let minX = rows[0], maxX = rows[0];
 
@@ -110,9 +110,11 @@ export function getCorners(rows, midpointDict) {
         ...midpointDict[[lowerRight[0], lowerRight[1]]]]
 }
 
-export function getCornerTiles(rows, midpointDict, tiling) { // corner + adjacent tiles
+export function getCornerTiles(tiling) { // corner + adjacent tiles
+    let [rows, midpointDict] = tiling.grid
     let ret = []
-    let cornerArr = getCorners(rows)
+    let cornerArr = getCorners(rows, midpointDict)
+    console.log(cornerArr)
     for (let j = 0; j < cornerArr?.length - 1; j += 2) {
         let tile = midpointDict[([cornerArr[j], cornerArr[j + 1]])]
         let neigh = getAdjTiles(tile[0], tiling)

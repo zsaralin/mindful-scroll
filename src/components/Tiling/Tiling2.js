@@ -16,7 +16,7 @@ import {
     getRowCol, getTileMiddle, getTilingProp, minMaxTile,
     setMidpointDict
 } from "./TilingProperties";
-import {getRandomHSV} from "../Stroke/Color/StrokeColor";
+import {getColourPal, getRandomHSV} from "../Stroke/Color/StrokeColor";
 
 let thisBottom; // bottom of current tiling
 let nextTop; // top of next tiling
@@ -51,6 +51,8 @@ function helperTiling(t) {
     tiling.midSeg = midSeg;
     tiling.vert = vert;
     tiling.orien = orien;
+    tiling.colourPal = [];
+
     pathArr.push(tiling);
 
 
@@ -117,6 +119,7 @@ function initTiling(segArr){
     tiling.midSeg = midSeg;
     tiling.vert = vert;
     tiling.orien = orien;
+    tiling.colourPal = getColourPal();
     pathArr.push(tiling);
 }
 

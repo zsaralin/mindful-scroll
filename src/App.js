@@ -4,7 +4,13 @@ import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import Music, {changeAudio, reduceAudio, triggerAudio} from './components/Audio.js'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/ShrinkingStroke'
-import {stopColorChange, colorDelay, getCurrColor, getRandomHSV} from './components/Stroke/Color/StrokeColor'
+import {
+    stopColorChange,
+    colorDelay,
+    getCurrColor,
+    getRandomHSV,
+    getColourPal, setColourPal
+} from './components/Stroke/Color/StrokeColor'
 import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
 import {addToTilingArr, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
 import {getOffsetY} from './components/Scroll/Offset'
@@ -58,17 +64,17 @@ import {
     fillCorners2,
     fillCornersNeigh,
     fillOrien,
-    fillRow, getColumn,
+    fillRow, getColumn, getCorners, getCornerTiles,
     getRow
 } from "./components/Effects/Grid";
 import {
     fillGrad,
     fillGradient,
-    fillGradRow,
-    fillNeighGrad,
+    fillNeighGrad, fillTilesIndiv,
     fillTilesTogether
 } from "./components/Effects/FillTile/FillAnim";
 import {ditherFill, fillLinearGradient} from "./components/Effects/Gradient";
+import {generateColourPal, getColourPalette, testing} from "./components/Stroke/Color/ColourPalette";
 
 
 function App() {
@@ -77,6 +83,9 @@ function App() {
     let invisCol; // color of tile on invisible buffer canvas
     let currTile;
     let prevTile;
+
+    let prevTiling;
+    let currTiling;
 
     // mouse functions
     let leftMouseDown = false;
@@ -127,16 +136,36 @@ function App() {
     }, []);
 
     let currColor;
+    let firstClick = true;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
+
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
         console.log(invisCol, prevScaledX, prevScaledY)
         currTile = getTile(y, invisCol)
         console.log(currTile)
+
+        currTiling = getTiling(y, invisCol)
+        console.log('COLOUR PAL + ' +  currTiling.colourPal)
+        if(currTiling.colourPal.length === 0){
+            if(firstClick) {
+                currTiling.colourPal = getColourPal()
+                firstClick = false;
+            }
+            else {
+                currTiling.colourPal = generateColourPal().cols
+                setColourPal(currTiling.colourPal)
+                console.log('HEIIII')
+            }
+        }
+
+
         currColor = getCurrColor()
         stopColorChange()
+
+
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY)) {
-            moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
+            moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
             sendMidAlert()
 
             pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor);
@@ -146,39 +175,16 @@ function App() {
             if (currTile.firstCol === "white") currTile.firstCol = currColor
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile)
             currTile.colors.push(currColor)
-            let t = getTiling(y, invisCol)
-            // let tiles = getOrienTiles(currTile, t)
-            // fillGradRow(tiles, currColor, "right")
+
+            // let tiles = getOrienTiles(currTile, currTiling)
+            // let tiles = getRow(currTile, currTiling)
+            // let tiles = getColumn(currTile, currTiling)
+            // let tiles = getCorners(currTiling)
+
+            // fillTilesIndiv(tiles, currColor, "right")
+            // fillNeighGrad(tiles, currTiling, currColor)
+
             // fillOrien(currTile, t)
-            let tiles = getNeighTiles(currTile, t)
-            // let [neigh, midpointDict] = t.grid
-            // for(let i=0;i<neigh.length;i++) {
-            //     let row = neigh[i]
-            //     const ctx = document.getElementById('top-canvas').getContext("2d");
-            //     ctx.fillStyle = getRandomHSV()
-            //     for (let j = 0; j < row.length - 1; j += 2) {
-            //         let tile = midpointDict[([row[j], row[j + 1]])]
-            //         tile.forEach(function (i) {
-            //             ctx.fill(i?.path)
-            //         });
-            //     }
-            // }
-            let pathDict = t.pathDict;
-
-            // let neigh = getAdjTiles(currTile, t)
-            // ctx.fillStyle = 'red'
-            // ctx.fill(Object.values(pathDict)[0].path)
-            // for (let i = 0; i < neigh.length; i++) {
-            //     let tile = neigh[i]
-            //     const ctx = document.getElementById('top-canvas').getContext("2d");
-            //     ctx.fillStyle = 'red'
-            //     ctx.fill(tile?.path)
-            // }
-            // console.log(neigh.length)
-            // ctx.fillStyle = 'yellow'
-            // ctx.fill(Object.values(pathDict)[15].path)
-
-
         } else {
             startX = prevCursorX;
             startY = prevCursorY;
@@ -415,6 +421,7 @@ function App() {
         insidePoly = [0, 0]
         tooFast = false;
         prevTile = currTile;
+        prevTiling = currTiling;
         clearTimeout(hidePreviewInterval)
         clearInterval(timerId)
         clearInterval(midId)

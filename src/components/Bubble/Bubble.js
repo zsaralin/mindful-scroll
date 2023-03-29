@@ -118,7 +118,8 @@ export function resetColourPreview() {
 let isMoving = false;
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-export const moveFeedback = async (prevX, prevY, x, y) => {
+export const moveFeedback = async (prevX, prevY, x, y, newTile) => {
+    if(!newTile) return
     if (isMoving) {
         gsap.killTweensOf("#bubble")
     }
