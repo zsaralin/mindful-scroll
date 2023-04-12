@@ -1,10 +1,11 @@
 import {getCurrColor} from "../Stroke/Color/StrokeColor";
-import {hsl2Rgb} from "./FillTile/FillRatio";
+import {hsl2Rgb, isCircleInPath} from "../Tile/FillTile/FillRatio";
 import {getLineWidth} from "../Stroke/StrokeWidth";
 import {getTileWidth} from "../Tiling/TileWidth";
 import {getStrokeArr, getStrokeArrUnder, pushStrokeUnder, redrawBlurryStrokes} from "../Stroke/StrokeArr";
 import {drawStroke, drawStrokeUnder} from "../Stroke/DrawStroke";
-import {fillEachPixel} from "./FillTile/FillGaps";
+import {fillEachPixel} from "../Tile/FillTile/FillGaps";
+import {fillTile} from "../Tile/FillTile/FillTile";
 
 let blurryArr = {}
 
@@ -25,21 +26,61 @@ export function blurryHelper(x0, y0, x1, y1, theColor, theLineWidth, context) {
     context.fillRect(x0 - r, y0 - r, 150, 150);
     context.closePath();
 }
+let BB_PADDING = 35;
 
 export function blurTile(tile) {
-    let strokesUnder = getStrokeArrUnder()[tile.id]
-    let strokes = getStrokeArr()[tile.id]
-    if (strokesUnder) {
-        strokesUnder.forEach(stroke => {
-            drawBlurryStroke(stroke.x0, stroke.y0, stroke.x1, stroke.y1, stroke.lineWidth, stroke.color)
-            pushStroke(tile, stroke.x0, stroke.y0, stroke.x1, stroke.y1, stroke.lineWidth, stroke.color)
-        })
-    }
-    strokes.forEach(stroke => {
-        drawBlurryStroke(stroke.x0, stroke.y0, stroke.x1, stroke.y1, stroke.lineWidth, stroke.color)
-        pushStroke(tile, stroke.x0, stroke.y0, stroke.x1, stroke.y1, stroke.lineWidth, stroke.color)
+    // let strokesUnder = getStrokeArrUnder()[tile.id]
+    // let strokes = getStrokeArr()[tile.id]
+    // if (strokesUnder) {
+    //     strokesUnder.forEach(stroke => {
+    //         drawBlurryStroke(stroke.x0, stroke.y0, stroke.x1, stroke.y1, stroke.lineWidth, stroke.color)
+    //         pushStroke(tile, stroke.x0, stroke.y0, stroke.x1, stroke.y1, stroke.lineWidth, stroke.color)
+    //     })
+    // }
+    // strokes.forEach(stroke => {
+    //     drawBlurryStroke(stroke.x0, stroke.y0, stroke.x1, stroke.y1, stroke.lineWidth, stroke.color)
+    //     pushStroke(tile, stroke.x0, stroke.y0, stroke.x1, stroke.y1, stroke.lineWidth, stroke.color)
+    //
+    // })
+    let canvas = document.getElementById("top-canvas");
+    let ctx = document.getElementById("top-canvas").getContext("2d");
+    let tileDim = tile.bounds;
+    let startX = tileDim[0] - BB_PADDING;
+    let startY = tileDim[2] - BB_PADDING;
+    let endX = tileDim[1] + BB_PADDING;
+    let endY = tileDim[3] + BB_PADDING;
 
-    })
+    // get the image data in the region defined by the path
+    let imageData = ctx.getImageData(startX, startY, endX - startX, endY - startY);
+
+    // apply a Gaussian blur to the image data
+    let pixels = imageData.data;
+    let width = imageData.width;
+    let height = imageData.height;
+    let radius = 10;
+    let sigma = 5;
+    let i = 1;
+    for (let y = 0; y < imageData.height; y += i) {
+        for (let x = 0; x < imageData.width; x += i) {
+            if (isCircleInPath(tile.path, startX + x, startY + y)) {
+
+                let index = (y * imageData.width + x) * 4;
+                // Check if pixel is black
+                if (pixels[index] === 0 && pixels[index + 1] === 0 && pixels[index + 2] === 0) {
+                    // Convert black pixel to white
+                    pixels[index] = 255;
+                    pixels[index + 1] = 255;
+                    pixels[index + 2] = 255;
+                }
+            }
+        }
+    }
+            let kernel = getGaussianKernel(radius, sigma);
+
+            convolve2D(pixels, kernel, width, height, 4, tile);
+
+    // put the blurred image data back into the canvas
+    ctx.putImageData(imageData, startX, startY);
 }
 
 export function fillAndBlur(tile) {
@@ -104,7 +145,55 @@ export function drawBlurryStroke(x0, y0, x1, y1, theColor, theLineWidth, context
     }
 }
 
+function getGaussianKernel(radius, sigma) {
+    let size = radius * 2 + 1;
+    let kernel = new Array(size);
+    let sigma2 = sigma * sigma;
+    let sum = 0;
 
+    for (let i = 0; i < size; i++) {
+        let x = i - radius;
+        let weight = Math.exp(-x * x / (2 * sigma2)) / Math.sqrt(2 * Math.PI * sigma2);
+        kernel[i] = weight;
+        sum += weight;
+    }
 
+    for (let i = 0; i < size; i++) {
+        kernel[i] /= sum;
+    }
 
+    return kernel;
+}
 
+function convolve2D(pixels, kernel, width, height, channels, tile) {
+    let startX = tile.bounds[0] - BB_PADDING;
+    let startY = tile.bounds[2] - BB_PADDING;
+
+    let radius = Math.floor(kernel.length / 2);
+
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            if (isCircleInPath(tile.path, startX + x, startY + y)) {
+
+                let index = (y * width + x) * channels;
+
+            for (let c = 0; c < channels; c++) {
+                let sum = 0;
+
+                for (let i = -radius; i <= radius; i++) {
+                    let xi = x + i;
+
+                    if (xi < 0 || xi >= width) {
+                        continue;
+                    }
+
+                    let weight = kernel[i + radius];
+                    let pi = (y * width + xi) * channels + c;
+                    sum += pixels[pi] * weight;
+                }
+
+                pixels[index + c] = sum;
+            }}
+        }
+    }
+}

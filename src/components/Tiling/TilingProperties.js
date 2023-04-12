@@ -79,7 +79,7 @@ export function getGrid(pathDict) {
     return [outputArr, middleDict];
 }
 
-export function getMidpoint(tile){
+export function getMidpoint(tile) {
     let [xmin, xmax, ymin, ymax] = tile.bounds
     let w = xmax - xmin
     let h = ymax - ymin
@@ -204,4 +204,65 @@ function normalizeCurve(curve) {
         Math.sqrt(normCurve[1].x * normCurve[1].x + normCurve[1].y * normCurve[1].y);
 
     return normCurve.map(point => ({x: point.x / length, y: point.y / length}));
+}
+
+export function isSymmetricalX(t) { // x axis
+    let rows = t.grid[0]
+    let points = rows.flat();
+
+    const numPoints = points.length;
+    let sumX = 0;
+
+    // Sort the points by their x-coordinates
+    points.sort((a, b) => a[0] - b[0]);
+    console.log(points)
+    // Calculate the sum of x-coordinates
+    for (let i = 0; i < numPoints; i += 2) {
+        sumX += points[i];
+    }
+
+    // Calculate the x-coordinate of the axis of symmetry
+    const axisX = sumX / (numPoints / 2);
+
+    // Check if the points are equidistant from the axis of symmetry
+    for (let i = 0; i < numPoints; i += 2) {
+        const expectedDistance = Math.abs(points[i] - axisX);
+        const actualDistance = Math.abs(axisX - points[numPoints - i - 2]);
+        if (Math.abs(expectedDistance - actualDistance) > 2) {
+            return false;
+        }
+    }
+
+    return true;
+
+}
+
+export function isSymmetricalY(t) { // y axis
+    let rows = t.grid[0];
+    let points = rows.flat();
+
+    const numPoints = points.length;
+    let sumY = 0;
+
+    // Sort the points by their y-coordinates
+    points.sort((a, b) => a[1] - b[1]);
+
+    // Calculate the sum of y-coordinates
+    for (let i = 0; i < numPoints; i += 2) {
+        sumY += points[i+1];
+    }
+
+    // Calculate the y-coordinate of the axis of symmetry
+    const axisY = sumY / (numPoints / 2);
+
+    // Check if the points are within 2 units of the axis of symmetry along the y-axis
+    for (let i = 0; i < numPoints; i += 2) {
+        const expectedDistance = Math.abs(points[i+1] - axisY);
+        const actualDistance = Math.abs(points[numPoints - i - 1] - axisY);
+        if (Math.abs(expectedDistance - actualDistance) > 2) {
+            return false;
+        }
+    }
+
+    return true;
 }

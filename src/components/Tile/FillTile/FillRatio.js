@@ -9,15 +9,15 @@ let BB_PADDING = 35; // bounding box padding
 let fillMin = FILL_RATIO
 let strokeCanvas = 'top-canvas'
 
-function getTotalPixels(currTile) {
+export function getTotalPixels(currTile) {
     let tileDim = currTile.bounds
     let startX = tileDim[0] - BB_PADDING;
     let startY = tileDim[2] - BB_PADDING;
     let endX = tileDim[1] + BB_PADDING;
     let endY = tileDim[3] + BB_PADDING;
 
-    for (let x = startX; x < endX; x += 5) {
-        for (let y = startY; y < endY; y += 5) {
+    for (let x = startX; x < endX; x += 1) {
+        for (let y = startY; y < endY; y += 1) {
             if (isCircleInPath(currTile.path, x, y)) {
                 currTile.inPath.push([x, y])
             }

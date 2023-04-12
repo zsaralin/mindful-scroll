@@ -2,7 +2,7 @@ import {getLineWidth} from "../StrokeWidth";
 import {drawStrokeHelper} from "../DrawStroke";
 import './Dot.css'
 import {hslToRgb} from "../../Effects/ColorTheory";
-import {isCircleInPath} from "../../Effects/FillTile/FillRatio";
+import {isCircleInPath} from "../../Tile/FillTile/FillRatio";
 export function drawGradientStroke(tile, x0, y0, x1, y1, theColor, grad) {
     const lw = getLineWidth();
     const hslArr = theColor.match(/\d+/g).map(Number);

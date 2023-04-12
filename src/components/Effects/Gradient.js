@@ -1,5 +1,6 @@
 import {fillTileColors, isSimilar} from "./ColorTheory";
 import image from './noise.png'
+import {dither} from "./Dither";
 
 export function fillRadialGradient(tile, similar) {
     let [xMin, xMax, yMin, yMax] = tile.bounds
@@ -27,12 +28,11 @@ export function fillLinearGradient(tile, dir, similar) {
     ctx.fill(tile.path)
 }
 
-export function ditherFill(tile, dir) {
-    var img = new Image();
+export function ditherFill(tile, i) {
     let ctx = document.getElementById('top-canvas').getContext('2d');
     let [xMin, xMax, yMin, yMax] = tile.bounds
     let grd = ctx.createLinearGradient(xMin, yMin, xMax, yMax)
-    img.onload = function () {
+    // img.onload = function () {
         if (tile.colors.length === 1) {
             grd.addColorStop(0, tile.colors[0])
             const values = tile.colors[0].split(",");
@@ -49,12 +49,7 @@ export function ditherFill(tile, dir) {
         }
         ctx.fillStyle = grd;
         ctx.fill(tile.path)
-        var pattern = ctx.createPattern(img, "repeat");
-        ctx.fillStyle = pattern;
-        ctx.fill(tile.path)
-    }
-    img.src = image
-    // img.setAttribute('crossOrigin', '');
+    dither(tile, i)
 }
 
 function addColorStop(colors, grd) {

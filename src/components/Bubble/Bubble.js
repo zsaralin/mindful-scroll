@@ -119,6 +119,14 @@ let isMoving = false;
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 export const moveFeedback = async (prevX, prevY, x, y, newTile) => {
+    if(x === undefined) {
+        gsap.to("#bubble", {
+            duration: 1, delay: 0, opacity: 0, onComplete() {
+                return
+            }
+        })
+    }
+    console.log(x + ' adndddd  ' + y)
     if(!newTile) return
     if (isMoving) {
         gsap.killTweensOf("#bubble")

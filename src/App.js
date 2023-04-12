@@ -2,7 +2,7 @@ import './App.css';
 import './components/Bubble/Bubble.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
-import Music, {changeAudio, reduceAudio, triggerAudio} from './components/Audio.js'
+import Music, {changeAudio, reduceAudio, triggerAudio} from './components/Audio/Audio.js'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/ShrinkingStroke'
 import {
     stopColorChange,
@@ -28,7 +28,7 @@ import {
     resetLineWidth,
     setLineWidth
 } from "./components/Stroke/StrokeWidth";
-import {changeBool, getFillMin, getFillRatio, isCircleInPath} from "./components/Effects/FillTile/FillRatio";
+import {changeBool, getFillMin, getFillRatio, isCircleInPath} from "./components/Tile/FillTile/FillRatio";
 import {BUBBLE_DIST, FILL_RATIO, SCROLL_DELTA, SCROLL_DIST, SHAPE_COLOR, SWIPE_THRESHOLD} from "./components/Constants";
 import {completeTile, fillEachPixel, triggerCompleteTile} from "./components/Tile/CompleteTile";
 import {gsap} from "gsap";
@@ -55,7 +55,7 @@ import {
     getGrid,
     getNeighTiles,
     getOrienTiles,
-    getTileMiddle,
+    getTileMiddle, isSymmetrical, isSymmetricalX,
     setMidpointDict
 } from "./components/Tiling/TilingProperties";
 import {
@@ -64,17 +64,19 @@ import {
     fillCorners2,
     fillCornersNeigh,
     fillOrien,
-    fillRow, getColumn, getCorners, getCornerTiles,
-    getRow
+    fillRow, getColSections, getColumn, getCorners, getCornerTiles,
+    getRow, getRowSections
 } from "./components/Effects/Grid";
 import {
     fillGrad,
     fillGradient,
-    fillNeighGrad, fillTilesIndiv,
+    fillNeighGrad, fillTilesIndiv, fillTilesTogeth,
     fillTilesTogether
-} from "./components/Effects/FillTile/FillAnim";
+} from "./components/Tile/FillTile/FillAnim";
 import {ditherFill, fillLinearGradient} from "./components/Effects/Gradient";
 import {generateColourPal, getColourPalette, testing} from "./components/Stroke/Color/ColourPalette";
+import {draw} from "./components/Effects/Dither";
+import {fillStripes} from "./components/Tile/FillTile/FillPattern";
 
 
 function App() {
@@ -139,14 +141,10 @@ function App() {
     let firstClick = true;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
-
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
         console.log(invisCol, prevScaledX, prevScaledY)
         currTile = getTile(y, invisCol)
-        console.log(currTile)
-
         currTiling = getTiling(y, invisCol)
-        console.log('COLOUR PAL + ' +  currTiling.colourPal)
         if(currTiling.colourPal.length === 0){
             if(firstClick) {
                 currTiling.colourPal = getColourPal()
@@ -155,24 +153,23 @@ function App() {
             else {
                 currTiling.colourPal = generateColourPal().cols
                 setColourPal(currTiling.colourPal)
-                console.log('HEIIII')
             }
         }
-
 
         currColor = getCurrColor()
         stopColorChange()
 
 
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY)) {
-            moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
             sendMidAlert()
+            moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
 
             pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor);
             startDot(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor);
 
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
+            console.log('ratop ' + getFillRatio(currTile))
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile)
             currTile.colors.push(currColor)
 
@@ -180,9 +177,11 @@ function App() {
             // let tiles = getRow(currTile, currTiling)
             // let tiles = getColumn(currTile, currTiling)
             // let tiles = getCorners(currTiling)
+            // let tiles = getCornerTiles(currTiling)
 
-            // fillTilesIndiv(tiles, currColor, "right")
-            // fillNeighGrad(tiles, currTiling, currColor)
+            // fillTilesTogeth(tiles, currColor, "center")
+            // let tiles = getNeighTiles(currTile, currTiling)
+            // fillNeighGrad(currTile, tiles, currColor)
 
             // fillOrien(currTile, t)
         } else {
@@ -203,11 +202,11 @@ function App() {
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY) && isCircleInPath(currTile.path, scaledX, scaledY)) {
             // hideColourPreview(cursorX, cursorY)
             // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
-            if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
-                currTile.filled = true;
-                // fillLinearGradient(currTile, "horiz")
-                completeTile(currTile, invisCol)
-            }
+            // if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
+            //     currTile.filled = true;
+            //     // fillLinearGradient(currTile, "horiz")
+            //     completeTile(currTile, invisCol)
+            // }
             if ((isShrinkStroke() && (Math.abs(speed[0]) > 10 || Math.abs(speed[1]) > 10))) {
                 pushShrinkingLine(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor);
                 drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY, currColor);
@@ -244,6 +243,7 @@ function App() {
         }
         // detect right clicks
         if (event.button === 2) {
+            moveFeedback()
             rightMouseDown = true;
             leftMouseDown = false;
         }
@@ -282,14 +282,15 @@ function App() {
                 onStrokeEnd()
             }
         }
+        else {
+            // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
+        }
 
         startX = undefined;
         startY = undefined;
         leftMouseDown = false;
         rightMouseDown = false;
         endScroll();
-
-
     }
 
     // touch functions
@@ -322,29 +323,34 @@ function App() {
             let r = getLineWidth() / 2
             singleTouch = true;
             doubleTouch = false;
-            const touch0X = event.touches[0]?.pageX - r;
-            const touch0Y = event.touches[0]?.pageY - r;
+            const touch0X = cursorX = event.touches[0]?.pageX - r;
+            const touch0Y = cursorY = event.touches[0]?.pageY - r;
 
             const scaledX = touch0X;
             const scaledY = toTrueY(touch0Y);
 
-            onStrokeStart(scaledX, scaledY, touch0X, touch0Y)
+            prevCursorX = !prevCursorX ? 0 : prevTouches[0].pageX
+            prevCursorY = !prevCursorY ? 0 : prevTouches[0].pageY
+
+            onStrokeStart(touch0X, touch0Y, touch0X, touch0Y)
 
         } else if (event.touches.length >= 2) {
             removeLastStroke(event.touches[0], event.touches[1], getOffsetY())
+            moveFeedback()
             singleTouch = false;
             doubleTouch = true;
         }
 
         // store the last touches
-        prevTouches[0] = event.touches[0];
-        prevTouches[1] = event.touches[1];
+        prevTouches[0] = event.touches[0]
+        prevTouches[1] = event.touches[1]
+
+        // prevCursorX = cursorX
+        // prevCursorY = cursorY
 
         cursorX = event.touches[0].pageX
         cursorY = event.touches[0].pageY
 
-        prevCursorX = prevTouches[0].pageX
-        prevCursorY = prevTouches[0].pageY
     }
 
     let firstMove = false;
@@ -369,7 +375,7 @@ function App() {
         touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
 
         if (singleTouch) {
-            onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, touchSpeed)
+            onStrokeMove(prevTouch0X, prevTouch0Y, scaledX, scaledY, touchSpeed)
             if (event.touches && event.touches[0] && typeof event.touches[0]["force"] !== "undefined") {
                 if (event.touches[0]["force"] > 0) {
                     document.getElementById("angle").innerHTML = event.touches[0]["force"]
@@ -412,6 +418,10 @@ function App() {
     }
 
     function onStrokeEnd() {
+        if (currTile && !currTile.filled && getFillRatio(currTile) > getFillMin()) {
+            currTile.filled = true;
+            completeTile(currTile, invisCol)
+        }
         resetLineWidth()
         reduceAudio()
         colorDelay()
@@ -429,7 +439,6 @@ function App() {
         firstMove = false;
         setHandChanged(false)
         setDragging(false)
-
     }
 
     let reduceOpac;
@@ -488,7 +497,7 @@ function App() {
         sendingAlert = false;
     }
 
-    let alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
+    let alertInterval = Math.floor(Math.random() * (3 - 2 + 1)) + 2; // random num between 5 and 10
     let count = 0;
 
     async function sendAlert() {

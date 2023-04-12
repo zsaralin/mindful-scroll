@@ -1,7 +1,7 @@
-import {pushCompleteTile} from "../../Tile/CompleteTileArr";
-import {complem, fillTileColors, invert, invertHue, meanHue} from "../ColorTheory";
+import {pushCompleteTile} from "../CompleteTileArr";
+import {complem, fillTileColors, invert, invertHue, meanHue} from "../../Effects/ColorTheory";
 import {getCurrColor} from "../../Stroke/Color/StrokeColor";
-import {leastUsed, mostUsed} from "../CommonColours";
+import {leastUsed, mostUsed} from "../../Effects/CommonColours";
 
 function getCol(tile, str, inputCol){
     let tempCol;
@@ -17,7 +17,6 @@ function getCol(tile, str, inputCol){
     else if(str === "meanHueI") tempCol = invert(meanHue(tile, tile.colors))
     else if(str === "least") tempCol = leastUsed(tile)
     else if(str === "most") tempCol = mostUsed(tile)
-
     return tempCol;
 }
 
@@ -25,10 +24,10 @@ export function fillTile(tile, str, under, inputCol){
     fillTileColors(tile)
     let canvStr = under ? 'fill-canvas' : 'top-canvas'
     let ctx = document.getElementById(canvStr).getContext('2d');
-    let col = ctx.fillStyle = getCol(tile, str, inputCol)
-    console.log(col)
+    let col = ctx.fillStyle =  getCol(tile, str, inputCol)
     ctx.fill(tile.path)
     tile.filled = true;
+
     pushCompleteTile(tile.path, col)
 }
 
