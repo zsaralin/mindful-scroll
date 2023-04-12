@@ -1,7 +1,9 @@
 import {useState} from "react";
+import {getRandomTrack} from "./Tracks";
 
-let audio = new Audio('https://audio.jukehost.co.uk/M8pzlNF3rdamYbcdo7cLg9b41gfwqC1b');
+let audio = new Audio(getRandomTrack());
 let audioOn = true;
+
 
 export function getAbsArray(arr) {
     for (let i = 0; i < arr.length; i++) {
@@ -14,8 +16,13 @@ export default function Music() {
     const [intro, setIntro] = useState(true); // do not remove useState
 
     function playMusic() {
-        let playPromise = audio.play()
         audio.volume = 0.2
+        audio.addEventListener("ended", () => {
+            let audio = new Audio(getRandomTrack());
+            audio.play()
+            // Do something here when the audio has ended
+        });
+        let playPromise = audio.play()
         if (playPromise !== undefined) {
             playPromise.then(function () {
                 // Automatic playback started!

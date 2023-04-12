@@ -25,7 +25,8 @@
     "snapsvg": "^0.5.1",
     "snapsvg-cjs": "^0.0.6",
     "uuid": "^9.0.0",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "ytdl-core": "^4.11.3"
   },
   "scripts": {
     "start": "react-scripts start",

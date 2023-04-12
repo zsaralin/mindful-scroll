@@ -138,6 +138,7 @@ function drawShape(yMin, yMax, pathDict, shape = null) {
         inPath: [],
         id : uuidv4(),
         colors: [],
+        allColors: [],
         segArr : undefined,
     };
 }

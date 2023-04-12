@@ -2,10 +2,10 @@ import {getTile} from "../Tiling/TilingArr";
 import {getCurrColor} from "../Stroke/Color/StrokeColor";
 import {LINE_WIDTH, TOP_CANV} from "../Constants";
 import {pushCompleteTile, redrawTiles} from "../Tile/CompleteTileArr";
-import {getFillRatio, getFillRatio2} from "./FillTile/FillRatio";
+import {getFillRatio, getFillRatio2} from "../Tile/FillTile/FillRatio";
 import {fillCurrTile} from "../Tile/CompleteTile";
 import {getOffsetY, getTotOffset} from "../Scroll/PageScroll";
-import {fillTile} from "./FillTile/FillTile";
+import {fillTile} from "../Tile/FillTile/FillTile";
 
 let activeTileArr = []; // semi coloured tiles (gradient)
 const ORIG_RADIUS = LINE_WIDTH;

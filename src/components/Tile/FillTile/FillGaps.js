@@ -1,7 +1,7 @@
 import {getTileWidth} from "../../Tiling/TileWidth";
 import {getStrokeArr, pushStrokeUnder, redrawTileStrokes, redrawTileStrokesI} from "../../Stroke/StrokeArr";
 import {drawStrokeUnder} from "../../Stroke/DrawStroke";
-import {invert, invertHue} from "../ColorTheory";
+import {invert, invertHue} from "../../Effects/ColorTheory";
 import {clearTile, fillTile} from "./FillTile";
 import {getOffsetY} from "../../Scroll/Offset";
 import {getCurrColor, setCurrColor,} from "../../Stroke/Color/StrokeColor";

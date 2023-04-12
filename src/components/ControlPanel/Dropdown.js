@@ -47,12 +47,18 @@ export function FillStyle(props) {
                 <option value={"diagGradient"}>Diagonal Gradient</option>
                 <option value={"horizGradient"}>Horizontal Gradient</option>
                 <option value={"vertGradient"}>Vertical Gradient</option>
-                <option value={"dither"}>Dither</option>
+                <option value={"dither1"}>Dither 1</option>
+                <option value={"dither2"}>Dither 2</option>
+                <option value={"dither3"}>Dither 3</option>
+                <option value={"dither4"}>Dither 4</option>
+                <option value={"dither5"}>Dither 5</option>
                 <option value={"mostUsed"}>Most Used Colour</option>
                 <option value={"leastUsed"}>Least Used Colour</option>
                 <option value={"inverseComb"}>Inverse Combination</option>
-
-
+                <option value={"pattern"}>Pattern</option>
+                <option value={"stripesH"}>Horizontal Stripes</option>
+                <option value={"stripesV"}>Vertical Stripes</option>
+                <option value={"fillAnim"} >Fill Animation</option>
             </NativeSelect>
         </FormControl>
             </div>
