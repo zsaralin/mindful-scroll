@@ -8,7 +8,18 @@ export function fillRadialGradient(tile, similar) {
     let midY = (yMax + yMin) / 2
     let ctx = document.getElementById('top-canvas').getContext('2d');
     let grd = ctx.createRadialGradient(midX, midY, 0, midX, midY, 100);
-    addColorStop(similar ? getSimilarColours(tile) : tile.allColors, grd)
+    if (tile.colors.length === 1) {
+        grd.addColorStop(0, tile.colors[0])
+        const values = tile.colors[0].split(",");
+        if (Math.random() < 0.5) {
+            // Lighter color
+            values[2] = Math.min(parseInt(values[2]) + 55, 100) + "%"; // lighter colour
+        } else {
+            // Darker color
+            values[2] = Math.max(parseInt(values[2]) - 45, 0) + "%"; // darker colour
+        }
+        grd.addColorStop(1, values.join(","))
+    } else addColorStop(similar ? getSimilarColours(tile) : tile.allColors, grd)
     ctx.fillStyle = grd
     ctx.fill(tile.path)
 }
@@ -23,33 +34,20 @@ export function fillLinearGradient(tile, dir, similar) {
     if (dir === "diag") grd = ctx.createLinearGradient(xMin, yMin, xMax, yMax)
     else if (dir === 'horiz') grd = ctx.createLinearGradient(xMin, midY, xMax, midY)
     else if (dir === 'vert') grd = ctx.createLinearGradient(midX, yMin, midX, yMax)
-    addColorStop(similar ? getSimilarColours(tile) : tile.allColors, grd)
+    if (tile.colors.length === 1) {
+        grd.addColorStop(0, tile.colors[0])
+        const values = tile.colors[0].split(",");
+        if (Math.random() < 0.5) {
+            // Lighter color
+            values[2] = Math.min(parseInt(values[2]) + 55, 100) + "%"; // lighter colour
+        } else {
+            // Darker color
+            values[2] = Math.max(parseInt(values[2]) - 45, 0) + "%"; // darker colour
+        }
+        grd.addColorStop(1, values.join(","))
+    } else addColorStop(similar ? getSimilarColours(tile) : tile.allColors, grd)
     ctx.fillStyle = grd
     ctx.fill(tile.path)
-}
-
-export function ditherFill(tile, i) {
-    let ctx = document.getElementById('top-canvas').getContext('2d');
-    let [xMin, xMax, yMin, yMax] = tile.bounds
-    let grd = ctx.createLinearGradient(xMin, yMin, xMax, yMax)
-    // img.onload = function () {
-        if (tile.colors.length === 1) {
-            grd.addColorStop(0, tile.colors[0])
-            const values = tile.colors[0].split(",");
-            if (Math.random() < 0.5) {
-                // Lighter color
-                values[2] = Math.min(parseInt(values[2]) + 55, 100) + "%"; // lighter colour
-            } else {
-                // Darker color
-                values[2] = Math.max(parseInt(values[2]) -45, 0) + "%"; // darker colour
-            }
-            grd.addColorStop(1, values.join(","))
-        } else {
-            addColorStop(tile.colors, grd)
-        }
-        ctx.fillStyle = grd;
-        ctx.fill(tile.path)
-    dither(tile, i)
 }
 
 function addColorStop(colors, grd) {

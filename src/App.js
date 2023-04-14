@@ -544,7 +544,10 @@ function App() {
                         onTouchMove={onTouchMove}
                 >
                 </canvas>
-
+                <div id = "overlay">
+                    <div id = 'overlayTop'> </div>
+                    <div id = 'overlayBottom'> </div>
+                </div>
                 <Bubble/>
             </div>
         </div>

@@ -6,6 +6,27 @@
     -webkit-appearance: none;
 }
 
+#overlay{
+    width: 100vw;
+    height: 100vh;
+    z-index: 3;
+    position: absolute;
+    pointer-events: none;
+}
+#overlayTop{
+    width: 100vw;
+    height: 20vh;
+    position: absolute;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 20%, rgba(255, 255, 255, 0) 100%);
+}
+
+#overlayBottom{
+    width: 100vw;
+    height: 20vh;
+    position: absolute;
+    top: 80%;
+    background: linear-gradient(to top, rgba(255, 255, 255, 1) 20%, rgba(255, 255, 255, 0) 100%);
+}
 
 #feedbackBar{
     position: absolute;
