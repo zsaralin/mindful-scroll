@@ -16,12 +16,13 @@ import {invert} from "../Effects/ColorTheory";
 import {fillTile} from "./FillTile/FillTile";
 import {
     fillPattern,
-    fillStripes,
+    fillStripes, fillStripesDiagGrad, fillStripesDiagNeg, fillStripesDiagonal, fillStripesDiagPos,
     fillStripesHoriz,
     fillStripesHorizGrad,
     fillStripesVert, fillStripesVertGrad
 } from "./FillTile/FillPattern";
 import {fillGrad} from "./FillTile/FillAnim";
+import {dither} from "../Effects/Dither";
 
 let fillTileArr = [] // fully coloured tiles
 let completeTileOn = true;
@@ -39,30 +40,33 @@ export function completeTile(currTile, invisCol) {
         currTile.filled = true;
         fillTileColors(currTile)
         currTile.fillTyle = fillType
-        if (fillType === "combination") fillEachPixel(currTile)
-        else if (fillType === "first") fillTile(currTile, "first", false)
-        else if (fillType === "last") fillTile(currTile, "last", false)
-        else if (fillType === "complem") fillTile(currTile, "firstC", false)
-        else if (fillType === "blur") blurTile(currTile)
-        else if (fillType === "blurFill") fillAndBlur(currTile)
-        else if (fillType === "meanHue") fillTile(currTile, "meanHue", false)
-        else if (fillType === "inverseMean") fillTile(currTile, "meanHueI", false)
-        else if (fillType === "radialGradient") fillRadialGradient(currTile, true)
-        else if (fillType === "diagGradient") fillLinearGradient(currTile, "diag")
-        else if (fillType === "horizGradient") fillLinearGradient(currTile, "horiz")
-        else if (fillType === "vertGradient") fillLinearGradient(currTile, "vert")
-        else if (fillType === "dither1") ditherFill(currTile, 1)
-        else if (fillType === "dither2") ditherFill(currTile, 2)
-        else if (fillType === "dither3") ditherFill(currTile, 3)
-        else if (fillType === "dither4") ditherFill(currTile, 4)
-        else if (fillType === "dither5") ditherFill(currTile, 5)
-        else if (fillType === "mostUsed") fillTile(currTile, "most", true)
-        else if (fillType === "leastUsed") fillTile(currTile, "least", true)
-        else if (fillType === "inverseComb") fillInverseStrokes(currTile)
-        else if (fillType === "pattern") fillPattern(currTile)
-        else if (fillType === "stripesH") fillStripesHorizGrad(currTile)
-        else if (fillType === "stripesV") fillStripesVertGrad(currTile)
-        else if (fillType === "fillAnim") fillGrad(currTile, currTile.colors[0], "right", )
+        fillStripesDiagonal(currTile , -1)
+        blurTile(currTile)
+        dither(currTile, 1)
+        // if (fillType === "combination") fillEachPixel(currTile)
+        // else if (fillType === "first") fillTile(currTile, "first", false)
+        // else if (fillType === "last") fillTile(currTile, "last", false)
+        // else if (fillType === "complem") fillTile(currTile, "firstC", false)
+        // else if (fillType === "blur") blurTile(currTile)
+        // else if (fillType === "blurFill") fillAndBlur(currTile)
+        // else if (fillType === "meanHue") fillTile(currTile, "meanHue", false)
+        // else if (fillType === "inverseMean") fillTile(currTile, "meanHueI", false)
+        // else if (fillType === "radialGradient") fillRadialGradient(currTile, true)
+        // else if (fillType === "diagGradient") fillLinearGradient(currTile, "diag")
+        // else if (fillType === "horizGradient") fillLinearGradient(currTile, "horiz")
+        // else if (fillType === "vertGradient") fillLinearGradient(currTile, "vert")
+        // else if (fillType === "dither1") dither(currTile, 1)
+        // else if (fillType === "dither2") dither(currTile, 2)
+        // else if (fillType === "dither3") dither(currTile, 3)
+        // else if (fillType === "dither4") dither(currTile, 4)
+        // else if (fillType === "dither5") dither(currTile, 5)
+        // else if (fillType === "mostUsed") fillTile(currTile, "most", true)
+        // else if (fillType === "leastUsed") fillTile(currTile, "least", true)
+        // else if (fillType === "inverseComb") fillInverseStrokes(currTile)
+        // else if (fillType === "pattern") fillPattern(currTile)
+        // else if (fillType === "stripesH") fillStripesHorizGrad(currTile)
+        // else if (fillType === "stripesV") fillStripesVertGrad(currTile)
+        // else if (fillType === "fillAnim") fillGrad(currTile, currTile.colors[0], "right", )
 
         if (`rgb(${invisCol?.substring(0, 7)})` === SHAPE_COLOR) {
             shapeGlow(currTile)
