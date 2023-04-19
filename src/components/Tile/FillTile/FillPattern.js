@@ -5,6 +5,7 @@ import {geStrokeWidth, getLineWidth} from "../../Stroke/StrokeWidth";
 import {getTileWidth} from "../../Tiling/TileWidth";
 import {getColSections} from "../../Effects/Grid";
 import {isCircleInPath} from "./FillRatio";
+import {setCols} from "./ColourFn";
 
 export function fillPattern(tile) {
     let ctx = document.getElementById("top-canvas").getContext("2d");
@@ -13,35 +14,35 @@ export function fillPattern(tile) {
     fillTile(tile, "first", false)
     scaledStroke(ctx, tile, cols[0], 20, .6, midX, midY)
     scaledStroke(ctx, tile, cols[1], 80, .4, midX, midY)
-    scaledStroke(ctx, tile, cols[2], 80, .2, midX, midY)
+    scaledStroke(ctx, tile, cols[2] ? cols[2] : cols[0], 80, .2, midX, midY)
 }
-
-function setCols(tile) {
-    let cols = []
-    let i = 10
-    let randomSign = Math.random() < 0.5 ? -1 : 1; // randomly generate -1 or 1
-    if (tile.colors.length === 1) {
-        if (parseInt(tile.colors[0].match(/\d+(?=%\))/)[0]) > 70) { // Check if last value is greater than 70
-            randomSign = -1; // Set randomSign1 to -1 if last value is greater than 70
-        } else if (parseInt(tile.colors[0].match(/\d+(?=%\))/)[0]) < 30) {
-            randomSign = 1; // Set randomSign1 to -1 if last value is greater than 70
-        }
-        cols.push(tile.colors[0])
-        cols.push(tile.colors[0].replace(/\d+(?=%\))/, parseInt(tile.colors[0].match(/\d+(?=%\))/)[0]) + i * randomSign));
-        cols.push(tile.colors[0].replace(/\d+(?=%\))/, parseInt(tile.colors[0].match(/\d+(?=%\))/)[0]) + i * 2 * randomSign));
-    } else if (tile.colors.length === 2) {
-        cols.push(tile.colors[0])
-        cols.push(tile.colors[1]);
-        cols.push(tile.colors[0])
-    } else if (tile.colors.length === 3) {
-        cols.push(tile.colors[0])
-        cols.push(tile.colors[1]);
-        cols.push(tile.colors[2])
-    } else {
-        cols = Array.from({length: 3}, () => tile.colors.splice(Math.floor(Math.random() * tile.colors.length), 1)[0]);
-    }
-    return cols
-}
+//
+// function setCols(tile) {
+//     let cols = []
+//     let i = 10
+//     let randomSign = Math.random() < 0.5 ? -1 : 1; // randomly generate -1 or 1
+//     if (tile.colors.length === 1) {
+//         if (parseInt(tile.colors[0].match(/\d+(?=%\))/)[0]) > 70) { // Check if last value is greater than 70
+//             randomSign = -1; // Set randomSign1 to -1 if last value is greater than 70
+//         } else if (parseInt(tile.colors[0].match(/\d+(?=%\))/)[0]) < 30) {
+//             randomSign = 1; // Set randomSign1 to -1 if last value is greater than 70
+//         }
+//         cols.push(tile.colors[0])
+//         cols.push(tile.colors[0].replace(/\d+(?=%\))/, parseInt(tile.colors[0].match(/\d+(?=%\))/)[0]) + i * randomSign));
+//         cols.push(tile.colors[0].replace(/\d+(?=%\))/, parseInt(tile.colors[0].match(/\d+(?=%\))/)[0]) + i * 2 * randomSign));
+//     } else if (tile.colors.length === 2) {
+//         cols.push(tile.colors[0])
+//         cols.push(tile.colors[1]);
+//         cols.push(tile.colors[0])
+//     } else if (tile.colors.length === 3) {
+//         cols.push(tile.colors[0])
+//         cols.push(tile.colors[1]);
+//         cols.push(tile.colors[2])
+//     } else {
+//         cols = Array.from({length: 3}, () => tile.colors.splice(Math.floor(Math.random() * tile.colors.length), 1)[0]);
+//     }
+//     return cols
+// }
 
 function findMid(tile) {
     let midpointX;
@@ -152,98 +153,6 @@ export function fillStripesVertGrad(tile) {
         i > 1 ? i = 0 : i++
     }
 }
-
-// export function fillStripesDiagPos(tile) {
-//     fillTile(tile, "first", false)
-//     let cols = setCols(tile)
-//     let ctx = document.getElementById("top-canvas").getContext("2d");
-//     let ymin = tile.bounds[2]
-//     let ymax = tile.bounds[3]
-//     let lw = getLineWidth()
-//     let i = 0
-//     let y = tile.inPath.reduce((min, [x, y]) => y < min ? y : min, Number.POSITIVE_INFINITY) - lw;
-//     const xmin = Math.min(...tile.inPath.map(p => p[0])) - lw / 4; // leftmost x-coordinate in path
-//     const xmax = Math.max(...tile.inPath.map(p => p[0])) + lw / 4; // rightmost x-coordinate in path
-//     let x = xmax - xmin
-//     while (y <= ymax + lw) {
-//         ctx.beginPath();
-//         ctx.strokeStyle = cols[i]
-//         ctx.lineCap = ctx.lineJoin = "flat"
-//         ctx.lineWidth = lw
-//
-//         let x0 = xmin;
-//         let y0 = y + x / 2;
-//         let x1 = xmax;
-//         let y1 = y - x / 2;
-//
-//         while (!isCircleInPath(tile.path, x0, y0) && x0 < xmax && y0 > ymin) {
-//             x0 += 1;
-//             y0 -= 1;
-//         }
-//         while (!isCircleInPath(tile.path, x1, y1) && x1 > xmin && y1 < ymax) {
-//             x1 -= 1;
-//             y1 += 1;
-//         }
-//         if (x0 > xmax || y0 < ymin || x1 < xmin || y1 > ymax) {
-//             y += lw + lw / 4//-1;
-//             i > 1 ? i = 0 : i++
-//             continue
-//         } else {
-//             ctx.moveTo(x0 - lw / 4, y0 + lw / 4);
-//             ctx.lineTo(x1 + lw / 4, y1 - lw / 4);
-//             ctx.stroke();
-//         }
-//         y += lw + lw / 4//-1;
-//         i > 1 ? i = 0 : i++
-//     }
-//     ctx.closePath()
-// }
-//
-// export function fillStripesDiagNeg(tile) {
-//     fillTile(tile, "first", false)
-//     let cols = setCols(tile)
-//     let ctx = document.getElementById("top-canvas").getContext("2d");
-//     let ymin = tile.bounds[2]
-//     let ymax = tile.bounds[3]
-//     let lw = getLineWidth()
-//     let i = 0
-//     let y = tile.inPath.reduce((min, [x, y]) => y < min ? y : min, Number.POSITIVE_INFINITY) - lw;
-//     while (y <= ymax + lw) {
-//         const xmin = Math.min(...tile.inPath.map(p => p[0])) - lw / 4; // leftmost x-coordinate in path
-//         const xmax = Math.max(...tile.inPath.map(p => p[0])) + lw / 4; // rightmost x-coordinate in path
-//         let x = xmax - xmin
-//         ctx.beginPath();
-//         ctx.strokeStyle = cols[i]
-//         ctx.lineCap = ctx.lineJoin = "flat"
-//         ctx.lineWidth = lw
-//
-//         let x0 = xmin;
-//         let y0 = y - x / 2;
-//         let x1 = xmax;
-//         let y1 = y + x / 2;
-//         while (!isCircleInPath(tile.path, x0, y0) && x0 < xmax && y0 < ymax) {
-//             x0 += (1);
-//             y0 += 1
-//         }
-//         while (!isCircleInPath(tile.path, x1, y1) && x1 > xmin && y1 > ymin) {
-//             x1 -= 1;
-//             y1 -= 1;
-//         }
-//         if (x0 > xmax || y0 > ymax || x1 < xmin || y1 < ymin) {
-//             y += lw + lw / 4//-1;
-//             i > 1 ? i = 0 : i++
-//             continue
-//         }
-//         else {
-//             ctx.moveTo(x0 , y0 );
-//             ctx.lineTo(x1 + lw/4, y1  + lw/4);
-//             ctx.stroke();
-//             y += lw + lw / 4//-1;
-//             i > 1 ? i = 0 : i++
-//         }
-//     }
-//     ctx.closePath()
-// }
 
 export function fillStripesDiagonal(tile, direction) {
     const lw = getLineWidth();

@@ -77,6 +77,7 @@ import {ditherFill, fillLinearGradient} from "./components/Effects/Gradient";
 import {generateColourPal, getColourPalette, testing} from "./components/Stroke/Color/ColourPalette";
 import {draw} from "./components/Effects/Dither";
 import {fillStripes} from "./components/Tile/FillTile/FillPattern";
+import {ditherTiling} from "./components/Tiling/DitherTiling";
 
 
 function App() {
@@ -134,7 +135,6 @@ function App() {
         setUpCanvas()
         ctx = document.getElementById('invis-canvas').getContext("2d");
         d = SCROLL_DIST
-
     }, []);
 
     let currColor;
@@ -497,7 +497,7 @@ function App() {
         sendingAlert = false;
     }
 
-    let alertInterval = Math.floor(Math.random() * (3 - 2 + 1)) + 2; // random num between 5 and 10
+    let alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
     let count = 0;
 
     async function sendAlert() {
@@ -520,7 +520,7 @@ function App() {
             </Helmet>
             <button id="cp-button" onClick={showControlPanel}></button>
             <ControlPanel/>
-            <div id="feedbackBar"></div>
+            {/*<div id="feedbackBar"></div>*/}
             <div id="angle" style={{position: "absolute", top: 0}}> {angle}</div>
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
@@ -544,10 +544,10 @@ function App() {
                         onTouchMove={onTouchMove}
                 >
                 </canvas>
-                <div id = "overlay">
-                    <div id = 'overlayTop'> </div>
-                    <div id = 'overlayBottom'> </div>
-                </div>
+                {/*<div id = "overlay">*/}
+                {/*    <div id = 'overlayTop'> </div>*/}
+                {/*    <div id = 'overlayBottom'> </div>*/}
+                {/*</div>*/}
                 <Bubble/>
             </div>
         </div>

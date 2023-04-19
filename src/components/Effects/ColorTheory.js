@@ -2,7 +2,7 @@ export function invertHue(col) {
     let hsl = col;
     if (typeof col === "string" && col?.slice(0, 4) === 'rgba') {
         const rgbaValues = col.substring(5, hsl.length - 1).split(",");
-        hsl = rgbToHsl(parseInt(rgbaValues[0]),parseInt(rgbaValues[1]), parseInt(rgbaValues[2]));
+        hsl = rgbToHsl(parseInt(rgbaValues[0]), parseInt(rgbaValues[1]), parseInt(rgbaValues[2]));
     } else if (typeof col === "string" && col?.slice(0, 3) === 'hsl') {
         hsl = hsl.match(/\d+(\.\d+)?%?/g).map(e => e.includes('%') ? parseInt(e) : parseFloat(e));
     }
@@ -11,12 +11,12 @@ export function invertHue(col) {
     return 'rgba(' + ans.r + ',' + ans.g + ',' + ans.b + ',1)'
 }
 
-export function invert(col){
+export function invert(col) {
     let rgb = {r: 0, g: 0, b: 0};
     if (typeof col === "string" && col?.slice(0, 4) === 'rgba') {
         const rgbaValues = col.substring(5, rgb.length - 1).split(",");
         rgb = {r: parseInt(rgbaValues[0]), g: parseInt(rgbaValues[1]), b: parseInt(rgbaValues[2])}
-    } else if(typeof col === "string" && col?.slice(0,3) === 'hsl') {
+    } else if (typeof col === "string" && col?.slice(0, 3) === 'hsl') {
         const match = col.match(/hsl\((\d+),(\d+)%?,(\d+)%?\)/);
         rgb = match ? hslToRgb(parseInt(match[1]), parseInt(match[2]), parseInt(match[3])) : null;
     }
@@ -107,10 +107,9 @@ export function rgbToHsl(r, g, b) {
     return [h, s, l];
 }
 
-export function meanHue(tile, colArr) {
+export function meanHue(colArr) {
     var rgb = {r: 0, g: 0, b: 0},
         count = 0;
-
     colArr.forEach(data => {
         ++count;
         rgb.r += data.data[0];
@@ -126,9 +125,31 @@ export function meanHue(tile, colArr) {
     return 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',1)'
 }
 
-export function complem(rgb) {
-    const firstNumber = rgb.match(/^hsl\((\d+)/)?.[1] ?? 'No match found';
-    return rgb.replace(/^hsl\(\d+/, `hsl(${HueShift(firstNumber, 180.0)}`)
+export function complem(hsl) {
+    const firstNumber = hsl.match(/^hsl\((\d+)/)?.[1] ?? 'No match found';
+    return hsl.replace(/^hsl\(\d+/, `hsl(${HueShift(firstNumber, 180.0)}`)
+}
+
+export function splitComplem(hsl) {
+    let complem1 = complem(hsl)
+    console.log('hsl coopmelx ' + complem1)
+    const hslValues = complem1.match(/\d+/g);
+
+// Convert HSL values to numbers
+    const hue = parseInt(hslValues[0]);
+    const saturation = parseInt(hslValues[1]);
+    const lightness = parseInt(hslValues[2]);
+    let complementHsl = [hue, saturation, lightness]
+    // Calculate split complements
+    const splitComplements = [
+        (complementHsl[0] + 30) % 360,
+        (complementHsl[0] - 30 + 360) % 360,
+    ];
+
+    // Convert split complements to RGB or any other format as needed
+    let ans = splitComplements.map((hue) => (`hsl(${hue}, ${complementHsl[1]}%, ${complementHsl[2]}%)`));
+    console.log(ans + ' and is ' + ans.toString())
+    return ans;
 }
 
 //Adding HueShift via Jacob (see comments)
@@ -136,4 +157,5 @@ function HueShift(h, s) {
     h += s;
     while (h >= 360.0) h -= 360.0;
     while (h < 0.0) h += 360.0;
-    return h;}
+    return h;
+}

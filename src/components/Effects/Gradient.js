@@ -76,7 +76,7 @@ function shuffleArray(array) {
 }
 
 
-function getSimilarColours(tile) {
+export function getSimilarColours(tile) {
     let arr = tile.allColors
     let returnArr = Array.from({length: tile.allColors.length}, () => []);
     for (let i = 0; i < arr.length; i++) {
@@ -84,6 +84,19 @@ function getSimilarColours(tile) {
         returnArr[i].push(temp)
         for (let y = i + 1; y < arr.length; y++) {
             if (isSimilar(temp, arr[y])) returnArr[i].push('rgba(' + arr[y].data + ')')
+        }
+    }
+    return returnArr.reduce((acc, curr) => curr.length > acc.length ? curr : acc, []);
+}
+
+export function getDifferentCols(tile) {
+    let arr = tile.allColors
+    let returnArr = Array.from({length: tile.allColors.length}, () => []);
+    for (let i = 0; i < arr.length; i++) {
+        let temp = arr[i]
+        returnArr[i].push(temp)
+        for (let y = i + 1; y < arr.length; y++) {
+            if (!isSimilar(temp, arr[y])) returnArr[i].push('rgba(' + arr[y].data + ')')
         }
     }
     return returnArr.reduce((acc, curr) => curr.length > acc.length ? curr : acc, []);
