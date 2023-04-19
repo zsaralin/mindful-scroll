@@ -59,6 +59,11 @@ export function FillStyle(props) {
                 <option value={"stripesH"}>Horizontal Stripes</option>
                 <option value={"stripesV"}>Vertical Stripes</option>
                 <option value={"fillAnim"} >Fill Animation</option>
+                <option value={"pixel3"}>Pixel 1</option>
+                <option value={"pixel4"}>Pixel 2</option>
+                <option value={"pixel5"}>Pixel 3</option>
+                <option value={"pixel6"}>Pixel 4</option>
+                <option value={"pixel7"}>Pixel 5</option>
             </NativeSelect>
         </FormControl>
             </div>

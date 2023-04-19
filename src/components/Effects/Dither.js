@@ -1,7 +1,7 @@
 import {getTotalPixels, isCircleInPath} from "../Tile/FillTile/FillRatio";
 import {ditherFill} from "./Gradient";
+import {BB_PADDING} from "../Constants";
 
-let BB_PADDING = 35; // bounding box padding
 
 export function dither(tile, i) {
     let ctx = document.getElementById("top-canvas").getContext("2d");

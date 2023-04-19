@@ -6,6 +6,7 @@ import {getTile} from "./TilingArr";
 import {getLineWidth} from "../Stroke/StrokeWidth";
 import {getTileWidth} from "./TileWidth";
 import {getYPadding} from "./TilingSize";
+import {getBoundsTiling2} from "./TilingBounds";
 
 function generateRandomNum() {
     var num = Math.floor(81 * Math.random());
@@ -74,17 +75,30 @@ export function drawTiling(pathDict) {
     tilingCtx.lineJoin = tilingCtx.lineCap = invisCtx.lineJoin = invisCtx.lineCap = offCtx.lineJoin = offCtx.lineCap = "round";
     tilingCtx.strokeStyle = invisCtx.strokeStyle = offCtx.strokeStyle = '#000';
 
+    // // Define the gradient
+    let [xMin, xMax, yMin, yMax] = getBoundsTiling2(pathDict)
+
+    const gradient = offCtx.createLinearGradient(0, yMin, 0, yMax+ 135);
+
+    // Add color stops to the gradient
+    gradient.addColorStop(0, '#EBECF0');
+    gradient.addColorStop(0.2, '#000');
+    gradient.addColorStop(0.6, '#000');
+    gradient.addColorStop(.8, '#fff');
+    gradient.addColorStop(.81, '#000');
+
+    // Set the stroke style to the gradient
+    tilingCtx.strokeStyle = invisCtx.strokeStyle = offCtx.strokeStyle  = gradient;
+
     for (let p in pathDict) {
         offCtx.fill(pathDict[p].path)
         offCtx.stroke(pathDict[p].path)
         offCtx.closePath()
-
         invisCtx.fillStyle = p
         invisCtx.fill(pathDict[p].path)
         invisCtx.stroke(pathDict[p].path)
         invisCtx.closePath()
     }
-    console.log('and thennnn ' + pathDict)
 }
 
 

@@ -1,22 +1,13 @@
 import {makeRandomTiling, drawTiling} from './TilingGenerator'
 import {getTilingPathDict} from './TilingPathDict'
 import {getRandomShape} from "../Tile/Shape";
-import {getBoundsTiling, getRows} from "./TilingBounds";
+import {getBoundsTiling} from "./TilingBounds";
 import {getOffsetY} from "../Scroll/Offset";
 import {SHAPE_COLOR, TOP_PAGE_SPACE} from "../Constants";
 import { v4 as uuidv4 } from 'uuid';
-
-import {getCurrentPathDict, getTilingIndex, sumArray, tilingArrLength} from "./TilingArr";
-import {stopWatercolor} from "../Effects/Watercolor";
-import {redrawStrokes} from "../Stroke/StrokeArr";
-import {
-    getAdjTiles, getGrid, getGrid2,
-    getNeighbouringTiles,
-    getNeighTiles, getOrienTiles,
-    getRowCol, getTileMiddle, getTilingProp, minMaxTile,
-    setMidpointDict
-} from "./TilingProperties";
+import {getGrid, getTilingProp, minMaxTile,} from "./TilingProperties";
 import {getColourPal, getRandomHSV} from "../Stroke/Color/StrokeColor";
+import {ditherTiling} from "./DitherTiling";
 
 let thisBottom; // bottom of current tiling
 let nextTop; // top of next tiling
@@ -54,38 +45,6 @@ function helperTiling(t) {
     tiling.colourPal = [];
 
     pathArr.push(tiling);
-
-
-    // let [top, bottom, left, right] = getRowCol(pathDict)
-    // for(let i = 0; i< left.length ; i++){
-    //     let tile = left[i]
-    //     const ctx = document.getElementById('top-canvas').getContext("2d");
-    //     ctx.fillStyle = 'red'
-    //     ctx.fill(tile.path)
-    // }
-    // for(let i = 0; i< right.length ; i++){
-    //     let tile = right[i]
-    //     const ctx = document.getElementById('top-canvas').getContext("2d");
-    //     ctx.fillStyle = 'red'
-    //     ctx.fill(tile.path)
-    // }
-    // setMidpointDict(pathDict)
-    // let neigh = getOrienTiles(Object.values(pathDict)[15])
-    // let neigh = getGrid(pathDict)
-    // console.log('UMMM ' + neigh)
-    // let neigh = getNeighbouringTiles( Object.values(pathDict)[15], pathDict);
-    // const ctx = document.getElementById('top-canvas').getContext("2d");
-    // ctx.fillStyle = 'red'
-    // ctx.fill(Object.values(pathDict)[0].path)
-    // for(let i = 0; i< neigh.length ; i++){
-        // let tile = neigh[i]
-        // const ctx = document.getElementById('top-canvas').getContext("2d");
-        // ctx.fillStyle = 'red'
-        // ctx.fill(tile?.path)
-    // }
-    // console.log(neigh.length)
-    // ctx.fillStyle = 'yellow'
-    // ctx.fill(Object.values(pathDict)[15].path)
 }
 
 export function addTwoTilings(oldTilingArr) {
@@ -125,11 +84,11 @@ function initTiling(segArr){
 
 let shapePath, dimension;
 function drawShape(yMin, yMax, pathDict, shape = null) {
-    console.log(' LOOK IEEEE ' + pathDict)
+    // console.log(' LOOK IEEEE ' + pathDict)
     if (shape == null) {
         [shapePath, dimension] = getRandomShape(!tiling2 ? yMax - yMin + TOP_SPACE : yMax - yMin + 40);
     }
-    console.log(SHAPE_COLOR  + ' COLOR GIR')
+    // console.log(SHAPE_COLOR  + ' COLOR GIR')
     pathDict[SHAPE_COLOR] = {
         path: shapePath,
         bounds: dimension,
@@ -172,40 +131,12 @@ export function clearCanvas() {
 
 export function drawTwoTilings(tilingArr) {
     clearCanvas()
-
     addTwoTilings(tilingArr)
-    // clearCanvas();
-
     pathArr.forEach(tiling => {
         drawTiling(tiling.pathDict)
+        ditherTiling(6, tiling.pathDict)
     });
     console.log(pathArr.length)
-
-    // let neigh = getOrienTiles(Object.values(pathDict)[15])
-    // let pathDict = pathArr[0]
-    // if(pathArr.length === 2){
-    //     let pathDict = pathArr[0]
-
-        // let neigh = getGrid(pathDict)
-    // let neigh = getGrid(pathDict)
-    //
-    // // console.log('UMMM ' + neigh)
-    //
-    // for(let i=0;i<neigh.length;i++) {
-    //     let row = neigh[i]
-    //     const ctx = document.getElementById('top-canvas').getContext("2d");
-    //     ctx.fillStyle = getRandomHSV()
-    //     for (let j = 0; j < row.length -1; j+=2) {
-    //         let tile = getTileMiddle([row[j], row[j+1]])
-    //         tile.forEach(function(i) {
-    //             ctx.fill(i?.path)
-    //         });
-    //
-    //     }
-        // let tile = getTileMiddle(neigh[0])
-        // console.log(tile)
-        // ctx.fill(tile?.path)
-    // }
 
 }
 

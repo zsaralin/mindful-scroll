@@ -13,8 +13,8 @@ function getCol(tile, str, inputCol){
     else if(str === "lastI") tempCol = invert(getCurrColor())
     else if(str === "firstC") tempCol = complem(tile.firstCol)
     else if(str === "lastC") tempCol = complem(getCurrColor())
-    else if(str === "meanHue") tempCol = meanHue(tile, tile.colors)
-    else if(str === "meanHueI") tempCol = invert(meanHue(tile, tile.colors))
+    else if(str === "meanHue") tempCol = meanHue(tile.allColors)
+    else if(str === "meanHueI") tempCol = invert(meanHue(tile.allColors))
     else if(str === "least") tempCol = leastUsed(tile)
     else if(str === "most") tempCol = mostUsed(tile)
     return tempCol;

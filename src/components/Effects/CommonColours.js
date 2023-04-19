@@ -45,3 +45,27 @@ function getColorCounts(tile){
     }
     return colorCounts
 }
+
+export function mostUsed4(tile) {
+    let colorCounts = getColorCounts(tile);
+    // If tile has less than four colors, return an array of all colors
+    if (Object.keys(colorCounts).length < 4) {
+        return Object.keys(colorCounts).sort((a, b) => colorCounts[b] - colorCounts[a])
+    }
+    // Find the four most common colors by sorting an array of colors by their count
+    let mostCommonColors = Object.keys(colorCounts).sort((a, b) => colorCounts[b] - colorCounts[a]).slice(0, 4);
+
+    return mostCommonColors;
+}
+
+export function leastUsed4(tile) {
+    let colorCounts = getColorCounts(tile);
+    // If tile has less than four colors, return an array of all colors
+    if (Object.keys(colorCounts).length < 4) {
+        return Object.keys(colorCounts).sort((a, b) => colorCounts[a] - colorCounts[b])
+    }
+    // Find the four least common colors by sorting an array of colors by their count
+    let leastCommonColors = Object.keys(colorCounts).sort((a, b) => colorCounts[a] - colorCounts[b]).slice(0, 4);
+
+    return leastCommonColors;
+}
