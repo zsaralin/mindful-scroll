@@ -17,6 +17,7 @@ import {gsap} from "gsap";
 export let limitScroll = 0;
 
 let overlay = false;
+let scrollFade = false;
 
 export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
@@ -63,29 +64,28 @@ export const redrawCanvas = async () => {
         [invisCanvas, canvas, fillCanvas, tilingCanvas, topCanvas, dots].forEach(canvas => {
             canvas.style.transform = `translate(0,-${offsetY}px)`;
         });
-
-        let hiddenBottom = document.getElementById("hiddenBottom")
-        let hiddenTop = document.getElementById("hiddenTop")
-        if(done ){
-            if(refreshed){
-                oldOffset -= prevOffsetY;
-                refreshed = false;
+        if (scrollFade) {
+            let hiddenBottom = document.getElementById("hiddenBottom")
+            let hiddenTop = document.getElementById("hiddenTop")
+            if (done) {
+                if (refreshed) {
+                    oldOffset -= prevOffsetY;
+                    refreshed = false;
+                }
+                gsap.killTweensOf('#hiddenTop, #hiddenBottom')
+                let twoPercentInPixels = (2 / 100) * window.innerHeight;
+                hiddenBottom.style.bottom = -(window.innerHeight + oldOffset - twoPercentInPixels) + 'px';
+                hiddenBottom.style.opacity = 1;
+                hiddenTop.style.bottom = (window.innerHeight - oldOffset - twoPercentInPixels) + 'px';
+                hiddenTop.style.opacity = 1;
+                done = true;
             }
-            gsap.killTweensOf('#hiddenTop, #hiddenBottom')
-            // console.log('inside ')
-            hiddenBottom.style.bottom = -(window.innerHeight + oldOffset - 2) + 'px';
-            hiddenBottom.style.opacity = 1;
-            hiddenTop.style.bottom = (window.innerHeight - oldOffset - 2) + 'px';
-            hiddenTop.style.opacity = 1;
-            done = true;
-        }
             hiddenBottom.style.transform = `translate(0,-${offsetY}px)`;
             hiddenTop.style.transform = `translate(0,-${offsetY}px)`;
-        gsap.to('#hiddenTop, #hiddenBottom', {opacity: 0, delay: .5, duration: 10, ease: "Expo.easeNone"})
+            gsap.to('#hiddenTop, #hiddenBottom', {opacity: 0, delay: .5, duration: 10, ease: "Expo.easeNone"})
 
-
-
-        done0 = false;
+            done0 = false;
+        }
     }
 }
 let done0 = true;
@@ -136,6 +136,7 @@ export function startScroll(ySpeed, prevCursorY, cursorY) {
 
 let done = true;
 let oldOffset = 0
+
 export function endScroll() {
     if (overlay) {
         gsap.to("#overlayBottom, #overlayTop", {
@@ -145,13 +146,14 @@ export function endScroll() {
         })
     }
     done = true;
-
-    let offsetY = getOffsetY();
-
-    gsap.to('#hiddenTop, #hiddenBottom', {opacity: 0, duration: 3, ease: "Expo.easeNone", onComplete: () =>{
-        gsap.killTweensOf('#hiddenTop, #hiddenBottom')
-        }})
-    oldOffset = offsetY
+    if (scrollFade) {
+        gsap.to('#hiddenTop, #hiddenBottom', {
+            opacity: 0, duration: 3, ease: "Expo.easeNone", onComplete: () => {
+                gsap.killTweensOf('#hiddenTop, #hiddenBottom')
+            }
+        })
+        oldOffset = getOffsetY();
+    }
 
     d = SCROLL_DIST
 }
