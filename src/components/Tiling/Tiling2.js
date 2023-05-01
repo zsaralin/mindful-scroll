@@ -11,7 +11,7 @@ import {ditherTiling} from "./DitherTiling";
 
 let thisBottom; // bottom of current tiling
 let nextTop; // top of next tiling
-const SPACE = 500; // space between tilings
+const SPACE = 0//500; // space between tilings
 const TOP_SPACE = 75;
 let pathArr = [] //array of path dict for each tiling
 let tilingArr = [] //array of tilings
@@ -19,6 +19,7 @@ let tilingArr = [] //array of tilings
 let offsetX, offsetY;
 let tiling2;
 let xMin, xMax, yMin, yMax;
+let numTilings = 0;
 
 export function topSecondTiling() { //top of second tiling
     return nextTop;
@@ -33,17 +34,19 @@ function helperTiling(t) {
     } else {
         offsetY = thisBottom - yMin;
     }
+
     let tiling = {segArr: [], pathDict: {}, grid: []}
     tiling.segArr = t
     tiling.pathDict = getTilingPathDict(t, offsetX, offsetY);
     tiling.grid = getGrid(tiling.pathDict)
+    tiling.bounds = [xMin, xMax, yMin, yMax]
 
     const [midSeg, vert, orien] = getTilingProp(tiling.pathDict);
     tiling.midSeg = midSeg;
     tiling.vert = vert;
     tiling.orien = orien;
     tiling.colourPal = [];
-
+    // tilingArr.push(tiling)
     pathArr.push(tiling);
 }
 
@@ -51,35 +54,42 @@ export function addTwoTilings(oldTilingArr) {
     pathArr = []
     tilingArr = []
     if (!tiling2) {
-        let tiling1 = makeRandomTiling(oldTilingArr ? oldTilingArr[0] : '');
+        let tiling1 = makeRandomTiling(oldTilingArr?.[0] ?? '');
+        tiling1.order = numTilings;
+        numTilings ++;
+        tilingArr.push(tiling1)
         helperTiling(tiling1);
-        drawShape(yMin, yMax, pathArr[0].pathDict, oldTilingArr ? [shapePath, dimension] : null);
+        // drawShape(yMin, yMax, pathArr[0].pathDict, oldTilingArr ? [shapePath, dimension] : null);
         thisBottom = yMax + offsetY + SPACE
 
     } else { // use information from second tiling
         initTiling(tiling2)
-        drawShape(yMin - TOP_PAGE_SPACE, yMax, pathArr[0].pathDict)
+        // drawShape(yMin - TOP_PAGE_SPACE, yMax, pathArr[0].pathDict)
         thisBottom = yMax - yMin + SPACE + TOP_PAGE_SPACE
     }
     tiling2 = makeRandomTiling(oldTilingArr ? oldTilingArr[1] : '');
+    tilingArr.push(tiling2)
 
     helperTiling(tiling2)
     nextTop = thisBottom //top of curr tiling is bottom of tilingBottom
 }
 
 function initTiling(segArr){
-    let tiling = {segArr: [], pathDict: {}, grid: []}
+    let tiling = {segArr: [], pathDict: {}, grid: [], order: 0}
     tiling.segArr = segArr
     tiling.pathDict = getTilingPathDict(segArr, offsetX, -yMin + TOP_PAGE_SPACE);
     tiling.grid = getGrid(tiling.pathDict)
     tiling.minMaxWH = minMaxTile(tiling.pathDict)
-
+    tiling.bounds = getBoundsTiling(segArr)
     const [midSeg, vert, orien] = getTilingProp(tiling.pathDict);
     tiling.midSeg = midSeg;
     tiling.vert = vert;
     tiling.orien = orien;
     tiling.colourPal = getColourPal();
+    tiling2.order = numTilings;
+    numTilings ++;
     pathArr.push(tiling);
+    tilingArr.push(tiling)
 }
 
 let shapePath, dimension;
@@ -133,10 +143,9 @@ export function drawTwoTilings(tilingArr) {
     clearCanvas()
     addTwoTilings(tilingArr)
     pathArr.forEach(tiling => {
-        drawTiling(tiling.pathDict)
-        ditherTiling(6, tiling.pathDict)
+        drawTiling(tiling)
+        // ditherTiling(6, tiling.pathDict)
     });
-    console.log(pathArr.length)
 
 }
 

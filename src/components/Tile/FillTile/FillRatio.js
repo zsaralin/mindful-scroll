@@ -23,7 +23,7 @@ export function getTotalPixels(currTile) {
             }
         }
     }
-    console.log('TOTAL PIXELS ' + currTile.bounds)
+    // console.log('TOTAL PIXELS ' + currTile.bounds)
 
     return currTile.inPath.length
 }

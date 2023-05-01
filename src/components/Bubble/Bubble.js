@@ -11,7 +11,8 @@ import {
     setCirclePoints,
     setCloudPoints,
     setSpeechPoints,
-    stopShapeChange
+    stopShapeChange,
+    currShape, setIsChanging
 } from "./ShapeChange";
 
 let colourInterval;
@@ -45,16 +46,9 @@ export function showColourPreview(x, y, newTile, handChange) {
         let loc = bubbleHelper(x, y)
         gsap.to("#bubble", {
             duration: 0, x: loc[0] + 'px', y: loc[1] + 'px', onComplete:
-            innerFunction
+                gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0, onComplete: startColourPreview})
         })
-        return
-    }
-    // bubble.style.opacity = 0;
-    gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0, onComplete: startColourPreview})
-
-    function innerFunction() {
-        gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0, onComplete: startColourPreview})
-    }
+    } else gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0, onComplete: startColourPreview})
 }
 
 
@@ -76,9 +70,7 @@ export async function hideColourPreview(x, y) {
         circle?.animate({d: circlePoints}, 100, mina.linear);
 
         gsap.to("#bubble", {
-            opacity: 0, duration: 0, onComplete() {
-                teleportFeedback(x, y)
-            }
+            opacity: 0, duration: 0
         })
         prevTop = bubble.style.top;
         prevLeft = bubble.style.left;
@@ -115,23 +107,54 @@ export function resetColourPreview() {
     bubble.style.left = prevLeft
 }
 
-let isMoving = false;
+export let isMoving = false;
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
+
 export const moveFeedback = async (prevX, prevY, x, y, newTile) => {
-    if(x === undefined) {
+    // getCircle()?.animate({d: circlePoints}, 1000, mina.linear);
+    if (!newTile) return
+    if (isMoving) {
+        gsap.killTweensOf("#bubble")
+    }
+    isMoving = true;
+    console.log('CURRSHAPE ' + currShape)
+    // gsap.killTweensOf('#circlesR, #circlesL, #cloud-text, #speech-text, #bubble')
+    if (currShape !== 'circle') {
+        stopShapeChange()
+        gsap.killTweensOf('#circlesR, #circlesL, #cloud-text, #speech-text, #bubble, #circle')
+        setIsChanging(false)
+        // document.getElementById('#' + currShape + '-text')
+        gsap.to('#' + currShape + '-text, #circlesR, #circlesL', {
+            opacity: 0, duration: .5, onComplete: () => {
+                gsap.to("#circle", {stroke: 'white', strokeWidth: 10, duration: 1})
+                getCircle()?.animate({d: circlePoints}, 500, mina.linear);
+                delay(1000)
+                startColourPreview()
+                moveFeedbackHelper(prevX, prevY, x, y, newTile)
+            }
+        })
+    }
+    else{
+        moveFeedbackHelper(prevX, prevY, x, y, newTile)
+    }
+
+}
+
+const moveFeedbackHelper = async (prevX, prevY, x, y, newTile) => {
+    if (x === undefined) {
         gsap.to("#bubble", {
-            duration: 1, delay: 0, opacity: 0, onComplete() {
+            duration: .5, delay: 0, opacity: 0, onComplete() {
                 return
             }
         })
     }
     console.log(x + ' adndddd  ' + y)
-    if(!newTile) return
-    if (isMoving) {
-        gsap.killTweensOf("#bubble")
-    }
-    isMoving = true;
+    // if (!newTile) return
+    // if (isMoving) {
+    //     gsap.killTweensOf("#bubble")
+    // }
+    // isMoving = true;
     let loc = bubbleHelper(x, y)
     let dist = sqrt((prevY - loc[1]) ** 2 + (prevX - loc[0]) ** 2)
     gsap.to("#bubble", {
@@ -141,28 +164,19 @@ export const moveFeedback = async (prevX, prevY, x, y, newTile) => {
         ease: "power1.inOut",
     })
     gsap.to("#bubble", {
-        duration: 1, delay: 1, opacity: 0, onComplete() {
-            innerFunction(x, y)
+        duration: 1, delay: 1, opacity: 0, onComplete: () => {
+            gsap.killTweensOf("#bubble", "x,y");
+            let loc = bubbleHelper(x, y)
+            gsap.to("#bubble", {
+                duration: 0, delay: 1, x: loc[0] + 'px', y: loc[1] + 'px', onComplete: () => {
+                    if (dontShow) {
+                        gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0, onComplete: isMoving = false})
+                        dontShow = false;
+                    } else isMoving = false;
+                }
+            })
         }
     })
-
-    function innerFunction(x, y) {
-            gsap.killTweensOf("#bubble", "x,y");
-
-            let loc = bubbleHelper(x, y)
-            gsap.to("#bubble", {duration: 0, delay: 1, x: loc[0] + 'px', y: loc[1] + 'px', onComplete: um})
-    }
-
-    function um() {
-        if(dontShow){
-        gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0, onComplete: isMoving = false})
-        dontShow = false;}
-        else isMoving = false;
-    }
-}
-
-export const teleportFeedback = async (x, y) => {
-
 }
 
 export function getCircle() {

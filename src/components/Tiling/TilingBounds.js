@@ -19,7 +19,7 @@ export function getBoundsTiling(segArr) {
             yMax = tileYMax;
         }
     }
-
+    // console.log('HI ' + [xMin, xMax, yMin, yMax])
     return [xMin, xMax, yMin, yMax]
 }
 export function getBoundsTiling2(pathDict) {

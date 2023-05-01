@@ -1,7 +1,7 @@
 import {gsap} from "gsap";
 import Snap from "snapsvg-cjs";
 import {isRightHand} from "../Effects/Handedness";
-import {getCircle, pauseColourPreview, setIsHiding, startColourPreview} from "./Bubble";
+import {getCircle, pauseColourPreview, setIsHiding, startColourPreview, isMoving} from "./Bubble";
 
 let startWhite;
 let startInterval;
@@ -15,9 +15,10 @@ let cloudPoints;
 let bubble;
 let isChanging = false;
 
+
 const mina = window.mina;
 
-let currShape = "circle"
+export let currShape = "circle"
 let cloudType = '#circlesR';
 
 export function toSpeech(str) {
@@ -32,10 +33,17 @@ export function getIsChanging() {
     return isChanging;
 }
 
+export function setIsChanging(i){
+    isChanging = i;
+}
+
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 async function shapeChange(shapeType, feedbackStr) {
-    // await delay(1000)
+    while(isMoving) {
+        console.log('wait ')
+        await delay(500)
+    }
 
     isChanging = true;
     let circle = getCircle();
@@ -51,21 +59,19 @@ async function shapeChange(shapeType, feedbackStr) {
         speech = s.select(speechType);
         speechPoints = speech?.node.getAttribute('d');
     }
-
+if(!isMoving) {
     circle?.animate({d: points}, 1500, mina.linear);
     currShape = shapeType
 
-    gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0})
+    gsap.to("#bubble", {opacity: 1, duration: .5, delay: 0})
     startWhite = setTimeout(function () {
         pauseColourPreview()
         gsap.to("#circle", {stroke: 'grey', strokeWidth: 3, onComplete: showText})
     }, 1000);
-
+}
     function showText() {
-        startInterval = setTimeout(function () {
-            gsap.to(textStr, {opacity: 1, duration: 1.3, onComplete: toCircle})
-            document.getElementById(id).innerHTML = feedbackStr
-        }, 2000);
+        gsap.to(textStr, {opacity: 1, delay: 0, duration: 1.3, onComplete: toCircle})
+        document.getElementById(id).innerHTML = feedbackStr
     }
 
     function toCircle() {
@@ -76,7 +82,7 @@ async function shapeChange(shapeType, feedbackStr) {
             isChanging = false;
             startColourPreview()
             currShape = "circle";
-        }, 4000);
+        }, 2000);
     }
 
     setIsHiding(false)

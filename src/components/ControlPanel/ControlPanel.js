@@ -13,7 +13,7 @@ import {changeFillMin} from "../Tile/FillTile/FillRatio";
 import {isSlowScrollOn, triggerSlowScroll} from "../Scroll/SlowScroll";
 import {changeTilingSize} from "../Tiling/TilingSize";
 import {Handedness} from "./CheckboxGrey";
-import {DotStyle, Dropdown, FillStyle, StrokeStyle} from "./Dropdown"
+import {DotStyle, Dropdown, FillStyle, StrokeStyle, TilingPath} from "./Dropdown"
 import {SwitchGreyUnchecked, SwitchGreyChecked} from "./SwitchGrey";
 import {triggerScroll} from "../Scroll/AutoScroll";
 import {FormControl, FormHelperText, MenuItem, Select} from "@mui/material";
@@ -63,6 +63,7 @@ export default function ControlPanel() {
                     <FillStyle name = "Fill Style"/>
                     <StrokeStyle name = "Stroke Style"/>
                     <DotStyle name = "Dot Style"/>
+                    <TilingPath name = "Tiling Path"/>
                     <Handedness name = "Handedness"/>
                 </FormGroup>
             </div>

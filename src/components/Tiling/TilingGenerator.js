@@ -6,7 +6,8 @@ import {getTile} from "./TilingArr";
 import {getLineWidth} from "../Stroke/StrokeWidth";
 import {getTileWidth} from "./TileWidth";
 import {getYPadding} from "./TilingSize";
-import {getBoundsTiling2} from "./TilingBounds";
+import {getBoundsTiling, getBoundsTiling2} from "./TilingBounds";
+import {createPath, getPathPadding} from "./TilingPath";
 
 function generateRandomNum() {
     var num = Math.floor(81 * Math.random());
@@ -59,10 +60,13 @@ function getSegArr(tiling, edges) {
         }
     }
     segArr.t = tiling; segArr.e = edges;
-    return segArr
+    return createPath(segArr)
 }
 
-export function drawTiling(pathDict) {
+let rem = 0;
+export function drawTiling(tiling) {
+    console.log('tiling ' + tiling)
+    let pathDict = tiling.pathDict
     let tilingCtx = document.getElementById('tiling-canvas').getContext('2d');
     let offCtx = document.getElementById('off-canvas').getContext('2d');
     tilingCtx.fillStyle = offCtx.fillStyle = "transparent";
@@ -76,19 +80,22 @@ export function drawTiling(pathDict) {
     tilingCtx.strokeStyle = invisCtx.strokeStyle = offCtx.strokeStyle = '#000';
 
     // // Define the gradient
-    let [xMin, xMax, yMin, yMax] = getBoundsTiling2(pathDict)
-
-    const gradient = offCtx.createLinearGradient(0, yMin, 0, yMax+ 135);
-
+    let [xMin, xMax, yMin, yMax] = tiling.bounds; //getBoundsTiling2(tiling)
+    const gradient = offCtx.createLinearGradient(0, rem, 0, (yMax-yMin) + 150 + 75);
+    rem = yMax + yMax - yMin
     // Add color stops to the gradient
-    gradient.addColorStop(0, '#EBECF0');
-    gradient.addColorStop(0.2, '#000');
-    gradient.addColorStop(0.6, '#000');
-    gradient.addColorStop(.8, '#fff');
-    gradient.addColorStop(.81, '#000');
+    // gradient.addColorStop(0, '#EBECF0');
+    // gradient.addColorStop(0.2, '#000');
+    // gradient.addColorStop(0.6, '#000');
+    // gradient.addColorStop(.8, '#fff');
+    // gradient.addColorStop(.81, '#000');
+    // gradient.addColorStop(0, '#EBECF0');
+    // gradient.addColorStop(.99, '#000');
+    // gradient.addColorStop(1, 'pink');
+
 
     // Set the stroke style to the gradient
-    tilingCtx.strokeStyle = invisCtx.strokeStyle = offCtx.strokeStyle  = gradient;
+    // tilingCtx.strokeStyle = invisCtx.strokeStyle = offCtx.strokeStyle  = gradient;
 
     for (let p in pathDict) {
         offCtx.fill(pathDict[p].path)
@@ -103,9 +110,9 @@ export function drawTiling(pathDict) {
 
 
 export function makeRandomTiling(t) { //add tiling here option
-    // if(t){
-    //     return makeRandomTilingHelper(t)
-    // }
+    if(t){
+        return makeRandomTilingHelper(t)
+    }
     let segArr = makeRandomTilingHelper(t ? t: '')
     while (segArr.length === 0) {
         segArr = makeRandomTilingHelper()
@@ -157,6 +164,7 @@ export function makeRandomTilingHelper(t) {
 function isOutsideWindow(seg) { // returns true if tile is outside x bounds of screen
     let x0 = seg[0].x;
     let x1 = seg.length === 2 ? seg[1].x : seg[3].x
+    let y = seg[0].y
     let rightEdge = (window.innerWidth - getYPadding())
     let leftEdge = getYPadding()
     if (x0 > leftEdge && x0 < rightEdge && x1 > leftEdge && x1 < rightEdge) {

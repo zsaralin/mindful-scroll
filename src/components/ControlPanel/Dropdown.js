@@ -6,6 +6,7 @@ import * as React from 'react';
 import {ThemeProvider} from "@mui/material/styles";
 import {setDotType} from "../Stroke/Dot/DotType";
 import {setStrokeType} from "../Stroke/StrokeType";
+import {setPathType} from "../Tiling/TilingPath";
 
 const theme = createTheme({
     typography: {
@@ -126,6 +127,41 @@ export function StrokeStyle(props) {
                         <option value={"transparent"}>Transparent</option>
                         <option value={"dotted"}>Dotted</option>
 
+                    </NativeSelect>
+                </FormControl>
+            </div>
+        </ThemeProvider>
+    );
+}
+
+
+export function TilingPath(props) {
+
+    const handleChange = (event: SelectChangeEvent) => {
+        setPathType(event.target.value.toString());
+    };
+
+    return (
+        <ThemeProvider theme={theme}>
+            <div id="controlPanelRow">{props.name}
+                <FormControl sx={{ m: 1, minWidth: 120}}>
+                    <NativeSelect
+                        defaultValue="rect"
+                        onChange={handleChange}
+                        inputProps={{
+                            name: 'age',
+                            id: 'uncontrolled-native',
+                        }}
+                    >
+                        <option value={"rect"} >Normal</option>
+                        <option value={"triangle"}>Triangle</option>
+                        <option value={"revTriangle"}>Reverse Triangle</option>
+                        <option value={"rightTriangle"}>Right Triangle</option>
+                        <option value={"leftTriangle"}>Left Triangle</option>
+                        <option value={"rightDiagonal"}>Right Diagonal</option>
+                        <option value={"leftDiagonal"}>Left Diagonal</option>
+                        <option value={"wiggly"}>Wiggly</option>
+                        <option value={"wiggly2"}>Sinuous</option>
                     </NativeSelect>
                 </FormControl>
             </div>
