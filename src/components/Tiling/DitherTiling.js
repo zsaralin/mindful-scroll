@@ -1,7 +1,7 @@
 import {getBoundsTiling2} from "./TilingBounds";
 
-export function ditherTiling(i, pathDict) {
-    let [xMin, xMax, yMin, yMax] = getBoundsTiling2(pathDict)
+export function ditherTiling(i, tiling) {
+    let [xMin, xMax, yMin, yMax] = tiling.bounds
 
     for (let x = xMin; x < xMax; x += i) {
         for (let y = yMin; y < yMin + 150; y += i) {

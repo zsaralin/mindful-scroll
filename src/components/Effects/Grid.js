@@ -126,7 +126,7 @@ export function getCornerTiles(tiling) { // corner + adjacent tiles
 
 export function getRowSections(t) {
     let [rows, midpointDict] = t.grid;
-    let bounds = getBoundsTiling2(t.pathDict);
+    let bounds = t.bounds
     let section = (bounds[3] - bounds[2]) / 5 // quarter height of the tile
     let ans = [[], [], [], []]
     for (const row of rows) {
@@ -148,7 +148,7 @@ export function getRowSections(t) {
 
 export function getColSections(t) {
     let [rows, midpointDict] = t.grid;
-    let bounds = getBoundsTiling2(t.pathDict);
+    let bounds = t.bounds
     let section = (bounds[1] - bounds[0]) / 4 // quarter height of the tile
     let ans = [[], [], [], []]
     let rowIndex, columnIndex;

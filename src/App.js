@@ -269,6 +269,7 @@ function App() {
             onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, mouseSpeed)
         } else if (rightMouseDown) {
             startScroll(Math.abs(mouseSpeed[1]), prevCursorY, cursorY)
+
         }
         prevCursorX = cursorX;
         prevCursorY = cursorY;
@@ -383,6 +384,7 @@ function App() {
             }
         } else if (doubleTouch) {
             startScroll(Math.abs(touchSpeed[1]), prevTouch0Y, touch0Y)
+
         }
         prevTouches[0] = event.touches[0];
         prevTouches[1] = event.touches[1];
@@ -497,14 +499,14 @@ function App() {
         sendingAlert = false;
     }
 
-    let alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
+    let alertInterval = 0//Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
     let count = 0;
 
     async function sendAlert() {
         if (!isPanelOn() && !sendingAlert) {
             if (count === alertInterval) {
                 generateAlert();
-                alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+                alertInterval = 0//Math.floor(Math.random() * (10 - 5 + 1)) + 5;
                 count = 0;
             } else count++
         }
@@ -548,6 +550,10 @@ function App() {
                 {/*    <div id = 'overlayTop'> </div>*/}
                 {/*    <div id = 'overlayBottom'> </div>*/}
                 {/*</div>*/}
+                <div id="hidden">
+                    <div id = "hiddenTop"></div>
+                    <div id = "hiddenBottom"></div>
+                </div>
                 <Bubble/>
             </div>
         </div>

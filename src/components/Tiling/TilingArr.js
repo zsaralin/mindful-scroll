@@ -25,14 +25,13 @@ export function sumArrayPrev() {
 
 export function addToTilingArr() {
     let tiling = makeRandomTiling()
-    let [xMin, xMax, yMin, yMax] = getBoundsTiling(tiling)
+    let [xMin, xMax, yMin, yMax] = tiling.bounds; //getBoundsTiling(tiling)
     yMin += sumArray();
     yMax += sumArray();
 
     let offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
     let pathDict = getTilingPathDict(tiling, offsetX,
         yMaxArr.length > 0 ? yMaxArr[yMaxArr.length - 1] + (yMaxArr[yMaxArr.length - 1] - yMin) : -yMin + 75)
-    tilingArr.push(tiling)
 
     drawRandomShape(yMin, yMax, pathDict)
 
@@ -43,6 +42,7 @@ export function addToTilingArr() {
         yMinArr.push(yMin)
         yMaxArr.push(yMax - yMin + 500)
     }
+    tilingArr.push(tiling)
     pathArr.push(pathDict);
 }
 
@@ -51,7 +51,7 @@ export function redrawTilings() {
     // let q = 0;
     for (let i = q; i < tilingArr.length; i++) {
         // for (let i = q; i < 1; i++) {
-        drawTiling(pathArr[i])
+        drawTiling(tilingArr[i])
     }
 }
 

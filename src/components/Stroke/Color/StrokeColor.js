@@ -133,7 +133,6 @@ function rgbToHsl(r, g, b) {
 }
 
 export function getColourPal(){
-    console.log('iunside + ' + colourPal)
     return colourPal
 }
 

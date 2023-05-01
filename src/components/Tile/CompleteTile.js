@@ -41,7 +41,6 @@ export function completeTile(currTile, invisCol) {
         currTile.filled = true;
         fillTileColors(currTile)
         currTile.fillStyle = fillType
-        // fillStripesDiagonal(currTile , -1)
         // blurTile(currTile)
         // dither(currTile, 1)
 

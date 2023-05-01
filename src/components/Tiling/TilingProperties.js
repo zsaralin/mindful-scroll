@@ -3,8 +3,8 @@ import {getTile} from "./Tiling2";
 import {drawStroke} from "../Stroke/DrawStroke";
 import {getRandomHSV} from "../Stroke/Color/StrokeColor";
 
-export function getRowCol(pathDict) {
-    let tilingBounds = getBoundsTiling2(pathDict)
+export function getRowCol(tiling) {
+    let tilingBounds = tiling.bounds
     let tilingLeft = tilingBounds[0], tilingRight = tilingBounds[1]
     let tilingTop = tilingBounds[2], tilingBottom = tilingBounds[3]
     const topRow = [];
@@ -12,8 +12,8 @@ export function getRowCol(pathDict) {
     const leftCol = [];
     const rightCol = [];
 
-    for (const key in pathDict) {
-        const tile = pathDict[key];
+    for (const key in tiling.pathDict) {
+        const tile = tiling.pathDict[key];
         let [xmin, xmax, ymin, ymax] = tile.bounds
         let w = xmax - xmin
         let h = ymax - ymin
