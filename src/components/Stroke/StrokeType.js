@@ -6,7 +6,8 @@ import {drawDottedStroke} from "./DottedStroke";
 
 let strokeType = "reg"
 
-export function startStroke(currTile, x0, y0, x1, y1, color) {
+export function startStroke(currTile, x0, y0, x1, y1, color, tiling) {
+    setStrokeType(tiling.strokeType)
     if (strokeType === "reg") drawStroke(x0, y0, x1, y1, color)
     else if (strokeType === "fuzzy") drawBlurryStroke(x0, y0, x1, y1, color)
     else if (strokeType === "transparent") drawTransparentStroke(currTile, x0, y0, x1, y1, color)
