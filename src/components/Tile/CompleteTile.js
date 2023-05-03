@@ -24,6 +24,7 @@ import {
 import {fillGrad} from "./FillTile/FillAnim";
 import {dither} from "../Effects/Dither";
 import {fillDots, pixelated} from "./FillTile/Pixelated";
+import {getFillType} from "../Tiling/SortingHat";
 
 let fillTileArr = [] // fully coloured tiles
 let completeTileOn = true;
@@ -36,14 +37,12 @@ export function setInternalOffset(input) {
     internalOffset = input
 }
 
-export function completeTile(currTile, invisCol) {
+export function completeTile(currTile, invisCol, currTiling) {
     if (completeTileOn) {
         currTile.filled = true;
         fillTileColors(currTile)
-        currTile.fillStyle = fillType
-        // blurTile(currTile)
-        // dither(currTile, 1)
-
+        currTile.fillStyle = getFillType(currTiling.fillType)// fillType
+        setFillType(currTile.fillStyle)
         if (fillType === "combination") fillEachPixel(currTile)
         else if (fillType === "first") fillTile(currTile, "first", false)
         else if (fillType === "last") fillTile(currTile, "last", false)

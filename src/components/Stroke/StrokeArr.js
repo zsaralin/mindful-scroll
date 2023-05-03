@@ -5,6 +5,8 @@ import {getCurrColor} from "./Color/StrokeColor";
 import {getOffsetY, limitScroll} from "../Scroll/PageScroll";
 import {redrawActiveTiles} from "../Effects/Watercolor";
 import {invert, invertHue} from "../Effects/ColorTheory";
+import {drawClover} from "./Dot/DrawDot";
+import {pushDot, redrawTileDots} from "./Dot/DotArr";
 
 let strokeArr = {}
 let strokeArrUnder = {}
@@ -38,6 +40,18 @@ export function removeLastStroke(touch0, touch1, offsetY) {
     }
 }
 
+export function redrawDot(tile, offset){
+    const ctx = document.getElementById('top-canvas').getContext("2d");
+    ctx.fillStyle = "white"
+    ctx.fill(tile.path)
+
+    console.log(strokeArr[tile.id].length)
+    let last = strokeArr[tile.id].pop()
+
+    pushDot(tile,last.x0, last.y0, last.x1, last.y1, last.color, "clover")
+    redrawTileStrokes(tile.id, offset)
+    redrawTileDots(tile.id, offset)
+}
 
 export function pushStroke(tile, x0, y0, x1, y1, col) {
     const newStroke = {
@@ -75,8 +89,8 @@ export function redrawStrokes(offsetY) {
     for (let tile in strokeArr) {
         redrawTileStrokes(tile, offsetY)
     }
-    strokeArr = [];
-    strokeArrUnder = [];
+    // strokeArr = [];
+    // strokeArrUnder = [];
 }
 
 export function redrawTileStrokes(tile, offsetY) {

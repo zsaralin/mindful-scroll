@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {getGrid, getTilingProp, minMaxTile,} from "./TilingProperties";
 import {getColourPal, getRandomHSV} from "../Stroke/Color/StrokeColor";
 import {ditherTiling} from "./DitherTiling";
+import {setTiling} from "./SortingHat";
 
 let thisBottom; // bottom of current tiling
 let nextTop; // top of next tiling
@@ -144,6 +145,7 @@ export function drawTwoTilings(tilingArr) {
     addTwoTilings(tilingArr)
     pathArr.forEach(tiling => {
         drawTiling(tiling)
+        setTiling(tiling)
         // ditherTiling(6, tiling.pathDict)
     });
 

@@ -26,7 +26,7 @@ export function drawGradientStroke(tile, x0, y0, x1, y1, theColor, grad) {
 }
 
 export function drawClover(x0, y0, x1, y1, theColor, theLineWidth, offset, context) {
-    context = context || document.getElementById('canvas').getContext("2d");
+    context = context || document.getElementById('top-canvas').getContext("2d");
     let x = Math.max(getLineWidth() / 3, 5);
     theLineWidth = Math.max(getLineWidth() / 2, 5);
     drawStrokeHelper(x0, y0 + x, x1, y1 + x, theLineWidth, theColor, context, offset)
@@ -36,7 +36,7 @@ export function drawClover(x0, y0, x1, y1, theColor, theLineWidth, offset, conte
 }
 
 export function drawFlower(x0, y0, x1, y1, theColor, theLineWidth, offset, context) {
-    context = context || document.getElementById('canvas').getContext("2d");
+    context = context || document.getElementById('top-canvas').getContext("2d");
     let x = Math.max(getLineWidth() / 3, 5);
     theLineWidth = Math.max(getLineWidth() / 2, 5);
     drawStrokeHelper(x0 - x / 1.5, y0 + x * 1.2, x1 - x / 1.5, y1 + x * 1.2, theLineWidth, theColor, context, offset)

@@ -11,7 +11,13 @@ import {
     getRandomHSV,
     getColourPal, setColourPal
 } from './components/Stroke/Color/StrokeColor'
-import {pushStroke, pushShrinkingLine, removeLastStroke} from './components/Stroke/StrokeArr'
+import {
+    pushStroke,
+    pushShrinkingLine,
+    removeLastStroke,
+    redrawTileStrokes,
+    redrawDot
+} from './components/Stroke/StrokeArr'
 import {addToTilingArr, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
 import {getOffsetY} from './components/Scroll/Offset'
 import {
@@ -78,6 +84,7 @@ import {generateColourPal, getColourPalette, testing} from "./components/Stroke/
 import {draw} from "./components/Effects/Dither";
 import {fillStripes} from "./components/Tile/FillTile/FillPattern";
 import {ditherTiling} from "./components/Tiling/DitherTiling";
+import {setTiling} from "./components/Tiling/SortingHat";
 
 
 function App() {
@@ -115,6 +122,7 @@ function App() {
     let hidePreviewInterval;
     let ratio = 0;
 
+    let strokeMove = false;
 
     function toTrueY(y) {
         return (y) + getOffsetY();
@@ -141,6 +149,7 @@ function App() {
     let firstClick = true;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
+        console.log('strokeMove'  + strokeMove)
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
         console.log(invisCol, prevScaledX, prevScaledY)
         currTile = getTile(y, invisCol)
@@ -170,7 +179,7 @@ function App() {
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
             console.log('ratop ' + getFillRatio(currTile))
-            if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile)
+            if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile, invisCol, currTiling)
             currTile.colors.push(currColor)
 
             // let tiles = getOrienTiles(currTile, currTiling)
@@ -191,13 +200,14 @@ function App() {
     }
 
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
+        strokeMove = true;
         insidePoly[0] += 1;
         currColor = getCurrColor();
         // scroll when dragging on white space
         if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(scaledX, scaledY, 1, 1).data.toString().trim() === '0,0,0,0') {
             doubleTouch = true;
             // rightMouseDown = true;
-            startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
+            // startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
         }
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY) && isCircleInPath(currTile.path, scaledX, scaledY)) {
             // hideColourPreview(cursorX, cursorY)
@@ -213,7 +223,7 @@ function App() {
                 tooFast = true;
             } else {
                 pushStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor);
-                startStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor);
+                startStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor, currTiling);
             }
             changeAudio(mouseSpeed)
             startAutoScroll(cursorY);
@@ -332,8 +342,9 @@ function App() {
 
             prevCursorX = !prevCursorX ? 0 : prevTouches[0].pageX
             prevCursorY = !prevCursorY ? 0 : prevTouches[0].pageY
-
-            onStrokeStart(touch0X, touch0Y, touch0X, touch0Y)
+            // prevCursorX = !prevCursorX ? 0 : prevTouches[0].pageX
+            // prevCursorY = !prevCursorY ? 0 : touch0Y
+            onStrokeStart(scaledX, scaledY, touch0X, touch0Y)
 
         } else if (event.touches.length >= 2) {
             removeLastStroke(event.touches[0], event.touches[1], getOffsetY())
@@ -376,13 +387,13 @@ function App() {
         touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
 
         if (singleTouch) {
-            onStrokeMove(prevTouch0X, prevTouch0Y, scaledX, scaledY, touchSpeed)
+            onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, touchSpeed)
             if (event.touches && event.touches[0] && typeof event.touches[0]["force"] !== "undefined") {
                 if (event.touches[0]["force"] > 0) {
                     document.getElementById("angle").innerHTML = event.touches[0]["force"]
                 }
             }
-        } else if (doubleTouch) {
+        } if (doubleTouch) {
             startScroll(Math.abs(touchSpeed[1]), prevTouch0Y, touch0Y)
 
         }
@@ -422,7 +433,10 @@ function App() {
     function onStrokeEnd() {
         if (currTile && !currTile.filled && getFillRatio(currTile) > getFillMin()) {
             currTile.filled = true;
-            completeTile(currTile, invisCol)
+            completeTile(currTile, invisCol, currTiling)
+        }
+        if(!strokeMove){
+            redrawDot(currTile, getOffsetY())
         }
         resetLineWidth()
         reduceAudio()
@@ -441,6 +455,7 @@ function App() {
         firstMove = false;
         setHandChanged(false)
         setDragging(false)
+        strokeMove = false;
     }
 
     let reduceOpac;
