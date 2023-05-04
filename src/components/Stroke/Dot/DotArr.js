@@ -60,7 +60,7 @@ export function redrawTileDots(id, offsetY) {
     arr?.forEach(dot => {
         if(offsetY !== 0) {
             let ctx = document.getElementById('invis-canvas').getContext("2d");
-            // offsetY = getOffsetY();
+            offsetY = getOffsetY();
             let invisCol = ctx.getImageData(dot.x0, dot.y0 - offsetY, 1, 1).data.toString()
             let currTile = getTile(dot.y0 - offsetY, invisCol)
             pushDot(currTile, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, (dot.color), dot.lineWidth, dot.type)

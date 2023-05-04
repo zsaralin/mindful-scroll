@@ -1,5 +1,5 @@
 // reg, fuzzy, transparent, dotted
-const strokeWeights = [0,0,1, 0]
+const strokeWeights = [1,0,0, 0]
 
 export function setTiling(tiling) {
     const strokeType = getStrokeType()
