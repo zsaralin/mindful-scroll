@@ -10,8 +10,9 @@ import {getBoundsTiling, getBoundsTiling2} from "./TilingBounds";
 import {createPath, getPathPadding} from "./TilingPath";
 
 function generateRandomNum() {
-    var num = Math.floor(81 * Math.random());
-    return (num === 27 ? generateRandomNum() : num);
+    var num =  Math.floor(81 * Math.random());
+    return num;
+    // return (num === 27 ? generateRandomNum() : num);
 }
 
 function getScaler(tiling) {

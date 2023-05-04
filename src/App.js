@@ -16,7 +16,6 @@ import {
     pushShrinkingLine,
     removeLastStroke,
     redrawTileStrokes,
-    redrawDot
 } from './components/Stroke/StrokeArr'
 import {addToTilingArr, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
 import {getOffsetY} from './components/Scroll/Offset'
@@ -85,6 +84,7 @@ import {draw} from "./components/Effects/Dither";
 import {fillStripes} from "./components/Tile/FillTile/FillPattern";
 import {ditherTiling} from "./components/Tiling/DitherTiling";
 import {setTiling} from "./components/Tiling/SortingHat";
+import {drawJustDot, pushDot, removeLastDot} from "./components/Stroke/Dot/DotArr";
 
 
 function App() {
@@ -147,11 +147,11 @@ function App() {
 
     let currColor;
     let firstClick = true;
+    let lw;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
-        console.log('strokeMove'  + strokeMove)
+        lw = getLineWidth()
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
-        console.log(invisCol, prevScaledX, prevScaledY)
         currTile = getTile(y, invisCol)
         currTiling = getTiling(y, invisCol)
         if(currTiling.colourPal.length === 0){
@@ -173,12 +173,12 @@ function App() {
             sendMidAlert()
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
 
-            pushStroke(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor);
-            startDot(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor);
+            pushDot(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, "clover");
+            // startDot(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, "transparent" );
 
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
-            console.log('ratop ' + getFillRatio(currTile))
+            console.log('fillRatio ' + getFillRatio(currTile))
             if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile, invisCol, currTiling)
             currTile.colors.push(currColor)
 
@@ -199,8 +199,8 @@ function App() {
         }
     }
 
+    let dotRemoved = false;
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
-        strokeMove = true;
         insidePoly[0] += 1;
         currColor = getCurrColor();
         // scroll when dragging on white space
@@ -210,6 +210,12 @@ function App() {
             // startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
         }
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY) && isCircleInPath(currTile.path, scaledX, scaledY)) {
+            strokeMove = true;
+            if(!dotRemoved) {
+                console.log('how often ')
+                removeLastDot(currTile)
+                dotRemoved = true;
+            }
             // hideColourPreview(cursorX, cursorY)
             // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
             // if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
@@ -222,8 +228,8 @@ function App() {
                 drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY, currColor);
                 tooFast = true;
             } else {
-                pushStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor);
-                startStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor, currTiling);
+                pushStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor, lw, currTiling.strokeType);
+                startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), lw, currTiling.strokeType);
             }
             changeAudio(mouseSpeed)
             startAutoScroll(cursorY);
@@ -249,7 +255,6 @@ function App() {
             const prevScaledX = prevCursorX;
             const prevScaledY = toTrueY(prevCursorY);
             onStrokeStart(prevScaledX, prevScaledY, cursorX, cursorY)
-            // console.log(prevScaledY)
         }
         // detect right clicks
         if (event.button === 2) {
@@ -435,9 +440,8 @@ function App() {
             currTile.filled = true;
             completeTile(currTile, invisCol, currTiling)
         }
-        if(!strokeMove){
-            redrawDot(currTile, getOffsetY())
-        }
+        if(!strokeMove) drawJustDot(currTile)
+        dotRemoved = false;
         resetLineWidth()
         reduceAudio()
         colorDelay()
@@ -496,7 +500,6 @@ function App() {
     let sendingAlert = false;
 
     async function generateAlert() {
-        console.log('in speech')
         let insideRatio = insidePoly[1] / insidePoly[0]
         console.log(insideRatio)
         if (tooFast) {

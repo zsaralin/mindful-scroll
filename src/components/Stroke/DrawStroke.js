@@ -11,7 +11,7 @@ let context;
 
 export function drawStroke(x0, y0, x1, y1, theColor, theLineWidth, offset, context) {
     context = context || document.getElementById('top-canvas').getContext("2d");
-    drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context, offset)
+    drawStrokeHelper(x0, y0, x1, y1, theColor, theLineWidth, context, offset)
 }
 
 export function drawStrokeUnder(x0, y0, x1, y1, theColor, theLineWidth, offset) {
@@ -19,7 +19,7 @@ export function drawStrokeUnder(x0, y0, x1, y1, theColor, theLineWidth, offset) 
     drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context, offset)
 }
 
-export function drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context) {
+export function drawStrokeHelper(x0, y0, x1, y1, theColor, theLineWidth , context) {
     context.lineWidth = theLineWidth ? theLineWidth : getLineWidth();
     context.strokeStyle = theColor ;
     context.beginPath();

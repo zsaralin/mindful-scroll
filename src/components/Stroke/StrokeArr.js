@@ -2,11 +2,15 @@ import {getLineWidth} from "./StrokeWidth";
 import {drawBlurryStroke, drawStroke, drawStrokeUnder} from "./DrawStroke";
 import {drawShrinkingStroke} from "./ShrinkingStroke";
 import {getCurrColor} from "./Color/StrokeColor";
-import {getOffsetY, limitScroll} from "../Scroll/PageScroll";
 import {redrawActiveTiles} from "../Effects/Watercolor";
 import {invert, invertHue} from "../Effects/ColorTheory";
 import {drawClover} from "./Dot/DrawDot";
 import {pushDot, redrawTileDots} from "./Dot/DotArr";
+import {setStrokeType, startStroke} from "./StrokeType";
+import {redrawTransStrokesTile, refreshStrokes} from "./TransparentStroke";
+import {redrawDottedStrokesTile} from "./DottedStroke";
+import {getTile} from "../Tiling/Tiling2";
+import {getOffsetY} from "../Scroll/Offset";
 
 let strokeArr = {}
 let strokeArrUnder = {}
@@ -40,40 +44,30 @@ export function removeLastStroke(touch0, touch1, offsetY) {
     }
 }
 
-export function redrawDot(tile, offset){
-    const ctx = document.getElementById('top-canvas').getContext("2d");
-    ctx.fillStyle = "white"
-    ctx.fill(tile.path)
-
-    console.log(strokeArr[tile.id].length)
-    let last = strokeArr[tile.id].pop()
-
-    pushDot(tile,last.x0, last.y0, last.x1, last.y1, last.color, "clover")
-    redrawTileStrokes(tile.id, offset)
-    redrawTileDots(tile.id, offset)
-}
-
-export function pushStroke(tile, x0, y0, x1, y1, col) {
+export function pushStroke(tile, x0, y0, x1, y1, col, lw, type) {
     const newStroke = {
         x0,
         y0,
         x1,
         y1,
         color: col,
-        lineWidth: getLineWidth(),
+        lineWidth: lw,
+        type: type
     };
     strokeArr[tile.id] = strokeArr[tile.id] || [];
     strokeArr[tile.id].push(newStroke);
 }
 
-export function pushStrokeUnder(tile, x0, y0, x1, y1) {
+export function pushStrokeUnder(tile, x0, y0, x1, y1, col, lw, type) {
     const newStroke = {
         x0,
         y0,
         x1,
         y1,
-        color: getCurrColor(),
-        lineWidth: getLineWidth(),
+        color: col,
+        lineWidth: lw,
+        type: type
+
     };
     strokeArrUnder[tile.id] = strokeArrUnder[tile.id] || [];
     strokeArrUnder[tile.id].push(newStroke);
@@ -83,37 +77,63 @@ export function redrawStrokes(offsetY) {
     for (let tile in strokeArrUnder) {
         let arr = strokeArrUnder[tile]
         arr.forEach(stroke => {
+            setStrokeType(stroke.type)
             drawStrokeUnder(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, stroke.lineWidth, stroke.color);
         })
     }
-    for (let tile in strokeArr) {
-        redrawTileStrokes(tile, offsetY)
+    for (let tileId in strokeArr) {
+        redrawTileStrokes(tileId, offsetY)
     }
-    // strokeArr = [];
-    // strokeArrUnder = [];
+    // strokeArr = {};
+    // strokeArrUnder = {};
 }
 
-export function redrawTileStrokes(tile, offsetY) {
-    let arr = strokeArr[tile]
-    arr?.forEach(stroke => {
-            if (stroke.endWidth) {
-                drawShrinkingStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, (stroke.color),stroke.lineWidth)
-            } else drawStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, (stroke.color),stroke.lineWidth)
-    })
+export function redrawTileStrokes(id, offsetY) {
+    if(!offsetY) offsetY = 0;
+    let arr = strokeArr[id]
+    console.log('arr is ' + arr)
+    if (arr) {
+        for (let i = 0; i < arr.length; i++) {
+            console.log('i i s ' + i )
+            let stroke = arr[i]
+            if (stroke.y0 > offsetY) {
+
+                if (stroke.type === "transparent") {
+                    redrawTransStrokesTile(id, offsetY)
+                    return
+                } else if (stroke.type === "dotted") {
+                    redrawDottedStrokesTile(id, offsetY)
+                    return
+                }
+                if (stroke.endWidth) {
+                    drawShrinkingStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, (stroke.color), stroke.lineWidth, stroke.type)
+                } else {
+                    if(offsetY !== 0) {
+                        let ctx = document.getElementById('invis-canvas').getContext("2d");
+                        offsetY = getOffsetY();
+                        let invisCol = ctx.getImageData(stroke.x0, stroke.y0 - offsetY, 1, 1).data.toString()
+                        let currTile = getTile(stroke.y0 - offsetY, invisCol)
+                        pushStroke(currTile, stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, (stroke.color), stroke.lineWidth, stroke.type)
+                    }
+                    startStroke(id, stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, (stroke.color), stroke.lineWidth, stroke.type)
+
+            }}
+        }
+    }
 }
 
 export function redrawTileStrokesI(tile, offsetY, invert) {
-    let invertFn  = invert
+    let invertFn = invert
     let arr = strokeArrUnder[tile.id]
-        arr?.forEach(stroke => {
-            drawStrokeUnder(stroke.x0, stroke.y0 , stroke.x1, stroke.y1 , invertFn(stroke.color),stroke.lineWidth);
-        })
+    arr?.forEach(stroke => {
+        drawStrokeUnder(stroke.x0, stroke.y0, stroke.x1, stroke.y1, invertFn(stroke.color), stroke.lineWidth);
+    })
     arr = strokeArr[tile.id]
     arr?.forEach(stroke => {
         if (stroke.endWidth) {
-            drawShrinkingStroke(stroke.x0, stroke.y0 , stroke.x1, stroke.y1 , invertFn(stroke.color),stroke.lineWidth)
+            drawShrinkingStroke(stroke.x0, stroke.y0, stroke.x1, stroke.y1, invertFn(stroke.color), stroke.lineWidth)
         } else {
-            drawStroke(stroke.x0, stroke.y0 , stroke.x1, stroke.y1 , invertFn(stroke.color),stroke.lineWidth)
+            drawStroke(stroke.x0, stroke.y0, stroke.x1, stroke.y1, invertFn(stroke.color), stroke.lineWidth)
         }
     })
 }

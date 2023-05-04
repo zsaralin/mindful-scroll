@@ -13,6 +13,7 @@ import {redrawTransparentStrokes} from "../Stroke/TransparentStroke";
 import {redrawDottedStrokes} from "../Stroke/DottedStroke";
 import {gsap} from "gsap";
 import {endEffect, moveEffect, startEffect} from "./ScrollEffect";
+import {redrawDots} from "../Stroke/Dot/DotArr";
 
 
 export let limitScroll = 0;
@@ -49,18 +50,19 @@ export const redrawCanvas = async () => {
     const dots = document.getElementById("dots")
 
     let offsetY = getOffsetY()
-    if (offsetY > topSecondTiling() - TOP_PAGE_SPACE + 200) {
+    if (offsetY > topSecondTiling() - TOP_PAGE_SPACE ) {
         // await delay(.5);
         drawTwoTilings()
         copyToOnScreen(document.getElementById('off-canvas'));
-        redrawStrokes(offsetY)
+        redrawStrokes(offsetY ) // - 200
+        redrawDots(offsetY ) // - 200
         redrawCompleteTiles(offsetY)
         redrawActiveTiles(offsetY)
-        redrawTransparentStrokes(offsetY)
-        redrawDottedStrokes(offsetY)
+        // redrawTransparentStrokes(offsetY - 200)
+        // redrawDottedStrokes(offsetY - 200)
         redrawBlur(offsetY)
         prevOffsetY = offsetY
-        setOffsetY(200)
+        setOffsetY(0)
         refreshed = true;
         // oldOffset = 0
 
@@ -94,7 +96,6 @@ export function refreshPage() { // used when change tile width and size
 let d = SCROLL_DIST
 
 export function startScroll(ySpeed, prevCursorY, cursorY) {
-    console.log('prevCurs ' + prevCursorY  + 'cursorY + ' + cursorY)
     startEffect(prevCursorY, cursorY)
     if ((ySpeed < 10 || !isSlowScrollOn()) && d === SCROLL_DIST) {
         doScroll(cursorY, prevCursorY);

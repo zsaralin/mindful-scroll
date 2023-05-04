@@ -1,11 +1,12 @@
 // reg, fuzzy, transparent, dotted
-const strokeWeights = [.8, .1, .05, .05]
+const strokeWeights = [1,0,0, 0]
 
 export function setTiling(tiling) {
     const strokeType = getStrokeType()
     tiling.strokeType = strokeType;
     tiling.dotType = strokeType;
     tiling.fillType = generateRandomArray(28)
+    console.log('ok how  ' + strokeType)
 }
 
 

@@ -30,15 +30,15 @@ export function moveEffect(refreshed, offsetY, prevOffsetY){
             }
             gsap.killTweensOf('#hiddenTop, #hiddenBottom')
             let twoPercentInPixels = (2 / 100) * window.innerHeight;
-            hiddenBottom.style.bottom = -(window.innerHeight + oldOffset - twoPercentInPixels) + 'px';
-            hiddenBottom.style.opacity = 1;
+            // hiddenBottom.style.bottom = -(window.innerHeight + oldOffset - twoPercentInPixels) + 'px';
+            // hiddenBottom.style.opacity = 1;
             hiddenTop.style.bottom = (window.innerHeight - oldOffset - twoPercentInPixels) + 'px';
             hiddenTop.style.opacity = 1;
             done = true;
         }
-        hiddenBottom.style.transform = `translate(0,-${offsetY}px)`;
+        // hiddenBottom.style.transform = `translate(0,-${offsetY}px)`;
         hiddenTop.style.transform = `translate(0,-${offsetY}px)`;
-        gsap.to('#hiddenTop, #hiddenBottom', {opacity: 0, delay: .5, duration: 10, ease: "Expo.easeNone"})
+        gsap.to('#hiddenTop', {opacity: 0, delay: .5, duration: 10, ease: "Expo.easeNone"})
     }
 }
 export function endEffect(){
@@ -51,9 +51,9 @@ export function endEffect(){
     }
     done = true;
     if (scrollFade) {
-        gsap.to('#hiddenTop, #hiddenBottom', {
+        gsap.to('#hiddenTop', {
             opacity: 0, duration: 3, ease: "Expo.easeNone", onComplete: () => {
-                gsap.killTweensOf('#hiddenTop, #hiddenBottom')
+                gsap.killTweensOf('#hiddenTop')
             }
         })
         oldOffset = getOffsetY();
