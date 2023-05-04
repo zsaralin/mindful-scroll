@@ -42,7 +42,7 @@ function refresh(id) {
     const ctx = document.getElementById('top-canvas').getContext("2d");
     ctx.fillStyle = "white"
     ctx.fill(getPathWithId(id))
-    redrawTransStrokesTile(id)
+    // redrawTransStrokesTile(id)
     redrawTileStrokes(id) // redraw solid strokes
     redrawTileDots(id)
 }

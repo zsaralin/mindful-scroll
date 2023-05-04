@@ -91,10 +91,8 @@ export function redrawStrokes(offsetY) {
 export function redrawTileStrokes(id, offsetY) {
     if(!offsetY) offsetY = 0;
     let arr = strokeArr[id]
-    console.log('arr is ' + arr)
     if (arr) {
         for (let i = 0; i < arr.length; i++) {
-            console.log('i i s ' + i )
             let stroke = arr[i]
             if (stroke.y0 > offsetY) {
 
