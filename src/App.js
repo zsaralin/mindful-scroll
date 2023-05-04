@@ -229,7 +229,7 @@ function App() {
                 tooFast = true;
             } else {
                 pushStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor, lw, currTiling.strokeType);
-                startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), lw, currTiling.strokeType);
+                startStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), lw, currTiling.strokeType);
             }
             changeAudio(mouseSpeed)
             startAutoScroll(cursorY);
