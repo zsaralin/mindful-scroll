@@ -3,7 +3,7 @@ import {getCurrColor} from "../Color/StrokeColor";
 import {drawStroke, drawStrokeUnder} from "../DrawStroke";
 import {drawShrinkingStroke} from "../ShrinkingStroke";
 import {setDotType, startDot} from "./DotType";
-import {pushStroke, redrawTileStrokes} from "../StrokeArr";
+import {findTile, pushStroke, redrawTileStrokes} from "../StrokeArr";
 import {getOffsetY} from "../../Scroll/Offset";
 import {refreshStrokes} from "../TransparentStroke";
 import {getTile} from "../../Tiling/Tiling2";
@@ -55,18 +55,23 @@ export function redrawDots(offsetY) {
 }
 
 export function redrawTileDots(id, offsetY) {
-   if(!offsetY) offsetY = 0
-    let arr = dotArr[id]
+    const ctx = document.getElementById('invis-canvas').getContext("2d");
+    let currTile;
+    if(!offsetY) offsetY = 0
+    else{
+        currTile = findTile(id)
+    }
+    const arr = dotArr[id]
     arr?.forEach(dot => {
         if(offsetY !== 0) {
-            let ctx = document.getElementById('invis-canvas').getContext("2d");
             offsetY = getOffsetY();
-            let invisCol = ctx.getImageData(dot.x0, dot.y0 - offsetY, 1, 1).data.toString()
-            let currTile = getTile(dot.y0 - offsetY, invisCol)
-            pushDot(currTile, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, (dot.color), dot.lineWidth, dot.type)
+            if(currTile) pushDot(currTile, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, (dot.color), dot.lineWidth, dot.type)
         }
         startDot(id, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, (dot.color), dot.lineWidth, dot.type)
     })
+    if(offsetY !== 0){
+        delete dotArr[id]
+    }
 }
 
 export function redrawTileDotsI(tile, offsetY, invert) {
