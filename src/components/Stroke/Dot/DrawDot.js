@@ -25,24 +25,24 @@ export function drawGradientStroke(tile, x0, y0, x1, y1, theColor, grad) {
     bubbleElement.style.zIndex = a === 0 ? 1 : 2;
 }
 
-export function drawClover(x0, y0, x1, y1, theColor, theLineWidth, offset, context) {
+export function drawClover(x0, y0, x1, y1, theColor, lw, offset, context) {
+    console.log(x0,y0,x1,y1, theColor, lw)
     context = context || document.getElementById('top-canvas').getContext("2d");
-    let x = Math.max(getLineWidth() / 3, 5);
-    theLineWidth = Math.max(getLineWidth() / 2, 5);
-    drawStrokeHelper(x0, y0 + x, x1, y1 + x, theLineWidth, theColor, context, offset)
-    drawStrokeHelper(x0, y0 - x, x1, y1 - x, theLineWidth, theColor, context, offset)
-    drawStrokeHelper(x0 + x, y0, x1 + x, y1, theLineWidth, theColor, context, offset)
-    drawStrokeHelper(x0 - x, y0, x1 - x, y1, theLineWidth, theColor, context, offset)
+    let x = Math.max(lw / 3, 5);
+    lw = Math.max(lw / 2, 5);
+    drawStrokeHelper(x0, y0 + x, x1, y1 + x, theColor,lw, context, offset)
+    drawStrokeHelper(x0, y0 - x, x1, y1 - x, theColor,lw, context, offset)
+    drawStrokeHelper(x0 + x, y0, x1 + x, y1, theColor,lw, context, offset)
+    drawStrokeHelper(x0 - x, y0, x1 - x, y1, theColor,lw, context, offset)
 }
 
-export function drawFlower(x0, y0, x1, y1, theColor, theLineWidth, offset, context) {
+export function drawFlower(x0, y0, x1, y1, col , lw, offset, context) {
     context = context || document.getElementById('top-canvas').getContext("2d");
-    let x = Math.max(getLineWidth() / 3, 5);
-    theLineWidth = Math.max(getLineWidth() / 2, 5);
-    drawStrokeHelper(x0 - x / 1.5, y0 + x * 1.2, x1 - x / 1.5, y1 + x * 1.2, theLineWidth, theColor, context, offset)
-    drawStrokeHelper(x0 + x / 1.5, y0 + x * 1.2, x1 + x / 1.5, y1 + x * 1.2, theLineWidth, theColor, context, offset)
-
-    drawStrokeHelper(x0, y0 - x / 1.3, x1, y1 - x / 1.3, theLineWidth, theColor, context, offset)
-    drawStrokeHelper(x0 + x, y0, x1 + x, y1, theLineWidth, theColor, context, offset)
-    drawStrokeHelper(x0 - x, y0, x1 - x, y1, theLineWidth, theColor, context, offset)
+    let x = Math.max(lw / 3, 5);
+    lw = Math.max(lw / 2, 5);
+    drawStrokeHelper(x0 - x / 1.5, y0 + x * 1.2, x1 - x / 1.5, y1 + x * 1.2, col, lw, context, offset)
+    drawStrokeHelper(x0 + x / 1.5, y0 + x * 1.2, x1 + x / 1.5, y1 + x * 1.2, col, lw, context, offset)
+    drawStrokeHelper(x0, y0 - x / 1.3, x1, y1 - x / 1.3, col, lw, context, offset)
+    drawStrokeHelper(x0 + x, y0, x1 + x, y1, col, lw, context, offset)
+    drawStrokeHelper(x0 - x, y0, x1 - x, y1, col, lw, context, offset)
 }

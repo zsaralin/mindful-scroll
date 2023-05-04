@@ -94,7 +94,7 @@ export function hslToRgb(h, s, l) {
         g = hue2rgb(p, q, h);
         b = hue2rgb(p, q, h - 1.0 / 3.0);
     }
-    console.log('r : ' + r + ' g ' + g + 'and + ' + b)
+    // console.log('r : ' + r + ' g ' + g + 'and + ' + b)
     return {r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255)};
 }
 
@@ -171,7 +171,7 @@ export function complem(hsl) {
         let [h, s, l] = rgbToHsl(rgbaValues[0], rgbaValues[1], rgbaValues[2]);
         hsl = [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)]
         hsl = 'hsl(' + hsl[0] + ',' + hsl[1] + '%,' + hsl[2] + '%)'
-        console.log('hsl is ' + hsl)
+        // console.log('hsl is ' + hsl)
     }
     const firstNumber = hsl.match(/^hsl\((\d+)/)?.[1] ?? 'No match found';
     return hsl.replace(/^hsl\(\d+/, `hsl(${HueShift(firstNumber, 180.0)}`)
@@ -179,7 +179,7 @@ export function complem(hsl) {
 
 export function splitComplem(hsl) {
     let complem1 = complem(hsl)
-    console.log('hsl coopmelx ' + complem1)
+    // console.log('hsl coopmelx ' + complem1)
     const hslValues = complem1.match(/\d+/g);
 
 // Convert HSL values to numbers

@@ -112,7 +112,7 @@ export function redrawBlur(offsetY) {
 }
 
 export function drawBlurryStroke(x0, y0, x1, y1, theColor, theLineWidth, context) {
-
+    console.log(x0,y0,x1,y1,theColor, theLineWidth)
     const dx = Math.abs(x1 - x0);
     const dy = Math.abs(y1 - y0);
     const xStep = (x0 < x1) ? 1 : -1;

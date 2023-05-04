@@ -6,12 +6,12 @@ import {drawDottedStroke} from "./DottedStroke";
 
 let strokeType = "reg"
 
-export function startStroke(currTile, x0, y0, x1, y1, color, tiling) {
-    setStrokeType(tiling.strokeType)
-    if (strokeType === "reg") drawStroke(x0, y0, x1, y1, color)
-    else if (strokeType === "fuzzy") drawBlurryStroke(x0, y0, x1, y1, color)
-    else if (strokeType === "transparent") drawTransparentStroke(currTile, x0, y0, x1, y1, color)
-    else if (strokeType === "dotted") drawDottedStroke(currTile, x0, y0, x1, y1, color)
+export function startStroke(id, x0, y0, x1, y1, color, lw, inputStyle) {
+    if (inputStyle) setStrokeType(inputStyle)
+    if (strokeType === "reg") drawStroke(x0, y0, x1, y1, color, lw)
+    else if (strokeType === "fuzzy") drawBlurryStroke(x0, y0, x1, y1, color, lw)
+    else if (strokeType === "transparent") drawTransparentStroke(id, x0, y0, x1, y1, color, lw)
+    else if (strokeType === "dotted") drawDottedStroke(id, x0, y0, x1, y1, color, lw)
 }
 export function setStrokeType(str) {
     strokeType = str
