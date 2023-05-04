@@ -11,6 +11,7 @@ import {redrawTransStrokesTile, refreshStrokes} from "./TransparentStroke";
 import {redrawDottedStrokesTile} from "./DottedStroke";
 import {getTile} from "../Tiling/Tiling2";
 import {getOffsetY} from "../Scroll/Offset";
+import {TOP_PAGE_SPACE} from "../Constants";
 
 let strokeArr = {}
 let strokeArrUnder = {}
@@ -88,12 +89,30 @@ export function redrawStrokes(offsetY) {
     // strokeArrUnder = {};
 }
 
-export function redrawTileStrokes(id, offsetY) {
-    if(!offsetY) offsetY = 0;
-    let arr = strokeArr[id]
+export function findTile(id){
+    const arr = strokeArr[id]
+    let offsetY = getOffsetY();
+    console.log('OFFSET IS ' + offsetY)
+    let currTile;
     if (arr) {
         for (let i = 0; i < arr.length; i++) {
-            let stroke = arr[i]
+            const stroke = arr[i]
+        const ctx = document.getElementById('invis-canvas').getContext("2d");
+        const invisCol = ctx.getImageData(stroke.x0, stroke.y0 - offsetY, 1, 1).data.toString()
+        currTile = getTile(stroke.y0 - offsetY, invisCol)
+            if(currTile) return currTile
+    }
+}}
+export function redrawTileStrokes(id, offsetY) {
+    let currTile;
+    if (!offsetY) offsetY = 0;
+    else{
+        currTile = findTile(id)
+    }
+    const arr = strokeArr[id]
+    if (arr) {
+        for (let i = 0; i < arr.length; i++) {
+            const stroke = arr[i]
             if (stroke.y0 > offsetY) {
 
                 if (stroke.type === "transparent") {
@@ -106,16 +125,17 @@ export function redrawTileStrokes(id, offsetY) {
                 if (stroke.endWidth) {
                     drawShrinkingStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, (stroke.color), stroke.lineWidth, stroke.type)
                 } else {
-                    if(offsetY !== 0) {
-                        let ctx = document.getElementById('invis-canvas').getContext("2d");
+                    if (offsetY !== 0) {
                         offsetY = getOffsetY();
-                        let invisCol = ctx.getImageData(stroke.x0, stroke.y0 - offsetY, 1, 1).data.toString()
-                        let currTile = getTile(stroke.y0 - offsetY, invisCol)
-                        pushStroke(currTile, stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, (stroke.color), stroke.lineWidth, stroke.type)
+                        if (currTile) pushStroke(currTile, stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, (stroke.color), stroke.lineWidth, stroke.type)
                     }
                     startStroke(id, stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, (stroke.color), stroke.lineWidth, stroke.type)
 
-            }}
+                }
+            }
+        }
+        if (offsetY !== 0) {
+            delete strokeArr[id];
         }
     }
 }
