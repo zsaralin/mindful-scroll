@@ -31,7 +31,7 @@ const weightStrings = [
 ];
 
 // reg, fuzzy, transparent, dotted
-const strokeWeights = [1,0,0,0]//[.7,.1,.1,.1]
+const strokeWeights = [0,0,0,1]//[.7,.1,.1,.1]
 
 export function setTiling(tiling) {
     const strokeType = getStrokeType()
