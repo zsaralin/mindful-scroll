@@ -52,8 +52,8 @@ export function showColourPreview(x, y, newTile, handChange) {
 }
 
 
-export async function hideColourPreview(x, y) {
-    if (isHiding || getIsChanging()) return
+export async function hideColourPreview() {
+    if (isHiding) return
     else if (!isHiding) {
         gsap.killTweensOf("#bubble", "x,y");
         clearInterval(colourInterval)

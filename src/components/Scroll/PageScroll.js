@@ -14,6 +14,7 @@ import {redrawDottedStrokes} from "../Stroke/StrokeType/DottedStroke";
 import {gsap} from "gsap";
 import {endEffect, moveEffect, startEffect} from "./ScrollEffect";
 import {redrawDots} from "../Stroke/Dot/DotArr";
+import {hideColourPreview} from "../Bubble/Bubble";
 
 
 export let limitScroll = 0;
@@ -99,6 +100,7 @@ let d = SCROLL_DIST
 
 export function startScroll(ySpeed, prevCursorY, cursorY) {
     startEffect(prevCursorY, cursorY)
+    hideColourPreview()
     if ((ySpeed < 10 || !isSlowScrollOn()) && d === SCROLL_DIST) {
         doScroll(cursorY, prevCursorY);
     } else {
