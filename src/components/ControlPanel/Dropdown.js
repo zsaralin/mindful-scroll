@@ -115,7 +115,7 @@ export function StrokeStyle(props) {
             <div id="controlPanelRow">{props.name}
                 <FormControl sx={{ m: 1, minWidth: 120}}>
                     <NativeSelect
-                        defaultValue="combination"
+                        defaultValue="first"
                         onChange={handleChange}
                         inputProps={{
                             name: 'age',

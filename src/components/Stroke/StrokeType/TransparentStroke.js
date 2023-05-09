@@ -11,13 +11,14 @@ let transStrokes = {}
 let dragging = false;
 
 export function drawTransparentDot(id, x0, y0, x1, y1, theColor) {
+    // document.getElementById('fill-canvas').getContext("2d").fillStyle = 'rgba(0, 0, 0, 0)'
     if (transStrokes[id] === undefined) transStrokes[id] = []
     transStrokes[id].push([{x: x0, y: y0}]);
     const [h, s, l] = theColor.match(/(\d+)/g);
     let rgb = hslToRgb(h, s, l)
     rgb = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, .5)`;
     transStrokes[id][transStrokes[id].length - 1].push({x: x1, y: y1, col: rgb, lw: getLineWidth()}); // Append point to current path.
-    refresh(id);
+    refreshTrans(id);
 }
 
 export function drawTransparentStroke(id, x0, y0, x1, y1, theColor, theLineWidth, offset, context) {
@@ -36,14 +37,19 @@ export function drawTransparentStroke(id, x0, y0, x1, y1, theColor, theLineWidth
     let rgb = hslToRgb(h, s, l)
     rgb = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, .5)`;
     transStrokes[id][transStrokes[id].length - 1].push({x: x0, y: y0, col: rgb, lw: theLineWidth}); // Append point to current path.
-    refresh(id);
+    refreshTrans(id);
     // drawHelper(transStrokes[id][transStrokes[id].length - 1])
 }
 
-function refresh(id) {
+export function refreshTrans(id) {
     const ctx = document.getElementById('top-canvas').getContext("2d");
+    let tile = getTileWithId(id)
     ctx.fillStyle = "white"
     ctx.fill(getTileWithId(id).path)
+    if(tile.filled){
+        ctx.fillStyle = `${tile.fillColors.slice(0, -1)}, 0.5)`;
+        ctx.fill(getTileWithId(id).path)
+    }
     redrawTransStrokesTile(id)
 }
 

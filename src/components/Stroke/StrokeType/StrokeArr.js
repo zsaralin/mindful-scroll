@@ -201,12 +201,13 @@ export function findTile1(id, offsetY, strokeArr){
     if (arr) {
         for (let i = 0; i < arr.length; i++) {
             const stroke = arr[i][0]
-            if(!stroke.stroke) continue
             const ctx = document.getElementById('invis-canvas').getContext("2d");
             const invisCol = ctx.getImageData(stroke.x, stroke.y - offsetY, 1, 1).data.toString()
             currTile = getTile(stroke.y - offsetY, invisCol)
             if (currTile) return currTile
         }
+        console.log('DID NOT GET TILE')
+
     }
 }
 

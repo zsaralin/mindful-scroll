@@ -18,7 +18,7 @@ export function drawDottedStroke(id, x0, y0, x1, y1, theColor, theLineWidth, off
         }
         dottedStrokes[id].push([{x: x0, y: y0}]);
         setDragging(true)
-        refresh(id)
+        refreshDotted(id)
         return
     }
     dottedStrokes[id][dottedStrokes[id].length - 1].push({
@@ -27,13 +27,20 @@ export function drawDottedStroke(id, x0, y0, x1, y1, theColor, theLineWidth, off
         col: theColor,
         lw: getLineWidth()
     }); // Append point to current path.
-    refresh(id);
+    refreshDotted(id);
 }
 
-function refresh(id) {
+export function refreshDotted(id) {
     const ctx = document.getElementById('top-canvas').getContext("2d");
+    ctx.fillStyle = document.getElementById('fill-canvas').getContext("2d").fillStyle.toString() === "rgba(0, 0, 0, 0)" ? "white" : document.getElementById('fill-canvas').getContext("2d").fillStyle ;
+    // ctx.fill(getTileWithId(id).path)
+    const tile = getTileWithId(id)
     ctx.fillStyle = "white"
     ctx.fill(getTileWithId(id).path)
+    if(tile.filled){
+        ctx.fillStyle = tile.fillColors
+        ctx.fill(getTileWithId(id).path)
+    }
     redrawDottedStrokesTile(id)
     redrawTileStrokes(id) // redraw solid strokes
 }
