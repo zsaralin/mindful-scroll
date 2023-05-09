@@ -33,14 +33,14 @@ export function getIsChanging() {
     return isChanging;
 }
 
-export function setIsChanging(i){
+export function setIsChanging(i) {
     isChanging = i;
 }
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 async function shapeChange(shapeType, feedbackStr) {
-    while(isMoving) {
+    while (isMoving) {
         await delay(500)
     }
 
@@ -58,16 +58,19 @@ async function shapeChange(shapeType, feedbackStr) {
         speech = s.select(speechType);
         speechPoints = speech?.node.getAttribute('d');
     }
-if(!isMoving) {
-    circle?.animate({d: points}, 1500, mina.linear);
-    currShape = shapeType
+    if (!isMoving) {
+        currShape = shapeType
 
-    gsap.to("#bubble", {opacity: 1, duration: .5, delay: 0})
-    startWhite = setTimeout(function () {
-        pauseColourPreview()
-        gsap.to("#circle", {stroke: 'grey', strokeWidth: 3, onComplete: showText})
-    }, 1000);
-}
+        circle?.animate({d: points}, 1500, mina.linear);
+        // currShape = shapeType
+
+        gsap.to("#bubble", {opacity: 1, duration: .5, delay: 0})
+        startWhite = setTimeout(function () {
+            pauseColourPreview()
+            gsap.to("#circle", {stroke: 'grey', strokeWidth: 3, onComplete: showText})
+        }, 1000);
+    }
+
     function showText() {
         gsap.to(textStr, {opacity: 1, delay: 0, duration: 1.3, onComplete: toCircle})
         document.getElementById(id).innerHTML = feedbackStr

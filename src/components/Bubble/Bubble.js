@@ -122,12 +122,15 @@ export const moveFeedback = async (prevX, prevY, x, y, newTile) => {
     if (currShape !== 'circle') {
         stopShapeChange()
         gsap.killTweensOf('#circlesR, #circlesL, #cloud-text, #speech-text, #bubble, #circle')
+        circle?.stop()
+
         setIsChanging(false)
         // document.getElementById('#' + currShape + '-text')
         gsap.to('#' + currShape + '-text, #circlesR, #circlesL', {
             opacity: 0, duration: .5, onComplete: () => {
+                console.log('IN HERE ' + currShape)
                 gsap.to("#circle", {stroke: 'white', strokeWidth: 10, duration: 1})
-                getCircle()?.animate({d: circlePoints}, 500, mina.linear);
+                circle?.animate({d: circlePoints}, 500, mina.linear);
                 delay(1000)
                 startColourPreview()
                 moveFeedbackHelper(prevX, prevY, x, y, newTile)
