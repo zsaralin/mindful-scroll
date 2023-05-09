@@ -520,14 +520,14 @@ function App() {
         sendingAlert = false;
     }
 
-    let alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
+    let alertInterval = 0//Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
     let count = 0;
 
     async function sendAlert() {
         if (!isPanelOn() && !sendingAlert) {
             if (count === alertInterval) {
                 generateAlert();
-                alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+                alertInterval = 0//Math.floor(Math.random() * (10 - 5 + 1)) + 5;
                 count = 0;
             } else count++
         }
@@ -544,7 +544,7 @@ function App() {
             <button id="cp-button" onClick={showControlPanel}></button>
             <ControlPanel/>
             {/*<div id="feedbackBar"></div>*/}
-            <div id="angle" style={{position: "absolute", top: 0}}> {angle}</div>
+            {/*<div id="angle" style={{position: "absolute", top: 0}}> {angle}</div>*/}
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
             <div className="wrapper">
