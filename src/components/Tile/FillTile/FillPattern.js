@@ -1,4 +1,4 @@
-import {pushStrokeUnder} from "../../Stroke/StrokeArr";
+import {pushStrokeUnder} from "../../Stroke/StrokeType/StrokeArr";
 import {drawStrokeUnder} from "../../Stroke/DrawStroke";
 import {fillTile} from "./FillTile";
 import {geStrokeWidth, getLineWidth} from "../../Stroke/StrokeWidth";
@@ -11,8 +11,7 @@ import {getOffsetY} from "../../Scroll/Offset";
 
 export function fillPattern(tile) {
     let ctx = document.getElementById("top-canvas").getContext("2d");
-    let cols = setCols(tile)
-    console.log('length of cols ' + cols.length)
+    let cols = tile.fillColors ? tile.fillColors : (tile.fillColors = setCols(tile));
     let [midX, midY] = findMid(tile)
     ctx.save()
     ctx.clip(tile.path)
@@ -22,34 +21,6 @@ export function fillPattern(tile) {
     scaledStroke(ctx, tile, cols[2] ? cols[2] : cols[0], 60, .2, midX, midY)
     ctx.restore()
 }
-
-//
-// function setCols(tile) {
-//     let cols = []
-//     let i = 10
-//     let randomSign = Math.random() < 0.5 ? -1 : 1; // randomly generate -1 or 1
-//     if (tile.colors.length === 1) {
-//         if (parseInt(tile.colors[0].match(/\d+(?=%\))/)[0]) > 70) { // Check if last value is greater than 70
-//             randomSign = -1; // Set randomSign1 to -1 if last value is greater than 70
-//         } else if (parseInt(tile.colors[0].match(/\d+(?=%\))/)[0]) < 30) {
-//             randomSign = 1; // Set randomSign1 to -1 if last value is greater than 70
-//         }
-//         cols.push(tile.colors[0])
-//         cols.push(tile.colors[0].replace(/\d+(?=%\))/, parseInt(tile.colors[0].match(/\d+(?=%\))/)[0]) + i * randomSign));
-//         cols.push(tile.colors[0].replace(/\d+(?=%\))/, parseInt(tile.colors[0].match(/\d+(?=%\))/)[0]) + i * 2 * randomSign));
-//     } else if (tile.colors.length === 2) {
-//         cols.push(tile.colors[0])
-//         cols.push(tile.colors[1]);
-//         cols.push(tile.colors[0])
-//     } else if (tile.colors.length === 3) {
-//         cols.push(tile.colors[0])
-//         cols.push(tile.colors[1]);
-//         cols.push(tile.colors[2])
-//     } else {
-//         cols = Array.from({length: 3}, () => tile.colors.splice(Math.floor(Math.random() * tile.colors.length), 1)[0]);
-//     }
-//     return cols
-// }
 
 function findMid(tile) {
     let midpointX;
@@ -79,8 +50,8 @@ export function fillStripesHoriz(tile, backCol, stripeCol) {
     let lw = getLineWidth()
     let y = tile.inPath.reduce((min, [x, y]) => y < min ? y : min, Number.POSITIVE_INFINITY) + lw;
     while (y <= ymax + lw) {
-        const xmin = Math.min(...tile.inPath.filter(p => p[1] === y).map(p => p[0])) - lw / 4
-        const xmax = Math.max(...tile.inPath.filter(p => p[1] === y).map(p => p[0])) + lw / 4
+        const xmin = Math.min(...tile.inPath.filter(p => p[1] === y).map(p => p[0])) - lw
+        const xmax = Math.max(...tile.inPath.filter(p => p[1] === y).map(p => p[0])) + lw
         ctx.beginPath();
         ctx.strokeStyle = stripeCol
         ctx.lineCap = ctx.lineJoin = "flat"
@@ -115,7 +86,7 @@ export function fillStripesVert(tile, backCol, stripeCol) {
 
 export function fillStripesHorizGrad(tile) {
     fillTile(tile, "first", false)
-    let cols = setCols(tile)
+    let cols = tile.fillColors ? tile.fillColors : (tile.fillColors = setCols(tile));
     let ctx = document.getElementById("top-canvas").getContext("2d");
     let lw = getLineWidth()
     let i = 0
@@ -139,7 +110,7 @@ export function fillStripesHorizGrad(tile) {
 
 export function fillStripesVertGrad(tile) {
     fillTile(tile, "first", false)
-    let cols = setCols(tile)
+    let cols = tile.fillColors ? tile.fillColors : (tile.fillColors = setCols(tile));
     let ctx = document.getElementById("top-canvas").getContext("2d");
     let lw = getLineWidth()
     let [x, xmax, ymin, ymax] = tile.bounds
@@ -164,7 +135,7 @@ export function fillStripesVertGrad(tile) {
 export function fillStripesDiagonal(tile, slope) {
     const lw = getLineWidth();
     fillTile(tile, "first", false);
-    const cols = setCols(tile);
+    let cols = tile.fillColors ? tile.fillColors : (tile.fillColors = setCols(tile));
     const ctx = document.getElementById("top-canvas").getContext("2d");
     ctx.lineWidth = lw;
     let i = 0;

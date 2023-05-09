@@ -2,6 +2,7 @@ import {pushCompleteTile} from "../CompleteTileArr";
 import {complem, fillTileColors, invert, invertHue, meanHue} from "../../Effects/ColorTheory";
 import {getCurrColor} from "../../Stroke/Color/StrokeColor";
 import {leastUsed, mostUsed} from "../../Effects/CommonColours";
+import {strokeArr} from "../../Stroke/StrokeType/StrokeArr";
 
 function getCol(tile, str, inputCol){
     let tempCol;
@@ -27,8 +28,9 @@ export function fillTile(tile, str, under, inputCol){
     let col = ctx.fillStyle =  getCol(tile, str, inputCol)
     ctx.fill(tile.path)
     tile.filled = true;
+    // strokeArr[tile.id] = [] // delete strokes
 
-    pushCompleteTile(tile.path, col)
+    // pushCompleteTile(tile, col)
 }
 
 export function clearTile(tile, col){

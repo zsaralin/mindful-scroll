@@ -41,7 +41,6 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
 async function shapeChange(shapeType, feedbackStr) {
     while(isMoving) {
-        console.log('wait ')
         await delay(500)
     }
 

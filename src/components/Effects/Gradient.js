@@ -4,15 +4,19 @@ import {dither} from "./Dither";
 import {setCols} from "../Tile/FillTile/ColourFn";
 
 export function fillRadialGradient(tile, similar) {
-    let [xMin, xMax, yMin, yMax] = tile.bounds
-    let midX = (xMax + xMin) / 2;
-    let midY = (yMax + yMin) / 2
-    let ctx = document.getElementById('top-canvas').getContext('2d');
-    let grd = ctx.createRadialGradient(midX, midY, 0, midX, midY, 100);
+    const ctx = document.getElementById('top-canvas').getContext('2d');
+
+    const [xMin, xMax, yMin, yMax] = tile.bounds
+    const midX = (xMax + xMin) / 2;
+    const midY = (yMax + yMin) / 2
+    const grd = ctx.createRadialGradient(midX, midY, 0, midX, midY, 100);
     addColorStop(tile, grd)
 
     ctx.fillStyle = grd
     ctx.fill(tile.path)
+
+    // tile.fillColors = grd;
+
 }
 
 export function fillLinearGradient(tile, dir, similar) {
@@ -25,13 +29,19 @@ export function fillLinearGradient(tile, dir, similar) {
     if (dir === "diag") grd = ctx.createLinearGradient(xMin, yMin, xMax, yMax)
     else if (dir === 'horiz') grd = ctx.createLinearGradient(xMin, midY, xMax, midY)
     else if (dir === 'vert') grd = ctx.createLinearGradient(midX, yMin, midX, yMax)
-     addColorStop(tile, grd)
+    addColorStop(tile, grd)
     ctx.fillStyle = grd
     ctx.fill(tile.path)
 }
 
 function addColorStop(tile, grd) {
-    let arr = setCols(tile)
+    let arr;
+    if (tile.fillColors) {
+         arr = tile.fillColors;
+    } else {
+         arr = setCols(tile)
+        tile.fillColors = arr;
+    }
     const i = Math.max(.1, 1 / (arr.length - 1));
     let d = 0, q = 0;
     while (q < arr.length && d <= 1) {

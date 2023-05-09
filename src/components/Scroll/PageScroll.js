@@ -1,5 +1,5 @@
 import {drawTwoTilings, refreshTilings, refreshTilings2, topSecondTiling} from "../Tiling/Tiling2";
-import {redrawStrokes} from "../Stroke/StrokeArr";
+import {redrawStrokes} from "../Stroke/StrokeType/StrokeArr";
 import {redrawCompleteTiles} from "../Tile/CompleteTileArr";
 import {redrawActiveTiles} from "../Effects/Watercolor";
 import {setInternalOffset} from "../Tile/CompleteTile";
@@ -9,8 +9,8 @@ import {getOffsetY, setOffsetY} from "./Offset";
 import {isSlowScrollOn} from "./SlowScroll";
 import {getOffsetTop} from "@mui/material";
 import {redrawBlur} from "../Effects/Blur";
-import {redrawTransparentStrokes} from "../Stroke/TransparentStroke";
-import {redrawDottedStrokes} from "../Stroke/DottedStroke";
+import {redrawTransparentStrokes} from "../Stroke/StrokeType/TransparentStroke";
+import {redrawDottedStrokes} from "../Stroke/StrokeType/DottedStroke";
 import {gsap} from "gsap";
 import {endEffect, moveEffect, startEffect} from "./ScrollEffect";
 import {redrawDots} from "../Stroke/Dot/DotArr";
@@ -54,13 +54,15 @@ export const redrawCanvas = async () => {
         // await delay(.5);
         drawTwoTilings()
         copyToOnScreen(document.getElementById('off-canvas'));
+        // await delay(.5);
+
         redrawStrokes(offsetY ) // - 200
-        redrawDots(offsetY ) // - 200
+        // redrawDots(offsetY ) // - 200
         redrawCompleteTiles(offsetY)
         redrawActiveTiles(offsetY)
-        // redrawTransparentStrokes(offsetY - 200)
-        // redrawDottedStrokes(offsetY - 200)
-        redrawBlur(offsetY)
+        // redrawTransparentStrokes(offsetY )
+        // redrawDottedStrokes(offsetY)
+        // redrawBlur(offsetY)
         prevOffsetY = offsetY
         setOffsetY(0)
         refreshed = true;

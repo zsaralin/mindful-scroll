@@ -2,13 +2,11 @@ import {redrawCanvas, refreshPage} from "../Scroll/PageScroll";
 import {getBoundsTile, getBoundsTiling} from "./TilingBounds";
 import {getYPadding} from "./TilingSize";
 
-let path = "rightDiagonal";
+let path = "rect";
 let numTilings = 0;
 
 export const setPathType = (newPath) => {
-    console.log('newPath ' + newPath)
     path = newPath;
-    console.log('hum')
     refreshPage()
 };
 
@@ -27,7 +25,7 @@ export function getPathPadding(y, tiling) {
 }
 
 export function createPath(tiling) {
-    console.log('path ' + path)
+    // console.log('path ' + path)
     numTilings++
     let [xmin, xmax, ymin, ymax] = getBoundsTiling(tiling)
     let w = xmax - xmin

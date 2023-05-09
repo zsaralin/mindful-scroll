@@ -13,6 +13,6 @@ export const FIFTH_WINDOW = window.innerHeight * 4 / 5;
 
 export const SWIPE_THRESHOLD = window.innerWidth/12;
 
-export const TOP_CANV = 'fill-canvas'
+export const TOP_CANV = 'top-canvas'
 
 export const BB_PADDING = 35

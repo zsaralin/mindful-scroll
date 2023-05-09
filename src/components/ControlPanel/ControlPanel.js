@@ -8,7 +8,7 @@ import {changeLineWidth} from "../Stroke/StrokeWidth";
 import {FILL_RATIO, LINE_WIDTH, TILE_WIDTH} from "../Constants";
 import {changeColourSpeed, colorDelay, stopColorChange, triggerRandomColour} from "../Stroke/Color/StrokeColor";
 import {changeTileWidth} from "../Tiling/TileWidth";
-import {triggerShrinkStroke} from "../Stroke/ShrinkingStroke";
+import {triggerShrinkStroke} from "../Stroke/StrokeType/ShrinkingStroke";
 import {changeFillMin} from "../Tile/FillTile/FillRatio";
 import {isSlowScrollOn, triggerSlowScroll} from "../Scroll/SlowScroll";
 import {changeTilingSize} from "../Tiling/TilingSize";

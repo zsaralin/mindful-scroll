@@ -1,6 +1,6 @@
 import {getTileWidth} from "../../Tiling/TileWidth";
 import {fillTile} from "./FillTile";
-import {pushStrokeUnder} from "../../Stroke/StrokeArr";
+import {pushStrokeUnder} from "../../Stroke/StrokeType/StrokeArr";
 import {drawStroke, drawStrokeUnder} from "../../Stroke/DrawStroke";
 import {isCircleInPath} from "./FillRatio";
 import {BB_PADDING} from "../../Constants";

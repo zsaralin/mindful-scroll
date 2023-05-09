@@ -12,7 +12,7 @@ import {setTiling} from "./SortingHat";
 
 let thisBottom; // bottom of current tiling
 let nextTop; // top of next tiling
-const SPACE = 0//500; // space between tilings
+const SPACE = 150; // space between tilings
 const TOP_SPACE = 75;
 let pathArr = [] //array of path dict for each tiling
 let tilingArr = [] //array of tilings
@@ -175,10 +175,10 @@ export function getTilingIndex2(y) {
     //     }
     // }
 }
-
-export function getTile(y1, invisCol) {
+// used scaledY
+export function getTile(y, invisCol) {
     if (invisCol) {
-        let currTiling = pathArr[(getTilingIndex2(y1 + getOffsetY()))].pathDict
+        let currTiling = pathArr[(getTilingIndex2(y))].pathDict
         return currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
     }
 }

@@ -1,7 +1,7 @@
-import {drawStroke} from "./DrawStroke";
-import {drawBlurryStroke} from "../Effects/Blur";
+import {drawStroke} from "../DrawStroke";
+import {drawBlurryStroke} from "../../Effects/Blur";
 import {drawTransparentDot, drawTransparentStroke} from "./TransparentStroke";
-import {setDotType} from "./Dot/DotType";
+import {setDotType} from "../Dot/DotType";
 import {drawDottedStroke} from "./DottedStroke";
 
 let strokeType = "reg"

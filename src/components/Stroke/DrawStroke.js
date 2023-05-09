@@ -16,11 +16,11 @@ export function drawStroke(x0, y0, x1, y1, theColor, theLineWidth, offset, conte
 
 export function drawStrokeUnder(x0, y0, x1, y1, theColor, theLineWidth, offset) {
     context = document.getElementById('fill-canvas').getContext("2d");
-    drawStrokeHelper(x0, y0, x1, y1, theLineWidth, theColor, context, offset)
+    drawStrokeHelper(x0, y0, x1, y1, theColor, theLineWidth, context, offset)
 }
 
-export function drawStrokeHelper(x0, y0, x1, y1, theColor, theLineWidth , context) {
-    context.lineWidth = theLineWidth ? theLineWidth : getLineWidth();
+export function drawStrokeHelper(x0, y0, x1, y1, theColor, lw , context) {
+    context.lineWidth = lw ? lw : getLineWidth();
     context.strokeStyle = theColor ;
     context.beginPath();
     context.moveTo(x0, y0);
