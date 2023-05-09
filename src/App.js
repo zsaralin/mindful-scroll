@@ -397,7 +397,7 @@ function App() {
             onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, touchSpeed)
             if (event.touches && event.touches[0] && typeof event.touches[0]["force"] !== "undefined") {
                 if (event.touches[0]["force"] > 0) {
-                    // document.getElementById("angle").innerHTML = event.touches[0]["force"]
+                    document.getElementById("angle").innerHTML = event.touches[0]["force"]
                 }
             }
         } if (doubleTouch) {
@@ -544,7 +544,7 @@ function App() {
             <button id="cp-button" onClick={showControlPanel}></button>
             <ControlPanel/>
             {/*<div id="feedbackBar"></div>*/}
-            {/*<div id="angle" style={{position: "absolute", top: 0}}> {angle}</div>*/}
+            <div id="angle" style={{position: "absolute", top: 0, display: 'none'}}> {angle}</div>
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
             <div className="wrapper">

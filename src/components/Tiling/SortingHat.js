@@ -30,6 +30,34 @@ const weightStrings = [
     // "inverseComb"
 ];
 
+const weightStrings2 = [
+    "combination",
+    "first",
+    "last",
+    "complem",
+    // "blur",
+    "blurFill",
+    "meanHue",
+    "inverseMean",
+    "radialGradient",
+    "diagGradient",
+    "horizGradient",
+    "vertGradient",
+    "dither1",
+    "dither2",
+    "dither3",
+    "dither4",
+    "dither5",
+    "mostUsed",
+    "leastUsed",
+    "pattern",
+    "stripesH",
+    "stripesV",
+    "pixel"
+    // "fillAnim",
+    // "inverseComb"
+];
+
 // reg, fuzzy, transparent, dotted
 const strokeWeights = [1,0,0,0]//[.7,.1,.1,.1]
 
