@@ -66,7 +66,6 @@ function getSegArr(tiling, edges) {
 
 let rem = 0;
 export function drawTiling(tiling) {
-    console.log('tiling ' + tiling)
     let pathDict = tiling.pathDict
     let tilingCtx = document.getElementById('tiling-canvas').getContext('2d');
     let offCtx = document.getElementById('off-canvas').getContext('2d');

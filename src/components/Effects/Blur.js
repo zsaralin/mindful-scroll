@@ -2,7 +2,7 @@ import {getCurrColor} from "../Stroke/Color/StrokeColor";
 import {hsl2Rgb, isCircleInPath} from "../Tile/FillTile/FillRatio";
 import {getLineWidth} from "../Stroke/StrokeWidth";
 import {getTileWidth} from "../Tiling/TileWidth";
-import {getStrokeArr, getStrokeArrUnder, pushStrokeUnder, redrawBlurryStrokes} from "../Stroke/StrokeArr";
+import {getStrokeArr, getStrokeArrUnder, pushStrokeUnder, redrawBlurryStrokes} from "../Stroke/StrokeType/StrokeArr";
 import {drawStroke, drawStrokeUnder} from "../Stroke/DrawStroke";
 import {fillEachPixel} from "../Tile/FillTile/FillGaps";
 import {fillTile} from "../Tile/FillTile/FillTile";
@@ -29,6 +29,7 @@ export function blurryHelper(x0, y0, x1, y1, theColor, theLineWidth, context) {
 let BB_PADDING = 35;
 
 export function blurTile(tile) {
+    console.log('HIEEEE ' + tile)
     // let strokesUnder = getStrokeArrUnder()[tile.id]
     // let strokes = getStrokeArr()[tile.id]
     // if (strokesUnder) {

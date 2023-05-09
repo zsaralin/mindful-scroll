@@ -26,7 +26,6 @@ export function drawGradientStroke(tile, x0, y0, x1, y1, theColor, grad) {
 }
 
 export function drawClover(x0, y0, x1, y1, theColor, lw, offset, context) {
-    console.log(x0,y0,x1,y1, theColor, lw)
     context = context || document.getElementById('top-canvas').getContext("2d");
     let x = Math.max(lw / 3, 5);
     lw = Math.max(lw / 2, 5);

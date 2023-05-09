@@ -1,5 +1,11 @@
 import {getTileWidth} from "../../Tiling/TileWidth";
-import {getStrokeArr, pushStrokeUnder, redrawTileStrokes, redrawTileStrokesI} from "../../Stroke/StrokeArr";
+import {
+    getStrokeArr,
+    pushStrokeUnder,
+    redrawTileStrokes,
+    redrawTileStrokesI,
+    strokeArr
+} from "../../Stroke/StrokeType/StrokeArr";
 import {drawStrokeUnder} from "../../Stroke/DrawStroke";
 import {invert, invertHue, isSimilar, rgbToHsl} from "../../Effects/ColorTheory";
 import {clearTile, fillTile} from "./FillTile";
@@ -43,12 +49,15 @@ export function fillEachPixelInverseHue(tile) {
 // redraw strokes to inverse colour, set background to currColour
 export function fillInverseStrokes(tile) {
     // clearTile(tile)
-    let arr = getStrokeArr()[tile.id]
-    let lastColor = arr[arr.length-1].color
-    // let col = getCurrColor()
-    setCurrColor(invert(lastColor))
+    // let id=  tile.id
+    let arr = strokeArr[tile.id]
+    console.log('arr is ' + arr)
+    // if(arr){
+    let lastColor = tile.colors[tile.colors.length-1]
+    // // let col = getCurrColor()
+    // setCurrColor(invertHue(lastColor))
 
-    redrawTileStrokesI(tile, getOffsetY(), invert)
+    redrawTileStrokesI(tile.id, invertHue)
     fillTile(tile, "input", true, lastColor)
     // setCurrColor(invertHue(col))
     // setCurrColor(invert(col))
@@ -56,7 +65,6 @@ export function fillInverseStrokes(tile) {
 
 function getTopLeftCol(tile) {
     let ctx = document.getElementById('top-canvas').getContext('2d');
-    console.log('hi')
     for (let i = 0; i < tile.inPath.length; i++) {
         let x = tile.inPath[i][0], y = tile.inPath[i][1];
         let hsl  = toHsl(ctx.getImageData(x, y, 1, 1).data)

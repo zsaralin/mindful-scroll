@@ -3,7 +3,7 @@ import './components/Bubble/Bubble.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import Music, {changeAudio, reduceAudio, triggerAudio} from './components/Audio/Audio.js'
-import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/ShrinkingStroke'
+import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/StrokeType/ShrinkingStroke'
 import {
     stopColorChange,
     colorDelay,
@@ -16,7 +16,7 @@ import {
     pushShrinkingLine,
     removeLastStroke,
     redrawTileStrokes,
-} from './components/Stroke/StrokeArr'
+} from './components/Stroke/StrokeType/StrokeArr'
 import {addToTilingArr, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
 import {getOffsetY} from './components/Scroll/Offset'
 import {
@@ -50,11 +50,11 @@ import {startAutoScroll} from "./components/Scroll/AutoScroll";
 import {getHandChange, handChanged, isRightHand, setHand, setHandChanged} from "./components/Effects/Handedness";
 import {startDot} from "./components/Stroke/Dot/DotType";
 import {drawBlurryStroke, drawDiagonalLine} from "./components/Effects/Blur";
-import {startStroke} from "./components/Stroke/StrokeType";
+import {startStroke} from "./components/Stroke/StrokeType/StrokeType";
 import {toCloud, toSpeech} from "./components/Bubble/ShapeChange";
-import {drawTransparentStroke, setDragging} from "./components/Stroke/TransparentStroke";
+import {drawTransparentStroke, setDragging} from "./components/Stroke/StrokeType/TransparentStroke";
 import {drawStroke} from "./components/Stroke/DrawStroke";
-import {drawDottedStroke} from "./components/Stroke/DottedStroke";
+import {drawDottedStroke} from "./components/Stroke/StrokeType/DottedStroke";
 import {
     getAdjTiles,
     getGrid,
@@ -152,7 +152,7 @@ function App() {
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
         lw = getLineWidth()
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
-        currTile = getTile(y, invisCol)
+        currTile = getTile(prevScaledY, invisCol)
         currTiling = getTiling(y, invisCol)
         if(currTiling.colourPal.length === 0){
             if(firstClick) {
@@ -172,14 +172,15 @@ function App() {
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY)) {
             sendMidAlert()
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
-
-            pushDot(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, "clover");
+            pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, "clover");
             // startDot(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, "transparent" );
 
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
-            console.log('fillRatio ' + getFillRatio(currTile))
-            if (!currTile.filled && getFillRatio(currTile) > getFillMin()) completeTile(currTile, invisCol, currTiling)
+            // console.log('fillRatio ' + getFillRatio(currTile))
+            if (!currTile.watercolor && !currTile.filled && getFillRatio(currTile) > getFillMin()) {
+                completeTile(currTile, currTiling, invisCol)
+            }
             currTile.colors.push(currColor)
 
             // let tiles = getOrienTiles(currTile, currTiling)
@@ -212,7 +213,6 @@ function App() {
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY) && isCircleInPath(currTile.path, scaledX, scaledY)) {
             strokeMove = true;
             if(!dotRemoved) {
-                console.log('how often ')
                 removeLastDot(currTile)
                 dotRemoved = true;
             }
@@ -224,12 +224,15 @@ function App() {
             //     completeTile(currTile, invisCol)
             // }
             if ((isShrinkStroke() && (Math.abs(speed[0]) > 10 || Math.abs(speed[1]) > 10))) {
-                pushShrinkingLine(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor);
+                currTile.strokeType = currTiling.strokeType
+                pushShrinkingLine(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, currTiling.strokeType);
                 drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY, currColor);
                 tooFast = true;
             } else {
-                pushStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, currColor, lw, currTiling.strokeType);
-                startStroke(currTile, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), lw, currTiling.strokeType);
+                currTile.strokeType = currTiling.strokeType
+                console.log('asdas' + currTile.strokeType)
+                pushStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, getLineWidth(), currTiling.strokeType);
+                startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), getLineWidth(), currTiling.strokeType);
             }
             changeAudio(mouseSpeed)
             startAutoScroll(cursorY);
@@ -436,11 +439,12 @@ function App() {
     }
 
     function onStrokeEnd() {
-        if (currTile && !currTile.filled && getFillRatio(currTile) > getFillMin()) {
+
+        if (!currTile.watercolor && currTile && !currTile.filled && getFillRatio(currTile) > getFillMin()) {
             currTile.filled = true;
-            completeTile(currTile, invisCol, currTiling)
+            completeTile(currTile, currTiling, invisCol)
         }
-        if(!strokeMove) drawJustDot(currTile)
+        if(currTile && !strokeMove && !currTile.watercolor) drawJustDot(currTile)
         dotRemoved = false;
         resetLineWidth()
         reduceAudio()
@@ -501,7 +505,7 @@ function App() {
 
     async function generateAlert() {
         let insideRatio = insidePoly[1] / insidePoly[0]
-        console.log(insideRatio)
+        // console.log(insideRatio)
         if (tooFast) {
             word = slowArr[Math.floor(Math.random() * slowArr.length)]
             toSpeech(word)

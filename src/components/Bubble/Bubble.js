@@ -118,7 +118,6 @@ export const moveFeedback = async (prevX, prevY, x, y, newTile) => {
         gsap.killTweensOf("#bubble")
     }
     isMoving = true;
-    console.log('CURRSHAPE ' + currShape)
     // gsap.killTweensOf('#circlesR, #circlesL, #cloud-text, #speech-text, #bubble')
     if (currShape !== 'circle') {
         stopShapeChange()
@@ -149,7 +148,6 @@ const moveFeedbackHelper = async (prevX, prevY, x, y, newTile) => {
             }
         })
     }
-    console.log(x + ' adndddd  ' + y)
     // if (!newTile) return
     // if (isMoving) {
     //     gsap.killTweensOf("#bubble")

@@ -1,18 +1,15 @@
 import {getLineWidth} from "../StrokeWidth";
 import {getCurrColor} from "../Color/StrokeColor";
 import {drawStroke, drawStrokeUnder} from "../DrawStroke";
-import {drawShrinkingStroke} from "../ShrinkingStroke";
+import {drawShrinkingStroke} from "../StrokeType/ShrinkingStroke";
 import {setDotType, startDot} from "./DotType";
-import {findTile, pushStroke, redrawTileStrokes} from "../StrokeArr";
+import {findTile, pushStroke, redrawTileStrokes, strokeArr, strokeArrUnder} from "../StrokeType/StrokeArr";
 import {getOffsetY} from "../../Scroll/Offset";
-import {refreshStrokes} from "../TransparentStroke";
+import {refreshStrokes} from "../StrokeType/TransparentStroke";
 import {getTile} from "../../Tiling/Tiling2";
 
-let dotArr = {}
-let dotArrUnder = {}
 
-
-export function pushDot(tile, x0, y0, x1, y1, col, lw, type) {
+export function pushDot(id, x0, y0, x1, y1, col, lw, type) {
     const newDot = {
         x0,
         y0,
@@ -20,10 +17,11 @@ export function pushDot(tile, x0, y0, x1, y1, col, lw, type) {
         y1,
         color: col,
         lineWidth: lw,
-        type: type
+        type: type,
+        stroke: false
     };
-    dotArr[tile.id] = dotArr[tile.id] || [];
-    dotArr[tile.id].push(newDot);
+    strokeArr[id] = strokeArr[id] || [];
+    strokeArr[id].push(newDot);
 }
 
 export function pushDotUnder(tile, x0, y0, x1, y1) {
@@ -34,20 +32,21 @@ export function pushDotUnder(tile, x0, y0, x1, y1) {
         y1,
         color: getCurrColor(),
         lineWidth: getLineWidth(),
+        stroke: false
     };
-    dotArrUnder[tile.id] = dotArrUnder[tile.id] || [];
-    dotArrUnder[tile.id].push(newStroke);
+    strokeArrUnder[tile.id] = strokeArrUnder[tile.id] || [];
+    strokeArrUnder[tile.id].push(newStroke);
 }
 
 export function redrawDots(offsetY) {
-    for (let id in dotArrUnder) {
-        let arr = dotArrUnder[id]
+    for (let id in strokeArrUnder) {
+        let arr = strokeArrUnder[id]
         arr.forEach(dot => {
             setDotType(dot.type)
             startDot(id, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, dot.lineWidth, dot.color);
         })
     }
-    for (let id in dotArr) {
+    for (let id in strokeArr) {
         redrawTileDots(id, offsetY)
     }
     // dotArr = {};
@@ -57,54 +56,59 @@ export function redrawDots(offsetY) {
 export function redrawTileDots(id, offsetY) {
     const ctx = document.getElementById('invis-canvas').getContext("2d");
     let currTile;
-    if(!offsetY) offsetY = 0
-    else{
+    if (!offsetY) offsetY = 0
+    else {
         currTile = findTile(id)
     }
-    const arr = dotArr[id]
+    const arr = strokeArr[id]
     arr?.forEach(dot => {
-        if(offsetY !== 0) {
+        if (offsetY !== 0) {
             offsetY = getOffsetY();
-            if(currTile) pushDot(currTile, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, (dot.color), dot.lineWidth, dot.type)
+            if (currTile) pushDot(currTile, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, (dot.color), dot.lineWidth, dot.type)
         }
         startDot(id, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, (dot.color), dot.lineWidth, dot.type)
     })
-    if(offsetY !== 0){
-        delete dotArr[id]
+    if (offsetY !== 0) {
+        delete strokeArr[id]
     }
 }
 
 export function redrawTileDotsI(tile, offsetY, invert) {
     let invertFn = invert
-    let arr = dotArrUnder[tile.id]
+    let arr = strokeArrUnder[tile.id]
     arr?.forEach(dot => {
         drawStrokeUnder(dot.x0, dot.y0, dot.x1, dot.y1, invertFn(dot.color), dot.lineWidth);
     })
-    arr = dotArr[tile.id]
+    arr = strokeArr[tile.id]
     arr?.forEach(dot => {
         drawStroke(dot.x0, dot.y0, dot.x1, dot.y1, invertFn(dot.color), dot.lineWidth)
     })
 }
 
-export function getDotArr() {
-    return dotArr;
-}
-
-export function getDotArrUnder() {
-    return dotArrUnder;
-}
-
 export function drawJustDot(tile) {
-    const ctx = document.getElementById('top-canvas').getContext("2d");
-    ctx.fillStyle = "white"
-    ctx.fill(tile.path)
-    console.log('EBFOREEE' + tile.id)
-    redrawTileStrokes(tile.id)
-    // refreshStrokes(tile, offset)
-    redrawTileDots(tile.id)
+    let offsetY = 0
+    const arr = strokeArr[tile.id]
+    if (arr) {
+        const dot = arr[arr.length - 1]
+        startDot(tile.id, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, (dot.color), dot.lineWidth, dot.type)
+    }
+    // const ctx = document.getElementById('top-canvas').getContext("2d");
+    // ctx.fillStyle = "white"
+    // ctx.fill(tile.path)
+    // console.log('EBFOREEE' + tile.id)
+    // redrawTileStrokes(tile.id)
+    // // refreshStrokes(tile, offset)
+    // redrawTileDots(tile.id)
+
 }
 
 export function removeLastDot(tile) {
-    dotArr[tile.id].pop()
-
+    let arr = strokeArr[tile.id]
+    for (let i = arr.length - 1; i >= 0; i--) {
+        if (!arr[i].stroke) {
+            strokeArr[tile.id].pop();
+            // redrawTileStrokes(tile.id);
+            return;
+        }
+    }
 }

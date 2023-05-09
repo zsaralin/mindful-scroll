@@ -5,7 +5,7 @@ import {SelectChangeEvent} from "@mui/material";
 import * as React from 'react';
 import {ThemeProvider} from "@mui/material/styles";
 import {setDotType} from "../Stroke/Dot/DotType";
-import {setStrokeType} from "../Stroke/StrokeType";
+import {setStrokeType} from "../Stroke/StrokeType/StrokeType";
 import {setPathType} from "../Tiling/TilingPath";
 
 const theme = createTheme({

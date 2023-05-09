@@ -1,9 +1,11 @@
-import {hslToRgb} from "../Effects/ColorTheory";
-import {getLineWidth} from "./StrokeWidth";
-import {redrawStrokes, redrawTileStrokes} from "./StrokeArr";
-import {getBoundsTile} from "../Tiling/TilingBounds";
-import {redrawTileDots} from "./Dot/DotArr";
-import {getPathWithId} from "../Tiling/TilingPathDict";
+import {hslToRgb} from "../../Effects/ColorTheory";
+import {getLineWidth} from "../StrokeWidth";
+import {getBoundsTile} from "../../Tiling/TilingBounds";
+import {redrawTileDots} from "../Dot/DotArr";
+import {getPathWithId, getTileWithId} from "../../Tiling/TilingPathDict";
+import {getOffsetY} from "../../Scroll/Offset";
+import {getTile} from "../../Tiling/Tiling2";
+import {findTile, findTile1, redrawTileStrokes} from "./StrokeArr";
 
 let transStrokes = {}
 let dragging = false;
@@ -15,7 +17,6 @@ export function drawTransparentDot(id, x0, y0, x1, y1, theColor) {
     let rgb = hslToRgb(h, s, l)
     rgb = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, .5)`;
     transStrokes[id][transStrokes[id].length - 1].push({x: x1, y: y1, col: rgb, lw: getLineWidth()}); // Append point to current path.
-    console.log('lengh ' + transStrokes[id].length)
     refresh(id);
 }
 
@@ -36,15 +37,14 @@ export function drawTransparentStroke(id, x0, y0, x1, y1, theColor, theLineWidth
     rgb = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, .5)`;
     transStrokes[id][transStrokes[id].length - 1].push({x: x0, y: y0, col: rgb, lw: theLineWidth}); // Append point to current path.
     refresh(id);
+    // drawHelper(transStrokes[id][transStrokes[id].length - 1])
 }
 
 function refresh(id) {
     const ctx = document.getElementById('top-canvas').getContext("2d");
     ctx.fillStyle = "white"
-    ctx.fill(getPathWithId(id))
-    // redrawTransStrokesTile(id)
-    redrawTileStrokes(id) // redraw solid strokes
-    redrawTileDots(id)
+    ctx.fill(getTileWithId(id).path)
+    redrawTransStrokesTile(id)
 }
 
 export function setDragging(input) {
@@ -57,27 +57,40 @@ export function redrawTransparentStrokes(offsetY) {
     }
 }
 
-export function redrawTransStrokesTile(tileId, offsetY) {
-    if (!offsetY) offsetY = 0
-    const ctx = document.getElementById('top-canvas').getContext("2d");
-    if (transStrokes[tileId]) {
-        for (var i = 0; i < transStrokes[tileId].length; ++i) {
-            var path = transStrokes[tileId][i];
 
-            if (path.length < 1)
-                continue; // Need at least two points to draw a line.
+export function redrawTransStrokesTile(tileId, offsetY = 0) {
+    const currTile = offsetY ? findTile1(tileId, offsetY, transStrokes) : undefined;
+    const ctx = document.getElementById('top-canvas').getContext('2d');
+    const temp = transStrokes[tileId]?.slice() ?? [];
 
-            ctx.beginPath();
-            ctx.moveTo(path[0].x, path[0].y - offsetY);
-            for (var j = 1; j < path.length; ++j) {
-                ctx.strokeStyle = path[j].col;
-                ctx.lineWidth = path[j].lw
-                ctx.lineTo(path[j].x, path[j].y - offsetY);
-            }
-            ctx.stroke();
+    temp.forEach(path => {
+        if (offsetY !== 0 && path.y0 < offsetY) return;
+        if (path.length < 1) return;
+
+        if (offsetY !== 0 && currTile) {
+            transStrokes[currTile.id] ??= [];
+            transStrokes[currTile.id].push([{x: path[0].x, y: path[0].y - offsetY}]);
         }
-    }
+
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y - offsetY);
+
+        for (const {x, y, col, lw} of path.slice(1)) {
+            ctx.strokeStyle = col;
+            ctx.lineWidth = lw;
+            ctx.lineTo(x, y - offsetY);
+
+            if (offsetY !== 0 && currTile) {
+                transStrokes[currTile.id][transStrokes[currTile.id].length - 1].push({x, y: y - offsetY, col, lw});
+            }
+        }
+
+        ctx.stroke();
+    });
+
+    redrawTileStrokes(tileId);
 }
+
 
 export function getDragging() {
     return dragging
