@@ -397,7 +397,7 @@ function App() {
             onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, touchSpeed)
             if (event.touches && event.touches[0] && typeof event.touches[0]["force"] !== "undefined") {
                 if (event.touches[0]["force"] > 0) {
-                    document.getElementById("angle").innerHTML = event.touches[0]["force"]
+                    // document.getElementById("angle").innerHTML = event.touches[0]["force"]
                 }
             }
         } if (doubleTouch) {
