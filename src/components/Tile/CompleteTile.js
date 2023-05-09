@@ -31,7 +31,7 @@ let completeTileOn = true;
 
 const PADDING = 35 // account for curves that go past the vertex points (startX, startY,...)
 let internalOffset = 0;
-let fillType = "combination"
+let fillType = "first"
 
 export function setInternalOffset(input) {
     internalOffset = input
@@ -40,13 +40,11 @@ export function setInternalOffset(input) {
 export function completeTile(currTile, currTiling, invisCol) {
     if (completeTileOn) {
         currTile.filled = true;
-        console.log('id ' + currTile.id)
-
         fillTileColors(currTile)
-        currTile.fillType = getFillType(currTiling.fillType)// fillType
-        setFillType(currTile.fillType)
+        // currTile.fillType = getFillType(currTiling.fillType)// fillType
+        // setFillType(currTile.fillType)
         if (fillType === "combination") fillEachPixel(currTile)
-        else if (fillType === "first") fillTile(currTile, "first", false)
+        else if (fillType === "first") fillTile(currTile, "first", true)
         else if (fillType === "last") fillTile(currTile, "last", false)
         else if (fillType === "complem") fillTile(currTile, "firstC", false)
         else if (fillType === "blur") blurTile(currTile)

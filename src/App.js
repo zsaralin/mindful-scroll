@@ -230,7 +230,6 @@ function App() {
                 tooFast = true;
             } else {
                 currTile.strokeType = currTiling.strokeType
-                console.log('asdas' + currTile.strokeType)
                 pushStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, getLineWidth(), currTiling.strokeType);
                 startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), getLineWidth(), currTiling.strokeType);
             }
@@ -521,14 +520,14 @@ function App() {
         sendingAlert = false;
     }
 
-    let alertInterval = 0//Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
+    let alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
     let count = 0;
 
     async function sendAlert() {
         if (!isPanelOn() && !sendingAlert) {
             if (count === alertInterval) {
                 generateAlert();
-                alertInterval = 0//Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+                alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
                 count = 0;
             } else count++
         }

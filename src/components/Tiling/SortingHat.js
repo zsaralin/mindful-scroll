@@ -1,37 +1,37 @@
-const weightStrings = {
-    1: "combination",
-    2: "first",
-    3: "last",
-    4: "complem",
-    5: "blur",
-    6: "blurFill",
-    7: "meanHue",
-    8: "inverseMean",
-    9: "radialGradient",
-    10: "diagGradient",
-    11: "horizGradient",
-    12: "vertGradient",
-    13: "dither1",
-    14: "dither2",
-    15: "dither3",
-    16: "dither4",
-    17: "dither5",
-    18: "mostUsed",
-    19: "leastUsed",
-    20: "pattern",
-    21: "stripesH",
-    22: "stripesV",
-    23: "pixel3",
-    24: "pixel4",
-    25: "pixel5",
-    26: "pixel7",
-    27: "pixel8",
-    // 28: "fillAnim",
-    // 29: "inverseComb"
-}
+const weightStrings = [
+    "combination",
+    "first",
+    "last",
+    "complem",
+    // "blur",
+    "blurFill",
+    "meanHue",
+    "inverseMean",
+    "radialGradient",
+    "diagGradient",
+    "horizGradient",
+    "vertGradient",
+    "dither1",
+    "dither2",
+    "dither3",
+    "dither4",
+    "dither5",
+    "mostUsed",
+    "leastUsed",
+    "pattern",
+    "stripesH",
+    "stripesV",
+    "pixel3",
+    "pixel4",
+    "pixel5",
+    "pixel7",
+    "pixel8",
+    // "fillAnim",
+    // "inverseComb"
+];
 
 // reg, fuzzy, transparent, dotted
-const strokeWeights = [.7,.1,.1,.1]
+const strokeWeights = [0,0,0,1]//[.7,.1,.1,.1]
 
 export function setTiling(tiling) {
     const strokeType = getStrokeType()
@@ -73,8 +73,8 @@ export function getStrokeType(){
         return "dotted"
     }
 }
-
 export function getFillType(weights){
+
     const sumOfWeights = weights.reduce((acc, curr) => acc + curr);
     const randomNum = Math.random() * sumOfWeights;
     let weightSum = 0;
@@ -82,9 +82,9 @@ export function getFillType(weights){
     for (let i = 0; i < weights.length; i++) {
         weightSum += weights[i];
         if (randomNum < weightSum) {
-            return weightStrings[i + 1];
+            return weightStrings[i];
         }
     }
 
-    return weightStrings[weights.length-1];
+    return weightStrings[weightStrings.length-1];
 }
