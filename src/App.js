@@ -549,6 +549,7 @@ function App() {
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
             <div className="wrapper" id = "wrapper">
+                <div id = "canvas-wrapper">
                 <canvas ref={canvas} id="fill-canvas"></canvas>
                 <div id="dots"></div>
                 <canvas id="top-canvas" style={{display: '',}}></canvas>
@@ -566,6 +567,7 @@ function App() {
                         onTouchMove={onTouchMove}
                 >
                 </canvas>
+                </div>
                 {/*<div id = "overlay">*/}
                 {/*    <div id = 'overlayTop'> </div>*/}
                 {/*    <div id = 'overlayBottom'> </div>*/}
