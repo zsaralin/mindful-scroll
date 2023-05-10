@@ -62,7 +62,7 @@ export function completeTile(currTile, currTiling, invisCol) {
         else if (fillType === "dither5") dither(currTile, 5)
         else if (fillType === "mostUsed") fillTile(currTile, "most", true)
         else if (fillType === "leastUsed") fillTile(currTile, "least", true)
-        // else if (fillType === "inverseComb") fillInverseStrokes(currTile)
+        else if (fillType === "inverseComb") fillInverseStrokes(currTile)
         else if (fillType === "pattern") fillPattern(currTile)
         else if (fillType === "stripesH") fillStripesHorizGrad(currTile)
         else if (fillType === "stripesV") fillStripesVertGrad(currTile)
