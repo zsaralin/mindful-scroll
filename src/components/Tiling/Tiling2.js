@@ -124,7 +124,7 @@ function drawShape(yMin, yMax, pathDict, shape = null) {
 // }
 
 export function clearCanvas() {
-    const canvasIds = ['off-canvas', 'canvas', 'tiling-canvas', 'invis-canvas' ,'fill-canvas', 'top-canvas'];
+    const canvasIds = ['off-canvas', 'tiling-canvas', 'invis-canvas' ,'fill-canvas', 'top-canvas'];
 
     canvasIds.forEach(id => {
         const canvas = document.getElementById(id);

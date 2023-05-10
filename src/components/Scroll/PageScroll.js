@@ -42,20 +42,13 @@ export function setRefreshed(i){
 }
 
 export const redrawCanvas = async () => {
-    const canvas = document.getElementById("canvas");
-    const fillCanvas = document.getElementById("fill-canvas")
-    const invisCanvas = document.getElementById("invis-canvas")
-    const tilingCanvas = document.getElementById("tiling-canvas")
-    const topCanvas = document.getElementById("top-canvas")
-
-    const dots = document.getElementById("dots")
+    const wrap = document.getElementById("wrapper")
 
     let offsetY = getOffsetY()
     if (offsetY > topSecondTiling() - TOP_PAGE_SPACE ) {
         // await delay(.5);
         drawTwoTilings()
         copyToOnScreen(document.getElementById('off-canvas'));
-        // await delay(.5);
 
         redrawStrokes(offsetY ) // - 200
         // redrawDots(offsetY ) // - 200
@@ -71,9 +64,7 @@ export const redrawCanvas = async () => {
 
 
     } else {
-        [invisCanvas, canvas, fillCanvas, tilingCanvas, topCanvas, dots].forEach(canvas => {
-            canvas.style.transform = `translate(0,-${offsetY}px)`;
-        });
+        wrap.style.transform = `translate(0,-${offsetY}px)`;
         moveEffect(refreshed, offsetY, prevOffsetY)
     }
 }
