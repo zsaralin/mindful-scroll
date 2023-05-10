@@ -43,17 +43,19 @@ export function setRefreshed(i){
 
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
+    const canv = document.getElementById("canvas-wrapper")
 
     let offsetY = getOffsetY()
     if (offsetY > topSecondTiling() - TOP_PAGE_SPACE ) {
         // await delay(.5);
-        drawTwoTilings()
-        copyToOnScreen(document.getElementById('off-canvas'));
+        // drawTwoTilings()
+        // copyToOnScreen(document.getElementById('off-canvas'));
+        canv.style.transform = `translate(0,-${offsetY}px)`;
 
-        redrawStrokes(offsetY ) // - 200
+        // redrawStrokes(offsetY ) // - 200
         // redrawDots(offsetY ) // - 200
-        redrawCompleteTiles(offsetY)
-        redrawActiveTiles(offsetY)
+        // redrawCompleteTiles(offsetY)
+        // redrawActiveTiles(offsetY)
         // redrawTransparentStrokes(offsetY )
         // redrawDottedStrokes(offsetY)
         // redrawBlur(offsetY)
@@ -65,6 +67,7 @@ export const redrawCanvas = async () => {
 
     } else {
         wrap.style.transform = `translate(0,-${offsetY}px)`;
+
         moveEffect(refreshed, offsetY, prevOffsetY)
     }
 }
