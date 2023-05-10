@@ -129,7 +129,7 @@ function App() {
     }
 
     useEffect(() => {
-        const canvasIds = ['tiling-canvas', 'off-canvas', 'invis-canvas', 'canvas', 'fill-canvas', 'top-canvas',];
+        const canvasIds = ['tiling-canvas', 'off-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas',];
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
@@ -548,10 +548,8 @@ function App() {
             <div id="angle" style={{position: "absolute", top: 0, display: 'none'}}> {angle}</div>
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
-            <div className="wrapper">
-
-                <canvas id="fill-canvas"></canvas>
-                <canvas ref={canvas} id="canvas"></canvas>
+            <div className="wrapper" id = "wrapper">
+                <canvas ref={canvas} id="fill-canvas"></canvas>
                 <div id="dots"></div>
                 <canvas id="top-canvas" style={{display: '',}}></canvas>
                 <canvas id="off-canvas" style={{display: 'none',}}
@@ -572,12 +570,13 @@ function App() {
                 {/*    <div id = 'overlayTop'> </div>*/}
                 {/*    <div id = 'overlayBottom'> </div>*/}
                 {/*</div>*/}
-                <div id="hidden">
-                    <div id = "hiddenTop"></div>
-                    <div id = "hiddenBottom"></div>
-                </div>
-                <Bubble/>
+
             </div>
+            <div id="hidden">
+                <div id = "hiddenTop"></div>
+                <div id = "hiddenBottom"></div>
+            </div>
+            <Bubble/>
         </div>
     );
 }
