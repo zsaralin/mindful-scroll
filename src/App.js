@@ -520,14 +520,14 @@ function App() {
         sendingAlert = false;
     }
 
-    let alertInterval = 0//Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
+    let alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
     let count = 0;
 
     async function sendAlert() {
         if (!isPanelOn() && !sendingAlert) {
             if (count === alertInterval) {
                 generateAlert();
-                alertInterval = 0//Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+                alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
                 count = 0;
             } else count++
         }

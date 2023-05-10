@@ -44,7 +44,7 @@ export function completeTile(currTile, currTiling, invisCol) {
         // currTile.fillType = getFillType(currTiling.fillType)// fillType
         // setFillType(currTile.fillType)
         if (fillType === "combination") fillEachPixel(currTile)
-        else if (fillType === "first") fillTile(currTile, "first", true)
+        else if (fillType === "first") fillTile(currTile, "first", false)
         else if (fillType === "last") fillTile(currTile, "last", false)
         else if (fillType === "complem") fillTile(currTile, "firstC", false)
         else if (fillType === "blur") blurTile(currTile)
