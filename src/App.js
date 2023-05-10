@@ -154,7 +154,6 @@ function App() {
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
         currTile = getTile(prevScaledY, invisCol)
         currTiling = getTiling(y, invisCol)
-        // if(currTiling !== pre)
         if(currTiling.colourPal.length === 0){
             if(firstClick) {
                 currTiling.colourPal = getColourPal()
@@ -162,9 +161,10 @@ function App() {
             }
             else {
                 currTiling.colourPal = generateColourPal().cols
-                setColourPal(currTiling.colourPal)
             }
         }
+        setColourPal(currTiling.colourPal)
+
 
         currColor = getCurrColor()
         stopColorChange()
