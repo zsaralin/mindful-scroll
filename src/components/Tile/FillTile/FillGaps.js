@@ -11,6 +11,7 @@ import {invert, invertHue, isSimilar, rgbToHsl} from "../../Effects/ColorTheory"
 import {clearTile, fillTile} from "./FillTile";
 import {getOffsetY} from "../../Scroll/Offset";
 import {getCurrColor, setCurrColor,} from "../../Stroke/Color/StrokeColor";
+import {smallOffset} from "../../Tiling/Tiling3";
 
 export function fillEachPixel(tile) {
     let ctx = document.getElementById('top-canvas').getContext('2d');

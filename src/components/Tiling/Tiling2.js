@@ -4,11 +4,12 @@ import {getRandomShape} from "../Tile/Shape";
 import {getBoundsTiling} from "./TilingBounds";
 import {getOffsetY} from "../Scroll/Offset";
 import {SHAPE_COLOR, TOP_PAGE_SPACE} from "../Constants";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 import {getGrid, getTilingProp, minMaxTile,} from "./TilingProperties";
 import {getColourPal, getRandomHSV} from "../Stroke/Color/StrokeColor";
 import {ditherTiling} from "./DitherTiling";
 import {setTiling} from "./SortingHat";
+import {prevOffsetY} from "../Scroll/PageScroll";
 
 let thisBottom; // bottom of current tiling
 let nextTop; // top of next tiling
@@ -57,25 +58,33 @@ export function addTwoTilings(oldTilingArr) {
     if (!tiling2) {
         let tiling1 = makeRandomTiling(oldTilingArr?.[0] ?? '');
         tiling1.order = numTilings;
-        numTilings ++;
+        numTilings++;
         tilingArr.push(tiling1)
         helperTiling(tiling1);
         // drawShape(yMin, yMax, pathArr[0].pathDict, oldTilingArr ? [shapePath, dimension] : null);
-        thisBottom = yMax + offsetY + SPACE
+        thisBottom = yMax -yMin + TOP_SPACE + SPACE
+        console.log('BOTTOM FIRST ' + thisBottom)
+
 
     } else { // use information from second tiling
         initTiling(tiling2)
+        console.log('HEASDASD')
         // drawShape(yMin - TOP_PAGE_SPACE, yMax, pathArr[0].pathDict)
-        thisBottom = yMax - yMin + SPACE + TOP_PAGE_SPACE
+        // thisBottom = yMax + SPACE //+ TOP_PAGE_SPACE
     }
-    tiling2 = makeRandomTiling(oldTilingArr ? oldTilingArr[1] : '');
-    tilingArr.push(tiling2)
+    // tiling2 = makeRandomTiling(oldTilingArr ? oldTilingArr[1] : '');
+    // tilingArr.push(tiling2)
+    //
+    // helperTiling(tiling2)
+    // thisBottom = yMax + SPACE
+    // drawBottomTiling()
 
-    helperTiling(tiling2)
     nextTop = thisBottom //top of curr tiling is bottom of tilingBottom
+    // drawBottomTiling()
+
 }
 
-function initTiling(segArr){
+function initTiling(segArr) {
     let tiling = {segArr: [], pathDict: {}, grid: [], order: 0}
     tiling.segArr = segArr
     tiling.pathDict = getTilingPathDict(segArr, offsetX, -yMin + TOP_PAGE_SPACE);
@@ -88,12 +97,13 @@ function initTiling(segArr){
     tiling.orien = orien;
     tiling.colourPal = getColourPal();
     tiling2.order = numTilings;
-    numTilings ++;
+    numTilings++;
     pathArr.push(tiling);
     tilingArr.push(tiling)
 }
 
 let shapePath, dimension;
+
 function drawShape(yMin, yMax, pathDict, shape = null) {
     // console.log(' LOOK IEEEE ' + pathDict)
     if (shape == null) {
@@ -106,10 +116,10 @@ function drawShape(yMin, yMax, pathDict, shape = null) {
         filled: false,
         firstCol: 'white',
         inPath: [],
-        id : uuidv4(),
+        id: uuidv4(),
         colors: [],
         allColors: [],
-        segArr : undefined,
+        segArr: undefined,
     };
 }
 
@@ -124,16 +134,16 @@ function drawShape(yMin, yMax, pathDict, shape = null) {
 // }
 
 export function clearCanvas() {
-    const canvasIds = ['off-canvas', 'tiling-canvas', 'invis-canvas' ,'fill-canvas', 'top-canvas'];
+    const canvasIds = ['off-canvas', 'tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
 
     canvasIds.forEach(id => {
         const canvas = document.getElementById(id);
-        canvas.getContext("2d").clearRect(0, 0, window.innerWidth, window.innerHeight * 5);
-        if(id === 'fill-canvas'  || id === "canvas" || id === "top-canvas"){
+        canvas.getContext("2d").clearRect(0, 0, window.innerWidth, window.innerHeight * 7);
+        if (id === 'fill-canvas' || id === "canvas" || id === "top-canvas") {
             let ctx = canvas.getContext("2d");
             ctx.fillStyle = "transparent"
             ctx.lineJoin = ctx.lineCap = "round"
-        ctx.fillRect(0, 0, canvas.width, canvas.height )
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
         }
     });
 
@@ -141,7 +151,7 @@ export function clearCanvas() {
 }
 
 export function drawTwoTilings(tilingArr) {
-    clearCanvas()
+    // clearCanvas()
     addTwoTilings(tilingArr)
     pathArr.forEach(tiling => {
         drawTiling(tiling)
@@ -175,16 +185,57 @@ export function getTilingIndex2(y) {
     //     }
     // }
 }
-// used scaledY
-export function getTile(y, invisCol) {
-    if (invisCol) {
-        let currTiling = pathArr[(getTilingIndex2(y))].pathDict
-        return currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
-    }
-}
 
-export function getTiling(y1, invisCol) {
-    if (invisCol) {
-        return pathArr[(getTilingIndex2(y1 + getOffsetY()))]
-    }
+// used scaledY
+// export function getTile(y, invisCol) {
+//     if (invisCol) {
+//         let currTiling = pathArr[(getTilingIndex2(y))].pathDict
+//         return currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
+//     }
+// }
+//
+// export function getTiling(y1, invisCol) {
+//     if (invisCol) {
+//         return pathArr[(getTilingIndex2(y1 + getOffsetY()))]
+//     }
+// }
+
+export function drawBottomTiling() {
+    nextTop = thisBottom + SPACE
+
+    console.log('HEY')
+    let b = makeRandomTiling();
+    // tilingArr.push(b)
+
+    [xMin, xMax, yMin, yMax] = getBoundsTiling(b);
+    // tilingArr.push(b)
+
+    offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
+    console.log('yMin ' + yMin)
+    offsetY = thisBottom - yMin  //+ offsetY) //+ getOffsetY() + prevOffsetY;
+    let tiling = {segArr: [], pathDict: {}, grid: []}
+    tiling.segArr = b
+    tiling.pathDict = getTilingPathDict(b, offsetX, offsetY);
+    tiling.grid = getGrid(tiling.pathDict)
+    tiling.bounds = [xMin, xMax, yMin, yMax]
+
+    const [midSeg, vert, orien] = getTilingProp(tiling.pathDict);
+    tiling.midSeg = midSeg;
+    tiling.vert = vert;
+    tiling.orien = orien;
+    tiling.colourPal = [];
+    tiling.order = numTilings;
+    numTilings++;
+    // nextTop = thisBottom
+    pathArr.push(tiling)
+    // tilingArr.push(tiling2)
+    if(pathArr.length ===3){
+    pathArr.shift()}
+
+    // thisBottom = yMax - yMin +SPACE
+    thisBottom = yMax - yMin + SPACE
+    // nextTop = thisBottom
+
+    console.log('AFTER ' + thisBottom)
+    drawTiling(tiling)
 }

@@ -50,14 +50,15 @@ function getShades(col) {
 
 function setCol1(tile) {
     let equ = 1/6
-    // let weights = [equ, equ, equ, equ, equ, equ];
-    let weights = [0, 0, 0, 0, 0, 1];
-
+    let weights = [equ, equ, equ, equ, equ, equ];
+    // let weights = [0, 0, 0, 0, 0, 1];
+    console.log('HEY')
     let randomNum = Math.random();
     let cumulativeWeight = 0;
     for (let i = 0; i < weights.length; i++) {
         cumulativeWeight += weights[i];
         if (randomNum < cumulativeWeight) {
+            console.log(`I is ${i}`)
             switch (i) {
                 case 0:
                     console.log('case 0')

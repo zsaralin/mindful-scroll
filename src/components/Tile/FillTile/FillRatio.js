@@ -1,9 +1,10 @@
-import {getOffsetY} from "../../Scroll/PageScroll";
+import {getOffsetY} from "../../Scroll/Offset";
 import {getCurrColor} from "../../Stroke/Color/StrokeColor";
 import {getLineWidth} from "../../Stroke/StrokeWidth";
 import {useState} from "react";
 
 import {FILL_RATIO, TOP_CANV} from "../../Constants";
+import {smallOffset} from "../../Tiling/Tiling3";
 
 let BB_PADDING = 35; // bounding box padding
 let fillMin = FILL_RATIO
@@ -19,11 +20,11 @@ export function getTotalPixels(currTile) {
     for (let x = startX; x < endX; x += 1) {
         for (let y = startY; y < endY; y += 1) {
             if (isCircleInPath(currTile.path, x, y)) {
-                currTile.inPath.push([x, y])
+                currTile.inPath.push([x, y - smallOffset])
             }
         }
     }
-    // console.log('TOTAL PIXELS ' + currTile.bounds)
+    console.log('TOTAL PIXELS ' + currTile.inPath.length)
 
     return currTile.inPath.length
 }
@@ -39,11 +40,12 @@ export function getFillRatio(currTile) {
     let ctx = document.getElementById(strokeCanvas).getContext("2d")
     let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixels(currTile) : currTile.inPath.length] // [filledPixels, totalPixels]
     currTile.inPath.forEach(i => {
-        let col = ctx.getImageData(i[0], i[1], 1, 1).data.toString()
+        let col = ctx.getImageData(i[0], i[1], 1, 1, {willReadFrequently: true}).data.toString()
         if (col !== '0,0,0,0' && col !== '255,255,255,255') {
             fillRatio[0]++
         }
     })
+    console.log(`fillRatio ${fillRatio[0] / fillRatio[1]}`)
     return fillRatio[0] / fillRatio[1]
 }
 

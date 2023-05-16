@@ -5,6 +5,7 @@ import {leastUsed, mostUsed} from "../../Effects/CommonColours";
 import {strokeArr} from "../../Stroke/StrokeType/StrokeArr";
 import {redrawTransStrokesTile, refreshTrans} from "../../Stroke/StrokeType/TransparentStroke";
 import {redrawDottedStrokesTile, refreshDotted} from "../../Stroke/StrokeType/DottedStroke";
+import {smallOffset} from "../../Tiling/Tiling3";
 
 function getCol(tile, str, inputCol){
     let tempCol;
@@ -27,7 +28,9 @@ export function fillTile(tile, str, under, inputCol){
     fillTileColors(tile)
     let canvStr = under ? 'fill-canvas' : 'top-canvas'
     let ctx = document.getElementById(canvStr).getContext('2d');
-    let col = ctx.fillStyle = tile.fillColors =  getCol(tile, str, inputCol)
+    ctx.save()
+    ctx.translate(0,-smallOffset)
+    let col = ctx.fillStyle =  getCol(tile, str, inputCol)
     ctx.fill(tile.path)
     tile.filled = true;
     if(tile.strokeType === "transparent"){
@@ -37,6 +40,7 @@ export function fillTile(tile, str, under, inputCol){
     }
     ctx.fillStyle = "rgba(0,0,0,0)"
     // strokeArr[tile.id] = [] // delete strokes
+    ctx.restore()
 
     // pushCompleteTile(tile, col)
 }
