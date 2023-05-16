@@ -31,7 +31,7 @@ let completeTileOn = true;
 
 const PADDING = 35 // account for curves that go past the vertex points (startX, startY,...)
 let internalOffset = 0;
-let fillType = "first"
+let fillType = "fillAnim"
 
 export function setInternalOffset(input) {
     internalOffset = input
@@ -43,6 +43,7 @@ export function completeTile(currTile, currTiling, invisCol) {
         fillTileColors(currTile)
         // currTile.fillType = getFillType(currTiling.fillType)// fillType
         // setFillType(currTile.fillType)
+
         if (fillType === "combination") fillEachPixel(currTile)
         else if (fillType === "first") fillTile(currTile, "first", false)
         else if (fillType === "last") fillTile(currTile, "last", false)
@@ -66,7 +67,7 @@ export function completeTile(currTile, currTiling, invisCol) {
         else if (fillType === "pattern") fillPattern(currTile)
         else if (fillType === "stripesH") fillStripesHorizGrad(currTile)
         else if (fillType === "stripesV") fillStripesVertGrad(currTile)
-        // else if (fillType === "fillAnim") fillGrad(currTile, currTile.colors[0], "right", )
+        else if (fillType === "fillAnim") fillGrad(currTile, currTile.colors[0], "right", )
         else if (fillType === "pixel3") pixelated(currTile, 3)
         else if (fillType === "pixel4") pixelated(currTile, 4)
         else if (fillType === "pixel5") pixelated(currTile, 5)
@@ -74,6 +75,7 @@ export function completeTile(currTile, currTiling, invisCol) {
         else if (fillType === "pixel7") pixelated(currTile, 7)
 
         pushCompleteTile(currTile)
+
 
         if (invisCol && `rgb(${invisCol?.substring(0, 7)})` === SHAPE_COLOR) {
             shapeGlow(currTile)

@@ -1,3 +1,5 @@
+import {smallOffset} from "../Tiling/Tiling3";
+
 export function invertHue(col) {
     let hsl = col;
     if (typeof col === "string" && col?.slice(0, 4) === 'rgba') {
@@ -62,7 +64,7 @@ export function isSimilar(col0, col1, thres) {
 export function fillTileColors(tile) {
     let ctx = document.getElementById('top-canvas').getContext('2d');
     tile.inPath.forEach(i => {
-        let x = i[0], y = i[1]
+        let x = i[0], y = i[1] - smallOffset
         if (ctx.getImageData(x, y, 1, 1).data.toString() !== '0,0,0,0') {
             tile.allColors.push(ctx.getImageData(x, y, 1, 1))
         }

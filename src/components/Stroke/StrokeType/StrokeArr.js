@@ -9,7 +9,7 @@ import {pushDot, redrawTileDots} from "../Dot/DotArr";
 import {setStrokeType, startStroke} from "./StrokeType";
 import {drawTransStroke, getTransIndex, redrawTransStrokesTile, refreshStrokes} from "./TransparentStroke";
 import {redrawDottedStrokesTile} from "./DottedStroke";
-import {getTile} from "../../Tiling/Tiling2";
+import {getTile} from "../../Tiling/Tiling3";
 import {getOffsetY} from "../../Scroll/Offset";
 import {TOP_PAGE_SPACE} from "../../Constants";
 import {startDot} from "../Dot/DotType";

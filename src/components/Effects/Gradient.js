@@ -2,10 +2,12 @@ import {fillTileColors, isSimilar} from "./ColorTheory";
 import image from './noise.png'
 import {dither} from "./Dither";
 import {setCols} from "../Tile/FillTile/ColourFn";
+import {smallOffset} from "../Tiling/Tiling3";
 
 export function fillRadialGradient(tile, similar) {
     const ctx = document.getElementById('top-canvas').getContext('2d');
-
+    ctx.save()
+    ctx.translate(0,-smallOffset)
     const [xMin, xMax, yMin, yMax] = tile.bounds
     const midX = (xMax + xMin) / 2;
     const midY = (yMax + yMin) / 2
@@ -14,17 +16,16 @@ export function fillRadialGradient(tile, similar) {
 
     ctx.fillStyle = grd
     ctx.fill(tile.path)
-
-    // tile.fillColors = grd;
-
+    ctx.restore()
 }
 
 export function fillLinearGradient(tile, dir, similar) {
     let [xMin, xMax, yMin, yMax] = tile.bounds
-    console.log('hello')
     let midX = (xMax + xMin) / 2;
     let midY = (yMax + yMin) / 2
     let ctx = document.getElementById('top-canvas').getContext('2d');
+    ctx.save()
+    ctx.translate(0,-smallOffset)
     let grd;
     if (dir === "diag") grd = ctx.createLinearGradient(xMin, yMin, xMax, yMax)
     else if (dir === 'horiz') grd = ctx.createLinearGradient(xMin, midY, xMax, midY)
@@ -32,6 +33,8 @@ export function fillLinearGradient(tile, dir, similar) {
     addColorStop(tile, grd)
     ctx.fillStyle = grd
     ctx.fill(tile.path)
+    ctx.restore()
+
 }
 
 function addColorStop(tile, grd) {

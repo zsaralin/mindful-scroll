@@ -84,7 +84,6 @@ export function getCurrentPathDict(i) {
 }
 
 export function getTilingIndex(y) {
-    console.log('how long ' + tilingArrLength())
     for (let i = 0; i < tilingArrLength(); i++) {
         console.log('y ' + y + ' yMinArr ' + yMinArr[i] + 'ymaxarr ' + (yMaxArr[i] + yMaxArr[i - 1] - yMinArr[i]))
         if (yMaxArr.length > 0 && y >= yMinArr[i] && y <= yMaxArr[i] + yMaxArr[i - 1] - yMinArr[i]) {

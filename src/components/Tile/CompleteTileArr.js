@@ -1,7 +1,7 @@
 import {completeTile, fillFirstColour, recompleteTile} from "./CompleteTile";
 import {getOffsetY} from "../Scroll/PageScroll";
 import {getActiveTileArr} from "../Effects/Watercolor";
-import {getTile} from "../Tiling/Tiling2";
+import {getTile} from "../Tiling/Tiling3";
 import {getBoundsTile} from "../Tiling/TilingBounds";
 import {strokeArr} from "../Stroke/StrokeType/StrokeArr";
 import {getTotalPixels} from "./FillTile/FillRatio";
