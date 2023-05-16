@@ -130,7 +130,7 @@ function App() {
     }
 
     useEffect(() => {
-        const canvasIds = ['tiling-canvas', 'off-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas',];
+        const canvasIds = ['tiling-canvas','invis-canvas', 'fill-canvas', 'top-canvas'];
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
@@ -575,8 +575,6 @@ function App() {
                 <canvas ref={canvas} id="fill-canvas"></canvas>
                 <div id="dots"></div>
                 <canvas id="top-canvas" style={{display: '',}}></canvas>
-                <canvas id="off-canvas" style={{display: 'none',}}
-                ></canvas>
                 <canvas id="invis-canvas" style={{display: 'none',}}
                 ></canvas>
                 <canvas id="tiling-canvas" style={{display: '', background: '', zIndex: 2}}

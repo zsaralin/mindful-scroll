@@ -44,79 +44,27 @@ export function setRefreshed(i) {
 
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
-    const canv = document.getElementById("canvas-wrapper")
     let offsetY = getOffsetY()
     if (offsetY > top - TOP_PAGE_SPACE) {
         // await delay(.5);
-        // drawTwoTilings()
-        // copyToOnScreen(document.getElementById('off-canvas'));
-        // drawBottomTiling()
-        // copyToOnScreen(document.getElementById('off-canvas'));
-
-//         canv.style.transform = `translate(0,-${offsetY + prevOffsetY}px)`;
-
-        // redrawStrokes(offsetY ) // - 200
-        // redrawDots(offsetY ) // - 200
-        // redrawCompleteTiles(offsetY)
-        // redrawActiveTiles(offsetY)
-        // redrawTransparentStrokes(offsetY )
-        // redrawDottedStrokes(offsetY)
-        // redrawBlur(offsetY)
         prevOffsetY += offsetY
-        // canv.style.height = `${parseFloat(canv.style.height) + prevOffsetY}px`;
-        // wrap.style.height = `${parseFloat(wrap.style.height) + prevOffsetY}px`;
-        // let off = document.getElementById("off-canvas")
-        // off.getContext('2d').clearRect(0,0,off.width, off.height)
-        const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas', 'off-canvas'];
-        canvasIds.forEach(id => {
+        const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
+        await Promise.all(canvasIds.map(async (id) => {
             const canvas = document.getElementById(id);
-            const ctx = canvas.getContext('2d', {willReadFrequently: true});
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
             const buffer = document.createElement('canvas');
             buffer.width = window.innerWidth;
             buffer.height = window.innerHeight * 4;
-
-
             buffer.getContext('2d').drawImage(canvas, 0, -offsetY);
-            // if(id === "tiling-canvas") drawSecondTiling()
-            ctx.clearRect(0,0,window.innerWidth, window.innerHeight * 4)
-            // const imageData = ctx.getImageData(0, offsetY, window.innerWidth, window.innerHeight * 7, {willReadFrequently: true});
-
-            // off.width = canvas.width;
-            // off.height = canvas.height
-            // canvas.height += 3000
-
-            // ctx.putImageData(imageData, 0, 0);
-
+            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight * 4);
             ctx.drawImage(buffer, 0, 0);
-
-            // offCtx.drawImage(imageData, 0, 0);
-            // canvas.height += 3000
-            // ctx.drawImage(off, 0, 0);
-            // const ctx = canvas.getContext('2d');
-            // Store the current transformation matrix
-            // ctx.save();
-
-            // canvas.height = `${parseFloat(canvas.style.height) + prevOffsetY}px`;
-            // ctx.restore();
-        });
-
-        // drawBottomTiling()
+        }));
         drawSecondTiling()
-        // copyToOnScreen(document.getElementById('off-canvas'));
         setOffsetY(0)
         refreshed = true;
-
         redrawAnim()
-
-        // oldOffset = 0
-
-
     } else {
         wrap.style.transform = `translate(0,-${offsetY}px)`;
-        // console.log(offsetY)
-        // const currentHeight = parseFloat(wrap.style.height);
-        // wrap.style.height = `${currentHeight + offsetY}px`;
-        // wrap.style.height += `${offsetY}px`
         moveEffect(refreshed, offsetY, prevOffsetY)
     }
 }
