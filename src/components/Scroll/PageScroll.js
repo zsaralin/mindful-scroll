@@ -41,40 +41,53 @@ let refreshed = false;
 export function setRefreshed(i) {
     refreshed = i
 }
+let redrawing= false;
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
+
     if (offsetY > top - TOP_PAGE_SPACE) {
+        redrawing= true;
         // await delay(.1);
         prevOffsetY += offsetY
         const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
-        await Promise.all(canvasIds.map(async (id) => {
+        // Create a single buffer canvas outside the loop
+        const buffer = document.createElement('canvas');
+        buffer.width = window.innerWidth;
+        buffer.height = window.innerHeight * 4;
+        const bufferCtx = buffer.getContext('2d');
 
+// Create an array of promises for the canvas operations
+        const promises = canvasIds.map(id => {
             const canvas = document.getElementById(id);
             const ctx = canvas.getContext('2d', { willReadFrequently: true });
-            const buffer = document.createElement('canvas');
-            buffer.width = window.innerWidth;
-            buffer.height = window.innerHeight * 4;
-            buffer.getContext('2d').drawImage(canvas, 0, -offsetY);
-            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight * 4);
-            ctx.drawImage(buffer, 0, 0);
-
-        })).then(()=>{
-            // delay(.1);
-            drawSecondTiling()
-            setOffsetY(0)
-            refreshed = true;
-            redrawAnim()
+            return new Promise(resolve => {
+                bufferCtx.clearRect(0, 0, buffer.width, buffer.height);
+                bufferCtx.drawImage(canvas, 0, -offsetY);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(buffer, 0, 0);
+                resolve();
+            });
         });
+
+// Wait for all promises to resolve
+        await Promise.all(promises);
+        redrawing = false;
+// Perform the actions after all promises have resolved
+        drawSecondTiling();
+        setOffsetY(0);
+// refreshed = true;
+// redrawAnim();
         // drawSecondTiling()
         // setOffsetY(0)
         // refreshed = true;
         // redrawAnim()
     } else {
-        // if(!redrawing){
-        wrap.style.transform = `translate(0,-${offsetY}px)`;
-        moveEffect(refreshed, offsetY, prevOffsetY)}
-    // }
+        if (!redrawing) {
+            wrap.style.transform = `translate(0,-${offsetY}px)`;
+            moveEffect(refreshed, offsetY, prevOffsetY)
+        }
+    }
 }
 
 
