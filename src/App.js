@@ -161,14 +161,14 @@ function App() {
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
-        console.log(`tilingIndex ${index}`)
+        // console.log(`tilingIndex ${index}`)
         smallOffset = getOffSmall(index)
 
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
         currTile = getTile(y , invisCol)
         currTiling = getTiling(y , invisCol)
 
-        console.log(currTile + ' and ' + currTiling)
+        // console.log(currTile + ' and ' + currTiling)
         if(currTiling.colourPal.length === 0){
             if(firstClick) {
                 currTiling.colourPal = getColourPal()
@@ -185,7 +185,6 @@ function App() {
 
         currColor = getCurrColor()
         stopColorChange()
-        console.log('[' + currTile.bounds + '] and ' + (prevScaledY + smallOffset))
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
             let c = document.getElementById('top-canvas').getContext('2d')
             // c.save()
@@ -239,13 +238,6 @@ function App() {
                 removeLastDot(currTile)
                 dotRemoved = true;
             }
-            // hideColourPreview(cursorX, cursorY)
-            // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY)
-            // if (!currTile.filled && getFillRatio(currTile) > getFillMin()) {
-            //     currTile.filled = true;
-            //     // fillLinearGradient(currTile, "horiz")
-            //     completeTile(currTile, invisCol)
-            // }
             if ((isShrinkStroke() && (Math.abs(speed[0]) > 10 || Math.abs(speed[1]) > 10))) {
                 currTile.strokeType = currTiling.strokeType
                 pushShrinkingLine(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, currTiling.strokeType);
@@ -343,7 +335,12 @@ function App() {
 
     let touchType;
 
+    let isDrawing = false;
+    let requestId;
+
+
     function onTouchStart(event) {
+        isDrawing = true;
         touchType = event.touches[0]?.touchType;
         if (event.touches.length === 1) {
             if (event.touches[0]?.touchType === "stylus") {
@@ -378,7 +375,7 @@ function App() {
 
         } else if (event.touches.length >= 2) {
             removeLastStroke(event.touches[0], event.touches[1], getOffsetY())
-            moveFeedback()
+            // moveFeedback()
             singleTouch = false;
             doubleTouch = true;
         }
@@ -398,6 +395,8 @@ function App() {
     let firstMove = false;
 
     function onTouchMove(event) {
+        if(isDrawing) requestId = requestAnimationFrame(() => onTouchMove(event));
+
         let r = getLineWidth() / 2
 
         const touch0X = event.touches[0].pageX - r;
@@ -450,7 +449,11 @@ function App() {
                 onStrokeEnd()
             }
         }
-
+        isDrawing = false;
+        if (requestId) {
+            cancelAnimationFrame(requestId);
+            requestId = undefined;
+        }
         singleTouch = false;
         doubleTouch = false;
         endScroll();
