@@ -70,7 +70,6 @@ export function drawTiling(tiling) {
     let tilingCtx = document.getElementById('tiling-canvas').getContext('2d');
     let offCtx = document.getElementById('off-canvas').getContext('2d');
     tilingCtx.fillStyle = offCtx.fillStyle = "transparent";
-
     var invisCtx = document.getElementById('invis-canvas').getContext('2d');
 
     tilingCtx.lineWidth = offCtx.lineWidth = getTileWidth();

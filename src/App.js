@@ -17,10 +17,10 @@ import {
     removeLastStroke,
     redrawTileStrokes,
 } from './components/Stroke/StrokeType/StrokeArr'
-import {addToTilingArr, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
+import {addToTilingArr, getTilingIndex, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
 import {getOffsetY} from './components/Scroll/Offset'
 import {
-    doScroll, endScroll,
+    doScroll, endScroll, prevOffsetY,
     redrawCanvas,
     redrawCanvas2, setUpCanvas, startScroll,
     triggerScroll
@@ -44,7 +44,7 @@ import Bubble, {
     showColourPreview, teleportFeedback,
 
 } from "./components/Bubble/Bubble";
-import {getTile, getTiling} from "./components/Tiling/Tiling2";
+import {bottom, getOffSmall, getTile, getTiling, tilingIndex} from "./components/Tiling/Tiling3";
 import {isSlowScrollOn} from "./components/Scroll/SlowScroll";
 import {startAutoScroll} from "./components/Scroll/AutoScroll";
 import {getHandChange, handChanged, isRightHand, setHand, setHandChanged} from "./components/Effects/Handedness";
@@ -125,16 +125,18 @@ function App() {
     let strokeMove = false;
 
     function toTrueY(y) {
-        return (y) + getOffsetY();
+        return (y) + getOffsetY() //+ prevOffsetY;
     }
 
     useEffect(() => {
-        const canvasIds = ['tiling-canvas', 'off-canvas', 'invis-canvas', 'canvas', 'fill-canvas', 'top-canvas',];
-        canvasIds.forEach(id => {
+        const canvasIds = ['tiling-canvas', 'off-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas',];
+        for (let i = 0; i < canvasIds.length ; i++) { // last three id in canvasIds
+            let id = canvasIds[i]
+
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight * 9;
-        });
+            canvas.height = window.innerHeight *7;
+        }
         for (let i = canvasIds.length - 1; i < canvasIds.length; i++) { // last three id in canvasIds
             let id = canvasIds[i]
             const ctx = document.getElementById(id).getContext("2d");
@@ -143,45 +145,65 @@ function App() {
         setUpCanvas()
         ctx = document.getElementById('invis-canvas').getContext("2d");
         d = SCROLL_DIST
+
+        const wrapper = document.getElementById("wrapper");
+
+        // wrapper.style.width = `${wrapper.offsetWidth}px`;
+        // wrapper.style.height = `${wrapper.offsetHeight}px`;
     }, []);
 
     let currColor;
     let firstClick = true;
     let lw;
+    let index;
+    let smallOffset;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
         lw = getLineWidth()
+        index = tilingIndex(prevScaledY)
+        console.log(`tilingIndex ${index}`)
+        smallOffset = getOffSmall(index)
+
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
-        currTile = getTile(prevScaledY, invisCol)
-        currTiling = getTiling(y, invisCol)
+        currTile = getTile(y , invisCol)
+        currTiling = getTiling(y , invisCol)
+
+        console.log(currTile + ' and ' + currTiling)
         if(currTiling.colourPal.length === 0){
             if(firstClick) {
                 currTiling.colourPal = getColourPal()
                 firstClick = false;
+                setColourPal(currTiling.colourPal)
             }
             else {
                 currTiling.colourPal = generateColourPal().cols
             }
         }
-        setColourPal(currTiling.colourPal)
+        if(prevTiling !== currTiling){
+        setColourPal(currTiling.colourPal)}
 
 
         currColor = getCurrColor()
         stopColorChange()
-
-
-        if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY)) {
-            sendMidAlert()
+        console.log('[' + currTile.bounds + '] and ' + (prevScaledY + smallOffset))
+        if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
+            let c = document.getElementById('top-canvas').getContext('2d')
+            // c.save()
+            // c.translate(0,-smallOffset)
+            // c.fillStyle = "blue"
+            // c.fill(currTile.path)
+            // c.restore()
+            // sendMidAlert()
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
             pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, "clover");
             // startDot(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, "transparent" );
 
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
-            // console.log('fillRatio ' + getFillRatio(currTile))
-            if (!currTile.watercolor && !currTile.filled && getFillRatio(currTile) > getFillMin()) {
-                completeTile(currTile, currTiling, invisCol)
-            }
+            // console.log('fillRatio ' + getFillRatio(currTile,smallOffset))
+            // if (!currTile.watercolor && !currTile.filled && getFillRatio(currTile ,smallOffset) > getFillMin()) {
+            //     completeTile(currTile, currTiling, invisCol, smallOffset)
+            // }
             currTile.colors.push(currColor)
 
             // let tiles = getOrienTiles(currTile, currTiling)
@@ -211,7 +233,7 @@ function App() {
             // rightMouseDown = true;
             // startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
         }
-        if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY) && isCircleInPath(currTile.path, scaledX, scaledY)) {
+        if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
             strokeMove = true;
             if(!dotRemoved) {
                 removeLastDot(currTile)
@@ -440,7 +462,7 @@ function App() {
 
     function onStrokeEnd() {
 
-        if (!currTile.watercolor && currTile && !currTile.filled && getFillRatio(currTile) > getFillMin()) {
+        if (currTile && !currTile.watercolor && currTile && !currTile.filled && getFillRatio(currTile, smallOffset) > getFillMin()) {
             currTile.filled = true;
             completeTile(currTile, currTiling, invisCol)
         }
@@ -548,10 +570,9 @@ function App() {
             <div id="angle" style={{position: "absolute", top: 0, display: 'none'}}> {angle}</div>
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
-            <div className="wrapper">
-
-                <canvas id="fill-canvas"></canvas>
-                <canvas ref={canvas} id="canvas"></canvas>
+            <div className="wrapper" id = "wrapper">
+                <div id = "canvas-wrapper">
+                <canvas ref={canvas} id="fill-canvas"></canvas>
                 <div id="dots"></div>
                 <canvas id="top-canvas" style={{display: '',}}></canvas>
                 <canvas id="off-canvas" style={{display: 'none',}}
@@ -568,16 +589,18 @@ function App() {
                         onTouchMove={onTouchMove}
                 >
                 </canvas>
+                </div>
                 {/*<div id = "overlay">*/}
                 {/*    <div id = 'overlayTop'> </div>*/}
                 {/*    <div id = 'overlayBottom'> </div>*/}
                 {/*</div>*/}
-                <div id="hidden">
-                    <div id = "hiddenTop"></div>
-                    <div id = "hiddenBottom"></div>
-                </div>
-                <Bubble/>
+
             </div>
+            <div id="hidden">
+                <div id = "hiddenTop"></div>
+                <div id = "hiddenBottom"></div>
+            </div>
+            <Bubble/>
         </div>
     );
 }

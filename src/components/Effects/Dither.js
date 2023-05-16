@@ -1,6 +1,7 @@
 import {getTotalPixels, isCircleInPath} from "../Tile/FillTile/FillRatio";
 import {ditherFill} from "./Gradient";
 import {BB_PADDING} from "../Constants";
+import {smallOffset} from "../Tiling/Tiling3";
 
 
 export function dither(tile, i) {
@@ -12,11 +13,15 @@ export function dither(tile, i) {
     let startY = tileDim[2] - BB_PADDING;
     let endX = tileDim[1] + BB_PADDING;
     let endY = tileDim[3] + BB_PADDING;
-
+    console.log(`smallOffset 2222 ${smallOffset}`)
+    // ctx.save()
+    // ctx.translate(0,-smallOffset)
     for (let x = startX; x < endX; x += i) {
-        for (let y = startY; y < endY; y += i) {
-            if (isCircleInPath(tile.path, x, y)) {
-                let d = ctx.getImageData(x, y, i, i).data;
+        for (let y = startY; y < endY ; y += i) {
+            if (isCircleInPath(tile.path, x, y )) {
+                // ctx.save()
+                // ctx.translate(0,-smallOffset)
+                let d = ctx.getImageData(x, y - smallOffset, i, i).data;
                 let oldR = d[0]
                 let oldG = d[1]
                 let oldB = d[2]
@@ -24,6 +29,7 @@ export function dither(tile, i) {
                 let newG = closestStep(255, steps, oldG);
                 let newB = closestStep(255, steps, oldB);
                 let data = new Uint8ClampedArray(i*i * 4);
+                // console.log('data: ' + d.toString())
                 for (let j = 0; j < i*i; j++) {
                     const index = j * 4;
                     data[index] = newR;
@@ -32,14 +38,18 @@ export function dither(tile, i) {
                     data[index + 3] = d[3];
                 }
                 const imageData = new ImageData(data, i, i); // change size to 2x2
-                ctx.putImageData(imageData, x, y);
+                ctx.putImageData(imageData, x, y - smallOffset );
                 let errR = oldR - newR;
                 let errG = oldG - newG;
                 let errB = oldB - newB;
-                distributeError(imageData, x, y, errR, errG, errB, ctx, i);
+                distributeError(imageData, x,  y - smallOffset , errR, errG, errB, ctx, i);
+                // ctx.restore()
+
             }
         }
     }
+    console.log('done')
+    // ctx.restore()
 }
 
 // Finds the closest step for a given value
@@ -76,5 +86,5 @@ function addError(img, factor, x, y, errR, errG, errB, ctx, i) {
     }
     const imageData = new ImageData(data, i, i); // change size to 2x2
 
-    ctx.putImageData(imageData, x, y);
+    ctx.putImageData(imageData, x, y );
 }

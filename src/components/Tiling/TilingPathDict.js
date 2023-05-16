@@ -2,6 +2,7 @@ import {getBoundsTile, getRows} from "./TilingBounds";
 import {tilingIndex} from "./TilingGenerator";
 import {EdgeShape, IsohedralTiling, tilingTypes} from "../../lib";
 import {v4 as uuidv4} from 'uuid';
+import {prevOffsetY} from "../Scroll/PageScroll";
 
 const SQUARE_INDEX = 67
 let transition1x = 1;
@@ -13,11 +14,12 @@ let transition = 1;
 let idDict = {}
 
 export function getTilingPathDict(segArr, offsetX, offsetY) {
+    // offsetY += prevOffsetY;
     let pathDict = {}
     let colorIndex = 0
     let cols = fillColourArray(segArr.length)
     if (tilingIndex === SQUARE_INDEX) transition = [0.98, 1.02][Math.floor(Math.random() * 2)]
-
+    console.log(`offset y is ${offsetY}`)
     for (let i = 0; i < segArr.length; i++) { // for each tile in tiling
         let path = new Path2D()
         let start = true;
@@ -59,7 +61,7 @@ export function getTilingPathDict(segArr, offsetX, offsetY) {
                 }
 
                 path.bezierCurveTo(
-                    seg[1].x + offsetX - transition1x, seg[1].y * transition1y + offsetY,
+                    seg[1].x + offsetX - transition1x, seg[1].y * transition1y + offsetY ,
                     seg[2].x + offsetX - transition2x, seg[2].y * transition2y + offsetY,
                     seg[3].x + offsetX, seg[3].y + offsetY);
 

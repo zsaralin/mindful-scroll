@@ -1,4 +1,4 @@
-import {getTile} from "../Tiling/Tiling2";
+import {getTile, smallOffset} from "../Tiling/Tiling3";
 import {getCurrColor} from "../Stroke/Color/StrokeColor";
 import {LINE_WIDTH, TOP_CANV} from "../Constants";
 import {pushCompleteTile, redrawCompleteTile, redrawTiles} from "../Tile/CompleteTileArr";
@@ -33,7 +33,8 @@ export function watercolor(x, y, r2, currTile) {
     let startTime = new Date().getTime();
 
     let ctx = document.getElementById(canvStr).getContext('2d');
-
+    ctx.save()
+    ctx.translate(0,-smallOffset)
     animation = gsap.to({value: r2 ?? ORIG_RADIUS}, {
         duration: 10,
         value: targetRadius,
@@ -66,6 +67,7 @@ export function watercolor(x, y, r2, currTile) {
             }
         }
     });
+    ctx.restore()
 }
 
 function stopWatercolor() {

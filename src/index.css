@@ -15,12 +15,28 @@ code {
 
 }
 .wrapper {
-  position: relative;
+  position: relative; /* make the wrapper element a positioned container */
+  /*height:200px; !* set the height of the wrapper element *!*/
+  /*width:1000px; !* set the height of the wrapper element *!*/
+
+}
+
+#canvas-wrapper {
+  position: absolute; /* position the canvas wrapper element relative to the wrapper element */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .wrapper canvas {
-  position: absolute;
+  position: absolute; /* position the canvas wrapper element relative to the wrapper element */
+  will-read-frequently : true;
+
+  /*height: 100%; !* make the canvas element fill the entire height of the canvas wrapper element *!*/
+  /*width: 100%;*/
 }
+
 
 .introPage {
   position: absolute;
