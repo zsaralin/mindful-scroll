@@ -47,7 +47,7 @@ export const redrawCanvas = async () => {
     const canv = document.getElementById("canvas-wrapper")
     let offsetY = getOffsetY()
     if (offsetY > top - TOP_PAGE_SPACE) {
-        // await delay(.5);
+        await delay(.5);
         // drawTwoTilings()
         // copyToOnScreen(document.getElementById('off-canvas'));
         // drawBottomTiling()
@@ -145,14 +145,20 @@ export function startScroll(ySpeed, prevCursorY, cursorY) {
     hideColourPreview()
     // console.log(ySpeed)
     if ((ySpeed < 50 || !isSlowScrollOn()) && d === SCROLL_DIST) {
-        doScroll(cursorY, prevCursorY);
+        requestAnimationFrame(() => {
+            doScroll(cursorY, prevCursorY);
+        });
     } else {
         if (cursorY < prevCursorY) {
             d > 0 ? d -= SCROLL_DELTA * d : d = 0
-            doScroll(prevCursorY - d, prevCursorY);
+            requestAnimationFrame(() => {
+                doScroll(prevCursorY - d, prevCursorY);
+            });
         } else if (cursorY > prevCursorY) {
             d > 0 ? d -= SCROLL_DELTA * d : d = 0
-            doScroll(prevCursorY + d, prevCursorY);
+            requestAnimationFrame(() => {
+                doScroll(prevCursorY + d, prevCursorY);
+            });
         }
     }
 }

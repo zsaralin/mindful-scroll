@@ -30,13 +30,11 @@ export function fillGrad(currTile, col, dir, offsetI, smallOffsetI) {
     let ctx = document.getElementById(canvStr).getContext('2d');
     if (typeof smallOffsetI !== 'undefined' && smallOffsetI !== 0) return;
     let [xmin, xmax, ymin, ymax] = currTile.bounds
-    console.log()
     // animate the gradient position to the right
     let offset = offsetI ? offsetI : 0;
     let smallOff = typeof smallOffsetI !== 'undefined' ? getOffSmall(0) : smallOffset
     let activeFill = setInterval(() => {
         if(typeof smallOffsetI === 'undefined') {
-            console.log('HEY')
             activeDict[currTile.id] = {
                 currTile: currTile,
                 col: col,
@@ -75,8 +73,10 @@ export function fillGrad(currTile, col, dir, offsetI, smallOffsetI) {
         if (offset > 800) {
             delete activeDict[currTile.id]
             currTile.filled = true;
-            ctx.fillStyle = col;
-            ctx.fill(currTile.path);
+            if(activeDict[currTile.id] && (tilingsDrawn - activeDict[currTile.id].td) <= 1) {
+                ctx.fillStyle = col;
+                ctx.fill(currTile.path);
+            }
             clearInterval(activeFill)
         }
     }, 50); // adjust the interval time to control the smoothness of the animation
