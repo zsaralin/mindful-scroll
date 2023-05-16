@@ -45,7 +45,6 @@ export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
     if (offsetY > top - TOP_PAGE_SPACE) {
-        // await delay(.1);
         prevOffsetY += offsetY
         const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
         const buffer = document.createElement('canvas');
@@ -55,29 +54,14 @@ export const redrawCanvas = async () => {
         await Promise.all(canvasIds.map(async (id) => {
             if(id !== 'tiling-canvas') bufferCtx.clearRect(0, 0, buffer.width, buffer.height);
             const canvas = document.getElementById(id);
-            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            const ctx = canvas.getContext('2d');
             bufferCtx.drawImage(canvas, 0, -offsetY);
             ctx.clearRect(0, 0, window.innerWidth, window.innerHeight * 4);
             ctx.drawImage(buffer, 0, 0);
-
+            if(id === 'tiling-canvas') drawSecondTiling()
         })).then(()=>{
-            // delay(.1);
-            // drawSecondTiling()
-            // setOffsetY(0)
-            // refreshed = true;
-            // redrawAnim()
+            setOffsetY(0)
         });
-        drawSecondTiling()
-        setOffsetY(0)
-// Perform the actions after all promises have resolved
-//         drawSecondTiling();
-//         setOffsetY(0);
-        // drawSecondTiling();
-
-// refreshed = true;
-// redrawAnim();
-        // drawSecondTiling()
-        // setOffsetY(0)
         // refreshed = true;
         // redrawAnim()
     } else {
