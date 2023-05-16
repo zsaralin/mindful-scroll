@@ -71,14 +71,23 @@ export const redrawCanvas = async () => {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             const ctx = canvas.getContext('2d', {willReadFrequently: true});
+            var buffer = document.createElement('canvas');
+            buffer.width = window.innerWidth;
+            buffer.height = window.innerHeight * 5;
 
-            const imageData = ctx.getImageData(0, offsetY, window.innerWidth, window.innerHeight * 7, {willReadFrequently: true});
+
+            buffer.getContext('2d').drawImage(canvas, 0, -offsetY);
+            ctx.clearRect(0,0,window.innerWidth, window.innerHeight * 5)
+            // const imageData = ctx.getImageData(0, offsetY, window.innerWidth, window.innerHeight * 7, {willReadFrequently: true});
 
             // off.width = canvas.width;
             // off.height = canvas.height
             // canvas.height += 3000
 
-            ctx.putImageData(imageData, 0, 0);
+            // ctx.putImageData(imageData, 0, 0);
+
+            ctx.drawImage(buffer, 0, 0);
+
             // offCtx.drawImage(imageData, 0, 0);
             // canvas.height += 3000
             // ctx.drawImage(off, 0, 0);
@@ -134,7 +143,8 @@ let d = SCROLL_DIST
 export function startScroll(ySpeed, prevCursorY, cursorY) {
     startEffect(prevCursorY, cursorY)
     hideColourPreview()
-    if ((ySpeed < 10 || !isSlowScrollOn()) && d === SCROLL_DIST) {
+    // console.log(ySpeed)
+    if ((ySpeed < 50 || !isSlowScrollOn()) && d === SCROLL_DIST) {
         doScroll(cursorY, prevCursorY);
     } else {
         if (cursorY < prevCursorY) {

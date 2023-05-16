@@ -367,8 +367,8 @@ function App() {
             const scaledX = touch0X;
             const scaledY = toTrueY(touch0Y);
 
-            prevCursorX = !prevCursorX ? 0 : prevTouches[0].pageX
-            prevCursorY = !prevCursorY ? 0 : prevTouches[0].pageY
+            prevCursorX = !prevCursorX ? 0 : prevTouches[0]?.pageX
+            prevCursorY = !prevCursorY ? 0 : prevTouches[0]?.pageY
             // prevCursorX = !prevCursorX ? 0 : prevTouches[0].pageX
             // prevCursorY = !prevCursorY ? 0 : touch0Y
             onStrokeStart(scaledX, scaledY, touch0X, touch0Y)
@@ -429,7 +429,6 @@ function App() {
 
         prevCursorX = cursorX
         prevCursorY = cursorY
-        if(isDrawing) requestId = requestAnimationFrame(() => onTouchMove(event));
 
     }
 
