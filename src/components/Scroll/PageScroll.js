@@ -45,7 +45,7 @@ export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
     if (offsetY > top - TOP_PAGE_SPACE) {
-        wrap.style.transform = `translate(0,-${offsetY + 1}px)`;
+        wrap.style.transform = `translate(0,-${offsetY + 5}px)`;
 
         prevOffsetY += offsetY
         const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
