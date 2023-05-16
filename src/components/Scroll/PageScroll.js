@@ -47,20 +47,31 @@ export const redrawCanvas = async () => {
     if (offsetY > top - TOP_PAGE_SPACE) {
         prevOffsetY += offsetY
         const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
-        const buffer = document.createElement('canvas');
-        buffer.width = window.innerWidth;
-        buffer.height = window.innerHeight * 4;
-        const bufferCtx = buffer.getContext('2d');
-        await Promise.all(canvasIds.map(async (id) => {
-            if(id !== 'tiling-canvas') bufferCtx.clearRect(0, 0, buffer.width, buffer.height);
+        // const buffer = document.createElement('canvas');
+        // buffer.width = window.innerWidth;
+        // buffer.height = window.innerHeight * 4;
+        // const bufferCtx = buffer.getContext('2d');
+        const promises = canvasIds.map(async (id) => {
             const canvas = document.getElementById(id);
             const ctx = canvas.getContext('2d');
-            bufferCtx.drawImage(canvas, 0, -offsetY);
+
+            const newCanvas = document.createElement('canvas');
+            newCanvas.width = canvas.width;
+            newCanvas.height = canvas.height;
+            const newCtx = newCanvas.getContext('2d');
+            newCtx.drawImage(canvas, 0, -offsetY);
+
             ctx.clearRect(0, 0, window.innerWidth, window.innerHeight * 4);
-            ctx.drawImage(buffer, 0, 0);
-            if(id === 'tiling-canvas') drawSecondTiling()
-        })).then(()=>{
-            setOffsetY(0)
+            ctx.drawImage(newCanvas, 0, 0);
+
+            if (id === 'tiling-canvas') {
+                drawSecondTiling();
+            }
+        });
+
+        await Promise.allSettled(promises).then(() => {
+            setOffsetY(0);
+            wrap.style.transform = `translate(0,-${0}px)`
         });
         // refreshed = true;
         // redrawAnim()
