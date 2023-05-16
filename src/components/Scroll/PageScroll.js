@@ -47,7 +47,7 @@ export const redrawCanvas = async () => {
     const canv = document.getElementById("canvas-wrapper")
     let offsetY = getOffsetY()
     if (offsetY > top - TOP_PAGE_SPACE) {
-        await delay(.5);
+        // await delay(.5);
         // drawTwoTilings()
         // copyToOnScreen(document.getElementById('off-canvas'));
         // drawBottomTiling()
@@ -71,13 +71,14 @@ export const redrawCanvas = async () => {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             const ctx = canvas.getContext('2d', {willReadFrequently: true});
-            var buffer = document.createElement('canvas');
+            const buffer = document.createElement('canvas');
             buffer.width = window.innerWidth;
-            buffer.height = window.innerHeight * 5;
+            buffer.height = window.innerHeight * 4;
 
 
             buffer.getContext('2d').drawImage(canvas, 0, -offsetY);
-            ctx.clearRect(0,0,window.innerWidth, window.innerHeight * 5)
+            // if(id === "tiling-canvas") drawSecondTiling()
+            ctx.clearRect(0,0,window.innerWidth, window.innerHeight * 4)
             // const imageData = ctx.getImageData(0, offsetY, window.innerWidth, window.innerHeight * 7, {willReadFrequently: true});
 
             // off.width = canvas.width;
@@ -101,7 +102,7 @@ export const redrawCanvas = async () => {
 
         // drawBottomTiling()
         drawSecondTiling()
-        copyToOnScreen(document.getElementById('off-canvas'));
+        // copyToOnScreen(document.getElementById('off-canvas'));
         setOffsetY(0)
         refreshed = true;
 
@@ -127,12 +128,12 @@ function copyToOnScreen(offScreenCanvas) {
 
 export function setUpCanvas() {
     drawTwo()
-    copyToOnScreen(document.getElementById('off-canvas'));
+    // copyToOnScreen(document.getElementById('off-canvas'));
 }
 
 export function refreshPage() { // used when change tile width and size
     refreshTilings2()
-    copyToOnScreen(document.getElementById('off-canvas'));
+    // copyToOnScreen(document.getElementById('off-canvas'));
     // redrawStrokes(0)
     // redrawCompleteTiles()
     // redrawActiveTiles()

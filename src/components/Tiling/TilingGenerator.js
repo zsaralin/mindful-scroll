@@ -66,47 +66,28 @@ function getSegArr(tiling, edges) {
 
 let rem = 0;
 export function drawTiling(tiling) {
-    let pathDict = tiling.pathDict
-    let tilingCtx = document.getElementById('tiling-canvas').getContext('2d');
-    let offCtx = document.getElementById('off-canvas').getContext('2d');
-    tilingCtx.fillStyle = offCtx.fillStyle = "transparent";
-    var invisCtx = document.getElementById('invis-canvas').getContext('2d');
+    const pathDict = tiling.pathDict;
+    const tilingCanvas = document.getElementById('tiling-canvas');
+    const invisCanvas = document.getElementById('invis-canvas');
+    const tilingCtx = tilingCanvas.getContext('2d');
+    const invisCtx = invisCanvas.getContext('2d');
 
-    tilingCtx.lineWidth = offCtx.lineWidth = getTileWidth();
-    invisCtx.lineWidth = tilingCtx.lineWidth / 2;
+    // tilingCtx.fillStyle = 'transparent';
+    // tilingCtx.lineWidth = getTileWidth();
+    tilingCtx.strokeStyle = '#000';
 
-    tilingCtx.lineJoin = tilingCtx.lineCap = invisCtx.lineJoin = invisCtx.lineCap = offCtx.lineJoin = offCtx.lineCap = "round";
-    tilingCtx.strokeStyle = invisCtx.strokeStyle = offCtx.strokeStyle = '#000';
-
-    // // Define the gradient
-    let [xMin, xMax, yMin, yMax] = tiling.bounds; //getBoundsTiling2(tiling)
-    const gradient = offCtx.createLinearGradient(0, rem, 0, (yMax-yMin) + 150 + 75);
-    rem = yMax + yMax - yMin
-    // Add color stops to the gradient
-    // gradient.addColorStop(0, '#EBECF0');
-    // gradient.addColorStop(0.2, '#000');
-    // gradient.addColorStop(0.6, '#000');
-    // gradient.addColorStop(.8, '#fff');
-    // gradient.addColorStop(.81, '#000');
-    // gradient.addColorStop(0, '#EBECF0');
-    // gradient.addColorStop(.99, '#000');
-    // gradient.addColorStop(1, 'pink');
-
-
-    // Set the stroke style to the gradient
-    // tilingCtx.strokeStyle = invisCtx.strokeStyle = offCtx.strokeStyle  = gradient;
+    // invisCtx.lineWidth = tilingCtx.lineWidth / 2;
+    invisCtx.strokeStyle = '#000';
 
     for (let p in pathDict) {
-        offCtx.fill(pathDict[p].path)
-        offCtx.stroke(pathDict[p].path)
-        offCtx.closePath()
-        invisCtx.fillStyle = p
-        invisCtx.fill(pathDict[p].path)
-        invisCtx.stroke(pathDict[p].path)
-        invisCtx.closePath()
+        const path = pathDict[p].path;
+        tilingCtx.fill(path);
+        tilingCtx.stroke(path);
+        invisCtx.fillStyle = p;
+        invisCtx.fill(path);
+        invisCtx.stroke(path);
     }
 }
-
 
 export function makeRandomTiling(t) { //add tiling here option
     if(t){

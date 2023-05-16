@@ -44,7 +44,7 @@ import Bubble, {
     showColourPreview, teleportFeedback,
 
 } from "./components/Bubble/Bubble";
-import {bottom, getOffSmall, getTile, getTiling, tilingIndex} from "./components/Tiling/Tiling3";
+import {bottom, drawTwo, getOffSmall, getTile, getTiling, tilingIndex} from "./components/Tiling/Tiling3";
 import {isSlowScrollOn} from "./components/Scroll/SlowScroll";
 import {startAutoScroll} from "./components/Scroll/AutoScroll";
 import {getHandChange, handChanged, isRightHand, setHand, setHandChanged} from "./components/Effects/Handedness";
@@ -85,6 +85,7 @@ import {fillStripes} from "./components/Tile/FillTile/FillPattern";
 import {ditherTiling} from "./components/Tiling/DitherTiling";
 import {setTiling} from "./components/Tiling/SortingHat";
 import {drawJustDot, pushDot, removeLastDot} from "./components/Stroke/Dot/DotArr";
+import {getTileWidth} from "./components/Tiling/TileWidth";
 
 
 function App() {
@@ -113,7 +114,7 @@ function App() {
     let prevCursorX;
     let prevCursorY;
 
-    let d; // scroll distance (change in y)
+    let d = SCROLL_DIST// scroll distance (change in y)
 
     let insidePoly = [0, 0] // number of points inside and outside polygon
     let tooFast = false;
@@ -130,26 +131,23 @@ function App() {
 
     useEffect(() => {
         const canvasIds = ['tiling-canvas', 'off-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas',];
-        for (let i = 0; i < canvasIds.length ; i++) { // last three id in canvasIds
-            let id = canvasIds[i]
-
+        canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight *7;
-        }
-        for (let i = canvasIds.length - 1; i < canvasIds.length; i++) { // last three id in canvasIds
-            let id = canvasIds[i]
+            canvas.height = window.innerHeight * 4;
             const ctx = document.getElementById(id).getContext("2d");
-            ctx.lineCap = ctx.lineJoin = "round"
-        }
-        setUpCanvas()
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+            if(id === 'tiling-canvas'){
+                ctx.fillStyle = 'transparent';
+                ctx.lineWidth = getTileWidth();
+            }
+            else if(id === 'invis-canvas'){
+                ctx.lineWidth = ctx.lineWidth / 2;
+            }
+        });
+        drawTwo()
         ctx = document.getElementById('invis-canvas').getContext("2d");
-        d = SCROLL_DIST
-
-        const wrapper = document.getElementById("wrapper");
-
-        // wrapper.style.width = `${wrapper.offsetWidth}px`;
-        // wrapper.style.height = `${wrapper.offsetHeight}px`;
     }, []);
 
     let currColor;
