@@ -61,7 +61,7 @@ export const redrawCanvas = async () => {
             const newCtx = newCanvas.getContext('2d');
             newCtx.drawImage(canvas, 0, -offsetY);
 
-            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight * 4);
+            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight * 3);
             ctx.drawImage(newCanvas, 0, 0);
 
             if (id === 'tiling-canvas') {
