@@ -395,8 +395,6 @@ function App() {
     let firstMove = false;
 
     function onTouchMove(event) {
-        if(isDrawing) requestId = requestAnimationFrame(() => onTouchMove(event));
-
         let r = getLineWidth() / 2
 
         const touch0X = event.touches[0].pageX - r;
@@ -431,6 +429,8 @@ function App() {
 
         prevCursorX = cursorX
         prevCursorY = cursorY
+        if(isDrawing) requestId = requestAnimationFrame(() => onTouchMove(event));
+
     }
 
     function callRatio(currTile) {
