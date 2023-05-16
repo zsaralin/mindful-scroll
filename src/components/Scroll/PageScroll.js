@@ -45,10 +45,10 @@ export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
     if (offsetY > top - TOP_PAGE_SPACE) {
-        wrap.style.transform = `translate(0,-${offsetY}px)`;
+        wrap.style.transform = `translate(0,-${offsetY + 1}px)`;
 
         prevOffsetY += offsetY
-        const canvasIds = ['tiling-canvas','fill-canvas', 'top-canvas']; // 'invis-canvas',
+        const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
         // const buffer = document.createElement('canvas');
         // buffer.width = window.innerWidth;
         // buffer.height = window.innerHeight * 4;
@@ -74,11 +74,13 @@ export const redrawCanvas = async () => {
         await Promise.allSettled(promises).then(() => {
             setOffsetY(0);
             wrap.style.transform = `translate(0,-${0}px)`
+            redrawAnim()
         });
         // refreshed = true;
         // redrawAnim()
     } else {
         // if(!redrawing){
+        console.log(offsetY)
         wrap.style.transform = `translate(0,-${offsetY}px)`;
         // moveEffect(refreshed, offsetY, prevOffsetY)}
     }
