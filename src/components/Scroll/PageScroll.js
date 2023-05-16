@@ -57,25 +57,27 @@ export const redrawCanvas = async () => {
 // Create an array of promises for the canvas operations
         const promises = canvasIds.map(id => {
             const canvas = document.getElementById(id);
-            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            const ctx = canvas.getContext('2d');
             return new Promise(resolve => {
-                bufferCtx.clearRect(0, 0, buffer.width, buffer.height);
+                if(id !== 'tiling-canvas') bufferCtx.clearRect(0, 0, buffer.width, buffer.height);
                 bufferCtx.drawImage(canvas, 0, -offsetY);
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(buffer, 0, 0);
                 resolve();
+                bufferCtx.clearRect(0, 0, buffer.width, buffer.height);
+                if(id === 'tiling-canvas') drawSecondTiling()
             });
         });
 
 // Wait for all promises to resolve
         await Promise.all(promises);
         // drawSecondTiling();
-        // await delay(1);
+        await delay(.5);
 
 // Perform the actions after all promises have resolved
 //         drawSecondTiling();
         setOffsetY(0);
-        drawSecondTiling();
+        // drawSecondTiling();
 
 // refreshed = true;
 // redrawAnim();
