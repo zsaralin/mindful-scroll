@@ -1,13 +1,14 @@
 import {redrawCanvas, refreshPage} from "../Scroll/PageScroll";
 import {getBoundsTile, getBoundsTiling} from "./TilingBounds";
 import {getYPadding} from "./TilingSize";
+import {refreshTilings} from "./Tiling3";
 
 let path = "rect";
 let numTilings = 0;
 
 export const setPathType = (newPath) => {
     path = newPath;
-    refreshPage()
+    refreshTilings()
 };
 
 

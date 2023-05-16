@@ -134,20 +134,11 @@ function drawShape(yMin, yMax, pathDict, shape = null) {
 // }
 
 export function clearCanvas() {
-    const canvasIds = ['off-canvas', 'tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
-
+    const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
     canvasIds.forEach(id => {
         const canvas = document.getElementById(id);
-        canvas.getContext("2d").clearRect(0, 0, window.innerWidth, window.innerHeight * 7);
-        if (id === 'fill-canvas' || id === "canvas" || id === "top-canvas") {
-            let ctx = canvas.getContext("2d");
-            ctx.fillStyle = "transparent"
-            ctx.lineJoin = ctx.lineCap = "round"
-            ctx.fillRect(0, 0, canvas.width, canvas.height)
-        }
+        canvas.getContext("2d").clearRect(0, 0, window.innerWidth, window.innerHeight * 4);
     });
-
-    // stopWatercolor();
 }
 
 export function drawTwoTilings(tilingArr) {
@@ -159,18 +150,6 @@ export function drawTwoTilings(tilingArr) {
         // ditherTiling(6, tiling.pathDict)
     });
 
-}
-
-export function refreshTilings() {
-    clearCanvas()
-    tiling2 = undefined;
-    drawTwoTilings()
-}
-
-export function refreshTilings2() {
-    clearCanvas()
-    tiling2 = undefined;
-    drawTwoTilings(tilingArr)
 }
 
 

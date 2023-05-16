@@ -4,7 +4,7 @@ import {getTilingPathDict} from "./TilingPathDict";
 import {getGrid, getTilingProp} from "./TilingProperties";
 import {setTiling} from "./SortingHat";
 import {getOffsetY} from "../Scroll/Offset";
-import {getTilingIndex2} from "./Tiling2";
+import {clearCanvas, drawTwoTilings, getTilingIndex2} from "./Tiling2";
 import {prevOffsetY} from "../Scroll/PageScroll";
 import {TOP_PAGE_SPACE} from "../Constants";
 
@@ -13,7 +13,6 @@ export let top; // top of next tiling
 const SPACE = 150; // space between tilings
 const TOP_SPACE = 75;
 let pathArr = [] //array of path dict for each tiling
-let tilingArr = [] //array of tilings
 
 let offsetX, offsetY;
 let xMin, xMax, yMin, yMax;
@@ -33,19 +32,12 @@ export function drawTwo() {
     });
 }
 
-export function getOffSmall(i){
-    if(!secondDrawn) return 0
-    if (i===0){
-        smallOffset = oldOffset[0]
-        console.log('YAAAAAAAAAAS ' + smallOffset)
-        return smallOffset
-    }
-    else{
-        smallOffset = 0;
-        return smallOffset
-    }
-    // return (i === 0) ? oldOffset[0] : 0//oldOffset[1];
+export function getOffSmall(i) {
+    if (!secondDrawn) return 0
+    smallOffset = i === 0 ? oldOffset[0] : 0
+    return smallOffset
 }
+
 function toTiling(t) {
     let tiling = {segArr: [], pathDict: {}, grid: []}
     tiling.segArr = t
@@ -61,10 +53,9 @@ function toTiling(t) {
     return tiling
 }
 
-export function firstTiling() {
+export function firstTiling(inputArr) {
     pathArr = []
-    tilingArr = []
-    let t = makeRandomTiling();
+    let t = makeRandomTiling(inputArr);
 
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
     offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
@@ -75,10 +66,12 @@ export function firstTiling() {
 
     tilingsDrawn++;
 }
+
 let oldOffset = [0]
-export function secondTiling() {
+
+export function secondTiling(inputArr) {
     top = bottom + SPACE
-    let t = makeRandomTiling();
+    let t = makeRandomTiling(inputArr);
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
     offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
     offsetY = bottom - yMin
@@ -86,7 +79,7 @@ export function secondTiling() {
         oldOffset.push(offsetY + yMin);
     } else {
         oldOffset.shift();
-        oldOffset.push(offsetY+ yMin);
+        oldOffset.push(offsetY + yMin);
     }
     tilingsDrawn++;
     pathArr.push(toTiling(t))
@@ -97,16 +90,17 @@ export function secondTiling() {
 
 }
 
-export function drawSecondTiling(){
+export function drawSecondTiling() {
     secondTiling()
-    drawTiling(pathArr[pathArr.length-1])
+    drawTiling(pathArr[pathArr.length - 1])
     secondDrawn = true;
 }
 
 export function tilingIndex(y) {
-    if (y < top -TOP_PAGE_SPACE) return 0
+    if (y < top - TOP_PAGE_SPACE) return 0
     return 1
 }
+
 // used scaledY
 export function getTile(y, invisCol) {
     if (invisCol) {
@@ -120,3 +114,14 @@ export function getTiling(y, invisCol) {
         return pathArr[(tilingIndex(y + getOffsetY()))]//+ getOffsetY() + prevOffsetY))]
     }
 }
+
+export function refreshTilings() {
+    clearCanvas()
+    console.log('PATH ' + pathArr[0])
+    firstTiling(pathArr[0]?.segArr)
+    secondTiling(pathArr[1]?.segArr)
+    pathArr.forEach(tiling => {
+        drawTiling(tiling)
+        setTiling(tiling)
+        // ditherTiling(6, tiling.pathDict)
+    });}

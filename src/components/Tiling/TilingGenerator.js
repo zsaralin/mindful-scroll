@@ -73,7 +73,7 @@ export function drawTiling(tiling) {
     const invisCtx = invisCanvas.getContext('2d');
 
     // tilingCtx.fillStyle = 'transparent';
-    // tilingCtx.lineWidth = getTileWidth();
+    tilingCtx.lineWidth = getTileWidth();
     tilingCtx.strokeStyle = '#000';
 
     // invisCtx.lineWidth = tilingCtx.lineWidth / 2;

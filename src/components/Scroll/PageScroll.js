@@ -41,13 +41,11 @@ let refreshed = false;
 export function setRefreshed(i) {
     refreshed = i
 }
-let redrawing = false;
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
     if (offsetY > top - TOP_PAGE_SPACE) {
-        redrawing = true;
-        // await delay(.5);
+        // await delay(.1);
         prevOffsetY += offsetY
         const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
         await Promise.all(canvasIds.map(async (id) => {
@@ -62,10 +60,10 @@ export const redrawCanvas = async () => {
             ctx.drawImage(buffer, 0, 0);
 
         })).then(()=>{
+            // delay(.1);
             drawSecondTiling()
             setOffsetY(0)
             refreshed = true;
-            redrawing = false;
             redrawAnim()
         });
         // drawSecondTiling()
@@ -73,29 +71,13 @@ export const redrawCanvas = async () => {
         // refreshed = true;
         // redrawAnim()
     } else {
-        if(!redrawing){
+        // if(!redrawing){
         wrap.style.transform = `translate(0,-${offsetY}px)`;
         moveEffect(refreshed, offsetY, prevOffsetY)}
-    }
+    // }
 }
 
-function copyToOnScreen(offScreenCanvas) {
-    let tilingCanv = document.getElementById('tiling-canvas').getContext('2d');
-    tilingCanv.drawImage(offScreenCanvas, 0, 0);
-}
 
-export function setUpCanvas() {
-    drawTwo()
-    // copyToOnScreen(document.getElementById('off-canvas'));
-}
-
-export function refreshPage() { // used when change tile width and size
-    refreshTilings2()
-    // copyToOnScreen(document.getElementById('off-canvas'));
-    // redrawStrokes(0)
-    // redrawCompleteTiles()
-    // redrawActiveTiles()
-}
 
 let d = SCROLL_DIST
 

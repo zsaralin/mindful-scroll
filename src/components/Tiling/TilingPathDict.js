@@ -19,7 +19,6 @@ export function getTilingPathDict(segArr, offsetX, offsetY) {
     let colorIndex = 0
     let cols = fillColourArray(segArr.length)
     if (tilingIndex === SQUARE_INDEX) transition = [0.98, 1.02][Math.floor(Math.random() * 2)]
-    console.log(`offset y is ${offsetY}`)
     for (let i = 0; i < segArr.length; i++) { // for each tile in tiling
         let path = new Path2D()
         let start = true;
