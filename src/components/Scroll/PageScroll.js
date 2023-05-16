@@ -48,7 +48,7 @@ export const redrawCanvas = async () => {
         wrap.style.transform = `translate(0,-${offsetY}px)`;
 
         prevOffsetY += offsetY
-        const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
+        const canvasIds = ['tiling-canvas',]// 'invis-canvas', 'fill-canvas', 'top-canvas'];
         // const buffer = document.createElement('canvas');
         // buffer.width = window.innerWidth;
         // buffer.height = window.innerHeight * 4;
