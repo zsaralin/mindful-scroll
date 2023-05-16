@@ -15,6 +15,7 @@ code {
 
 }
 .wrapper {
+  transition: transform 0s ease;
   position: relative; /* make the wrapper element a positioned container */
   /*height:200px; !* set the height of the wrapper element *!*/
   /*width:1000px; !* set the height of the wrapper element *!*/
