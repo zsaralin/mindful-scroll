@@ -45,6 +45,8 @@ export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
     if (offsetY > top - TOP_PAGE_SPACE) {
+        wrap.style.transform = `translate(0,-${offsetY}px)`;
+
         prevOffsetY += offsetY
         const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
         // const buffer = document.createElement('canvas');
@@ -61,7 +63,7 @@ export const redrawCanvas = async () => {
             const newCtx = newCanvas.getContext('2d');
             newCtx.drawImage(canvas, 0, -offsetY);
 
-            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight * 2);
+            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight * 3);
             ctx.drawImage(newCanvas, 0, 0);
 
             if (id === 'tiling-canvas') {
