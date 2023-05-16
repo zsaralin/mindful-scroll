@@ -73,8 +73,10 @@ export const redrawCanvas = async () => {
         // await delay(1);
 
 // Perform the actions after all promises have resolved
-        drawSecondTiling();
+//         drawSecondTiling();
         setOffsetY(0);
+        drawSecondTiling();
+
 // refreshed = true;
 // redrawAnim();
         // drawSecondTiling()
