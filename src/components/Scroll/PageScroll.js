@@ -48,35 +48,30 @@ export const redrawCanvas = async () => {
         // await delay(.1);
         prevOffsetY += offsetY
         const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
-        // Create a single buffer canvas outside the loop
         const buffer = document.createElement('canvas');
         buffer.width = window.innerWidth;
         buffer.height = window.innerHeight * 4;
         const bufferCtx = buffer.getContext('2d');
-
-// Create an array of promises for the canvas operations
-        const promises = canvasIds.map(id => {
+        await Promise.all(canvasIds.map(async (id) => {
+            if(id !== 'tiling-canvas') bufferCtx.clearRect(0, 0, buffer.width, buffer.height);
             const canvas = document.getElementById(id);
-            const ctx = canvas.getContext('2d');
-            return new Promise(resolve => {
-                if(id !== 'tiling-canvas') bufferCtx.clearRect(0, 0, buffer.width, buffer.height);
-                bufferCtx.drawImage(canvas, 0, -offsetY);
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(buffer, 0, 0);
-                resolve();
-                bufferCtx.clearRect(0, 0, buffer.width, buffer.height);
-                if(id === 'tiling-canvas') drawSecondTiling()
-            });
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            bufferCtx.drawImage(canvas, 0, -offsetY);
+            ctx.clearRect(0, 0, window.innerWidth, window.innerHeight * 4);
+            ctx.drawImage(buffer, 0, 0);
+
+        })).then(()=>{
+            // delay(.1);
+            // drawSecondTiling()
+            // setOffsetY(0)
+            // refreshed = true;
+            // redrawAnim()
         });
-
-// Wait for all promises to resolve
-        await Promise.all(promises);
-        // drawSecondTiling();
-        await delay(.5);
-
+        drawSecondTiling()
+        setOffsetY(0)
 // Perform the actions after all promises have resolved
 //         drawSecondTiling();
-        setOffsetY(0);
+//         setOffsetY(0);
         // drawSecondTiling();
 
 // refreshed = true;
