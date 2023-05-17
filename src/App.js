@@ -86,6 +86,7 @@ import {ditherTiling} from "./components/Tiling/DitherTiling";
 import {setTiling} from "./components/Tiling/SortingHat";
 import {drawJustDot, pushDot, removeLastDot} from "./components/Stroke/Dot/DotArr";
 import {getTileWidth} from "./components/Tiling/TileWidth";
+import {completeTile2} from "./components/Tiling/SortingHat/TilingFillType";
 
 
 function App() {
@@ -163,9 +164,9 @@ function App() {
         smallOffset = getOffSmall(index)
 
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
+
         currTile = getTile(y , invisCol)
         currTiling = getTiling(y , invisCol)
-
         // console.log(currTile + ' and ' + currTiling)
         if(currTiling.colourPal.length === 0){
             if(firstClick) {
@@ -192,8 +193,8 @@ function App() {
             // c.restore()
             // sendMidAlert()
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
-            pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, "clover");
-            // startDot(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, "transparent" );
+            pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType );
+            // startDot(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType );
 
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
@@ -464,7 +465,7 @@ function App() {
 
         if (currTile && !currTile.watercolor && currTile && !currTile.filled && getFillRatio(currTile, smallOffset) > getFillMin()) {
             currTile.filled = true;
-            completeTile(currTile, currTiling, invisCol)
+            completeTile2(currTile, currTiling, invisCol)
         }
         if(currTile && !strokeMove && !currTile.watercolor) drawJustDot(currTile)
         dotRemoved = false;

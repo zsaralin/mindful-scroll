@@ -8,7 +8,9 @@ import {setStrokeType} from "../StrokeType/StrokeType";
 let dotType = "reg"
 
 export function startDot(id, x0, y0, x1, y1, color, lw, type) {
-    setDotType(type)
+    console.log('assdsa')
+
+    if(type)setDotType(type)
     if (dotType === "reg" || dotType === "dotted") {
         let prev = getStrokeType();
         setStrokeType("dotType")

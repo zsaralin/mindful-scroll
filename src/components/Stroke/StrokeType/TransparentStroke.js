@@ -6,6 +6,7 @@ import {getPathWithId, getTileWithId} from "../../Tiling/TilingPathDict";
 import {getOffsetY} from "../../Scroll/Offset";
 import {getTile} from "../../Tiling/Tiling2";
 import {findTile, findTile1, redrawTileStrokes} from "./StrokeArr";
+import {getOffSmall, smallOffset} from "../../Tiling/Tiling3";
 
 let transStrokes = {}
 let dragging = false;
@@ -13,11 +14,18 @@ let dragging = false;
 export function drawTransparentDot(id, x0, y0, x1, y1, theColor) {
     // document.getElementById('fill-canvas').getContext("2d").fillStyle = 'rgba(0, 0, 0, 0)'
     if (transStrokes[id] === undefined) transStrokes[id] = []
-    transStrokes[id].push([{x: x0, y: y0}]);
+
+    transStrokes[id].push([{x: x0, y: y0, smallOff: smallOffset}]);
     const [h, s, l] = theColor.match(/(\d+)/g);
     let rgb = hslToRgb(h, s, l)
     rgb = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, .5)`;
-    transStrokes[id][transStrokes[id].length - 1].push({x: x1, y: y1, col: rgb, lw: getLineWidth()}); // Append point to current path.
+    transStrokes[id][transStrokes[id].length - 1].push({
+        x: x1,
+        y: y1,
+        col: rgb,
+        lw: getLineWidth(),
+        smallOff: smallOffset
+    }); // Append point to current path.
     refreshTrans(id);
 }
 
@@ -26,9 +34,9 @@ export function drawTransparentStroke(id, x0, y0, x1, y1, theColor, theLineWidth
         drawTransparentDot(id, x0, y0, x1, y1, theColor)
         if (transStrokes[id] === undefined) {
             transStrokes[id] = []
-            transStrokes[id].push([{x: x0, y: y0}]);
+            transStrokes[id].push([{x: x0, y: y0, smallOff: smallOffset}]);
         } else {
-            transStrokes[id][transStrokes[id].length - 1].push({x: x0, y: y0});
+            transStrokes[id][transStrokes[id].length - 1].push({x: x0, y: y0, smallOff: smallOffset});
         }
         dragging = true;
         return
@@ -36,7 +44,13 @@ export function drawTransparentStroke(id, x0, y0, x1, y1, theColor, theLineWidth
     const [h, s, l] = theColor.match(/(\d+)/g);
     let rgb = hslToRgb(h, s, l)
     rgb = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, .5)`;
-    transStrokes[id][transStrokes[id].length - 1].push({x: x0, y: y0, col: rgb, lw: theLineWidth}); // Append point to current path.
+    transStrokes[id][transStrokes[id].length - 1].push({
+        x: x0,
+        y: y0,
+        col: rgb,
+        lw: theLineWidth,
+        smallOff: smallOffset
+    }); // Append point to current path.
     refreshTrans(id);
     // drawHelper(transStrokes[id][transStrokes[id].length - 1])
 }
@@ -44,13 +58,19 @@ export function drawTransparentStroke(id, x0, y0, x1, y1, theColor, theLineWidth
 export function refreshTrans(id) {
     const ctx = document.getElementById('top-canvas').getContext("2d");
     let tile = getTileWithId(id)
+    console.log('ID  + ' + id + ' ' + tile)
     ctx.fillStyle = "white"
-    ctx.fill(getTileWithId(id).path)
-    if(tile.filled){
+    ctx.save()
+    ctx.translate(0, -smallOffset)
+    ctx.fill(getTileWithId(id)?.path)
+    if (tile.filled) {
         ctx.fillStyle = `${tile.fillColors.slice(0, -1)}, 0.5)`;
         ctx.fill(getTileWithId(id).path)
     }
+    ctx.restore()
     redrawTransStrokesTile(id)
+    // ctx.restore()
+
 }
 
 export function setDragging(input) {
@@ -58,8 +78,21 @@ export function setDragging(input) {
 }
 
 export function redrawTransparentStrokes(offsetY) {
+    console.log(Object.keys(transStrokes).length)
+
     for (const id in transStrokes) {
-        redrawTransStrokesTile(id, offsetY)
+        const paths = transStrokes[id];
+        paths.forEach((path, index) => {
+            path.forEach((i) => {
+                if (i.smallOff === 0) {
+                    i.y = i.y - getOffSmall(0);
+                    i.smallOff = getOffSmall(0);
+                } else {
+                    delete transStrokes[id];
+                    return; // Move to the next path
+                }
+            });
+        });
     }
 }
 
@@ -68,7 +101,6 @@ export function redrawTransStrokesTile(tileId, offsetY = 0) {
     const currTile = offsetY ? findTile1(tileId, offsetY, transStrokes) : undefined;
     const ctx = document.getElementById('top-canvas').getContext('2d');
     const temp = transStrokes[tileId]?.slice() ?? [];
-
     temp.forEach(path => {
         if (offsetY !== 0 && path.y0 < offsetY) return;
         if (path.length < 1) return;
@@ -94,7 +126,8 @@ export function redrawTransStrokesTile(tileId, offsetY = 0) {
         ctx.stroke();
     });
 
-    redrawTileStrokes(tileId);
+    // redrawTileStrokes(tileId);
+    // ctx.restore()
 }
 
 

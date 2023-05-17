@@ -45,10 +45,10 @@ let redrawing = false;
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
-    if (offsetY > top - TOP_PAGE_SPACE && !redrawing) {
+    if (offsetY > top - TOP_PAGE_SPACE) {
         redrawing = true;
         prevOffsetY += offsetY
-        const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
+        const canvasIds = ['invis-canvas', 'fill-canvas', 'top-canvas', 'tiling-canvas', ];
         // const buffer = document.createElement('canvas');
         // buffer.width = window.innerWidth;
         // buffer.height = window.innerHeight * 4;
@@ -72,17 +72,17 @@ export const redrawCanvas = async () => {
         });
 
         await Promise.allSettled(promises).then(() => {
+            // drawSecondTiling();
+
             setOffsetY(0);
             wrap.style.transform = `translate(0,-${0}px)`
             redrawAnim()
-            redrawing = false;
-
+            redrawTransparentStrokes()
         });
         // refreshed = true;
         // redrawAnim()
     } else {
         // if(!redrawing){
-        console.log(offsetY)
         wrap.style.transform = `translate(0,-${offsetY}px)`;
         // moveEffect(refreshed, offsetY, prevOffsetY)}
     }

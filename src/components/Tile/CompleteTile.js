@@ -31,7 +31,7 @@ let completeTileOn = true;
 
 const PADDING = 35 // account for curves that go past the vertex points (startX, startY,...)
 let internalOffset = 0;
-let fillType = "fillAnim"
+let fillType = "first"
 
 export function setInternalOffset(input) {
     internalOffset = input
@@ -41,8 +41,9 @@ export function completeTile(currTile, currTiling, invisCol) {
     if (completeTileOn) {
         currTile.filled = true;
         fillTileColors(currTile)
-        // currTile.fillType = getFillType(currTiling.fillType)// fillType
-        // setFillType(currTile.fillType)
+
+        currTile.fillType = getFillType(currTiling.fillType)// fillType
+        setFillType(currTile.fillType)
 
         if (fillType === "combination") fillEachPixel(currTile)
         else if (fillType === "first") fillTile(currTile, "first", false)

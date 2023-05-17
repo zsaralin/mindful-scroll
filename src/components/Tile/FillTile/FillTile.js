@@ -25,7 +25,7 @@ function getCol(tile, str, inputCol){
 }
 
 export function fillTile(tile, str, under, inputCol){
-    fillTileColors(tile)
+    // fillTileColors(tile)
     let canvStr = under ? 'fill-canvas' : 'top-canvas'
     let ctx = document.getElementById(canvStr).getContext('2d');
     ctx.save()

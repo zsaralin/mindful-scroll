@@ -168,12 +168,12 @@ export function interpolateHslColor(hsl1, hsl2) {
 }
 
 export function complem(hsl) {
+    console.log('COLOR ' + hsl)
     if (typeof hsl === "string" && hsl?.slice(0, 4) === 'rgba') {
         const rgbaValues = hsl.substring(5, hsl.length - 1).split(",");
         let [h, s, l] = rgbToHsl(rgbaValues[0], rgbaValues[1], rgbaValues[2]);
         hsl = [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)]
         hsl = 'hsl(' + hsl[0] + ',' + hsl[1] + '%,' + hsl[2] + '%)'
-        // console.log('hsl is ' + hsl)
     }
     const firstNumber = hsl.match(/^hsl\((\d+)/)?.[1] ?? 'No match found';
     return hsl.replace(/^hsl\(\d+/, `hsl(${HueShift(firstNumber, 180.0)}`)

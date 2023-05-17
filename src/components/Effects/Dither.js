@@ -13,7 +13,6 @@ export function dither(tile, i) {
     let startY = tileDim[2] - BB_PADDING;
     let endX = tileDim[1] + BB_PADDING;
     let endY = tileDim[3] + BB_PADDING;
-    console.log(`smallOffset 2222 ${smallOffset}`)
     // ctx.save()
     // ctx.translate(0,-smallOffset)
     for (let x = startX; x < endX; x += i) {
@@ -48,7 +47,6 @@ export function dither(tile, i) {
             }
         }
     }
-    console.log('done')
     // ctx.restore()
 }
 

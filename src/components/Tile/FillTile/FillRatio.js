@@ -45,7 +45,7 @@ export function getFillRatio(currTile) {
             fillRatio[0]++
         }
     })
-    console.log(`fillRatio ${fillRatio[0] / fillRatio[1]}`)
+    // console.log(`fillRatio ${fillRatio[0] / fillRatio[1]}`)
     return fillRatio[0] / fillRatio[1]
 }
 

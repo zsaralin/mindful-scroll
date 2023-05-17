@@ -3,7 +3,7 @@ const weightStrings = [
     "first",
     "last",
     "complem",
-    // "blur",
+    "blur",
     "blurFill",
     "meanHue",
     "inverseMean",
@@ -26,40 +26,9 @@ const weightStrings = [
     "pixel5",
     "pixel7",
     "pixel8",
-    // "fillAnim",
-    // "inverseComb"
+    "fillAnim",
+    "inverseComb"
 ];
-
-const weightStrings2 = [
-    "combination",
-    "first",
-    "last",
-    "complem",
-    // "blur",
-    "blurFill",
-    "meanHue",
-    "inverseMean",
-    "radialGradient",
-    "diagGradient",
-    "horizGradient",
-    "vertGradient",
-    "dither1",
-    "dither2",
-    "dither3",
-    "dither4",
-    "dither5",
-    "mostUsed",
-    "leastUsed",
-    "pattern",
-    "stripesH",
-    "stripesV",
-    "pixel"
-    // "fillAnim",
-    // "inverseComb"
-];
-
-// reg, fuzzy, transparent, dotted
-const strokeWeights = [.7,.1,.1,.1]
 
 export function setTiling(tiling) {
     const strokeType = getStrokeType()
@@ -67,7 +36,6 @@ export function setTiling(tiling) {
     tiling.dotType = strokeType;
     tiling.fillType = generateRandomArray(weightStrings.length)
 }
-
 
 // Generate a random array of n decimal numbers that add up to 1, minimum val of .1
 function generateRandomArray(n) {
@@ -86,21 +54,6 @@ function generateRandomArray(n) {
     return arr
 }
 
-export function getStrokeType(){
-    const sumOfWeights = strokeWeights.reduce((acc, curr) => acc + curr);
-    const randomNum = Math.random() * sumOfWeights;
-
-    // Choose a value based on the weights
-    if (randomNum < strokeWeights[0]) {
-        return "reg"
-    } else if (randomNum < strokeWeights[0] + strokeWeights[1]) {
-        return "fuzzy"
-    } else if (randomNum < strokeWeights[0] + strokeWeights[1] + strokeWeights[2]) {
-        return "transparent"
-    } else {
-        return "dotted"
-    }
-}
 export function getFillType(weights){
 
     const sumOfWeights = weights.reduce((acc, curr) => acc + curr);
@@ -115,4 +68,23 @@ export function getFillType(weights){
     }
 
     return weightStrings[weightStrings.length-1];
+}
+
+// reg, fuzzy, transparent, dotted
+const strokeWeights = [1,0,0,0]
+const strokes = ["reg", "fuzzy", "transparent", "dotted"]
+
+export function getStrokeType(){
+    const sumOfWeights = strokeWeights.reduce((acc, curr) => acc + curr);
+    const randomNum = Math.random() * sumOfWeights;
+    let weightSum = 0;
+
+    for (let i = 0; i < strokeWeights.length; i++) {
+        weightSum += strokeWeights[i];
+        if (randomNum < weightSum) {
+            return strokeWeights[i];
+        }
+    }
+
+    return strokes[strokes.length-1];
 }

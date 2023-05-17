@@ -7,6 +7,7 @@ import {getOffsetY} from "../Scroll/Offset";
 import {clearCanvas, drawTwoTilings, getTilingIndex2} from "./Tiling2";
 import {prevOffsetY} from "../Scroll/PageScroll";
 import {TOP_PAGE_SPACE} from "../Constants";
+import {getFillType} from "./SortingHat/TilingFillType";
 
 export let bottom; // bottom of current tiling
 export let top; // top of next tiling
@@ -22,12 +23,13 @@ export let secondDrawn = false;
 
 export let smallOffset = 0;
 
-export function drawTwo() {
-    firstTiling()
-    secondTiling()
+export function drawTwo(pathArrI) {
+    firstTiling(pathArrI?.[0]?.segArr)
+    secondTiling(pathArrI?.[1]?.segArr)
     pathArr.forEach(tiling => {
         drawTiling(tiling)
-        setTiling(tiling)
+        tiling.fillInfo = getFillType()
+        // setTiling(tiling)
         // ditherTiling(6, tiling.pathDict)
     });
 }
@@ -117,11 +119,12 @@ export function getTiling(y, invisCol) {
 
 export function refreshTilings() {
     clearCanvas()
-    console.log('PATH ' + pathArr[0])
-    firstTiling(pathArr[0]?.segArr)
-    secondTiling(pathArr[1]?.segArr)
-    pathArr.forEach(tiling => {
-        drawTiling(tiling)
-        setTiling(tiling)
-        // ditherTiling(6, tiling.pathDict)
-    });}
+    drawTwo(pathArr)
+    // firstTiling(pathArr[0]?.segArr)
+    // secondTiling(pathArr[1]?.segArr)
+    // pathArr.forEach(tiling => {
+    //     drawTiling(tiling)
+    //     setTiling(tiling)
+    //     // ditherTiling(6, tiling.pathDict)
+    // });}
+}
