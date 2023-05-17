@@ -41,12 +41,12 @@ let refreshed = false;
 export function setRefreshed(i) {
     refreshed = i
 }
+let redrawing = false;
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
-    if (offsetY > top - TOP_PAGE_SPACE) {
-        wrap.style.transform = `translate(0,-${offsetY + 5}px)`;
-
+    if (offsetY > top - TOP_PAGE_SPACE && !redrawing) {
+        redrawing = true;
         prevOffsetY += offsetY
         const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
         // const buffer = document.createElement('canvas');
@@ -75,6 +75,8 @@ export const redrawCanvas = async () => {
             setOffsetY(0);
             wrap.style.transform = `translate(0,-${0}px)`
             redrawAnim()
+            redrawing = false;
+
         });
         // refreshed = true;
         // redrawAnim()
