@@ -1,5 +1,5 @@
 import {hslToRgb} from "../../Effects/ColorTheory";
-import {getLineWidth} from "../StrokeWidth";
+import {getLineWidth, setLineWidth} from "../StrokeWidth";
 import {findTile1, redrawStrokes, redrawTileStrokes, strokeArr} from "./StrokeArr";
 import {getBoundsTile} from "../../Tiling/TilingBounds";
 import {getDragging, setDragging} from "./TransparentStroke";
@@ -26,7 +26,7 @@ export function drawDottedStroke(id, x0, y0, x1, y1, theColor, theLineWidth, off
         x: x0,
         y: y0,
         col: theColor,
-        lw: getLineWidth(),
+        lw: theLineWidth,
         smallOff: smallOffset,
     }); // Append point to current path.
     refreshDotted(id);
@@ -75,13 +75,10 @@ export function redrawDottedStrokesTile(tileId, offsetY = 0) {
         ctx.moveTo(path[0].x, path[0].y - offsetY);
         for (const {x, y, col, lw} of path.slice(1)) {
             ctx.strokeStyle = col;
-            ctx.lineWidth = lw;
+            ctx.lineWidth = lw ;
             ctx.setLineDash([1, 25]);
             ctx.lineTo(x, y - offsetY);
-            if (offsetY !== 0 && tile) {
-                const currStrokes = dottedStrokes[tile.id];
-                currStrokes[currStrokes.length - 1].push({x, y: y - offsetY, col, lw});
-            }
+            // ctx.stroke();
         }
         ctx.stroke();
         ctx.setLineDash([]);

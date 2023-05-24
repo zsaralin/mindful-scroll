@@ -3,7 +3,7 @@ import {getBoundsTile, getBoundsTiling} from "./TilingBounds";
 import {getYPadding} from "./TilingSize";
 import {refreshTilings} from "./Tiling3";
 
-let path = "rightDiagonal";
+let path = "leftTriangle";
 let numTilings = 0;
 
 export const setPathType = (newPath) => {
@@ -38,9 +38,9 @@ export function createPath(tiling) {
         let [tileXMin, tileXMax, tileYMin, tileYMax] = getBoundsTile(tile)
         // console.log([tileXMin, tileXMax, tileYMin, tileYMax] )
         if (path === "rect") {
-            pathVar = 1;
-            rightEdge = (window.innerWidth - (getYPadding() + pathVar))
-            leftEdge = getYPadding() + pathVar
+            pathVar = 300
+            rightEdge = (window.innerWidth - pathVar)
+            leftEdge = pathVar
         } else if (path === "triangle") {
             pathVar = Math.max( tileYMin/2 + w/10, 1)
             rightEdge = (window.innerWidth - (getYPadding() + pathVar))
@@ -55,11 +55,11 @@ export function createPath(tiling) {
             leftEdge = getYPadding() + pathVar
         }else if (path === "leftTriangle") {
             pathVar = Math.max((y - tileYMin) / 2 + w / 10, 1)
-            rightEdge = (window.innerWidth - (getYPadding() + 1.5 * pathVar))
+            rightEdge =  (window.innerWidth - (getYPadding() + 1.5 * pathVar))
             leftEdge = getYPadding()
         } else if(path === "rightDiagonal"){
             pathVar = Math.max((y - tileYMin) / 2 + w / 10, 1)
-            rightEdge = (window.innerWidth - (getYPadding() +1.5*pathVar) )
+            rightEdge = (window.innerWidth - (getYPadding()+1.5*pathVar) )
             leftEdge = rightEdge - 400
         } else if(path === "leftDiagonal"){
             pathVar = Math.max((y - tileYMin) / 2 + w / 10, 1)

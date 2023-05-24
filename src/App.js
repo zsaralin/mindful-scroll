@@ -238,14 +238,15 @@ function App() {
                 removeLastDot(currTile)
                 dotRemoved = true;
             }
+            // console.log(Math.abs(speed[0]) + ' and ' + Math.abs(speed[1]))
             if ((isShrinkStroke() && (Math.abs(speed[0]) > 10 || Math.abs(speed[1]) > 10))) {
-                // pushShrinkingLine(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, currTiling.strokeType);
+                pushShrinkingLine(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, currTiling.strokeType);
                 drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY, currColor);
                 tooFast = true;
+
             } else {
-                // pushStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, getLineWidth(), currTile.strokeType );
-                startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), getLineWidth(), currTile.strokeType );
-            }
+                pushStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, getLineWidth(), currTile.strokeType );
+                startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), getLineWidth(), currTile.strokeType );}
             changeAudio(mouseSpeed)
             startAutoScroll(cursorY);
         } else {

@@ -257,20 +257,19 @@ function afterFillTypesHelper() {
 }
 
 function strokeTypesHelper(afterFillTypes) {
-    return [["reg"], [1]]
-    // if (afterFillTypes.includes("blur")) {
-    //     const strokeTypes = ["reg", "blur"]
-    //     const rand = Math.random()
-    //     const regW = rand >= .5 ? rand : 1 - rand
-    //     const strokeW = [regW, 1 - regW]
-    //     return [strokeTypes, strokeW]
-    // } else {
-    //     const otherStrokeType = ["transparent", "dotted"][Math.floor(Math.random() * 2)]; // choose one at random
-    //     const randomW = [0, 0, 0, 0.2, 0.7][Math.floor(Math.random() * 5)];
-    //     const strokeTypes = ["reg", otherStrokeType]
-    //     const strokeW = [1 - randomW, randomW]
-    //     return [strokeTypes, strokeW]
-    // }
+    if (afterFillTypes.includes("blur")) {
+        const strokeTypes = ["reg", "blur"]
+        const rand = Math.random()
+        const regW = rand >= .5 ? rand : 1 - rand
+        const strokeW = [regW, 1 - regW]
+        return [strokeTypes, strokeW]
+    } else {
+        const otherStrokeType = ["transparent", "dotted"][Math.floor(Math.random() * 2)]; // choose one at random
+        const randomW = [0, 0, 0, 0.2, 0.7][Math.floor(Math.random() * 5)];
+        const strokeTypes = ["reg", otherStrokeType]
+        const strokeW = [1 - randomW, randomW]
+        return [strokeTypes, strokeW]
+    }
 }
 
 export function dotTypesHelper(strokeType) {

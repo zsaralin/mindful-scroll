@@ -128,7 +128,6 @@ function pushStroke(tile, x0, y0, x1, y1, theLineWidth, theColor) {
 
 export function redrawBlur(offsetY) {
     for (let tile in blurryArr) {
-        console.log('i')
         let arr = blurryArr[tile]
         arr.forEach(stroke => {
             drawBlurryStroke(stroke.x0, stroke.y0 - offsetY, stroke.x1, stroke.y1 - offsetY, stroke.lineWidth, stroke.color);
