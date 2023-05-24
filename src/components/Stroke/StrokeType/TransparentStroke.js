@@ -33,11 +33,7 @@ export function drawTransparentStroke(id, x0, y0, x1, y1, theColor, theLineWidth
     if (!dragging) {
         drawTransparentDot(id, x0, y0, x1, y1, theColor)
         if (transStrokes[id] === undefined) {
-            transStrokes[id] = []
-            transStrokes[id].push([{x: x0, y: y0, smallOff: smallOffset}]);
-        } else {
-            transStrokes[id][transStrokes[id].length - 1].push({x: x0, y: y0, smallOff: smallOffset});
-        }
+            transStrokes[id] = []}
         dragging = true;
         return
     }
@@ -78,8 +74,6 @@ export function setDragging(input) {
 }
 
 export function redrawTransparentStrokes(offsetY) {
-    console.log(Object.keys(transStrokes).length)
-
     for (const id in transStrokes) {
         const paths = transStrokes[id];
         paths.forEach((path, index) => {

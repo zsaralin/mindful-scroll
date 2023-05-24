@@ -22,7 +22,7 @@ export function pixelated(tile, i, backgroundCol) { //3 to 8
     const imageData = ctx.getImageData(startX, startY  , endX-startX , endY- startY ) ;
     ctx.restore()
     const pixels = imageData.data
-    console.log(`pixels ${pixels.some(x => x !== 0)}`)
+    console.log(`pixels ${backgroundCol}`)
     fillTile(tile, "input", false, backgroundCol ? backgroundCol : "white")
     for (let x = startX; x < endX; x += i) {
         for (let y = startY + smallOffset; y < endY + smallOffset; y += i) {

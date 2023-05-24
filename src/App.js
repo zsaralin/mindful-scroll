@@ -86,7 +86,8 @@ import {ditherTiling} from "./components/Tiling/DitherTiling";
 import {setTiling} from "./components/Tiling/SortingHat";
 import {drawJustDot, pushDot, removeLastDot} from "./components/Stroke/Dot/DotArr";
 import {getTileWidth} from "./components/Tiling/TileWidth";
-import {completeTile2} from "./components/Tiling/SortingHat/TilingFillType";
+import {completeTile2} from "./components/Tiling/SortingHat/CompleteTile2";
+import {dotTypesHelper, helper} from "./components/Tiling/SortingHat/TilingFillType";
 
 
 function App() {
@@ -167,7 +168,7 @@ function App() {
 
         currTile = getTile(y , invisCol)
         currTiling = getTiling(y , invisCol)
-        // console.log(currTile + ' and ' + currTiling)
+        console.log(currTile + ' and ' + currTiling + ' and ' + currTiling.fillNum)
         if(currTiling.colourPal.length === 0){
             if(firstClick) {
                 currTiling.colourPal = getColourPal()
@@ -180,7 +181,7 @@ function App() {
         }
         if(prevTiling !== currTiling){
         setColourPal(currTiling.colourPal)}
-
+        if(currTile) currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
 
         currColor = getCurrColor()
         stopColorChange()
@@ -238,14 +239,12 @@ function App() {
                 dotRemoved = true;
             }
             if ((isShrinkStroke() && (Math.abs(speed[0]) > 10 || Math.abs(speed[1]) > 10))) {
-                currTile.strokeType = currTiling.strokeType
-                pushShrinkingLine(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, currTiling.strokeType);
+                // pushShrinkingLine(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, currTiling.strokeType);
                 drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY, currColor);
                 tooFast = true;
             } else {
-                currTile.strokeType = currTiling.strokeType
-                pushStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, getLineWidth(), currTiling.strokeType);
-                startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), getLineWidth(), currTiling.strokeType);
+                // pushStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, getLineWidth(), currTile.strokeType );
+                startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), getLineWidth(), currTile.strokeType );
             }
             changeAudio(mouseSpeed)
             startAutoScroll(cursorY);
@@ -467,7 +466,10 @@ function App() {
             currTile.filled = true;
             completeTile2(currTile, currTiling, invisCol)
         }
-        if(currTile && !strokeMove && !currTile.watercolor) drawJustDot(currTile)
+        if(currTile && !strokeMove && !currTile.watercolor) {
+            currTile.dotType = currTile.dotType ? currTile.dotType : dotTypesHelper(currTile.strokeType)
+            drawJustDot(currTile)
+        }
         dotRemoved = false;
         resetLineWidth()
         reduceAudio()
@@ -571,12 +573,14 @@ function App() {
             <div id="angle" style={{position: "absolute", top: 0, display: 'none'}}> {angle}</div>
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
+            <div id="dots"></div>
+
             <div className="wrapper" id = "wrapper">
                 <div id = "canvas-wrapper">
                 <canvas ref={canvas} id="fill-canvas"></canvas>
-                <div id="dots"></div>
                 <canvas id="top-canvas" style={{display: '',}}></canvas>
-                <canvas id="invis-canvas" style={{display: 'none',}}
+
+                    <canvas id="invis-canvas" style={{display: 'none',}}
                 ></canvas>
                 <canvas id="tiling-canvas" style={{display: '', background: '', zIndex: 2}}
                         onMouseDown={onMouseDown}

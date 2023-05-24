@@ -2,16 +2,16 @@ import {getLineWidth, setLineWidth} from "../StrokeWidth";
 import {getCurrColor} from "../Color/StrokeColor";
 import {LINE_WIDTH} from "../../Constants";
 
-let shrinkStroke = false;
+let shrinkStroke = true;
 
 export function drawShrinkingStroke(x0, y0, x1, y1, theColor) {
-    let context = document.getElementById('canvas').getContext("2d");
+    let context = document.getElementById('top-canvas').getContext("2d");
     let line = createShrinkingStroke(x0, y0, x1, y1, getLineWidth())
     context.fillStyle = theColor ? theColor : getCurrColor();
     context.fill(line);
 }
 
-function createShrinkingStroke(x1, y1, x2, y2, theLineWidth) {
+export function createShrinkingStroke(x1, y1, x2, y2, theLineWidth) {
     let endWidth = theLineWidth > 10 ? theLineWidth - 5 : 10;
     // calculate direction vector of point 1 and 2
     const directionVectorX = x2 - x1,

@@ -7,7 +7,7 @@ import {getOffsetY} from "../Scroll/Offset";
 import {clearCanvas, drawTwoTilings, getTilingIndex2} from "./Tiling2";
 import {prevOffsetY} from "../Scroll/PageScroll";
 import {TOP_PAGE_SPACE} from "../Constants";
-import {getFillType} from "./SortingHat/TilingFillType";
+import {getFillInfo, getFillType} from "./SortingHat/TilingFillType";
 
 export let bottom; // bottom of current tiling
 export let top; // top of next tiling
@@ -28,7 +28,7 @@ export function drawTwo(pathArrI) {
     secondTiling(pathArrI?.[1]?.segArr)
     pathArr.forEach(tiling => {
         drawTiling(tiling)
-        tiling.fillInfo = getFillType()
+        tiling.fillInfo = getFillInfo()
         // setTiling(tiling)
         // ditherTiling(6, tiling.pathDict)
     });
@@ -95,6 +95,7 @@ export function secondTiling(inputArr) {
 export function drawSecondTiling() {
     secondTiling()
     drawTiling(pathArr[pathArr.length - 1])
+    pathArr[pathArr.length - 1].fillInfo = getFillInfo()
     secondDrawn = true;
 }
 

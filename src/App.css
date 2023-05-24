@@ -20,7 +20,7 @@
 /*    z-index: 1;*/
 /*}*/
 #inner-div{
-    z-index: 1; /*2 on top, 1 underneath*/
+    z-index: 0; /*2 on top, 1 underneath*/
 }
 
 #cp-button{

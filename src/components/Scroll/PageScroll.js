@@ -42,47 +42,69 @@ export function setRefreshed(i) {
     refreshed = i
 }
 let redrawing = false;
+let newInvis;
+let newTiling;
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
+    if(offsetY > (top - TOP_PAGE_SPACE)/2){
+        const invisC = document.getElementById('invis-canvas');
+        const tilingC = document.getElementById('tiling-canvas');
+        newInvis = document.createElement('canvas');
+        newTiling = document.createElement('canvas');
+
+        newInvis.width = newTiling.width = invisC.width;
+        newInvis.height = newTiling.height = invisC.height;
+
+        const invisCtx = newInvis.getContext('2d');
+        const tilingCtx = newTiling.getContext('2d');
+
+        invisCtx.drawImage(invisC, 0, -(top - TOP_PAGE_SPACE));
+        tilingCtx.drawImage(tilingC, 0, -(top - TOP_PAGE_SPACE));
+    }
     if (offsetY > top - TOP_PAGE_SPACE) {
         redrawing = true;
         prevOffsetY += offsetY
-        const canvasIds = ['invis-canvas', 'fill-canvas', 'top-canvas', 'tiling-canvas', ];
-        // const buffer = document.createElement('canvas');
-        // buffer.width = window.innerWidth;
-        // buffer.height = window.innerHeight * 4;
-        // const bufferCtx = buffer.getContext('2d');
-        const promises = canvasIds.map(async (id) => {
-            const canvas = document.getElementById(id);
+
+        const updateCanvas = async (canvasId) => {
+            const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext('2d');
 
             const newCanvas = document.createElement('canvas');
             newCanvas.width = canvas.width;
             newCanvas.height = canvas.height;
             const newCtx = newCanvas.getContext('2d');
-            newCtx.drawImage(canvas, 0, -offsetY);
+            newCtx.drawImage(canvas, 0, -(top - TOP_PAGE_SPACE));
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(newCanvas, 0, 0);
+        };
 
-            if (id === 'tiling-canvas') {
-                drawSecondTiling();
-            }
-        });
+        const canvasIds = ['fill-canvas', 'top-canvas'];
+        const promises = canvasIds.map(updateCanvas);
+
+        const clearAndDraw = (canvasId, image) => {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, 0, 0);
+        };
+
+        clearAndDraw('invis-canvas', newInvis);
+        clearAndDraw('tiling-canvas', newTiling);
+
+        drawSecondTiling();
 
         await Promise.allSettled(promises).then(() => {
-            // drawSecondTiling();
-
             setOffsetY(0);
             wrap.style.transform = `translate(0,-${0}px)`
             redrawAnim()
             redrawTransparentStrokes()
+            redrawDottedStrokes()
         });
-        // refreshed = true;
-        // redrawAnim()
+
     } else {
-        // if(!redrawing){
         wrap.style.transform = `translate(0,-${offsetY}px)`;
         // moveEffect(refreshed, offsetY, prevOffsetY)}
     }

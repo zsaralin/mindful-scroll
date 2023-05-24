@@ -9,16 +9,16 @@ import {fillTile} from "../Tile/FillTile/FillTile";
 
 let blurryArr = {}
 
-export function blurryHelper(x0, y0, x1, y1, theColor, theLineWidth, context) {
-    context = document.getElementById('top-canvas').getContext("2d");
+export function blurryHelper(x0, y0, x1, y1, theColor, theLineWidth) {
+    const context = document.getElementById('top-canvas').getContext('2d');
     let rgbaColor = theColor;
     if (typeof rgbaColor === 'string' && rgbaColor.charAt(0) === 'h') {
-        rgbaColor = hsl2Rgb(rgbaColor)
-        rgbaColor = `rgba(${rgbaColor.join(",")},${1})`
+        rgbaColor = hsl2Rgb(rgbaColor);
+        rgbaColor = `rgba(${rgbaColor.join(',')},${1})`;
     }
     let r = theLineWidth ? theLineWidth : getLineWidth();
     context.beginPath();
-    var radialGradient = context.createRadialGradient(x0, y0, 0, x0 + 1, y0 + 1, r-8);
+    var radialGradient = context.createRadialGradient(x0, y0, 0, x0 + 1, y0 + 1, r - 11 > 5 ? r - 11 : r);
     radialGradient.addColorStop(0, rgbaColor);
     radialGradient.addColorStop(.2, rgbaColor.slice(0, rgbaColor.length - 2) + '0.2)');
     radialGradient.addColorStop(1, rgbaColor.slice(0, rgbaColor.length - 2) + '0)');
@@ -26,10 +26,34 @@ export function blurryHelper(x0, y0, x1, y1, theColor, theLineWidth, context) {
     context.fillRect(x0 - r, y0 - r, 150, 150);
     context.closePath();
 }
+
+export function blurryDotHelper(x0, y0, x1, y1, theColor, theLineWidth){
+        const context = document.getElementById('top-canvas').getContext('2d');
+        let rgbaColor = theColor;
+        if (typeof rgbaColor === 'string' && rgbaColor.charAt(0) === 'h') {
+            rgbaColor = hsl2Rgb(rgbaColor);
+            rgbaColor = `rgba(${rgbaColor.join(',')},${1})`;
+        }
+        let r = theLineWidth ? theLineWidth : getLineWidth();
+        context.beginPath();
+        var radialGradient = context.createRadialGradient(x0, y0, 0, x0 + 1, y0 + 1, r - 11 > 5 ? r - 11 : r);
+        radialGradient.addColorStop(0, rgbaColor); // Starting color at the center
+        // Middle color with larger size
+        radialGradient.addColorStop(0.2, rgbaColor.slice(0, rgbaColor.length - 2) + '1)');
+        // Gradual transition color stops
+        radialGradient.addColorStop(0.6, rgbaColor.slice(0, rgbaColor.length - 2) + '0.7)');
+        radialGradient.addColorStop(0.8, rgbaColor.slice(0, rgbaColor.length - 2) + '0.4)');
+        // Fading out color at the edges
+        radialGradient.addColorStop(1, rgbaColor.slice(0, rgbaColor.length - 2) + '0)');
+
+        context.fillStyle = radialGradient;
+        context.fillRect(x0 - r, y0 - r, 150, 150);
+        context.closePath();
+}
+
 let BB_PADDING = 35;
 
 export function blurTile(tile) {
-    console.log('HIEEEE ' + tile)
     // let strokesUnder = getStrokeArrUnder()[tile.id]
     // let strokes = getStrokeArr()[tile.id]
     // if (strokesUnder) {
@@ -76,9 +100,9 @@ export function blurTile(tile) {
             }
         }
     }
-            let kernel = getGaussianKernel(radius, sigma);
+    let kernel = getGaussianKernel(radius, sigma);
 
-            convolve2D(pixels, kernel, width, height, 4, tile);
+    convolve2D(pixels, kernel, width, height, 4, tile);
 
     // put the blurred image data back into the canvas
     ctx.putImageData(imageData, startX, startY);
@@ -113,7 +137,8 @@ export function redrawBlur(offsetY) {
 }
 
 export function drawBlurryStroke(x0, y0, x1, y1, theColor, theLineWidth, context) {
-    console.log(x0,y0,x1,y1,theColor, theLineWidth)
+    blurryHelper(x0, y0, x0, y0, theColor, theLineWidth, false)
+
     const dx = Math.abs(x1 - x0);
     const dy = Math.abs(y1 - y0);
     const xStep = (x0 < x1) ? 1 : -1;
@@ -124,7 +149,7 @@ export function drawBlurryStroke(x0, y0, x1, y1, theColor, theLineWidth, context
     if (dx > dy) {
         let error = dx / 2;
         while (x !== x1) {
-            blurryHelper(x,y,x,y, theColor, theLineWidth)
+            blurryHelper(x, y, x, y, theColor, theLineWidth, false)
             error -= dy;
             if (error < 0) {
                 y += yStep;
@@ -135,7 +160,7 @@ export function drawBlurryStroke(x0, y0, x1, y1, theColor, theLineWidth, context
     } else {
         let error = dy / 2;
         while (y !== y1) {
-            blurryHelper(x,y,x,y, theColor, theLineWidth)
+            blurryHelper(x, y, x, y, theColor, theLineWidth, false)
             error -= dx;
             if (error < 0) {
                 x += xStep;
@@ -178,23 +203,24 @@ function convolve2D(pixels, kernel, width, height, channels, tile) {
 
                 let index = (y * width + x) * channels;
 
-            for (let c = 0; c < channels; c++) {
-                let sum = 0;
+                for (let c = 0; c < channels; c++) {
+                    let sum = 0;
 
-                for (let i = -radius; i <= radius; i++) {
-                    let xi = x + i;
+                    for (let i = -radius; i <= radius; i++) {
+                        let xi = x + i;
 
-                    if (xi < 0 || xi >= width) {
-                        continue;
+                        if (xi < 0 || xi >= width) {
+                            continue;
+                        }
+
+                        let weight = kernel[i + radius];
+                        let pi = (y * width + xi) * channels + c;
+                        sum += pixels[pi] * weight;
                     }
 
-                    let weight = kernel[i + radius];
-                    let pi = (y * width + xi) * channels + c;
-                    sum += pixels[pi] * weight;
+                    pixels[index + c] = sum;
                 }
-
-                pixels[index + c] = sum;
-            }}
+            }
         }
     }
 }

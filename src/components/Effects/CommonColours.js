@@ -61,11 +61,12 @@ export function mostUsed4(tile) {
     let colorCounts = getColorCounts(tile);
     // If tile has less than four colors, return an array of all colors
     if (Object.keys(colorCounts).length < 4) {
+        console.log('MOST  ' + Object.keys(colorCounts).sort((a, b) => colorCounts[b] - colorCounts[a]))
+
         return Object.keys(colorCounts).sort((a, b) => colorCounts[b] - colorCounts[a])
     }
     // Find the four most common colors by sorting an array of colors by their count
     let mostCommonColors = Object.keys(colorCounts).sort((a, b) => colorCounts[b] - colorCounts[a]).slice(0, 4);
-
     return mostCommonColors;
 }
 

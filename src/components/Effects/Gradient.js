@@ -4,7 +4,7 @@ import {dither} from "./Dither";
 import {setCols} from "../Tile/FillTile/ColourFn";
 import {smallOffset} from "../Tiling/Tiling3";
 
-export function fillRadialGradient(tile, similar) {
+export function fillRadialGradient(tile, col0, col1) {
     const ctx = document.getElementById('top-canvas').getContext('2d');
     ctx.save()
     ctx.translate(0,-smallOffset)
@@ -12,43 +12,42 @@ export function fillRadialGradient(tile, similar) {
     const midX = (xMax + xMin) / 2;
     const midY = (yMax + yMin) / 2
     const grd = ctx.createRadialGradient(midX, midY, 0, midX, midY, 100);
-    addColorStop(tile, grd)
+    const cols = tile.fillColors ? tile.fillColors : setCols(tile, col0, col1)
+
+    addColorStop(tile, grd, cols)
 
     ctx.fillStyle = grd
     ctx.fill(tile.path)
     ctx.restore()
 }
 
-export function fillLinearGradient(tile, dir, similar) {
-    let [xMin, xMax, yMin, yMax] = tile.bounds
-    let midX = (xMax + xMin) / 2;
-    let midY = (yMax + yMin) / 2
-    let ctx = document.getElementById('top-canvas').getContext('2d');
+export function fillLinearGradient(tile, dir, col0, col1) {
+    const [xMin, xMax, yMin, yMax] = tile.bounds
+    const midX = (xMax + xMin) / 2;
+    const midY = (yMax + yMin) / 2
+    const ctx = document.getElementById('top-canvas').getContext('2d');
     ctx.save()
     ctx.translate(0,-smallOffset)
     let grd;
-    if (dir === "diag") grd = ctx.createLinearGradient(xMin, yMin, xMax, yMax)
+    if (dir === "diag") grd = Math.random() < .5 ?  ctx.createLinearGradient(xMin, yMin, xMax, yMax) : ctx.createLinearGradient(xMin, yMax, xMax, yMin)
     else if (dir === 'horiz') grd = ctx.createLinearGradient(xMin, midY, xMax, midY)
     else if (dir === 'vert') grd = ctx.createLinearGradient(midX, yMin, midX, yMax)
-    addColorStop(tile, grd)
+
+    const cols = tile.fillColors ? tile.fillColors : setCols(tile, col0, col1)
+    console.log('cols : ' + cols)
+    addColorStop(tile, grd, cols)
     ctx.fillStyle = grd
     ctx.fill(tile.path)
     ctx.restore()
 
 }
 
-function addColorStop(tile, grd) {
-    let arr;
-    if (tile.fillColors) {
-         arr = tile.fillColors;
-    } else {
-         arr = setCols(tile)
-        tile.fillColors = arr;
-    }
+function addColorStop(tile, grd, arr) {
     const i = Math.max(.1, 1 / (arr.length - 1));
     let d = 0, q = 0;
     while (q < arr.length && d <= 1) {
         let col = arr[q]
+        console.log('COL S ' + col)
         if (typeof col !== "string") {
             col = 'rgba(' + col.data + ')'
         }

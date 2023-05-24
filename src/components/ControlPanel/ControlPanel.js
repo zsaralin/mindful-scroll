@@ -50,7 +50,7 @@ export default function ControlPanel() {
                     <SwitchGreyChecked name="Show Colour Preview" fn={triggerAudio} />
                     <SwitchGreyChecked name="Auto Page Scroll" fn={triggerScroll}/>
                     <SwitchGreyChecked name="Auto Complete Tile" fn={triggerCompleteTile} />
-                    <SwitchGreyUnchecked name="Auto Stroke Width" fn={triggerShrinkStroke} />
+                    <SwitchGreyChecked name="Auto Stroke Width" fn={triggerShrinkStroke} />
                     <SwitchGreyChecked name="Random Colour Change" fn={triggerRandomColour} />
                     <SwitchGreyUnchecked name="Slow Page Scroll" fn={triggerSlowScroll} />
                     <div style = {{paddingBottom:'8px'}}></div>

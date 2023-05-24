@@ -12,14 +12,13 @@ import {getDifferentCols, getSimilarColours} from "../../Effects/Gradient";
 import {leastUsed4, mostUsed, mostUsed4} from "../../Effects/CommonColours";
 import {getColourPal} from "../../Stroke/Color/StrokeColor";
 
-export function setCols(tile) {
+export function setCols(tile, col0, col1){
     let cols;
     if (tile.colors.length === 1) {
-        cols = setCol1(tile)
+        cols = setCol1(tile, col0)
     } else {
-        cols = setCol2Plus(tile)
+        cols = setCol2Plus(tile, col1)
     }
-    console.log('cols ' + cols)
     return cols
 }
 
@@ -48,11 +47,10 @@ function getShades(col) {
     return cols;
 }
 
-function setCol1(tile) {
-    let equ = 1/6
-    let weights = [equ, equ, equ, equ, equ, equ];
-    // let weights = [0, 0, 0, 0, 0, 1];
-    console.log('HEY')
+function setCol1(tile, weightsI) {
+    // let equ = 1/6
+    // let weights = [equ, equ, equ, equ, equ, equ];
+    let weights = weightsI ? weightsI : [0, 0, 0, 0, 0, 1];
     let randomNum = Math.random();
     let cumulativeWeight = 0;
     for (let i = 0; i < weights.length; i++) {
@@ -169,7 +167,7 @@ function setCol2Plus(tile) {
                 case 13:
                     console.log('case 13')
                     most = mostUsed4(tile).slice(0, 2)
-                    if (!isSimilar(most[0], most[1], 20)) {
+                    if (most.length > 1 && !isSimilar(most[0], most[1], 20)) {
                         return [most[0], interpolateHslColor(most[0], most[1]), most[1]]
                     } else setCol2Plus(tile)
                 // Colours from Colour Palette

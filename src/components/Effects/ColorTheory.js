@@ -50,6 +50,7 @@ export function isSimilar(col0, col1, thres) {
         col0 = col0.match(/\d+/g).map(Number).slice(0,3);
     }
     else if (typeof col0 === "string" && col0.slice(0, 3) === 'hsl') { // both are hsl
+        console.log('COL 0 '  + col0 + 'and + ' + col1)
         col0 = col0.match(/(\d+(\.\d+)?)/g).map(Number);
         col1 = col1.match(/(\d+(\.\d+)?)/g).map(Number);
     } else {
@@ -210,4 +211,20 @@ function HueShift(h, s) {
     while (h >= 360.0) h -= 360.0;
     while (h < 0.0) h += 360.0;
     return h;
+}
+
+function rgbaToHex(rgbaString) {
+    // Extract RGBA values from the string
+    const rgbaValues = rgbaString.substring(rgbaString.indexOf('(') + 1, rgbaString.lastIndexOf(')')).split(',');
+
+    // Convert RGBA values to integers
+    const red = parseInt(rgbaValues[0].trim());
+    const green = parseInt(rgbaValues[1].trim());
+    const blue = parseInt(rgbaValues[2].trim());
+    const alpha = parseFloat(rgbaValues[3].trim());
+
+    // Convert RGB values to hex
+    const hex = ((red << 16) | (green << 8) | blue).toString(16).padStart(6, '0');
+
+    return `#${hex}`;
 }

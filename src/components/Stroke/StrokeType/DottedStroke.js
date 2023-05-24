@@ -7,6 +7,7 @@ import {redrawDots, redrawTileDots} from "../Dot/DotArr";
 import {getPathWithId, getTileWithId} from "../../Tiling/TilingPathDict";
 import {getTile} from "../../Tiling/Tiling2";
 import {startDot} from "../Dot/DotType";
+import {getOffSmall, smallOffset} from "../../Tiling/Tiling3";
 
 let dottedStrokes = {}
 
@@ -16,7 +17,7 @@ export function drawDottedStroke(id, x0, y0, x1, y1, theColor, theLineWidth, off
         if (dottedStrokes[id] === undefined) {
             dottedStrokes[id] = []
         }
-        dottedStrokes[id].push([{x: x0, y: y0}]);
+        dottedStrokes[id].push([{x: x0, y: y0, smallOff: smallOffset}]);
         setDragging(true)
         refreshDotted(id)
         return
@@ -25,7 +26,8 @@ export function drawDottedStroke(id, x0, y0, x1, y1, theColor, theLineWidth, off
         x: x0,
         y: y0,
         col: theColor,
-        lw: getLineWidth()
+        lw: getLineWidth(),
+        smallOff: smallOffset,
     }); // Append point to current path.
     refreshDotted(id);
 }
@@ -42,29 +44,33 @@ export function refreshDotted(id) {
         ctx.fill(getTileWithId(id).path)
     }
     redrawDottedStrokesTile(id)
-    redrawTileStrokes(id) // redraw solid strokes
 }
 
-export function redrawDottedStrokes(offsetY) {
+export function redrawDottedStrokes() {
     for (const id in dottedStrokes) {
-        redrawDottedStrokesTile(id, offsetY)
-    }
+            const paths = dottedStrokes[id];
+            paths.forEach((path, index) => {
+                path.forEach((i) => {
+                    if (i.smallOff === 0) {
+                        i.y = i.y - getOffSmall(0);
+                        i.smallOff = getOffSmall(0);
+                    } else {
+                        delete dottedStrokes[id];
+                        return; // Move to the next path
+                    }
+                });
+            });
+        }
 }
+
 export function redrawDottedStrokesTile(tileId, offsetY = 0) {
     const ctx = document.getElementById('top-canvas').getContext('2d');
     const tile = findTile1(tileId, offsetY, dottedStrokes);
     const strokes = dottedStrokes[tileId];
     if (!strokes) return;
     for (const path of strokes) {
-        // if(!path.stroke){
-        //     startDot(tileId, path.x0, path.y0 - offsetY, path.x1, path.y1 - offsetY, (path.color), path.lineWidth, path.type)
-        // }
-        if (offsetY !== 0 && path.y < offsetY) continue;
-        if (path.length < 2) continue; // Need at least two points to draw a line.
-        if (offsetY !== 0 && tile) {
-            const currStrokes = dottedStrokes[tile.id] ??= [];
-            currStrokes.push([{x: path[0].x, y: path[0].y - offsetY}]);
-        }
+        if (offsetY !== 0 && path.y < offsetY) return;
+        if (path.length < 2) return; // Need at least two points to draw a line.
         ctx.beginPath();
         ctx.moveTo(path[0].x, path[0].y - offsetY);
         for (const {x, y, col, lw} of path.slice(1)) {
@@ -96,4 +102,18 @@ export function pushDot(id, x0, y0, x1, y1, col, lw, type) {
     };
     dottedStrokes[id] = dottedStrokes[id] || [];
     dottedStrokes[id].push(newDot);
+}
+
+export function drawDottedDot(id, x0, y0, x1, y1, theColor, theLineWidth, offset, context) {
+    if (dottedStrokes[id] === undefined) {
+        dottedStrokes[id] = []
+    }
+    dottedStrokes[id].push([{x: x0, y: y0}]);
+    dottedStrokes[id][dottedStrokes[id].length - 1].push({
+        x: x0 + 1,
+        y: y0 + 1,
+        col: theColor,
+        lw: getLineWidth()
+    }); // Append point to current path.
+    refreshDotted(id);
 }

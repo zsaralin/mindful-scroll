@@ -90,25 +90,19 @@ export function drawJustDot(tile) {
     const arr = strokeArr[tile.id]
     if (arr) {
         const dot = arr[arr.length - 1]
-        startDot(tile.id, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, (dot.color), dot.lineWidth, dot.type)
+        startDot(tile.id, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, (dot.color), dot.lineWidth, tile.dotType)
     }
-    // const ctx = document.getElementById('top-canvas').getContext("2d");
-    // ctx.fillStyle = "white"
-    // ctx.fill(tile.path)
-    // console.log('EBFOREEE' + tile.id)
-    // redrawTileStrokes(tile.id)
-    // // refreshStrokes(tile, offset)
-    // redrawTileDots(tile.id)
 
 }
 
 export function removeLastDot(tile) {
     let arr = strokeArr[tile.id]
+    if(arr){
     for (let i = arr.length - 1; i >= 0; i--) {
         if (!arr[i].stroke) {
             strokeArr[tile.id].pop();
             // redrawTileStrokes(tile.id);
             return;
         }
-    }
+    }}
 }
