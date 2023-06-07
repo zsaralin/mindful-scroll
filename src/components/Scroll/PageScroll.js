@@ -44,6 +44,8 @@ export function setRefreshed(i) {
 let redrawing = false;
 let newInvis;
 let newTiling;
+
+let offsetI = 0;
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
@@ -59,10 +61,10 @@ export const redrawCanvas = async () => {
         const invisCtx = newInvis.getContext('2d');
         const tilingCtx = newTiling.getContext('2d');
 
-        invisCtx.drawImage(invisC, 0, -(top - TOP_PAGE_SPACE));
-        tilingCtx.drawImage(tilingC, 0, -(top - TOP_PAGE_SPACE));
+        invisCtx.drawImage(invisC, 0, -(top - TOP_PAGE_SPACE + offsetI - 25));
+        tilingCtx.drawImage(tilingC, 0, -(top - TOP_PAGE_SPACE + offsetI-25));
     }
-    if (offsetY > top - TOP_PAGE_SPACE) {
+    if (offsetY > top - TOP_PAGE_SPACE + offsetI - 25) {
         redrawing = true;
         prevOffsetY += offsetY
 
@@ -74,22 +76,22 @@ export const redrawCanvas = async () => {
             newCanvas.width = canvas.width;
             newCanvas.height = canvas.height;
             const newCtx = newCanvas.getContext('2d');
-            newCtx.drawImage(canvas, 0, -(top - TOP_PAGE_SPACE));
+            newCtx.drawImage(canvas, 0, -(top - TOP_PAGE_SPACE +  offsetI - 25));
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(newCanvas, 0, 0);
+            ctx.drawImage(newCanvas, 0, offsetI + 300);
         };
-
-        const canvasIds = ['fill-canvas', 'top-canvas'];
-        const promises = canvasIds.map(updateCanvas);
 
         const clearAndDraw = (canvasId, image) => {
             const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext('2d');
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(image, 0, 0);
+            ctx.drawImage(image, 0, 300  +offsetI );
         };
+
+        const canvasIds = ['fill-canvas', 'top-canvas'];
+        const promises = canvasIds.map(updateCanvas);
 
         clearAndDraw('invis-canvas', newInvis);
         clearAndDraw('tiling-canvas', newTiling);
@@ -97,11 +99,12 @@ export const redrawCanvas = async () => {
         drawSecondTiling();
 
         await Promise.allSettled(promises).then(() => {
-            setOffsetY(0);
-            wrap.style.transform = `translate(0,-${0}px)`
+            setOffsetY(300 + offsetI - 0);
+            wrap.style.transform = `translate(0,-${300 + offsetI - 0}px)`
             redrawAnim()
             redrawTransparentStrokes()
             redrawDottedStrokes()
+            offsetI = 300;
         });
 
     } else {
@@ -110,7 +113,32 @@ export const redrawCanvas = async () => {
     }
 }
 
+let i = 1;
 
+export const redrawCanvas2 = async () => {
+    const wrap = document.getElementById("wrapper")
+    let offsetY = getOffsetY()
+    if (offsetY > (top - TOP_PAGE_SPACE)+prevOffsetY) {
+        redrawing = true;
+        const canvas = document.getElementById('top-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, prevOffsetY, canvas.width, top-TOP_PAGE_SPACE);
+        const canvas1 = document.getElementById('fill-canvas');
+        const ctx1 = canvas1.getContext('2d');
+        ctx1.clearRect(0, prevOffsetY, canvas.width, top-TOP_PAGE_SPACE);
+        const canvas2 = document.getElementById('tiling-canvas');
+        const ctx2 = canvas2.getContext('2d');
+        ctx2.clearRect(0, prevOffsetY, canvas.width, top-TOP_PAGE_SPACE);
+        i++;
+        prevOffsetY += offsetY
+        drawSecondTiling();
+
+
+    } else {
+        wrap.style.transform = `translate(0,-${offsetY}px)`;
+        // moveEffect(refreshed, offsetY, prevOffsetY)}
+    }
+}
 
 let d = SCROLL_DIST
 

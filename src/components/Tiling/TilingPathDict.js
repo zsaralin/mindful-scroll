@@ -14,6 +14,7 @@ let transition = 1;
 let idDict = {}
 
 export function getTilingPathDict(segArr, offsetX, offsetY) {
+    console.log('LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOK')
     // offsetY += prevOffsetY;
     let pathDict = {}
     let colorIndex = 0

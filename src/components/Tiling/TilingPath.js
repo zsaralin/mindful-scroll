@@ -3,7 +3,7 @@ import {getBoundsTile, getBoundsTiling} from "./TilingBounds";
 import {getYPadding} from "./TilingSize";
 import {refreshTilings} from "./Tiling3";
 
-let path = "leftTriangle";
+let path = "rect";
 let numTilings = 0;
 
 export const setPathType = (newPath) => {
@@ -87,3 +87,42 @@ export function createPath(tiling) {
         }
     }
 return tiling}
+
+
+export function checkOverlap(boxes1, boxes2){
+    console.log(boxes1)
+    for (let i = 0; i < boxes1.length; i++) {
+        const box1 = boxes1[i];
+        const xmin1 = box1[0];
+        const xmax1 = box1[1];
+        const ymin1 = box1[2];
+        const ymax1 = box1[3];
+
+        for (let j = 0; j < boxes2.length; j++) {
+            const box2 = boxes2[j];
+            const xmin2 = box2[0];
+            const xmax2 = box2[1];
+            const ymin2 = box2[2];
+            const ymax2 = box2[3];
+
+            if (
+                xmin1 > xmax2 ||
+                xmax1 < xmin2 ||
+                ymin1 > ymax2 ||
+                ymax1 < ymin2
+            ) {
+                // Boxes do not overlap
+                continue;
+            } else {
+                // Boxes overlap
+                console.log('true')
+                return true;
+            }
+        }
+    }
+
+    // No overlap found
+    console.log('false')
+
+    return false;
+}
