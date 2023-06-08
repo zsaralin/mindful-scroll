@@ -6,14 +6,12 @@ import {setTiling} from "./SortingHat";
 import {getOffsetY} from "../Scroll/Offset";
 import {clearCanvas, drawTwoTilings, getTilingIndex2} from "./Tiling2";
 import {prevOffsetY} from "../Scroll/PageScroll";
-import {TOP_PAGE_SPACE} from "../Constants";
+import {TOP_PAGE_SPACE, BETWEEN_SPACE} from "../Constants";
 import {getFillInfo, getFillType} from "./SortingHat/TilingFillType";
 import {checkOverlap} from "./TilingPath";
 
 export let bottom; // bottom of current tiling
 export let top; // top of next tiling
-const SPACE = 150; // space between tilings
-const TOP_SPACE = 75;
 let pathArr = [] //array of path dict for each tiling
 
 let offsetX, offsetY;
@@ -27,7 +25,10 @@ export let smallOffset = 0;
 export function drawTwo(pathArrI) {
     firstTiling(pathArrI?.[0]?.segArr)
     secondTiling(pathArrI?.[1]?.segArr, 0)
-    // checkOverlap( Object.values(pathArr[0].pathDict),  Object.values(pathArr[1].pathDict))
+    console.log('before ' + Object.keys(pathArr[ 1].pathDict).length)
+    checkOverlap( pathArr[0].pathDict,  pathArr[1].pathDict)
+    console.log('after ' + Object.keys(pathArr[ 1].pathDict).length)
+
     pathArr.forEach(tiling => {
         drawTiling(tiling)
         tiling.fillInfo = getFillInfo()
@@ -38,7 +39,7 @@ export function drawTwo(pathArrI) {
 
 export function getOffSmall(i) {
     if (!secondDrawn) return 0
-    smallOffset = i === 0 ? oldOffset[0] : 0
+    smallOffset = i === 0 ? oldOffset[0] - 425: 0
     return smallOffset
 }
 
@@ -62,10 +63,10 @@ export function firstTiling(inputArr) {
     let t = makeRandomTiling(inputArr);
 
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
-    offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
-    offsetY = -yMin + TOP_SPACE ;
+    offsetX = -(xMin - (window.innerWidth - xMax)) / 5;
+    offsetY = -yMin + TOP_PAGE_SPACE ;
     pathArr.push(toTiling(t));
-    bottom = yMax - yMin + TOP_SPACE + SPACE
+    bottom = yMax - yMin + TOP_PAGE_SPACE //+ BETWEEN_SPACE
     top = bottom
 
     tilingsDrawn++;
@@ -75,11 +76,12 @@ let oldOffset = [0]
 
 export function secondTiling(inputArr, offset) {
     const finOffset = offset !== undefined ? offset : 400;
-    top = bottom + SPACE
+    top = bottom + BETWEEN_SPACE //+ finOffset ;
     let t = makeRandomTiling(inputArr);
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
     offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
-    offsetY = bottom - yMin + finOffset
+    offsetY = bottom - yMin + finOffset + BETWEEN_SPACE
+    console.log(oldOffset)
     if (oldOffset.length < 2) {
         oldOffset.push(offsetY + yMin);
     } else {
@@ -91,13 +93,17 @@ export function secondTiling(inputArr, offset) {
     if (pathArr.length === 3) {
         pathArr.shift()
     }
-    bottom = yMax - yMin + SPACE + finOffset
+    bottom = yMax - yMin + TOP_PAGE_SPACE + finOffset
 
 }
 
 export function drawSecondTiling() {
     secondTiling()
+    console.log('before ' + Object.keys(pathArr[pathArr.length - 1].pathDict).length)
+    // checkOverlap( pathArr[pathArr.length - 2].pathDict,  pathArr[pathArr.length - 1].pathDict, )
+    console.log('after ' + Object.keys(pathArr[pathArr.length - 1].pathDict).length)
     drawTiling(pathArr[pathArr.length - 1])
+
     pathArr[pathArr.length - 1].fillInfo = getFillInfo()
     secondDrawn = true;
 }

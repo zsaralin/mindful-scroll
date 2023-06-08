@@ -14,7 +14,6 @@ let transition = 1;
 let idDict = {}
 
 export function getTilingPathDict(segArr, offsetX, offsetY) {
-    console.log('LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOK')
     // offsetY += prevOffsetY;
     let pathDict = {}
     let colorIndex = 0
@@ -74,6 +73,7 @@ export function getTilingPathDict(segArr, offsetX, offsetY) {
         bounds[1] = bounds[1] + offsetX
         bounds[2] = bounds[2] + offsetY
         bounds[3] = bounds[3] + offsetY
+        // console.log(Math.round(bounds[2]) + ' and ' +Math.round(bounds[3]))
         let id = uuidv4()
         pathDict[cols[colorIndex]] = {
             path: path,

@@ -1,7 +1,7 @@
 import {redrawCanvas, refreshPage} from "../Scroll/PageScroll";
 import {getBoundsTile, getBoundsTiling} from "./TilingBounds";
 import {getYPadding} from "./TilingSize";
-import {refreshTilings} from "./Tiling3";
+import {refreshTilings, tilingsDrawn} from "./Tiling3";
 
 let path = "rect";
 let numTilings = 0;
@@ -38,7 +38,7 @@ export function createPath(tiling) {
         let [tileXMin, tileXMax, tileYMin, tileYMax] = getBoundsTile(tile)
         // console.log([tileXMin, tileXMax, tileYMin, tileYMax] )
         if (path === "rect") {
-            pathVar = 300
+            pathVar = 200
             rightEdge = (window.innerWidth - pathVar)
             leftEdge = pathVar
         } else if (path === "triangle") {
@@ -89,22 +89,26 @@ export function createPath(tiling) {
 return tiling}
 
 
-export function checkOverlap(boxes1, boxes2){
-    console.log(boxes1)
+export function checkOverlap(pathDict1, pathDict2, offset){
+    console.log('LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOK')
+
+    const off = typeof  offset !== 'undefined' ? offset: 0
+    const boxes1 = Object.values(pathDict1)
+    const boxes2 = Object.values(pathDict2)
     for (let i = 0; i < boxes1.length; i++) {
-        const box1 = boxes1[i];
+        const box1 = boxes1[i].bounds;
         const xmin1 = box1[0];
         const xmax1 = box1[1];
-        const ymin1 = box1[2];
-        const ymax1 = box1[3];
+        const ymin1 = box1[2] ;
+        const ymax1 = box1[3] ;
 
         for (let j = 0; j < boxes2.length; j++) {
-            const box2 = boxes2[j];
+            const box2 = boxes2[j].bounds;
             const xmin2 = box2[0];
             const xmax2 = box2[1];
-            const ymin2 = box2[2];
-            const ymax2 = box2[3];
-
+            const ymin2 = box2[2] ;
+            const ymax2 = box2[3] ;
+            // console.log(ymax1 + ' and ' + ymax2)
             if (
                 xmin1 > xmax2 ||
                 xmax1 < xmin2 ||
@@ -112,17 +116,25 @@ export function checkOverlap(boxes1, boxes2){
                 ymax1 < ymin2
             ) {
                 // Boxes do not overlap
+                // console.log('false')
+
                 continue;
             } else {
                 // Boxes overlap
                 console.log('true')
-                return true;
+                for (const key in pathDict2) {
+                    if (pathDict2[key] === boxes2[j]) {
+                        delete pathDict2[key];
+                        break; // Remove this line if you want to delete all matching objects
+                    }
+                }
+                // return true;
             }
         }
     }
 
     // No overlap found
-    console.log('false')
+    // console.log('false')
 
-    return false;
+    // return false;
 }

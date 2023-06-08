@@ -136,7 +136,7 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight * 4;
+            canvas.height = window.innerHeight * 6;
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
@@ -168,7 +168,7 @@ function App() {
 
         currTile = getTile(y , invisCol)
         currTiling = getTiling(y , invisCol)
-        console.log(currTile + ' and ' + currTiling + ' and ' + currTiling.fillNum)
+        // console.log(currTile + ' and ' + currTiling + ' and ' + currTiling.fillNum)
         if(currTiling.colourPal.length === 0){
             if(firstClick) {
                 currTiling.colourPal = getColourPal()
@@ -182,7 +182,6 @@ function App() {
         if(prevTiling !== currTiling){
         setColourPal(currTiling.colourPal)}
         if(currTile) currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
-
         currColor = getCurrColor()
         stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
@@ -239,7 +238,8 @@ function App() {
                 dotRemoved = true;
             }
             // console.log(Math.abs(speed[0]) + ' and ' + Math.abs(speed[1]))
-            if ((isShrinkStroke() && (Math.abs(speed[0]) > 10 || Math.abs(speed[1]) > 10))) {
+
+            if ((currTile.strokeType === "reg" && isShrinkStroke() && (Math.abs(speed[0]) > 10 || Math.abs(speed[1]) > 10))) {
                 pushShrinkingLine(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, currTiling.strokeType);
                 drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY, currColor);
                 tooFast = true;

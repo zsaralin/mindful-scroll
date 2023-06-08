@@ -8,7 +8,9 @@ export const BUBBLE_DIST = 120
 export const SCROLL_DIST = window.innerHeight/170
 export const SCROLL_DELTA = .03
 
-export const TOP_PAGE_SPACE = 150
+export const TOP_PAGE_SPACE = 75
+export const BETWEEN_SPACE = 150
+
 export const FIFTH_WINDOW = window.innerHeight * 4 / 5;
 
 export const SWIPE_THRESHOLD = window.innerWidth/12;

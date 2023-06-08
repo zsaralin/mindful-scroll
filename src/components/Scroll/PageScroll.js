@@ -3,7 +3,7 @@ import {redrawStrokes} from "../Stroke/StrokeType/StrokeArr";
 import {redrawCompleteTiles} from "../Tile/CompleteTileArr";
 import {redrawActiveTiles} from "../Effects/Watercolor";
 import {setInternalOffset} from "../Tile/CompleteTile";
-import {SCROLL_DELTA, SCROLL_DIST, TOP_PAGE_SPACE} from "../Constants";
+import {BETWEEN_SPACE, SCROLL_DELTA, SCROLL_DIST, TOP_PAGE_SPACE} from "../Constants";
 import {endAutoScroll, isAutoScrollActive} from "./AutoScroll";
 import {getOffsetY, setOffsetY} from "./Offset";
 import {isSlowScrollOn} from "./SlowScroll";
@@ -61,10 +61,10 @@ export const redrawCanvas = async () => {
         const invisCtx = newInvis.getContext('2d');
         const tilingCtx = newTiling.getContext('2d');
 
-        invisCtx.drawImage(invisC, 0, -(top - TOP_PAGE_SPACE + offsetI - 25));
-        tilingCtx.drawImage(tilingC, 0, -(top - TOP_PAGE_SPACE + offsetI-25));
+        invisCtx.drawImage(invisC, 0, -(top + offsetI - 25));
+        tilingCtx.drawImage(tilingC, 0, -(top + offsetI-25));
     }
-    if (offsetY > top - TOP_PAGE_SPACE + offsetI - 25) {
+    if (offsetY > top + offsetI - 25) {
         redrawing = true;
         prevOffsetY += offsetY
 
@@ -76,10 +76,10 @@ export const redrawCanvas = async () => {
             newCanvas.width = canvas.width;
             newCanvas.height = canvas.height;
             const newCtx = newCanvas.getContext('2d');
-            newCtx.drawImage(canvas, 0, -(top - TOP_PAGE_SPACE +  offsetI - 25));
+            newCtx.drawImage(canvas, 0, -(top + offsetI - 25));
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(newCanvas, 0, offsetI + 300);
+            ctx.drawImage(newCanvas, 0, offsetI + 400);
         };
 
         const clearAndDraw = (canvasId, image) => {
@@ -87,7 +87,7 @@ export const redrawCanvas = async () => {
             const ctx = canvas.getContext('2d');
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(image, 0, 300  +offsetI );
+            ctx.drawImage(image, 0, 400  +offsetI );
         };
 
         const canvasIds = ['fill-canvas', 'top-canvas'];
@@ -99,12 +99,12 @@ export const redrawCanvas = async () => {
         drawSecondTiling();
 
         await Promise.allSettled(promises).then(() => {
-            setOffsetY(300 + offsetI - 0);
-            wrap.style.transform = `translate(0,-${300 + offsetI - 0}px)`
+            setOffsetY(400 + offsetI - 0);
+            wrap.style.transform = `translate(0,-${400 + offsetI - 0}px)`
             redrawAnim()
             redrawTransparentStrokes()
             redrawDottedStrokes()
-            offsetI = 300;
+            offsetI = 400;
         });
 
     } else {

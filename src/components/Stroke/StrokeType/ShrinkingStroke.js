@@ -2,7 +2,7 @@ import {getLineWidth, setLineWidth} from "../StrokeWidth";
 import {getCurrColor} from "../Color/StrokeColor";
 import {LINE_WIDTH} from "../../Constants";
 
-let shrinkStroke = false;
+let shrinkStroke = true;
 
 export function drawShrinkingStroke(x0, y0, x1, y1, theColor) {
     let context = document.getElementById('top-canvas').getContext("2d");

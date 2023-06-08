@@ -19,7 +19,7 @@ function getScaler(tiling) {
     let t1 = tiling.getT1()
     let t2 = tiling.getT2()
     const B = Math.abs((t1.x * t2.y) - (t2.x * t1.y)) / (tiling.numAspects())
-    const A = 2
+    const A = 1.5
     return Math.sqrt(A / B)
 }
 
@@ -64,7 +64,6 @@ function getSegArr(tiling, edges) {
     return createPath(segArr)
 }
 
-let rem = 0;
 export function drawTiling(tiling) {
     const pathDict = tiling.pathDict;
     const tilingCanvas = document.getElementById('tiling-canvas');
