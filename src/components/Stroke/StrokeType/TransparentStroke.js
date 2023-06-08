@@ -54,7 +54,6 @@ export function drawTransparentStroke(id, x0, y0, x1, y1, theColor, theLineWidth
 export function refreshTrans(id) {
     const ctx = document.getElementById('top-canvas').getContext("2d");
     let tile = getTileWithId(id)
-    console.log('ID  + ' + id + ' ' + tile)
     ctx.fillStyle = "white"
     ctx.save()
     ctx.translate(0, -smallOffset)

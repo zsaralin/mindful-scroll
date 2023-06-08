@@ -38,7 +38,7 @@ export function createPath(tiling) {
         let [tileXMin, tileXMax, tileYMin, tileYMax] = getBoundsTile(tile)
         // console.log([tileXMin, tileXMax, tileYMin, tileYMax] )
         if (path === "rect") {
-            pathVar = 200
+            pathVar = window.innerWidth < 550 ? 200: 300
             rightEdge = (window.innerWidth - pathVar)
             leftEdge = pathVar
         } else if (path === "triangle") {

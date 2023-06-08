@@ -63,7 +63,7 @@ export function firstTiling(inputArr) {
     let t = makeRandomTiling(inputArr);
 
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
-    offsetX = -(xMin - (window.innerWidth - xMax)) / 5;
+    offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
     offsetY = -yMin + TOP_PAGE_SPACE ;
     pathArr.push(toTiling(t));
     bottom = yMax - yMin + TOP_PAGE_SPACE //+ BETWEEN_SPACE
