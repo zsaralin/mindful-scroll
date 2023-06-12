@@ -89,10 +89,9 @@ import {getTileWidth} from "./components/Tiling/TileWidth";
 import {completeTile2} from "./components/Tiling/SortingHat/CompleteTile2";
 import {dotTypesHelper, helper} from "./components/Tiling/SortingHat/TilingFillType";
 import firebase from "firebase/compat/app";
-import "firebase/compat/database";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getAuth , signInAnonymously  } from "firebase/auth";
 
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -139,24 +138,46 @@ function App() {
     let prevCursorY;
 
     firebase.initializeApp(firebaseConfig);
+    const db = getFirestore(firebase.app);
     // Get a reference to the database
-    const database = firebase.database();
+    // const database = firebase.functions.addM();
+    // const functions = require("./functions/index.js");
+    const auth = getAuth();
 
-    function sendMessage(message) {
+
+    async function sendMessage(message) {
+        const messagesCollection = collection(db, "messages");
+
+        const newMessage = {
+            participantId: 1,
+            original: "Hello, Firestore!",
+        };
+
+        const docRef = await addDoc(messagesCollection, newMessage);
+        console.log("Document written with ID: ", docRef.id);
+        // firebase.functions.addmessage({
+        //     query: {
+        //         text: "hey"
+        //     },
+        //     json: function(response) {
+        //         console.log(response);
+        //     }
+        // }, {});
         // Generate a new push key
-        const newMessageRef = database.ref('messages').push();
-        // Set the message data
-        newMessageRef.set({
-            text: message
-        })
-            .then(() => {
-                console.log('Message sent successfully.');
-            })
-            .catch((error) => {
-                console.error('Error sending message:', error);
-                console.log('has'
-                )
-            });
+        // const newMessageRef = database.ref('messages').push();
+        // console.log('ay h' + newMessageRef)
+        // // Set the message data
+        // newMessageRef.set({
+        //     text: message
+        // })
+        //     .then(() => {
+        //         console.log('Message sent successfully.');
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error sending message:', error);
+        //         console.log('has'
+        //         )
+        //     });
     }
     let d = SCROLL_DIST// scroll distance (change in y)
 
@@ -174,6 +195,15 @@ function App() {
     }
 
     useEffect(() => {
+        signInAnonymously(auth)
+            .then(() => {
+                // Signed in..
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // ...
+            });
         const canvasIds = ['tiling-canvas','invis-canvas', 'fill-canvas', 'top-canvas'];
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
