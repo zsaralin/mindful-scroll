@@ -145,7 +145,6 @@ function App() {
     function sendMessage(message) {
         // Generate a new push key
         const newMessageRef = database.ref('messages').push();
-
         // Set the message data
         newMessageRef.set({
             text: message
@@ -155,6 +154,8 @@ function App() {
             })
             .catch((error) => {
                 console.error('Error sending message:', error);
+                console.log('has'
+                )
             });
     }
     let d = SCROLL_DIST// scroll distance (change in y)
