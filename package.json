@@ -13,6 +13,7 @@
     "@ungap/structured-clone": "^1.0.1",
     "delaunator": "^5.0.0",
     "delaunay-fast": "^1.0.1",
+    "firebase": "^9.22.2",
     "gsap": "^3.11.0",
     "mathjs": "^10.6.4",
     "mina": "^1.0.9",

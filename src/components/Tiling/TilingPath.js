@@ -1,7 +1,7 @@
 import {redrawCanvas, refreshPage} from "../Scroll/PageScroll";
 import {getBoundsTile, getBoundsTiling} from "./TilingBounds";
 import {getYPadding} from "./TilingSize";
-import {refreshTilings, tilingsDrawn} from "./Tiling3";
+import {getTile, refreshTilings, tilingsDrawn} from "./Tiling3";
 
 let path = "rect";
 let numTilings = 0;
@@ -38,7 +38,7 @@ export function createPath(tiling) {
         let [tileXMin, tileXMax, tileYMin, tileYMax] = getBoundsTile(tile)
         // console.log([tileXMin, tileXMax, tileYMin, tileYMax] )
         if (path === "rect") {
-            pathVar = window.innerWidth < 550 ? 200: 300
+            pathVar = window.innerWidth > 550 ?  [300, 400, 500][Math.floor(Math.random() * 3)]: 200
             rightEdge = (window.innerWidth - pathVar)
             leftEdge = pathVar
         } else if (path === "triangle") {
@@ -88,49 +88,56 @@ export function createPath(tiling) {
     }
 return tiling}
 
-
 export function checkOverlap(pathDict1, pathDict2, offset){
-    console.log('LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOK')
-
     const off = typeof  offset !== 'undefined' ? offset: 0
-    const boxes1 = Object.values(pathDict1)
-    const boxes2 = Object.values(pathDict2)
-    for (let i = 0; i < boxes1.length; i++) {
-        const box1 = boxes1[i].bounds;
+    for (const key in pathDict1) {
+        const box1 = pathDict1[key].bounds;
         const xmin1 = box1[0];
         const xmax1 = box1[1];
-        const ymin1 = box1[2] ;
-        const ymax1 = box1[3] ;
-
-        for (let j = 0; j < boxes2.length; j++) {
-            const box2 = boxes2[j].bounds;
+        const ymin1 = box1[2] + off;
+        const ymax1 = box1[3]+ off;
+        // let c = document.getElementById('top-canvas').getContext('2d')
+        // c.save()
+        // c.translate(0,off)
+        // c.fillStyle = 'pink'
+        // c.fill(pathDict1[key].path)
+        // c.restore()
+        for (const key in pathDict2) {
+            const box2 = pathDict2[key].bounds
             const xmin2 = box2[0];
             const xmax2 = box2[1];
-            const ymin2 = box2[2] ;
-            const ymax2 = box2[3] ;
+            const ymin2 = box2[2]  ;
+            const ymax2 = box2[3]  ;
+            // let c = document.getElementById('top-canvas').getContext('2d')
+            // c.fillStyle = 'green'
+            // c.fill(pathDict2[key].path)
             // console.log(ymax1 + ' and ' + ymax2)
             if (
-                xmin1 > xmax2 ||
-                xmax1 < xmin2 ||
-                ymin1 > ymax2 ||
-                ymax1 < ymin2
+                xmin1 > xmax2 + 25 ||
+                xmax1 + 25 < xmin2 ||
+                ymin1 > ymax2 + 25 ||
+                ymax1 + 25 < ymin2
             ) {
                 // Boxes do not overlap
-                // console.log('false')
-
                 continue;
             } else {
                 // Boxes overlap
-                console.log('true')
-                for (const key in pathDict2) {
-                    if (pathDict2[key] === boxes2[j]) {
-                        delete pathDict2[key];
-                        break; // Remove this line if you want to delete all matching objects
+                // console.log('true')
+                // console.log(ymin1)
+                        // let c = document.getElementById('top-canvas').getContext('2d')
+                        // c.fillStyle = 'blue'
+                        // c.fill(pathDict2[key].path)
+                // c.strokeWidth = 50
+                // c.strokeStyle = "red"
+                //         c.strokeRect(xmin2, ymin2, xmax2-xmin2, ymax2-ymin2)
+                // c.strokeStyle = "pink"
+                // c.strokeRect(xmin1, ymin1, xmax1-xmin1, ymax1-ymin1)
+
+                delete pathDict2[key];
+                        // break; // Remove this line if you want to delete all matching objects
                     }
                 }
                 // return true;
-            }
-        }
     }
 
     // No overlap found

@@ -88,6 +88,7 @@ import {drawJustDot, pushDot, removeLastDot} from "./components/Stroke/Dot/DotAr
 import {getTileWidth} from "./components/Tiling/TileWidth";
 import {completeTile2} from "./components/Tiling/SortingHat/CompleteTile2";
 import {dotTypesHelper, helper} from "./components/Tiling/SortingHat/TilingFillType";
+import firebase from "firebase/compat";
 
 
 function App() {
@@ -115,7 +116,22 @@ function App() {
     let cursorY;
     let prevCursorX;
     let prevCursorY;
+    const database = firebase.database();
+    function sendMessage(message) {
+        // Generate a new push key
+        const newMessageRef = database.ref('messages').push();
 
+        // Set the message data
+        newMessageRef.set({
+            text: message
+        })
+            .then(() => {
+                console.log('Message sent successfully.');
+            })
+            .catch((error) => {
+                console.error('Error sending message:', error);
+            });
+    }
     let d = SCROLL_DIST// scroll distance (change in y)
 
     let insidePoly = [0, 0] // number of points inside and outside polygon
@@ -159,10 +175,12 @@ function App() {
     let smallOffset;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
+        sendMessage()
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
         // console.log(`tilingIndex ${index}`)
         smallOffset = getOffSmall(index)
+        console.log('SMALL ' + smallOffset)
 
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
 
@@ -579,7 +597,7 @@ function App() {
             <div className="wrapper" id = "wrapper">
                 <div id = "canvas-wrapper">
                 <canvas ref={canvas} id="fill-canvas"></canvas>
-                <canvas id="top-canvas" style={{display: '',}}></canvas>
+                <canvas id="top-canvas" style={{display: ''}}></canvas>
 
                     <canvas id="invis-canvas" style={{display: 'none',}}
                 ></canvas>
@@ -598,6 +616,7 @@ function App() {
                 {/*    <div id = 'overlayTop'> </div>*/}
                 {/*    <div id = 'overlayBottom'> </div>*/}
                 {/*</div>*/}
+                <div id = "gradRectangle"></div>
 
             </div>
             <div id="hidden">

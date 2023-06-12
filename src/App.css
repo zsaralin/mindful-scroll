@@ -124,3 +124,13 @@ text {
     height: 100%;
     background: linear-gradient(to top, rgba(255, 255, 255, 1) 70%, rgba(255, 255, 255, 0) 100%);
 }
+
+#gradRectangle{
+    position: absolute;
+    left: 0px;
+    background: linear-gradient(to bottom, white, transparent);
+    z-index: 2;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}

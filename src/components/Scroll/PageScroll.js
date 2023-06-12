@@ -15,7 +15,7 @@ import {gsap} from "gsap";
 import {endEffect, moveEffect, startEffect} from "./ScrollEffect";
 import {redrawDots} from "../Stroke/Dot/DotArr";
 import {hideColourPreview} from "../Bubble/Bubble";
-import {drawSecondTiling, drawTwo, secondTiling, top} from "../Tiling/Tiling3";
+import {bottom, drawSecondTiling, drawSecondTilingHelper, drawTwo, q, secondTiling, top} from "../Tiling/Tiling3";
 import {activeFillAnim, redrawAnim, stopAnim} from "../Tile/FillTile/FillAnim";
 
 export let limitScroll = 0;
@@ -41,30 +41,36 @@ let refreshed = false;
 export function setRefreshed(i) {
     refreshed = i
 }
+
 let redrawing = false;
 let newInvis;
 let newTiling;
 
 let offsetI = 0;
+let firstStep = false;
+const scrollBackAmount = 150;
+
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
-    let offsetY = getOffsetY()
-    if(offsetY > (top - TOP_PAGE_SPACE)/2){
+    const offsetY = getOffsetY()
+    const refreshSpot = top + offsetI - 100;
+    if (!firstStep && offsetY > (refreshSpot / 2)) {
+        firstStep = true;
         const invisC = document.getElementById('invis-canvas');
         const tilingC = document.getElementById('tiling-canvas');
         newInvis = document.createElement('canvas');
         newTiling = document.createElement('canvas');
-
         newInvis.width = newTiling.width = invisC.width;
         newInvis.height = newTiling.height = invisC.height;
 
-        const invisCtx = newInvis.getContext('2d');
-        const tilingCtx = newTiling.getContext('2d');
+        const newInvisCtx = newInvis.getContext('2d');
+        const newTilingCtx = newTiling.getContext('2d');
 
-        invisCtx.drawImage(invisC, 0, -(top + offsetI - 25));
-        tilingCtx.drawImage(tilingC, 0, -(top + offsetI-25));
+        newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
+        newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
-    if (offsetY > top + offsetI - 25) {
+    if (offsetY > refreshSpot) {
+        console.log('heere')
         redrawing = true;
         prevOffsetY += offsetY
 
@@ -76,18 +82,17 @@ export const redrawCanvas = async () => {
             newCanvas.width = canvas.width;
             newCanvas.height = canvas.height;
             const newCtx = newCanvas.getContext('2d');
-            newCtx.drawImage(canvas, 0, -(top + offsetI - 25));
+            newCtx.drawImage(canvas, 0, -(refreshSpot - scrollBackAmount));
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(newCanvas, 0, offsetI + 400);
+            ctx.drawImage(newCanvas, 0, offsetI + 400 - scrollBackAmount);
         };
 
         const clearAndDraw = (canvasId, image) => {
             const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext('2d');
-
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(image, 0, 400  +offsetI );
+            ctx.drawImage(image, 0, 400 - scrollBackAmount + offsetI);
         };
 
         const canvasIds = ['fill-canvas', 'top-canvas'];
@@ -99,12 +104,29 @@ export const redrawCanvas = async () => {
         drawSecondTiling();
 
         await Promise.allSettled(promises).then(() => {
-            setOffsetY(400 + offsetI - 0);
-            wrap.style.transform = `translate(0,-${400 + offsetI - 0}px)`
+            setOffsetY(400 + offsetI);
+            wrap.style.transform = `translate(0,-${400 + offsetI}px)`
             redrawAnim()
             redrawTransparentStrokes()
             redrawDottedStrokes()
+            firstStep = false;
+            drawSecondTilingHelper()
+
+            var rectangle = document.getElementById("gradRectangle");
+
+            // Set the rectangle's style properties
+            // rectangle.style.position = "absolute";
+            rectangle.style.top = 400 - scrollBackAmount - 1 + offsetI + "px";
+            // rectangle.style.left = "0px";
+            rectangle.style.width = document.getElementById('top-canvas').width + "px";
+            rectangle.style.height = scrollBackAmount + "px";
+            // rectangle.style.background = "linear-gradient(to bottom, white, transparent)";
+            // rectangle.style.zIndex = "2";
+            // rectangle.style.touchAction = "none"
+            // document.body.appendChild(rectangle);
+            // wrap.appendChild(rectangle)
             offsetI = 400;
+
         });
 
     } else {
@@ -118,17 +140,17 @@ let i = 1;
 export const redrawCanvas2 = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
-    if (offsetY > (top - TOP_PAGE_SPACE)+prevOffsetY) {
+    if (offsetY > (top - TOP_PAGE_SPACE) + prevOffsetY) {
         redrawing = true;
         const canvas = document.getElementById('top-canvas');
         const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, prevOffsetY, canvas.width, top-TOP_PAGE_SPACE);
+        ctx.clearRect(0, prevOffsetY, canvas.width, top - TOP_PAGE_SPACE);
         const canvas1 = document.getElementById('fill-canvas');
         const ctx1 = canvas1.getContext('2d');
-        ctx1.clearRect(0, prevOffsetY, canvas.width, top-TOP_PAGE_SPACE);
+        ctx1.clearRect(0, prevOffsetY, canvas.width, top - TOP_PAGE_SPACE);
         const canvas2 = document.getElementById('tiling-canvas');
         const ctx2 = canvas2.getContext('2d');
-        ctx2.clearRect(0, prevOffsetY, canvas.width, top-TOP_PAGE_SPACE);
+        ctx2.clearRect(0, prevOffsetY, canvas.width, top - TOP_PAGE_SPACE);
         i++;
         prevOffsetY += offsetY
         drawSecondTiling();

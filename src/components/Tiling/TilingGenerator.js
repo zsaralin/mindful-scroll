@@ -19,7 +19,7 @@ function getScaler(tiling) {
     let t1 = tiling.getT1()
     let t2 = tiling.getT2()
     const B = Math.abs((t1.x * t2.y) - (t2.x * t1.y)) / (tiling.numAspects())
-    const A = window.innerWidth > 550 ? 2 : 1.5
+    const A = window.innerWidth > 550 ? Math.floor(Math.random() * 3) + 2 : 1.5
     return Math.sqrt(A / B)
 }
 
