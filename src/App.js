@@ -88,8 +88,29 @@ import {drawJustDot, pushDot, removeLastDot} from "./components/Stroke/Dot/DotAr
 import {getTileWidth} from "./components/Tiling/TileWidth";
 import {completeTile2} from "./components/Tiling/SortingHat/CompleteTile2";
 import {dotTypesHelper, helper} from "./components/Tiling/SortingHat/TilingFillType";
-import firebase from "firebase/compat";
+import firebase from "firebase/compat/app";
+import "firebase/compat/database";
 
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+    apiKey: "AIzaSyD7jkL5al-vXpx49bscaB56M1p8uQAPhWU",
+    authDomain: "mindful-coloring.firebaseapp.com",
+    projectId: "mindful-coloring",
+    storageBucket: "mindful-coloring.appspot.com",
+    messagingSenderId: "899048890421",
+    appId: "1:899048890421:web:ef1ea89361951460ab117c",
+    measurementId: "G-L5Y0CXJXFG"
+};
+
+// Initialize Firebase
+// const app = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
 
 function App() {
     const canvas = useRef();
@@ -116,7 +137,11 @@ function App() {
     let cursorY;
     let prevCursorX;
     let prevCursorY;
+
+    firebase.initializeApp(firebaseConfig);
+    // Get a reference to the database
     const database = firebase.database();
+
     function sendMessage(message) {
         // Generate a new push key
         const newMessageRef = database.ref('messages').push();
@@ -175,7 +200,7 @@ function App() {
     let smallOffset;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
-        sendMessage()
+        sendMessage("Hello")
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
         // console.log(`tilingIndex ${index}`)
