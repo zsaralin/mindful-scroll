@@ -90,7 +90,7 @@ export function secondTiling(inputArr, offset) {
     }
     tilingsDrawn++;
     pathArr.push(toTiling(t))
-    if (pathArr.length === 3) {
+    if (pathArr.length === 4) {
         pathArr.shift()
     }
     bottom = yMax - yMin + TOP_PAGE_SPACE + finOffset
@@ -126,14 +126,28 @@ export function tilingIndex(y) {
 // used scaledY
 export function getTile(y, invisCol) {
     if (invisCol) {
-        let currTiling = pathArr[(tilingIndex(y + getOffsetY()))].pathDict//pathArr[(tilingIndex(y))].pathDict
-        return currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
+        for(let i=0;i<pathArr.length;i++){
+            const currTiling = pathArr[i].pathDict
+            const tile = currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
+            if(tile !== undefined){
+                return tile
+            }
+        }
+        // let currTiling = pathArr[(tilingIndex(y + getOffsetY()))].pathDict//pathArr[(tilingIndex(y))].pathDict
+        // return currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
     }
 }
 
 export function getTiling(y, invisCol) {
     if (invisCol) {
-        return pathArr[(tilingIndex(y + getOffsetY()))]//+ getOffsetY() + prevOffsetY))]
+        for(let i=0;i<pathArr.length;i++){
+            const ret = pathArr[i]
+            const currTiling = pathArr[i].pathDict
+            const tile = currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
+            if(tile !== undefined){
+                return ret
+            }
+        }
     }
 }
 

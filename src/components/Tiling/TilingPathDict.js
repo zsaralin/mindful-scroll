@@ -12,12 +12,14 @@ let transition2y = 1;
 let transition = 1;
 
 let idDict = {}
+const colourArr = fillArrayWithUniqueRGB()
 
 export function getTilingPathDict(segArr, offsetX, offsetY) {
     // offsetY += prevOffsetY;
     let pathDict = {}
     let colorIndex = 0
-    let cols = fillColourArray(segArr.length)
+    const cols = colourArr.splice(0, segArr.length);
+    colourArr.push(...cols);
     if (tilingIndex === SQUARE_INDEX) transition = [0.98, 1.02][Math.floor(Math.random() * 2)]
     for (let i = 0; i < segArr.length; i++) { // for each tile in tiling
         let path = new Path2D()
@@ -98,20 +100,49 @@ export function getTilingPathDict(segArr, offsetX, offsetY) {
 
 function fillColourArray(numTile) {
     let cols = new Array(numTile) // colour array, numTile must be <= 765
-    for (let i = 0; i < numTile; i++) {
-        if (i < 255) //(0-254, 255, 255)
-            cols[i] = `rgb(${i},255,255)`
-        else if (i < 255 * 2) { //(255, 0-254, 255)
-            cols[i] = `rgb(255,${i - 255},255)`
-        } else if (i < 255 * 3) {  //(255, 255, 0-254)
-            cols[i] = `rgb(255,255,${i - 255 * 2})`
-        }
+    const num = getRandomRGB();
+    cols[0] = "rgb(" + num[0] + ", " + num[1] + ", " + num[2] + ")"; // Return the RGB color string
+    for (let i = 1; i < numTile; i++) {
+        if(num[0] + i > 255){
+            cols[i] = "rgb(" + (num[0]) + ", " + num[1] + ", " + num[2] + ")"
+
+        let g = num[1]
+        let b = num[2]
     }
     return cols
+}}
+
+
+// Function to generate a random RGB color
+function getRandomRGB() {
+    var r = Math.floor(Math.random() * 256); // Random value between 0 and 255 for red
+    var g = Math.floor(Math.random() * 256); // Random value between 0 and 255 for green
+    var b = Math.floor(Math.random() * 256); // Random value between 0 and 255 for blue
+    return "rgb(" + r + "," + g + "," + b + ")"; // Return the RGB string
+}
+
+// Function to fill an array with unique RGB strings
+function fillArrayWithUniqueRGB() {
+    const arrLength = 500;
+    var rgbArray = [];
+    var uniqueRGB = {};
+
+    for (var i = 0; i < arrLength; i++) {
+        var rgbString = getRandomRGB();
+        // Check if the generated RGB string already exists in the uniqueRGB object
+        // If it does, decrement i to try generating a new RGB string again
+        if (uniqueRGB.hasOwnProperty(rgbString)) {
+            i--;
+            continue;
+        }
+
+        uniqueRGB[rgbString] = true; // Add the RGB string to the uniqueRGB object
+        rgbArray.push(rgbString); // Add the RGB string to the array
+    }
+
+    return rgbArray;
 }
 
 export function getTileWithId(id) {
     return idDict[id]
 }
-
-

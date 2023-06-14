@@ -128,7 +128,7 @@ text {
 #gradRectangle{
     position: absolute;
     left: 0px;
-    background: linear-gradient(to bottom, white, transparent);
+    background: linear-gradient(to bottom,  white 70%, transparent );
     z-index: 2;
     width: 0;
     height: 0;

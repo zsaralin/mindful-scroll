@@ -3,7 +3,7 @@ import {getRandomTrack} from "./Tracks";
 
 let audio = new Audio(getRandomTrack());
 let audioOn = true;
-
+export let UID = 0;
 
 export function getAbsArray(arr) {
     for (let i = 0; i < arr.length; i++) {
@@ -33,13 +33,38 @@ export default function Music() {
             setIntro(false)
         }
     }
-
+    const handleKeyPress = (event) => {
+        if (event.key === "Enter") {
+            playMusic();
+            setIntro(false);
+        }
+    };
+    const handleInputChange = (event) => {
+        UID = event.target.value;
+    }
     return (
-        <div className="introPage"
-             onClick={playMusic}
-             style={{visibility: intro ? 'visible' : 'hidden', }}
-        > {intro ? "click anywhere to start" : ""} </div>
+        <div className="introPage"  style={{visibility: intro ? 'visible' : 'hidden', }}>
+            {intro ? (
+                <div>
+                    <p>participant number:</p>
+                    <input
+                        type="number"
+                        // value={numberInput}
+                        onChange={handleInputChange}
+                        onKeyPress={handleKeyPress}
+                        // placeholder="Enter a number"
+                    />
+                </div>
+            ) : (
+                ""
+            )}
+        </div>
     );
+
+        //      onClick={playMusic}
+        //      style={{visibility: intro ? 'visible' : 'hidden', }}
+        // > {intro ? "click anywhere to start" : ""} </div>
+    // );
 };
 
 export function changeAudio(speedArr) {

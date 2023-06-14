@@ -2,7 +2,7 @@ import './App.css';
 import './components/Bubble/Bubble.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
-import Music, {changeAudio, reduceAudio, triggerAudio} from './components/Audio/Audio.js'
+import Music, {changeAudio, reduceAudio, triggerAudio, UID} from './components/Audio/Audio.js'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/StrokeType/ShrinkingStroke'
 import {
     stopColorChange,
@@ -91,6 +91,8 @@ import {dotTypesHelper, helper} from "./components/Tiling/SortingHat/TilingFillT
 import firebase from "firebase/compat/app";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { getAuth , signInAnonymously  } from "firebase/auth";
+import html2canvas from "html2canvas";
+// import html2canvas from "html2canvas";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -137,47 +139,23 @@ function App() {
     let prevCursorX;
     let prevCursorY;
 
+    const startTime = Date.now();
+
     firebase.initializeApp(firebaseConfig);
     const db = getFirestore(firebase.app);
-    // Get a reference to the database
-    // const database = firebase.functions.addM();
-    // const functions = require("./functions/index.js");
     const auth = getAuth();
 
 
     async function sendMessage(message) {
         const messagesCollection = collection(db, "messages");
-
         const newMessage = {
-            participantId: 1,
+            participantId: UID,
             original: "Hello, Firestore!",
+            time: Date.now() - startTime,
         };
 
         const docRef = await addDoc(messagesCollection, newMessage);
         console.log("Document written with ID: ", docRef.id);
-        // firebase.functions.addmessage({
-        //     query: {
-        //         text: "hey"
-        //     },
-        //     json: function(response) {
-        //         console.log(response);
-        //     }
-        // }, {});
-        // Generate a new push key
-        // const newMessageRef = database.ref('messages').push();
-        // console.log('ay h' + newMessageRef)
-        // // Set the message data
-        // newMessageRef.set({
-        //     text: message
-        // })
-        //     .then(() => {
-        //         console.log('Message sent successfully.');
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error sending message:', error);
-        //         console.log('has'
-        //         )
-        //     });
     }
     let d = SCROLL_DIST// scroll distance (change in y)
 
@@ -202,6 +180,7 @@ function App() {
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
+                console.log(errorMessage)
                 // ...
             });
         const canvasIds = ['tiling-canvas','invis-canvas', 'fill-canvas', 'top-canvas'];
@@ -229,8 +208,25 @@ function App() {
     let lw;
     let index;
     let smallOffset;
+// Function to capture and save a screenshot of a specific element
+    function captureScreenshot() {
+        var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+        // html2canvas(document.body, {
+        //     allowTaint: true,
+        //     width: viewportWidth,
+        //     height: viewportHeight
+        // }).then(function(canvas) {
+        //     var a = document.createElement('a');
+        //     a.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
+        //     a.download = 'Screenshot.jpg';
+        //     a.click();
+        // });
+    }
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
+        // captureScreenshot(document.body);
         sendMessage("Hello")
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
@@ -242,6 +238,7 @@ function App() {
 
         currTile = getTile(y , invisCol)
         currTiling = getTiling(y , invisCol)
+        console.log('currTiling ' + currTile)
         // console.log(currTile + ' and ' + currTiling + ' and ' + currTiling.fillNum)
         if(currTiling.colourPal.length === 0){
             if(firstClick) {

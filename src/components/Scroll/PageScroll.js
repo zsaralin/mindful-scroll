@@ -116,15 +116,10 @@ export const redrawCanvas = async () => {
 
             // Set the rectangle's style properties
             // rectangle.style.position = "absolute";
-            rectangle.style.top = 400 - scrollBackAmount - 1 + offsetI + "px";
-            // rectangle.style.left = "0px";
+            rectangle.style.top = 0 + "px";
             rectangle.style.width = document.getElementById('top-canvas').width + "px";
-            rectangle.style.height = scrollBackAmount + "px";
-            // rectangle.style.background = "linear-gradient(to bottom, white, transparent)";
-            // rectangle.style.zIndex = "2";
-            // rectangle.style.touchAction = "none"
-            // document.body.appendChild(rectangle);
-            // wrap.appendChild(rectangle)
+            rectangle.style.height = (400 - scrollBackAmount - 1 - offsetI) + scrollBackAmount + "px";
+
             offsetI = 400;
 
         });

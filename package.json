@@ -16,6 +16,7 @@
     "firebase": "^9.22.2",
     "firebaseui": "^6.0.2",
     "gsap": "^3.11.0",
+    "html2canvas": "^1.4.1",
     "mathjs": "^10.6.4",
     "mina": "^1.0.9",
     "node-fetch": "^3.3.1",
