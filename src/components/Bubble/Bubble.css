@@ -12,7 +12,6 @@
     width: 200px;
     height: 180px;
     top: 0; left: 0;
-
     /*top: 30px; left: 30px;*/
     transition: opacity .5s linear, x 6s ease-in-out, y 6s ease-in-out;
     pointer-events: none;

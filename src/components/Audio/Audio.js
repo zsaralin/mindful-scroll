@@ -44,20 +44,24 @@ export default function Music() {
     }
     return (
         <div className="introPage"  style={{visibility: intro ? 'visible' : 'hidden', }}>
-            {intro ? (
-                <div>
-                    <p>participant number:</p>
-                    <input
-                        type="number"
-                        // value={numberInput}
-                        onChange={handleInputChange}
-                        onKeyPress={handleKeyPress}
-                        // placeholder="Enter a number"
-                    />
-                </div>
-            ) : (
-                ""
-            )}
+            <div className="introPage"
+                 onClick={playMusic}
+                 style={{visibility: intro ? 'visible' : 'hidden', }}
+            > {intro ? "click anywhere to start" : ""} </div>
+            {/*{intro ? (*/}
+            {/*    <div>*/}
+            {/*        <p>participant number:</p>*/}
+            {/*        <input*/}
+            {/*            type="number"*/}
+            {/*            // value={numberInput}*/}
+            {/*            onChange={handleInputChange}*/}
+            {/*            onKeyPress={handleKeyPress}*/}
+            {/*            // placeholder="Enter a number"*/}
+            {/*        />*/}
+            {/*    </div>*/}
+            {/*) : (*/}
+            {/*    ""*/}
+            {/*)}*/}
         </div>
     );
 

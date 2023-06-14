@@ -114,12 +114,12 @@ export const redrawCanvas = async () => {
 
             var rectangle = document.getElementById("gradRectangle");
 
-            // Set the rectangle's style properties
-            // rectangle.style.position = "absolute";
             rectangle.style.top = 0 + "px";
             rectangle.style.width = document.getElementById('top-canvas').width + "px";
-            rectangle.style.height = (400 - scrollBackAmount - 1 - offsetI) + scrollBackAmount + "px";
-
+            rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
+            const position = offsetI === 0 ? '65%' : '85%'
+            console.log('look '  + position)
+            rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
             offsetI = 400;
 
         });
@@ -160,7 +160,7 @@ export const redrawCanvas2 = async () => {
 let d = SCROLL_DIST
 
 export function startScroll(ySpeed, prevCursorY, cursorY) {
-    startEffect(prevCursorY, cursorY)
+    // startEffect(prevCursorY, cursorY)
     hideColourPreview()
     // console.log(ySpeed)
     if ((ySpeed < 50 || !isSlowScrollOn()) && d === SCROLL_DIST) {
@@ -184,6 +184,5 @@ export function startScroll(ySpeed, prevCursorY, cursorY) {
 
 
 export function endScroll() {
-    endEffect()
     d = SCROLL_DIST
 }

@@ -92,7 +92,7 @@ import firebase from "firebase/compat/app";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { getAuth , signInAnonymously  } from "firebase/auth";
 import html2canvas from "html2canvas";
-// import html2canvas from "html2canvas";
+import {sendMessageFB, startScreenshots} from "./components/Logging/Logging";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -139,24 +139,11 @@ function App() {
     let prevCursorX;
     let prevCursorY;
 
-    const startTime = Date.now();
 
     firebase.initializeApp(firebaseConfig);
     const db = getFirestore(firebase.app);
     const auth = getAuth();
 
-
-    async function sendMessage(message) {
-        const messagesCollection = collection(db, "messages");
-        const newMessage = {
-            participantId: UID,
-            original: "Hello, Firestore!",
-            time: Date.now() - startTime,
-        };
-
-        const docRef = await addDoc(messagesCollection, newMessage);
-        console.log("Document written with ID: ", docRef.id);
-    }
     let d = SCROLL_DIST// scroll distance (change in y)
 
     let insidePoly = [0, 0] // number of points inside and outside polygon
@@ -173,16 +160,16 @@ function App() {
     }
 
     useEffect(() => {
-        signInAnonymously(auth)
-            .then(() => {
-                // Signed in..
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorMessage)
-                // ...
-            });
+        // signInAnonymously(auth)
+        //     .then(() => {
+        //         // Signed in..
+        //     })
+        //     .catch((error) => {
+        //         const errorCode = error.code;
+        //         const errorMessage = error.message;
+        //         console.log(errorMessage)
+        //         // ...
+        //     });
         const canvasIds = ['tiling-canvas','invis-canvas', 'fill-canvas', 'top-canvas'];
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
@@ -201,6 +188,8 @@ function App() {
         });
         drawTwo()
         ctx = document.getElementById('invis-canvas').getContext("2d");
+        startScreenshots()
+
     }, []);
 
     let currColor;
@@ -208,26 +197,10 @@ function App() {
     let lw;
     let index;
     let smallOffset;
-// Function to capture and save a screenshot of a specific element
-    function captureScreenshot() {
-        var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-        var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-
-        // html2canvas(document.body, {
-        //     allowTaint: true,
-        //     width: viewportWidth,
-        //     height: viewportHeight
-        // }).then(function(canvas) {
-        //     var a = document.createElement('a');
-        //     a.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
-        //     a.download = 'Screenshot.jpg';
-        //     a.click();
-        // });
-    }
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
         // captureScreenshot(document.body);
-        sendMessage("Hello")
+        sendMessageFB("Hello")
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
         // console.log(`tilingIndex ${index}`)
@@ -238,9 +211,10 @@ function App() {
 
         currTile = getTile(y , invisCol)
         currTiling = getTiling(y , invisCol)
-        console.log('currTiling ' + currTile)
+        console.log('currTiling ' + currTiling)
         // console.log(currTile + ' and ' + currTiling + ' and ' + currTiling.fillNum)
-        if(currTiling.colourPal.length === 0){
+
+        if(currTiling && currTiling.colourPal.length === 0){
             if(firstClick) {
                 currTiling.colourPal = getColourPal()
                 firstClick = false;
@@ -250,8 +224,8 @@ function App() {
                 currTiling.colourPal = generateColourPal().cols
             }
         }
-        if(prevTiling !== currTiling){
-        setColourPal(currTiling.colourPal)}
+        if(currTiling && prevTiling !== currTiling){
+            setColourPal(currTiling.colourPal)}
         if(currTile) currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
         currColor = getCurrColor()
         stopColorChange()
@@ -633,7 +607,7 @@ function App() {
 
 
     return (
-        <div className="App">
+        <div className="App" id = 'app'>
             <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');</style>
             <Helmet>
                 <meta name="viewport"
@@ -672,10 +646,10 @@ function App() {
                 <div id = "gradRectangle"></div>
 
             </div>
-            <div id="hidden">
-                <div id = "hiddenTop"></div>
-                <div id = "hiddenBottom"></div>
-            </div>
+            {/*<div id="hidden">*/}
+            {/*    <div id = "hiddenTop"></div>*/}
+            {/*    <div id = "hiddenBottom"></div>*/}
+            {/*</div>*/}
             <Bubble/>
         </div>
     );
