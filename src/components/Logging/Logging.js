@@ -1,9 +1,9 @@
 import {addDoc, collection, getFirestore} from "firebase/firestore";
-import {UID} from "../Audio/Audio";
 import firebase from "firebase/compat/app";
 import {getAuth} from "firebase/auth";
 import html2canvas from "html2canvas";
-import { getStorage, ref , uploadBytes} from "firebase/storage";
+import {getStorage, ref, uploadBytes, uploadString} from "firebase/storage";
+import * as htmlToImage from 'html-to-image';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -22,6 +22,16 @@ const db = getFirestore(firebase.app);
 const auth = getAuth();
 const startTime = Date.now();
 const storage = getStorage()
+const UID = setupParticipant()
+
+export function setupParticipant() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    // Retrieving the participant number
+    const participantNumber = urlParams.get('participant');
+    console.log('PEEPEE ' + participantNumber)
+    return participantNumber
+}
 
 export async function sendMessageFB(message) {
     const messagesCollection = collection(db, "messages");
@@ -34,8 +44,8 @@ export async function sendMessageFB(message) {
     console.log("Document written with ID: ", docRef.id);
 }
 
-export async function startScreenshots(){
-    setInterval(async function() {
+export async function startScreenshots() {
+    setInterval(async function () {
         captureScreenshot()
     }, 5000);
 }
@@ -44,27 +54,32 @@ export async function startScreenshots(){
 function captureScreenshot() {
     var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
     var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-    html2canvas(document.getElementById('app'), {
-        allowTaint: true,
-        scale: .5,
-        useCORS: true,
-        width: viewportWidth,
-        height: viewportHeight,
-        backgroundColor: '#FFFFFF',
-    }).then(function(canvas) {
-        canvas.toBlob(function(blob) {
-            const fileName = `image_${Date.now() - startTime}.jpg`; // Append timestamp to the file name
-            const spaceRef = ref(storage, `images/${fileName}`);
-            // Replace the 'file' parameter with the Blob object
-            uploadBytes(spaceRef, blob).then((snapshot) => {
-                console.log('Uploaded a blob or file!');
-            });
-        }, 'image/jpeg', 1);
-        // var a = document.createElement('a');
-        // a.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
-        // a.download = 'Screenshot.jpg';
-        // return a.href
-        // a.click();
-        // return a.download
+    // Get the source canvas elements
+    const canvas1 = document.getElementById('fill-canvas');
+    const canvas2 = document.getElementById('top-canvas');
+    const canvas3 = document.getElementById('tiling-canvas');
+
+    // Create a new canvas to combine the contents
+    const combinedCanvas = document.createElement('canvas');
+    combinedCanvas.width = viewportWidth; // Set the desired width
+    combinedCanvas.height = viewportHeight; // Set the desired height
+
+    // Get the 2D rendering context of the combined canvas
+    const combinedContext = combinedCanvas.getContext('2d');
+
+    // Draw the source canvases onto the combined canvas
+    combinedContext.drawImage(canvas1,  0, 0, viewportWidth, viewportHeight,0, 0, viewportWidth, viewportHeight);
+    combinedContext.drawImage(canvas2,  0, 0, viewportWidth, viewportHeight,0, 0, viewportWidth, viewportHeight);
+    combinedContext.drawImage(canvas3,  0, 0, viewportWidth, viewportHeight,0, 0, viewportWidth, viewportHeight);
+
+    const dataUrl = combinedCanvas.toDataURL()
+    const fileName = `image_${Date.now() - startTime}.png`; // Append timestamp to the file name
+    const storageRef = ref(storage, `images/${fileName}`);
+    uploadString(storageRef, dataUrl, 'data_url').then((snapshot) => {
+        console.log('Uploaded a data_url string!');
+    }).catch((error) => {
+        console.error('Error uploading data URL:', error);
     });
+
 }
+

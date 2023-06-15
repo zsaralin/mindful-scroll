@@ -2,6 +2,7 @@ import './App.css';
 import './components/Bubble/Bubble.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
+import TimerClock from './components/Timer.js';
 import Music, {changeAudio, reduceAudio, triggerAudio, UID} from './components/Audio/Audio.js'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/StrokeType/ShrinkingStroke'
 import {
@@ -88,30 +89,8 @@ import {drawJustDot, pushDot, removeLastDot} from "./components/Stroke/Dot/DotAr
 import {getTileWidth} from "./components/Tiling/TileWidth";
 import {completeTile2} from "./components/Tiling/SortingHat/CompleteTile2";
 import {dotTypesHelper, helper} from "./components/Tiling/SortingHat/TilingFillType";
-import firebase from "firebase/compat/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { getAuth , signInAnonymously  } from "firebase/auth";
-import html2canvas from "html2canvas";
+
 import {sendMessageFB, startScreenshots} from "./components/Logging/Logging";
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-    apiKey: "AIzaSyD7jkL5al-vXpx49bscaB56M1p8uQAPhWU",
-    authDomain: "mindful-coloring.firebaseapp.com",
-    projectId: "mindful-coloring",
-    storageBucket: "mindful-coloring.appspot.com",
-    messagingSenderId: "899048890421",
-    appId: "1:899048890421:web:ef1ea89361951460ab117c",
-    measurementId: "G-L5Y0CXJXFG"
-};
-
-// Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
 
 function App() {
     const canvas = useRef();
@@ -139,11 +118,6 @@ function App() {
     let prevCursorX;
     let prevCursorY;
 
-
-    firebase.initializeApp(firebaseConfig);
-    const db = getFirestore(firebase.app);
-    const auth = getAuth();
-
     let d = SCROLL_DIST// scroll distance (change in y)
 
     let insidePoly = [0, 0] // number of points inside and outside polygon
@@ -170,7 +144,8 @@ function App() {
         //         console.log(errorMessage)
         //         // ...
         //     });
-        const canvasIds = ['tiling-canvas','invis-canvas', 'fill-canvas', 'top-canvas'];
+        // Assuming the query string is "?participant=123"
+        const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
@@ -178,11 +153,10 @@ function App() {
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
-            if(id === 'tiling-canvas'){
+            if (id === 'tiling-canvas') {
                 ctx.fillStyle = 'transparent';
                 ctx.lineWidth = getTileWidth();
-            }
-            else if(id === 'invis-canvas'){
+            } else if (id === 'invis-canvas') {
                 ctx.lineWidth = ctx.lineWidth / 2;
             }
         });
@@ -199,7 +173,6 @@ function App() {
     let smallOffset;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
-        // captureScreenshot(document.body);
         sendMessageFB("Hello")
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
@@ -209,24 +182,24 @@ function App() {
 
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
 
-        currTile = getTile(y , invisCol)
-        currTiling = getTiling(y , invisCol)
+        currTile = getTile(y, invisCol)
+        currTiling = getTiling(y, invisCol)
         console.log('currTiling ' + currTiling)
         // console.log(currTile + ' and ' + currTiling + ' and ' + currTiling.fillNum)
 
-        if(currTiling && currTiling.colourPal.length === 0){
-            if(firstClick) {
+        if (currTiling && currTiling.colourPal.length === 0) {
+            if (firstClick) {
                 currTiling.colourPal = getColourPal()
                 firstClick = false;
                 setColourPal(currTiling.colourPal)
-            }
-            else {
+            } else {
                 currTiling.colourPal = generateColourPal().cols
             }
         }
-        if(currTiling && prevTiling !== currTiling){
-            setColourPal(currTiling.colourPal)}
-        if(currTile) currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
+        if (currTiling && prevTiling !== currTiling) {
+            setColourPal(currTiling.colourPal)
+        }
+        if (currTile) currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
         currColor = getCurrColor()
         stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
@@ -238,7 +211,7 @@ function App() {
             // c.restore()
             // sendMidAlert()
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
-            pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType );
+            pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType);
             // startDot(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType );
 
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
@@ -267,6 +240,7 @@ function App() {
     }
 
     let dotRemoved = false;
+
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
         insidePoly[0] += 1;
         currColor = getCurrColor();
@@ -278,7 +252,7 @@ function App() {
         }
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
             strokeMove = true;
-            if(!dotRemoved) {
+            if (!dotRemoved) {
                 removeLastDot(currTile)
                 dotRemoved = true;
             }
@@ -290,8 +264,9 @@ function App() {
                 tooFast = true;
 
             } else {
-                pushStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, getLineWidth(), currTile.strokeType );
-                startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), getLineWidth(), currTile.strokeType );}
+                pushStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, getLineWidth(), currTile.strokeType);
+                startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), getLineWidth(), currTile.strokeType);
+            }
             changeAudio(mouseSpeed)
             startAutoScroll(cursorY);
         } else {
@@ -358,8 +333,7 @@ function App() {
                 showColourPreview(cursorX, cursorY, prevTile !== currTile, getHandChange);
                 onStrokeEnd()
             }
-        }
-        else {
+        } else {
             // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
         }
 
@@ -464,7 +438,8 @@ function App() {
                     document.getElementById("angle").innerHTML = event.touches[0]["force"]
                 }
             }
-        } if (doubleTouch) {
+        }
+        if (doubleTouch) {
             startScroll(Math.abs(touchSpeed[1]), prevTouch0Y, touch0Y)
 
         }
@@ -512,7 +487,7 @@ function App() {
             currTile.filled = true;
             completeTile2(currTile, currTiling, invisCol)
         }
-        if(currTile && !strokeMove && !currTile.watercolor) {
+        if (currTile && !strokeMove && !currTile.watercolor) {
             currTile.dotType = currTile.dotType ? currTile.dotType : dotTypesHelper(currTile.strokeType)
             drawJustDot(currTile)
         }
@@ -605,45 +580,54 @@ function App() {
         }
     }
 
+    function getAdminStatus() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        return urlParams.get('admin');
+    }
+
+    const isAdmin = getAdminStatus();
 
     return (
-        <div className="App" id = 'app'>
+        <div className="App" id='app'>
             <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');</style>
             <Helmet>
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
             </Helmet>
-            <button id="cp-button" onClick={showControlPanel}></button>
-            <ControlPanel/>
-            {/*<div id="feedbackBar"></div>*/}
-            <div id="angle" style={{position: "absolute", top: 0, display: 'none'}}> {angle}</div>
+            <div id="cp-wrapper" style={{display: isAdmin === 'true' ? 'block' : 'none'}}>
+                <button id="cp-button" onClick={showControlPanel}></button>
+                <ControlPanel/>
+            </div>
+            <TimerClock/>
+            {/*<div id="angle" style={{position: "absolute", top: 0, display: 'none'}}> {angle}</div>*/}
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
             <div id="dots"></div>
 
-            <div className="wrapper" id = "wrapper">
-                <div id = "canvas-wrapper">
-                <canvas ref={canvas} id="fill-canvas"></canvas>
-                <canvas id="top-canvas" style={{display: ''}}></canvas>
+            <div className="wrapper" id="wrapper">
+                <div id="canvas-wrapper">
+                    <canvas ref={canvas} id="fill-canvas"></canvas>
+                    <canvas id="top-canvas" style={{display: ''}}></canvas>
 
                     <canvas id="invis-canvas" style={{display: 'none',}}
-                ></canvas>
-                <canvas id="tiling-canvas" style={{display: '', background: '', zIndex: 2}}
-                        onMouseDown={onMouseDown}
-                        onMouseUp={onMouseUp}
-                        onMouseMove={onMouseMove}
-                        onTouchStart={onTouchStart}
-                        onTouchEnd={onTouchEnd}
-                        onTouchCancel={onTouchEnd}
-                        onTouchMove={onTouchMove}
-                >
-                </canvas>
+                    ></canvas>
+                    <canvas id="tiling-canvas" style={{display: '', background: '', zIndex: 2}}
+                            onMouseDown={onMouseDown}
+                            onMouseUp={onMouseUp}
+                            onMouseMove={onMouseMove}
+                            onTouchStart={onTouchStart}
+                            onTouchEnd={onTouchEnd}
+                            onTouchCancel={onTouchEnd}
+                            onTouchMove={onTouchMove}
+                    >
+                    </canvas>
                 </div>
                 {/*<div id = "overlay">*/}
                 {/*    <div id = 'overlayTop'> </div>*/}
                 {/*    <div id = 'overlayBottom'> </div>*/}
                 {/*</div>*/}
-                <div id = "gradRectangle"></div>
+                <div id="gradRectangle"></div>
 
             </div>
             {/*<div id="hidden">*/}

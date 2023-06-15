@@ -16,6 +16,7 @@
     "firebase": "^9.22.2",
     "firebaseui": "^6.0.2",
     "gsap": "^3.11.0",
+    "html-to-image": "^1.11.11",
     "html2canvas": "^1.4.1",
     "html2pdf": "^0.0.11",
     "html2pdf.js": "^0.10.1",

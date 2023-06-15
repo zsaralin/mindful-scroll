@@ -31,16 +31,15 @@ code {
 }
 
 .wrapper canvas {
-  position: absolute; /* position the canvas wrapper element relative to the wrapper element */
+  position: fixed; /* position the canvas wrapper element relative to the wrapper element */
   will-read-frequently : true;
-
   /*height: 100%; !* make the canvas element fill the entire height of the canvas wrapper element *!*/
   /*width: 100%;*/
 }
 
 
 .introPage {
-  position: absolute;
+  position: fixed;
   height: 100%;
   width: 100%;
   left: 0;

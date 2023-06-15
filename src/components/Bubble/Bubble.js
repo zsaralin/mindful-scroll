@@ -198,7 +198,7 @@ export default function Bubble() {
         setCloudPoints(cloud?.node.getAttribute('d'));
 
         colorDelay()
-        gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0})
+        // gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0})
         startColourPreview()
 
     }, []);

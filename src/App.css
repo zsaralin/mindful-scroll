@@ -25,7 +25,7 @@
 
 #cp-button{
     top: 15px; left: -15px;
-    position: absolute;
+    position: fixed;
     width: 30px;
     height: 25px;
     z-index: 3;
@@ -33,7 +33,7 @@
 }
 
 #controlPanel{
-    position: absolute;
+    position: fixed;
     left: -100vw;
     width: 35%;
     min-width: 400px;
@@ -126,7 +126,7 @@ text {
 }
 
 #gradRectangle{
-    position: absolute;
+    position: fixed;
     left: 0px;
     background: linear-gradient(to bottom,  white 80%, rgba(0,0,0,.1) );
     z-index: 2;
