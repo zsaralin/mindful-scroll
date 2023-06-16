@@ -2,7 +2,7 @@ import {addDoc, collection, getFirestore} from "firebase/firestore";
 import firebase from "firebase/compat/app";
 import {getAuth} from "firebase/auth";
 import html2canvas from "html2canvas";
-import {getStorage, ref, uploadBytes, uploadString} from "firebase/storage";
+import {getStorage, ref, uploadBytes, uploadString, listAll, deleteObject } from "firebase/storage";
 import * as htmlToImage from 'html-to-image';
 
 // Your web app's Firebase configuration
@@ -41,13 +41,13 @@ export async function sendMessageFB(message) {
         time: Date.now() - startTime,
     };
     const docRef = await addDoc(messagesCollection, newMessage);
-    console.log("Document written with ID: ", docRef.id);
 }
 
 export async function startScreenshots() {
     setInterval(async function () {
-        captureScreenshot()
-    }, 5000);
+        if(!document.hidden) captureScreenshot()
+    }, 10000);
+
 }
 
 // Function to capture and save a screenshot of a specific element
@@ -83,3 +83,11 @@ function captureScreenshot() {
 
 }
 
+async function deleteAllImages() {
+    const folderRef = ref(storage, 'images');
+    const folderFiles = await listAll(folderRef);
+
+    // Delete each file in the folder
+    folderFiles.items.map((fileRef) =>
+        deleteObject(fileRef))
+}

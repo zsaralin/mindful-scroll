@@ -24,8 +24,6 @@ export function getTotalPixels(currTile) {
             }
         }
     }
-    console.log('TOTAL PIXELS ' + currTile.inPath.length)
-
     return currTile.inPath.length
 }
 
@@ -39,15 +37,12 @@ export function isCircleInPath(path, x, y, lineWidth) {
 export function getFillRatio(currTile) {
     let ctx = document.getElementById(strokeCanvas).getContext("2d")
     let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixels(currTile) : currTile.inPath.length] // [filledPixels, totalPixels]
-    console.log(currTile.inPath.length)
     currTile.inPath.forEach(i => {
-        // console.log('hey')
         let col = ctx.getImageData(i[0], i[1] - smallOffset, 1, 1, {willReadFrequently: true}).data.toString()
         if (col !== '0,0,0,0' && col !== '255,255,255,255') {
             fillRatio[0]++
         }
     })
-    console.log(`fillRatio ${fillRatio[0] / fillRatio[1]}`)
     return fillRatio[0] / fillRatio[1]
 }
 

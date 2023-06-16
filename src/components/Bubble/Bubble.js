@@ -128,7 +128,6 @@ export const moveFeedback = async (prevX, prevY, x, y, newTile) => {
         // document.getElementById('#' + currShape + '-text')
         gsap.to('#' + currShape + '-text, #circlesR, #circlesL', {
             opacity: 0, duration: .5, onComplete: () => {
-                console.log('IN HERE ' + currShape)
                 gsap.to("#circle", {stroke: 'white', strokeWidth: 10, duration: 1})
                 circle?.animate({d: circlePoints}, 500, mina.linear);
                 delay(1000)
