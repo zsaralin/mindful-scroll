@@ -1,4 +1,5 @@
 import React, {useEffect, useRef} from 'react';
+import {UID} from "./Logging/Logging";
 
 export default function TimerClock() {
     // Timer configuration
@@ -65,10 +66,18 @@ export default function TimerClock() {
         }
         function handleClick() {
             // Do something when the timer circle is clicked
-            window.open(
-                'https://docs.google.com/document/d/1qvniuCkiFiIQq1N6vYYQXH14KS-kVT0pbAYnM_gJIAo/edit?usp=sharing',
-                '_blank'
-            );
+            if(UID === 0.1){
+                window.open(
+                    'https://docs.google.com/document/d/1-X1Jhy_nxj2bdS60b7_S5LFy1AycbTgOktIYdGqPi1c/edit?usp=sharing',
+                    '_blank'
+                );
+            }
+            else if(UID === 0.2){
+                window.open(
+                    'https://docs.google.com/document/d/1qvniuCkiFiIQq1N6vYYQXH14KS-kVT0pbAYnM_gJIAo/edit?usp=sharing',
+                    '_blank'
+                );
+            }
         }
 
         // Start the timer

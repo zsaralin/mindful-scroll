@@ -22,13 +22,13 @@ const db = getFirestore(firebase.app);
 const auth = getAuth();
 const startTime = Date.now();
 const storage = getStorage()
-const UID = setupParticipant()
+export const UID = setupParticipant()
 
 export function setupParticipant() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     // Retrieving the participant number
-    const participantNumber = urlParams.get('participant');
+    const participantNumber = urlParams.get('uid');
     console.log('PEEPEE ' + participantNumber)
     return participantNumber
 }
