@@ -13,7 +13,7 @@ const theme = createTheme({
     typography: {
         // In Chinese and Japanese the characters are usually larger,
         // so a smaller fontsize may be appropriate.
-        fontSize: 12,
+        fontSize: 9,
         fontFamily: 'Montserrat'
     },
     palette: {
@@ -48,19 +48,20 @@ export function FillStyle(props) {
 
 export function Handedness(props) {
     return (
-        <div id="controlPanelRow">{"Handedness"}
             <ThemeProvider theme={theme}>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                {"Handedness"}
                 <RadioGroup defaultValue="right" style={{display: 'flex', flexDirection: 'row'}}>
                     <FormControlLabel control={<Radio/>} label="Right"
-                                      sx={{'& .MuiSvgIcon-root': {fontSize: 15}}} value="right"
+                                      sx={{'& .MuiSvgIcon-root': {fontSize: 10}}} value="right"
                                       onChange={() => setHand("right")}
                     />
                     <FormControlLabel  control={<Radio/>} label="Left"
-                                       sx={{'& .MuiSvgIcon-root': {fontSize: 15}}} value="left"
+                                       sx={{'& .MuiSvgIcon-root': {fontSize: 10}}} value="left"
                                        onChange={() => setHand("left")}
                     />
                 </RadioGroup>
+                </Box>
             </ThemeProvider>
-        </div>
     );
 }

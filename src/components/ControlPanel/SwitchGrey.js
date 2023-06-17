@@ -56,14 +56,14 @@ export const IOSSwitch = styled((props: SwitchProps) => (
 
 export function SwitchGreyChecked(props) {
     return (
-        <div id="controlPanelRow">{props.name}
+        <div id="controlPanelRow" style={{ padding: '4px 0' }}>{props.name}
             <FormControlLabel control={<IOSSwitch onChange={props.fn} defaultChecked />} />
         </div>
     );
 }
 export function SwitchGreyUnchecked(props) {
     return (
-        <div id="controlPanelRow">{props.name}
+        <div id="controlPanelRow" style={{ padding: '4px 0' }}>{props.name}
             <FormControlLabel control={<IOSSwitch onChange={props.fn} />} />
         </div>
     );

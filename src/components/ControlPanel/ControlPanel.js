@@ -43,8 +43,8 @@ export default function ControlPanel() {
     return (
         <div >
             <div id="controlPanel">
-                <div style={{padding: '20px', fontSize: '1em'}}>Control Panel</div>
-                <FormGroup style={{paddingLeft: '25px', fontSize: '.9em', fontFamily : 'montserrat'}}>
+                <div style={{padding: '20px', fontSize: '.9em'}}>Control Panel</div>
+                <FormGroup style={{paddingLeft: '25px', fontSize: '.8em', fontFamily : 'montserrat'}}>
                     <SwitchGreyChecked name="Music" fn={triggerAudio} />
                     <SwitchGreyChecked name="Show Feedback" fn={triggerAudio} />
                     <SwitchGreyChecked name="Show Colour Preview" fn={triggerAudio} />
@@ -53,13 +53,13 @@ export default function ControlPanel() {
                     <SwitchGreyUnchecked name="Auto Stroke Width" fn={triggerShrinkStroke} />
                     <SwitchGreyChecked name="Random Colour Change" fn={triggerRandomColour} />
                     <SwitchGreyUnchecked name="Slow Page Scroll" fn={triggerSlowScroll} />
-                    <div style = {{paddingBottom:'8px'}}></div>
+                    {/*<div style = {{paddingBottom:'8px'}}></div>*/}
                     <SliderGrey name="Stroke Width" fn={changeLineWidth} default = {LINE_WIDTH} min = {5} max = {40}/>
                     <SliderGrey name="Tile Outline Width" fn={changeTileWidth} default = {TILE_WIDTH} min = {5} max = {40}/>
                     <SliderGrey name="Colour Change" fn={changeColourSpeed} default = {-300} min = {-1000} max = {-100}/>
                     <SliderGrey name="Auto Fill Percentage" fn={changeFillMin} default = {FILL_RATIO*100} min = {0} max = {95}/>
                     <SliderGrey name="Tiling Size" fn={changeTilingSize} default = {-50} min = {-window.innerWidth/3} max = {-50}/>
-                    <div style = {{paddingBottom:'8px'}}></div>
+                    {/*<div style = {{paddingBottom:'8px'}}></div>*/}
                     <FillStyle name = "Fill Style"/>
                     <StrokeStyle name = "Stroke Style"/>
                     <DotStyle name = "Dot Style"/>

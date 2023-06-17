@@ -45,7 +45,7 @@ export async function sendMessageFB(message) {
 
 export async function startScreenshots() {
     setInterval(async function () {
-        if(!document.hidden) captureScreenshot()
+        if(UID && !document.hidden) captureScreenshot()
     }, 10000);
 
 }
@@ -74,7 +74,12 @@ function captureScreenshot() {
 
     const dataUrl = combinedCanvas.toDataURL()
     const fileName = `image_${Date.now() - startTime}.png`; // Append timestamp to the file name
-    const storageRef = ref(storage, `images/${fileName}`);
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1; // Months are zero-based, so we add 1
+    const year = today.getFullYear();
+    const folderName = `images_${day}_${month}_${year}_${UID}`;
+    const storageRef = ref(storage, `${folderName}/${fileName}`);
     uploadString(storageRef, dataUrl, 'data_url').then((snapshot) => {
         console.log('Uploaded a data_url string!');
     }).catch((error) => {

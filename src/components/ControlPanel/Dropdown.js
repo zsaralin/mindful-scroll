@@ -1,4 +1,14 @@
-import {createTheme, FormControl, FormHelperText, MenuItem, NativeSelect, Select} from "@mui/material";
+import {
+    Box,
+    createTheme,
+    FormControl,
+    FormHelperText,
+    Grid,
+    MenuItem,
+    NativeSelect,
+    Select,
+    Typography
+} from "@mui/material";
 import {changeColourSpeed} from "../Stroke/Color/StrokeColor";
 import {setFillType} from "../Tile/CompleteTile";
 import {SelectChangeEvent} from "@mui/material";
@@ -14,7 +24,7 @@ const theme = createTheme({
             'Montserrat',
             'sans-serif'
         ].join(','),
-        fontSize: 11,
+        fontSize: 9,
     }
 });
 
@@ -26,8 +36,9 @@ export function FillStyle(props) {
 
     return (
         <ThemeProvider theme={theme}>
-        <div id="controlPanelRow">{props.name}
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+        {props.name}
+        <FormControl sx={{ m: 1, minWidth: 160 }}>
             <NativeSelect
                 defaultValue="combination"
                 onChange={handleChange}
@@ -67,53 +78,53 @@ export function FillStyle(props) {
                 <option value={"pixel7"}>Pixel 5</option>
             </NativeSelect>
         </FormControl>
-            </div>
+            </Box>
         </ThemeProvider>
+
     );
 }
 
-
 export function DotStyle(props) {
-
     const handleChange = (event: SelectChangeEvent) => {
         setDotType(event.target.value.toString());
     };
 
     return (
         <ThemeProvider theme={theme}>
-            <div id="controlPanelRow">{props.name}
-                <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <NativeSelect
-                        defaultValue="combination"
-                        onChange={handleChange}
-                        inputProps={{
-                            name: 'age',
-                            id: 'uncontrolled-native',
-                        }}
-                    >
-                        <option value={"reg"} >Regular</option>
-                        <option value={"clover"}>Clover</option>
-                        <option value={"flower"}>Flower</option>
-                        <option value={"grad-pulse"}>Gradient Pulse</option>
-                        <option value={"pulse"}>Pulse</option>
-                        <option value={"transparent"}>Transparent</option>
-                    </NativeSelect>
-                </FormControl>
-            </div>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    {props.name}
+                    <FormControl sx={{ m: 1, minWidth: 160 }}>
+                        <NativeSelect
+                            defaultValue="combination"
+                            onChange={handleChange}
+                            inputProps={{
+                                name: 'age',
+                                id: 'uncontrolled-native',
+                            }}
+                        >
+                            <option value={"reg"}>Regular</option>
+                            <option value={"clover"}>Clover</option>
+                            <option value={"flower"}>Flower</option>
+                            <option value={"grad-pulse"}>Gradient Pulse</option>
+                            <option value={"pulse"}>Pulse</option>
+                            <option value={"transparent"}>Transparent</option>
+                        </NativeSelect>
+                    </FormControl>
+                </Box>
         </ThemeProvider>
     );
 }
 
 export function StrokeStyle(props) {
-
     const handleChange = (event: SelectChangeEvent) => {
         setStrokeType(event.target.value.toString());
     };
 
     return (
         <ThemeProvider theme={theme}>
-            <div id="controlPanelRow">{props.name}
-                <FormControl sx={{ m: 1, minWidth: 120}}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+                {props.name}
+                <FormControl sx={{ m: 1, minWidth: 160 }}>
                     <NativeSelect
                         defaultValue="first"
                         onChange={handleChange}
@@ -126,25 +137,23 @@ export function StrokeStyle(props) {
                         <option value={"fuzzy"}>Fuzzy</option>
                         <option value={"transparent"}>Transparent</option>
                         <option value={"dotted"}>Dotted</option>
-
                     </NativeSelect>
                 </FormControl>
-            </div>
+            </Box>
         </ThemeProvider>
     );
 }
 
-
 export function TilingPath(props) {
-
     const handleChange = (event: SelectChangeEvent) => {
         setPathType(event.target.value.toString());
     };
 
     return (
         <ThemeProvider theme={theme}>
-            <div id="controlPanelRow">{props.name}
-                <FormControl sx={{ m: 1, minWidth: 120}}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+                {props.name}
+                <FormControl sx={{ m: 1, minWidth: 160 }}>
                     <NativeSelect
                         defaultValue="rect"
                         onChange={handleChange}
@@ -164,7 +173,7 @@ export function TilingPath(props) {
                         <option value={"wiggly2"}>Sinuous</option>
                     </NativeSelect>
                 </FormControl>
-            </div>
+            </Box>
         </ThemeProvider>
     );
 }
