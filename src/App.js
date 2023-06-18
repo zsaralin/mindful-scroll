@@ -149,7 +149,7 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight * (basicVersion ? 3: 6);
+            canvas.height = window.innerHeight * (basicVersion ? 3: 5);
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
             ctx.lineJoin = "round";

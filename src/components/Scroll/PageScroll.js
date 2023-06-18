@@ -61,9 +61,9 @@ const updateCanvas = (canvasId, refreshSpot) => {
     const newCtx = newCanvas.getContext('2d');
     const h = window.innerHeight + 400
     newCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, newCanvas.width, h, 0,0,canvas.width, h)
-    console.log('1 ' + h)
-    ctx.clearRect(0, 0, canvas.width, canvas.height );
-    ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
+    // console.log('1 ' + h)
+    // ctx.clearRect(0, 0, canvas.width, canvas.height );
+    // ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
 };
 
 const clearAndDraw = (canvasId, image) => {
@@ -100,13 +100,13 @@ export const redrawCanvas = async () => {
         const promise1 = updateCanvas('fill-canvas', refreshSpot);
         const promise2 = updateCanvas('top-canvas', refreshSpot);
 
-        // Promise.all([promise1, promise2])
-        //     .then(() => {
-        //         // Code to execute after both updateCanvas calls are completed
-        //     })
-        //     .catch((error) => {
-        //         // Handle any errors that occurred during the updateCanvas calls
-        //     });
+        Promise.all([promise1, promise2])
+            .then(() => {
+                // Code to execute after both updateCanvas calls are completed
+            })
+            .catch((error) => {
+                // Handle any errors that occurred during the updateCanvas calls
+            });
     }
     if (!thirdStep && offsetY > refreshSpot) {
         thirdStep = true;
