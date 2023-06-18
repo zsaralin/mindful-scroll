@@ -48,8 +48,31 @@ let newTiling;
 let offsetI = 0;
 let firstStep = false;
 let secondStep = false;
+let thirdStep = false;
 
 const scrollBackAmount = 150;
+
+const updateCanvas = (canvasId, refreshSpot) => {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    const newCanvas = document.createElement('canvas');
+    newCanvas.width = canvas.width;
+    newCanvas.height = canvas.height;
+    const newCtx = newCanvas.getContext('2d');
+    const h = window.innerHeight + 400
+    newCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, newCanvas.width, h, 0,0,canvas.width, h)
+    console.log('1 ' + h)
+    ctx.clearRect(0, 0, canvas.width, canvas.height );
+    ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
+};
+
+const clearAndDraw = (canvasId, image) => {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    console.log('2 ' + (image.height))
+    ctx.drawImage(image, 0, 400 - scrollBackAmount + offsetI);
+};
 
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
@@ -71,39 +94,35 @@ export const redrawCanvas = async () => {
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
-    if (!secondStep && offsetY > refreshSpot) {
+    if(!secondStep && offsetY > refreshSpot*(3/4)){
         secondStep = true;
+        console.log('hihi')
+        const promise1 = updateCanvas('fill-canvas', refreshSpot);
+        const promise2 = updateCanvas('top-canvas', refreshSpot);
+
+        // Promise.all([promise1, promise2])
+        //     .then(() => {
+        //         // Code to execute after both updateCanvas calls are completed
+        //     })
+        //     .catch((error) => {
+        //         // Handle any errors that occurred during the updateCanvas calls
+        //     });
+    }
+    if (!thirdStep && offsetY > refreshSpot) {
+        thirdStep = true;
         prevOffsetY += offsetY
 
-        const updateCanvas = async (canvasId) => {
-            const canvas = document.getElementById(canvasId);
-            const ctx = canvas.getContext('2d');
-            const newCanvas = document.createElement('canvas');
-            newCanvas.width = canvas.width;
-            newCanvas.height = canvas.height;
-            const newCtx = newCanvas.getContext('2d');
-            const h = window.innerHeight + 400
-            // newCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, newCanvas.width, h, 0,0,canvas.width, h)
-            // ctx.clearRect(0, 0, canvas.width, canvas.height );
-            // ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
-        };
-
-        const clearAndDraw = (canvasId, image) => {
-            const canvas = document.getElementById(canvasId);
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(image, 0, 400 - scrollBackAmount + offsetI);
-        };
-
         const canvasIds = ['fill-canvas', 'top-canvas'];
-        const promises = canvasIds.map(updateCanvas);
+        // const promises = canvasIds.map(updateCanvas);
+        // updateCanvas('fill-canvas', refreshSpot)
+        // updateCanvas('top-canvas', refreshSpot)
 
         clearAndDraw('invis-canvas', newInvis);
         clearAndDraw('tiling-canvas', newTiling);
 
         drawSecondTiling();
 
-        await Promise.allSettled(promises).then(() => {
+        // await Promise.allSettled(promises).then(() => {
             setOffsetY(400 + offsetI);
             wrap.style.transform = `translate(0,-${400 + offsetI}px)`
             redrawAnim()
@@ -111,6 +130,8 @@ export const redrawCanvas = async () => {
             redrawDottedStrokes()
             firstStep = false;
             secondStep = false;
+            thirdStep = false;
+
             drawSecondTilingHelper()
 
             var rectangle = document.getElementById("gradRectangle");
@@ -122,7 +143,7 @@ export const redrawCanvas = async () => {
 
             offsetI = 400;
 
-        });
+        // });
 
     } else {
         wrap.style.transform = `translate(0,-${offsetY}px)`;
