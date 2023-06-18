@@ -65,14 +65,13 @@ export default function TimerClock() {
             }
         }
         function handleClick() {
-            // Do something when the timer circle is clicked
-            if(UID === 0.1){
+            if(UID === '.1'){
                 window.open(
                     'https://docs.google.com/document/d/1-X1Jhy_nxj2bdS60b7_S5LFy1AycbTgOktIYdGqPi1c/edit?usp=sharing',
                     '_blank'
                 );
             }
-            else if(UID === 0.2){
+            else if(UID === '.2'){
                 window.open(
                     'https://docs.google.com/document/d/1qvniuCkiFiIQq1N6vYYQXH14KS-kVT0pbAYnM_gJIAo/edit?usp=sharing',
                     '_blank'

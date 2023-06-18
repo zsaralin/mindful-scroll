@@ -1,6 +1,6 @@
 import {drawTiling, makeRandomTiling} from "./TilingGenerator";
 import {getBoundsTiling, getBoundsTiling2} from "./TilingBounds";
-import {getTilingPathDict} from "./TilingPathDict";
+import {addShape, getShapeColor, getTilingPathDict} from "./TilingPathDict";
 import {getGrid, getTilingProp} from "./TilingProperties";
 import {setTiling} from "./SortingHat";
 import {getOffsetY} from "../Scroll/Offset";
@@ -72,18 +72,7 @@ export function firstTiling(inputArr) {
     pathArr = []
     if(basicVersion) {
         const shape = getRandomShape(0)
-        const pathDict = {}
-        pathDict[SHAPE_COLOR] = {
-            path: shape[0],
-            bounds: shape[1],
-            filled: false,
-            firstCol: 'white',
-            inPath: [],
-            id: uuidv4(),
-            colors: [],
-            allColors: [],
-            segArr: undefined,
-        };
+        const pathDict = addShape(shape)
         const tiling = {pathDict: pathDict}
         tiling.colourPal = [];
         pathArr.push(tiling);
@@ -108,18 +97,7 @@ export function secondTiling(inputArr, offset) {
     if(basicVersion) {
         const finOffset = offset !== undefined ? offset : 400;
         const shape = getRandomShape(bottom)
-        const pathDict = {}
-        pathDict[SHAPE_COLOR] = {
-            path: shape[0],
-            bounds: shape[1],
-            filled: false,
-            firstCol: 'white',
-            inPath: [],
-            id: uuidv4(),
-            colors: [],
-            allColors: [],
-            segArr: undefined,
-        };
+        const pathDict = addShape(shape)
         const tiling = {pathDict: pathDict}
         tiling.colourPal = [];
         pathArr.push(tiling);
@@ -127,6 +105,10 @@ export function secondTiling(inputArr, offset) {
         offsetY = yMax //+ BETWEEN_SPACE
         top = yMin;
         bottom = window.innerHeight*2 + finOffset - 400;
+        tilingsDrawn++;
+        if (pathArr.length === 4) {
+            pathArr.shift()
+        }
     }
     else{
     const finOffset = offset !== undefined ? offset : 400;
@@ -182,12 +164,10 @@ export function tilingIndex(y) {
 // used scaledY
 export function getTile(y, invisCol) {
     if (invisCol) {
-        for(let i=0;i<pathArr.length;i++){
-            const currTiling = pathArr[i].pathDict
+            const currTiling = pathArr[currI].pathDict
             const tile = currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
             if(tile !== undefined){
                 return tile
-            }
         }
         console.log('DID NOT GET TILE'
         )
@@ -201,11 +181,12 @@ export function getTiling(y, invisCol) {
     if (invisCol) {
         for(let i=0;i<pathArr.length;i++){
             const ret = pathArr[i]
-            const currTiling = pathArr[i].pathDict
+            const currTiling = ret.pathDict
             const tile = currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
             if(tile !== undefined){
+                console.log('i is ' + i)
                 currI = i;
-                return ret
+                return [ret, tile]
             }
         }
     }

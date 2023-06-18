@@ -35,6 +35,7 @@ export function fillTile(tile, str, under, inputCol){
 
     console.log('IS BLACK OR CLOSE ? : ' + isBlackOrClose(col))
     ctx.fillStyle =  isBlackOrClose(col) ? '#333333'  : col; // replace black colours with dark grey
+    tile.fillColor = col
     // console.log('LOOK NOW '  + ctx.fillStyle)
     ctx.fill(tile.path)
     tile.filled = true;

@@ -76,7 +76,7 @@ export function getTilingPathDict(segArr, offsetX, offsetY) {
         bounds[2] = bounds[2] + offsetY
         bounds[3] = bounds[3] + offsetY
         // console.log(Math.round(bounds[2]) + ' and ' +Math.round(bounds[3]))
-        let id = uuidv4()
+        const id = uuidv4()
         pathDict[cols[colorIndex]] = {
             path: path,
             bounds: bounds,
@@ -145,4 +145,32 @@ function fillArrayWithUniqueRGB() {
 
 export function getTileWithId(id) {
     return idDict[id]
+}
+
+
+export function addShape(shape){
+    const pathDict = {}
+    const col = getShapeColor()
+    const id = uuidv4()
+    pathDict[col] = {
+        path: shape[0],
+        bounds: shape[1],
+        filled: false,
+        firstCol: 'white',
+        inPath: [],
+        id: id,
+        colors: [],
+        allColors: [],
+        segArr: undefined,
+        watercolor: false,
+        fillType: null,
+        fillColors: null,
+    };
+    idDict[id] = pathDict[col]
+    return pathDict
+}
+export function getShapeColor(){
+    const col = colourArr.shift();
+    colourArr.push(col);
+    return col
 }

@@ -14,13 +14,10 @@ const gradient = ["radial", "diag", "vert", "horiz"]
 const under = [true, false]
 
 export function getFillInfo() {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const basic = urlParams.get('basic');
-    if (basic === true) { //simple
+    if (basicVersion) { //simple
         return ["regular", [1]]
     } else {
-        const num = sections[Math.floor(Math.random() * sections.length)];
+        const num = 0//sections[Math.floor(Math.random() * sections.length)];
         if (num === 0) {
             const weights = [5, 3, 2, 1, 1]
             const totFillTypes = [1, 2, 3, 4, 5]
@@ -270,13 +267,8 @@ function strokeTypesHelper(afterFillTypes) {
         const regW = rand >= .5 ? rand : 1 - rand
         const strokeW = [regW, 1 - regW]
         return [strokeTypes, strokeW]
-    } else {
-        const otherStrokeType = ["transparent", "dotted"][Math.floor(Math.random() * 2)]; // choose one at random
-        const randomW = [0, 0, 0, 0.2, 0.7][Math.floor(Math.random() * 5)];
-        const strokeTypes = ["reg", otherStrokeType]
-        const strokeW = [1 - randomW, randomW]
-        return [strokeTypes, strokeW]
     }
+    return [["reg", [1]]]
 }
 
 export function dotTypesHelper(strokeType) {

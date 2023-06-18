@@ -1,7 +1,7 @@
 import {refreshTilings} from "./Tiling3";
 
 
-let yPadding = 0;
+let yPadding = 5;
 
 export const changeTilingSize = (event: Event, newValue: number) => {
     yPadding = -newValue

@@ -179,14 +179,16 @@ function App() {
         // console.log(`tilingIndex ${index}`)
 
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
-        currTiling = getTiling(y, invisCol)
+        const tiling = getTiling(y,invisCol)
+        if(tiling){
+        currTiling =tiling[0]
+        currTile = tiling[1]}
         smallOffset = getOffSmall(index)
-        currTile = getTile(y, invisCol)
+        // currTile = getTile(y, invisCol)
 
         // currTiling = getTiling(y, invisCol)
-        console.log('currTiling ' + currTiling)
         // console.log(currTile + ' and ' + currTiling + ' and ' + currTiling.fillNum)
-
+        // currTile.strokeType = "dotted"
         if (currTiling && currTiling.colourPal.length === 0) {
             if (firstClick) {
                 currTiling.colourPal = getColourPal()

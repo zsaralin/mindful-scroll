@@ -42,13 +42,14 @@ export function setRefreshed(i) {
     refreshed = i
 }
 
-let redrawing = false;
 let newInvis;
 let newTiling;
 
 let offsetI = 0;
 let firstStep = false;
-const scrollBackAmount = 0//150;
+let secondStep = false;
+
+const scrollBackAmount = 150;
 
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
@@ -70,24 +71,21 @@ export const redrawCanvas = async () => {
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
-    if (offsetY > refreshSpot) {
-        // console.log('heere')
-        redrawing = true;
+    if (!secondStep && offsetY > refreshSpot) {
+        secondStep = true;
         prevOffsetY += offsetY
 
         const updateCanvas = async (canvasId) => {
             const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext('2d');
-
             const newCanvas = document.createElement('canvas');
             newCanvas.width = canvas.width;
             newCanvas.height = canvas.height;
             const newCtx = newCanvas.getContext('2d');
-            newCtx.drawImage(canvas, 0, -(refreshSpot - scrollBackAmount))
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(newCanvas, 0, offsetI + 400 - scrollBackAmount);
-
+            const h = window.innerHeight + 400
+            newCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, newCanvas.width, h, 0,0,canvas.width, h)
+            ctx.clearRect(0, 0, canvas.width, canvas.height );
+            ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
         };
 
         const clearAndDraw = (canvasId, image) => {
@@ -112,6 +110,7 @@ export const redrawCanvas = async () => {
             redrawTransparentStrokes()
             redrawDottedStrokes()
             firstStep = false;
+            secondStep = false;
             drawSecondTilingHelper()
 
             var rectangle = document.getElementById("gradRectangle");
@@ -137,7 +136,6 @@ export const redrawCanvas2 = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
     if (offsetY > (top - TOP_PAGE_SPACE) + prevOffsetY) {
-        redrawing = true;
         const canvas = document.getElementById('top-canvas');
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, prevOffsetY, canvas.width, top - TOP_PAGE_SPACE);

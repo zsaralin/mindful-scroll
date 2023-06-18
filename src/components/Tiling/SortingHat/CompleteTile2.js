@@ -26,10 +26,12 @@ export let basicVersion = basic === 'true' ? true: false;
 
 export function completeTile2(tile, tiling) {
     fillTileColors(tile);
-
+    // if(tile.strokeStyle === "dotted" || tile.strokeStyle === "transparent"){
+    //     const fillType = ['first']
+    // }
     const fillInfo = tiling.fillInfo;
     const fillType = helper(fillInfo.fillW, fillInfo.fillTypes);
-
+    console.log('fillTly ' + fillType)
     if (fillInfo.fillNum === 0) {
         const underType = helper(fillInfo.underW, under);
 

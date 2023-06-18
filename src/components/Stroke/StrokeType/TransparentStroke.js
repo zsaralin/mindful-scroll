@@ -59,7 +59,8 @@ export function refreshTrans(id) {
     ctx.translate(0, -smallOffset)
     ctx.fill(tile?.path)
     if (tile.filled) {
-        ctx.fillStyle = `${tile.fillColors.slice(0, -1)}, 0.5)`;
+        // console.log('LOOK ' + tile.colors)
+        ctx.fillStyle = `${tile.fillColor.slice(0, -1)}, 0.5)`;
         ctx.fill(tile.path)
     }
     ctx.restore()

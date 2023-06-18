@@ -42,7 +42,7 @@ export function refreshDotted(id) {
     ctx.fillStyle = "white"
     ctx.fill(tile.path)
     if(tile.filled){
-        ctx.fillStyle = tile.fillColors
+        ctx.fillStyle = tile.fillColor
         ctx.fill(tile.path)
     }
     ctx.restore()
