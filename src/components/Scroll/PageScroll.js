@@ -54,7 +54,7 @@ let thirdStep = false;
 
 const scrollBackAmount = 150;
 
-export const updateCanvas = (canvasId, refreshSpot) => {
+export const updateCanvasOld = (canvasId, refreshSpot) => {
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext('2d');
     const newCanvas = document.createElement('canvas');
@@ -68,7 +68,9 @@ export const updateCanvas = (canvasId, refreshSpot) => {
     // ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
 };
 
-export const updateCanvasNew = () =>{
+let drawn = false;
+export const updateOffCanvas = () =>{
+    drawn = true;
     const refreshSpot = top + offsetI - 100;
     const fillC = document.getElementById('fill-canvas');
     const topC = document.getElementById('top-canvas');
@@ -78,25 +80,29 @@ export const updateCanvasNew = () =>{
     newFill.height = newTop.height = fillC.height;
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
+    // Set the fill color to white
+    newFillCtx.fillStyle = 'white';
+    newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
+    newTopCtx.fillStyle = 'white';
+    newTopCtx.fillRect(0, 0, fillC.width, fillC.height);
     const h = window.innerHeight + 400
+
+    // newFillCtx.fillStyle = "red"
+    // newFillCtx.fillRect(0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
     newFillCtx.drawImage(fillC, 0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
     newTopCtx.drawImage(topC, 0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
     // console.log('1 ' + h)
 }
 
-function updateCanv2(){
+function updateCanvas(){
+    if(drawn){
     const fillC = document.getElementById('fill-canvas');
     const topC = document.getElementById('top-canvas');
-    const filCtx = fillC.getContext('2d');
+    const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
-    const h = window.innerHeight + 400
-
-    filCtx.clearRect(0, 0, fillC.width, fillC.height );
-    topCtx.clearRect(0, 0, fillC.width, fillC.height );
-    filCtx.drawImage(newFill, 0, 0, newFill.width, h, 0,0,newFill.width, h)
-    topCtx.drawImage(newTop, 0, 0, newTop.width, h, 0,0,newTop.width, h)
-
-    // ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
+    fillCtx.drawImage(newFill, 0, 0)
+    topCtx.drawImage(newTop, 0, 0)
+    drawn = false; }
 }
 
 const clearAndDraw = (canvasId, image) => {
@@ -112,7 +118,6 @@ export const redrawCanvas = async () => {
     const offsetY = getOffsetY()
     const refreshSpot = top + offsetI - 100;
     if (!firstStep && offsetY > (refreshSpot / 2)) {
-        console.log('HERE1')
         firstStep = true;
         const invisC = document.getElementById('invis-canvas');
         const tilingC = document.getElementById('tiling-canvas');
@@ -127,34 +132,16 @@ export const redrawCanvas = async () => {
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
-    // if(!secondStep && offsetY > refreshSpot*(3/4)){
-    //     secondStep = true;
-    //     console.log('hihi')
-    //     const promise1 = updateCanvas('fill-canvas', refreshSpot);
-    //     const promise2 = updateCanvas('top-canvas', refreshSpot);
-    //
-    //     Promise.all([promise1, promise2])
-    //         .then(() => {
-    //             // Code to execute after both updateCanvas calls are completed
-    //         })
-    //         .catch((error) => {
-    //             // Handle any errors that occurred during the updateCanvas calls
-    //         });
-    // }
-    if (!thirdStep && offsetY > refreshSpot) {
-        thirdStep = true;
+    if (!secondStep && offsetY > refreshSpot) {
+        secondStep = true;
         prevOffsetY += offsetY
 
-        const canvasIds = ['fill-canvas', 'top-canvas'];
-        // const promises = canvasIds.map(updateCanvas);
-        // updateCanvas('fill-canvas', refreshSpot)
-        // updateCanvas('top-canvas', refreshSpot)
+        updateCanvas()
 
         clearAndDraw('invis-canvas', newInvis);
         clearAndDraw('tiling-canvas', newTiling);
 
         drawSecondTiling();
-        updateCanv2()
         // await Promise.allSettled(promises).then(() => {
             setOffsetY(400 + offsetI);
             wrap.style.transform = `translate(0,-${400 + offsetI}px)`
