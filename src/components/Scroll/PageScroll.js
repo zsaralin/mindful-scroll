@@ -84,6 +84,21 @@ export const updateCanvasNew = () =>{
     // console.log('1 ' + h)
 }
 
+function updateCanv2(){
+    const fillC = document.getElementById('fill-canvas');
+    const topC = document.getElementById('top-canvas');
+    const filCtx = fillC.getContext('2d');
+    const topCtx = topC.getContext('2d');
+    const h = window.innerHeight + 400
+
+    filCtx.clearRect(0, 0, fillC.width, fillC.height );
+    topCtx.clearRect(0, 0, fillC.width, fillC.height );
+    filCtx.drawImage(newFill, 0, 0, newFill.width, h, 0,0,newFill.width, h)
+    topCtx.drawImage(newTop, 0, 0, newTop.width, h, 0,0,newTop.width, h)
+
+    // ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
+}
+
 const clearAndDraw = (canvasId, image) => {
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext('2d');
@@ -139,7 +154,7 @@ export const redrawCanvas = async () => {
         clearAndDraw('tiling-canvas', newTiling);
 
         drawSecondTiling();
-
+        updateCanv2()
         // await Promise.allSettled(promises).then(() => {
             setOffsetY(400 + offsetI);
             wrap.style.transform = `translate(0,-${400 + offsetI}px)`
