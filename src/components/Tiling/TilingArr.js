@@ -1,6 +1,6 @@
 import {makeRandomTiling, drawTiling} from './TilingGenerator'
 import {getTilingPathDict} from './TilingPathDict'
-import {getRandomShape} from "../Tile/Shape";
+import {getRandomShapeOld} from "../Tile/Shape";
 import {getBoundsTiling} from "./TilingBounds";
 import {getOffsetY} from "../Scroll/Offset";
 import {SHAPE_COLOR} from "../Constants";
@@ -63,9 +63,9 @@ function drawRandomShape(yMin, yMax, pathDict) {
     let shapePath;
     let dimension;
     if (yMaxArr.length > 0) {
-        [shapePath, dimension] = getRandomShape(yMax + yMaxArr[yMaxArr.length - 1] - yMin)
+        [shapePath, dimension] = getRandomShapeOld(yMax + yMaxArr[yMaxArr.length - 1] - yMin)
     } else {
-        [shapePath, dimension] = getRandomShape(yMax - yMin + 75)
+        [shapePath, dimension] = getRandomShapeOld(yMax - yMin + 75)
     }
     pathDict[SHAPE_COLOR] = {
         path: shapePath,

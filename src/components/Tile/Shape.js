@@ -11,7 +11,7 @@ function getRandomNum(min, max) {
     return Math.floor(Math.random() * (max - min) + min)
 }
 
-export function getRandomShape(currYMax) {
+export function getRandomShapeOld(currYMax) {
     let path = new Path2D()
     let dimension = []
     let index = getRandomNum(0, 15)

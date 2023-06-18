@@ -2,6 +2,7 @@ import {redrawCanvas, refreshPage} from "../Scroll/PageScroll";
 import {getBoundsTile, getBoundsTiling} from "./TilingBounds";
 import {getYPadding} from "./TilingSize";
 import {getTile, refreshTilings, tilingsDrawn} from "./Tiling3";
+const mediaQuery = window.matchMedia('(max-width: 480px)');
 
 let path = "rect";
 let numTilings = 0;
@@ -38,7 +39,7 @@ export function createPath(tiling) {
         let [tileXMin, tileXMax, tileYMin, tileYMax] = getBoundsTile(tile)
         // console.log([tileXMin, tileXMax, tileYMin, tileYMax] )
         if (path === "rect") {
-            pathVar = window.innerWidth > 550 ?  [300, 400, 500][Math.floor(Math.random() * 3)]: 200
+            pathVar = !mediaQuery.matches ?  [300, 400][Math.floor(Math.random() * 2)]: 100//200
             rightEdge = (window.innerWidth - pathVar)
             leftEdge = pathVar
         } else if (path === "triangle") {

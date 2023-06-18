@@ -19,11 +19,15 @@ const under = [true, false]
 const ditherI = [1, 2, 3, 4, 5]
 const ditherW = [1, 2, 3, 2, 1];
 
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const basic = urlParams.get('basic');
+export let basicVersion = basic === 'true' ? true: false;
+
 export function completeTile2(tile, tiling) {
     fillTileColors(tile);
 
     const fillInfo = tiling.fillInfo;
-    console.log(fillInfo)
     const fillType = helper(fillInfo.fillW, fillInfo.fillTypes);
 
     if (fillInfo.fillNum === 0) {

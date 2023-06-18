@@ -48,13 +48,14 @@ let newTiling;
 
 let offsetI = 0;
 let firstStep = false;
-const scrollBackAmount = 150;
+const scrollBackAmount = 0//150;
 
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     const offsetY = getOffsetY()
     const refreshSpot = top + offsetI - 100;
     if (!firstStep && offsetY > (refreshSpot / 2)) {
+        console.log('HERE1')
         firstStep = true;
         const invisC = document.getElementById('invis-canvas');
         const tilingC = document.getElementById('tiling-canvas');
@@ -70,7 +71,7 @@ export const redrawCanvas = async () => {
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
     if (offsetY > refreshSpot) {
-        console.log('heere')
+        // console.log('heere')
         redrawing = true;
         prevOffsetY += offsetY
 
@@ -82,10 +83,11 @@ export const redrawCanvas = async () => {
             newCanvas.width = canvas.width;
             newCanvas.height = canvas.height;
             const newCtx = newCanvas.getContext('2d');
-            newCtx.drawImage(canvas, 0, -(refreshSpot - scrollBackAmount));
+            newCtx.drawImage(canvas, 0, -(refreshSpot - scrollBackAmount))
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(newCanvas, 0, offsetI + 400 - scrollBackAmount);
+
         };
 
         const clearAndDraw = (canvasId, image) => {
@@ -113,13 +115,12 @@ export const redrawCanvas = async () => {
             drawSecondTilingHelper()
 
             var rectangle = document.getElementById("gradRectangle");
-
             rectangle.style.top = 0 + "px";
             rectangle.style.width = document.getElementById('top-canvas').width + "px";
             rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
             const position = offsetI === 0 ? '65%' : '85%'
-            console.log('look '  + position)
             rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
+
             offsetI = 400;
 
         });

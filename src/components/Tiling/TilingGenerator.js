@@ -8,6 +8,8 @@ import {getTileWidth} from "./TileWidth";
 import {getYPadding} from "./TilingSize";
 import {getBoundsTiling, getBoundsTiling2} from "./TilingBounds";
 import {createPath, getPathPadding} from "./TilingPath";
+import {basicVersion} from "./SortingHat/CompleteTile2";
+const mediaQuery = window.matchMedia('(max-width: 480px)');
 
 function generateRandomNum() {
     var num =  Math.floor(81 * Math.random());
@@ -19,7 +21,7 @@ function getScaler(tiling) {
     let t1 = tiling.getT1()
     let t2 = tiling.getT2()
     const B = Math.abs((t1.x * t2.y) - (t2.x * t1.y)) / (tiling.numAspects())
-    const A = window.innerWidth > 550 ? Math.floor(Math.random() * 3) + 2 : 1.5
+    const A = !mediaQuery.matches ? Math.floor(Math.random() * 2.5) + 2 : 1.3 + Math.random() * 0.6; // 1.3 to 1.0
     return Math.sqrt(A / B)
 }
 
@@ -32,7 +34,13 @@ export let tilingIndex;
 function getSegArr(tiling, edges) {
     let segArr = [] // array of paths for a tile
     ST = [100 * scale, 0.0, 0.0, 0.0, 100 * scale, 0.0];
-    list = [0, 0, (window.innerWidth / 50) / scale, 9 / scale]
+    if(basicVersion){
+        list = [0, 0, window.innerWidth/120/scale, window.innerHeight/50/scale ]
+        console.log('list ' + list.toString())
+    }
+    else{
+        list = [0, 0, (window.innerWidth / 50) / scale, 9 / scale]
+    }
     for (let i of tiling.fillRegionBounds(list[0], list[1], list[2], list[3])) {
         const T = mul(ST, i.T);
         let outXBounds = false; // tile is outside width of window
@@ -61,6 +69,7 @@ function getSegArr(tiling, edges) {
         }
     }
     segArr.t = tiling; segArr.e = edges;
+    // return segArr;
     return createPath(segArr)
 }
 

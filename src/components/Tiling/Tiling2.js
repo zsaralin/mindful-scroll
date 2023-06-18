@@ -1,6 +1,6 @@
 import {makeRandomTiling, drawTiling} from './TilingGenerator'
 import {getTilingPathDict} from './TilingPathDict'
-import {getRandomShape} from "../Tile/Shape";
+import {getRandomShapeOld} from "../Tile/Shape";
 import {getBoundsTiling} from "./TilingBounds";
 import {getOffsetY} from "../Scroll/Offset";
 import {SHAPE_COLOR, TOP_PAGE_SPACE} from "../Constants";
@@ -107,7 +107,7 @@ let shapePath, dimension;
 function drawShape(yMin, yMax, pathDict, shape = null) {
     // console.log(' LOOK IEEEE ' + pathDict)
     if (shape == null) {
-        [shapePath, dimension] = getRandomShape(!tiling2 ? yMax - yMin + TOP_SPACE : yMax - yMin + 40);
+        [shapePath, dimension] = getRandomShapeOld(!tiling2 ? yMax - yMin + TOP_SPACE : yMax - yMin + 40);
     }
     // console.log(SHAPE_COLOR  + ' COLOR GIR')
     pathDict[SHAPE_COLOR] = {

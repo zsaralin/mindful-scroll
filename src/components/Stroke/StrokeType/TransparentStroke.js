@@ -6,7 +6,7 @@ import {getPathWithId, getTileWithId} from "../../Tiling/TilingPathDict";
 import {getOffsetY} from "../../Scroll/Offset";
 import {getTile} from "../../Tiling/Tiling2";
 import {findTile, findTile1, redrawTileStrokes} from "./StrokeArr";
-import {getOffSmall, smallOffset} from "../../Tiling/Tiling3";
+import {getOffSmall, overlapOffset, smallOffset} from "../../Tiling/Tiling3";
 
 let transStrokes = {}
 let dragging = false;
@@ -57,10 +57,10 @@ export function refreshTrans(id) {
     ctx.fillStyle = "white"
     ctx.save()
     ctx.translate(0, -smallOffset)
-    ctx.fill(getTileWithId(id)?.path)
+    ctx.fill(tile?.path)
     if (tile.filled) {
         ctx.fillStyle = `${tile.fillColors.slice(0, -1)}, 0.5)`;
-        ctx.fill(getTileWithId(id).path)
+        ctx.fill(tile.path)
     }
     ctx.restore()
     redrawTransStrokesTile(id)
@@ -78,8 +78,8 @@ export function redrawTransparentStrokes(offsetY) {
         paths.forEach((path, index) => {
             path.forEach((i) => {
                 if (i.smallOff === 0) {
-                    i.y = i.y - getOffSmall(0);
-                    i.smallOff = getOffSmall(0);
+                    i.y = i.y + overlapOffset;
+                    i.smallOff = overlapOffset;
                 } else {
                     delete transStrokes[id];
                     return; // Move to the next path
@@ -95,7 +95,7 @@ export function redrawTransStrokesTile(tileId, offsetY = 0) {
     const ctx = document.getElementById('top-canvas').getContext('2d');
     const temp = transStrokes[tileId]?.slice() ?? [];
     temp.forEach(path => {
-        if (offsetY !== 0 && path.y0 < offsetY) return;
+        // if (offsetY !== 0 && path.y0 < offsetY) return;
         if (path.length < 1) return;
 
         if (offsetY !== 0 && currTile) {

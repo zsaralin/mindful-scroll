@@ -87,7 +87,7 @@ import {ditherTiling} from "./components/Tiling/DitherTiling";
 import {setTiling} from "./components/Tiling/SortingHat";
 import {drawJustDot, pushDot, removeLastDot} from "./components/Stroke/Dot/DotArr";
 import {getTileWidth} from "./components/Tiling/TileWidth";
-import {completeTile2} from "./components/Tiling/SortingHat/CompleteTile2";
+import {completeTile2, basicVersion} from "./components/Tiling/SortingHat/CompleteTile2";
 import {dotTypesHelper, helper} from "./components/Tiling/SortingHat/TilingFillType";
 
 import {sendMessageFB, startScreenshots} from "./components/Logging/Logging";
@@ -149,7 +149,7 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight * 6;
+            canvas.height = window.innerHeight * (basicVersion ? 3: 6);
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
@@ -177,13 +177,13 @@ function App() {
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
         // console.log(`tilingIndex ${index}`)
-        smallOffset = getOffSmall(index)
-        console.log('SMALL ' + smallOffset)
 
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
-
-        currTile = getTile(y, invisCol)
         currTiling = getTiling(y, invisCol)
+        smallOffset = getOffSmall(index)
+        currTile = getTile(y, invisCol)
+
+        // currTiling = getTiling(y, invisCol)
         console.log('currTiling ' + currTiling)
         // console.log(currTile + ' and ' + currTiling + ' and ' + currTiling.fillNum)
 
@@ -257,7 +257,6 @@ function App() {
                 dotRemoved = true;
             }
             // console.log(Math.abs(speed[0]) + ' and ' + Math.abs(speed[1]))
-
             if ((currTile.strokeType === "reg" && isShrinkStroke() && (Math.abs(speed[0]) > 10 || Math.abs(speed[1]) > 10))) {
                 pushShrinkingLine(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, currTiling.strokeType);
                 drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY, currColor);
@@ -482,8 +481,7 @@ function App() {
     }
 
     function onStrokeEnd() {
-
-        if (currTile && !currTile.watercolor && currTile && !currTile.filled && getFillRatio(currTile, smallOffset) > getFillMin()) {
+        if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled && getFillRatio(currTile, smallOffset) > getFillMin()) {
             currTile.filled = true;
             completeTile2(currTile, currTiling, invisCol)
         }
@@ -600,7 +598,7 @@ function App() {
                 <ControlPanel/>
             </div>
             <TimerClock/>
-            {/*<div id="angle" style={{position: "absolute", top: 0, display: 'none'}}> {angle}</div>*/}
+            <div id="angle" style={{position: "absolute", top: 0, display: 'none'}}> {angle}</div>
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
             <div id="dots"></div>

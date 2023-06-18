@@ -29,7 +29,6 @@ export function setupParticipant() {
     const urlParams = new URLSearchParams(queryString);
     // Retrieving the participant number
     const participantNumber = urlParams.get('uid');
-    console.log('PEEPEE ' + participantNumber)
     return participantNumber
 }
 
@@ -77,9 +76,7 @@ function captureScreenshot() {
     const today = new Date();
     const day = today.getDate();
     const month = today.getMonth() + 1; // Months are zero-based, so we add 1
-    const year = today.getFullYear();
-    const folderName = `images_${day}_${month}_${year}_${UID}`;
-    const storageRef = ref(storage, `${folderName}/${fileName}`);
+    const storageRef = ref(storage, `${UID}/${day}_${month}/${fileName}`);
     uploadString(storageRef, dataUrl, 'data_url').then((snapshot) => {
         console.log('Uploaded a data_url string!');
     }).catch((error) => {

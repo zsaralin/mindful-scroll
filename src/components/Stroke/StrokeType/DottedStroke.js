@@ -7,7 +7,7 @@ import {redrawDots, redrawTileDots} from "../Dot/DotArr";
 import {getPathWithId, getTileWithId} from "../../Tiling/TilingPathDict";
 import {getTile} from "../../Tiling/Tiling2";
 import {startDot} from "../Dot/DotType";
-import {getOffSmall, smallOffset} from "../../Tiling/Tiling3";
+import {getOffSmall, overlapOffset, smallOffset} from "../../Tiling/Tiling3";
 
 let dottedStrokes = {}
 
@@ -36,13 +36,16 @@ export function refreshDotted(id) {
     const ctx = document.getElementById('top-canvas').getContext("2d");
     ctx.fillStyle = document.getElementById('fill-canvas').getContext("2d").fillStyle.toString() === "rgba(0, 0, 0, 0)" ? "white" : document.getElementById('fill-canvas').getContext("2d").fillStyle ;
     // ctx.fill(getTileWithId(id).path)
+    ctx.save()
+    ctx.translate(0, -smallOffset)
     const tile = getTileWithId(id)
     ctx.fillStyle = "white"
-    ctx.fill(getTileWithId(id).path)
+    ctx.fill(tile.path)
     if(tile.filled){
         ctx.fillStyle = tile.fillColors
-        ctx.fill(getTileWithId(id).path)
+        ctx.fill(tile.path)
     }
+    ctx.restore()
     redrawDottedStrokesTile(id)
 }
 
@@ -52,8 +55,8 @@ export function redrawDottedStrokes() {
             paths.forEach((path, index) => {
                 path.forEach((i) => {
                     if (i.smallOff === 0) {
-                        i.y = i.y - getOffSmall(0);
-                        i.smallOff = getOffSmall(0);
+                        i.y = i.y + overlapOffset;
+                        i.smallOff = overlapOffset
                     } else {
                         delete dottedStrokes[id];
                         return; // Move to the next path
@@ -69,7 +72,7 @@ export function redrawDottedStrokesTile(tileId, offsetY = 0) {
     const strokes = dottedStrokes[tileId];
     if (!strokes) return;
     for (const path of strokes) {
-        if (offsetY !== 0 && path.y < offsetY) return;
+        // if (offsetY !== 0 && path.y < offsetY) return;
         if (path.length < 2) return; // Need at least two points to draw a line.
         ctx.beginPath();
         ctx.moveTo(path[0].x, path[0].y - offsetY);

@@ -24,25 +24,34 @@ export function getTotalPixels(currTile) {
             }
         }
     }
+    console.log('LOOK ' + currTile.inPath.length)
     return currTile.inPath.length
 }
 
 export function isCircleInPath(path, x, y, lineWidth) {
     let ctx = document.getElementById(strokeCanvas).getContext("2d");
+    // ctx.translate(0,-smallOffset)
+
     let r = lineWidth ? lineWidth / 1.5 : getLineWidth() / 4
     if (ctx.isPointInPath(path, x, y) && ctx.isPointInPath(path, x + r, y + r) && ctx.isPointInPath(path, x + r, y - r) && ctx.isPointInPath(path, x - r, y - r) && ctx.isPointInPath(path, x - r, y + r)) return true
+
+    // ctx.restore()
     return false
 }
 
 export function getFillRatio(currTile) {
     let ctx = document.getElementById(strokeCanvas).getContext("2d")
+    // ctx.translate(0,-smallOffset)
+
     let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixels(currTile) : currTile.inPath.length] // [filledPixels, totalPixels]
     currTile.inPath.forEach(i => {
-        let col = ctx.getImageData(i[0], i[1] - smallOffset, 1, 1, {willReadFrequently: true}).data.toString()
+        let col = ctx.getImageData(i[0], i[1]-smallOffset, 1, 1, {willReadFrequently: true}).data.toString()
         if (col !== '0,0,0,0' && col !== '255,255,255,255') {
             fillRatio[0]++
         }
     })
+    // ctx.restore()
+    console.log('filRatio ' + (fillRatio[0] / fillRatio[1]) )
     return fillRatio[0] / fillRatio[1]
 }
 
