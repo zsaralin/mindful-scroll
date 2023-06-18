@@ -62,7 +62,7 @@ const updateCanvas = (canvasId, refreshSpot) => {
     const h = window.innerHeight + 400
     newCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, newCanvas.width, h, 0,0,canvas.width, h)
     // console.log('1 ' + h)
-    // ctx.clearRect(0, 0, canvas.width, canvas.height );
+    ctx.clearRect(0, 0, canvas.width, canvas.height );
     // ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
 };
 
