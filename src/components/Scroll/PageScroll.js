@@ -79,8 +79,8 @@ export const updateCanvasNew = () =>{
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
     const h = window.innerHeight + 400
-    newFillCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
-    newTopCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
+    newFillCtx.drawImage(fillC, 0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
+    newTopCtx.drawImage(topC, 0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
     // console.log('1 ' + h)
 }
 
