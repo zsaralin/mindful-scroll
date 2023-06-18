@@ -83,9 +83,9 @@ export const redrawCanvas = async () => {
             newCanvas.height = canvas.height;
             const newCtx = newCanvas.getContext('2d');
             const h = window.innerHeight + 400
-            newCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, newCanvas.width, h, 0,0,canvas.width, h)
-            ctx.clearRect(0, 0, canvas.width, canvas.height );
-            ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
+            // newCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, newCanvas.width, h, 0,0,canvas.width, h)
+            // ctx.clearRect(0, 0, canvas.width, canvas.height );
+            // ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
         };
 
         const clearAndDraw = (canvasId, image) => {
