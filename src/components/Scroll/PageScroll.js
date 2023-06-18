@@ -44,6 +44,8 @@ export function setRefreshed(i) {
 
 let newInvis;
 let newTiling;
+let newFill;
+let newTop;
 
 let offsetI = 0;
 let firstStep = false;
@@ -52,7 +54,7 @@ let thirdStep = false;
 
 const scrollBackAmount = 150;
 
-const updateCanvas = (canvasId, refreshSpot) => {
+export const updateCanvas = (canvasId, refreshSpot) => {
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext('2d');
     const newCanvas = document.createElement('canvas');
@@ -62,9 +64,25 @@ const updateCanvas = (canvasId, refreshSpot) => {
     const h = window.innerHeight + 400
     newCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, newCanvas.width, h, 0,0,canvas.width, h)
     // console.log('1 ' + h)
-    ctx.clearRect(0, 0, canvas.width, canvas.height );
+    // ctx.clearRect(0, 0, canvas.width, canvas.height );
     // ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
 };
+
+export const updateCanvasNew = () =>{
+    const refreshSpot = top + offsetI - 100;
+    const fillC = document.getElementById('fill-canvas');
+    const topC = document.getElementById('top-canvas');
+    newFill = document.createElement('canvas');
+    newTop = document.createElement('canvas');
+    newFill.width = newTop.width = fillC.width;
+    newFill.height = newTop.height = fillC.height;
+    const newFillCtx = newFill.getContext('2d');
+    const newTopCtx = newTop.getContext('2d');
+    const h = window.innerHeight + 400
+    newFillCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
+    newTopCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
+    // console.log('1 ' + h)
+}
 
 const clearAndDraw = (canvasId, image) => {
     const canvas = document.getElementById(canvasId);
@@ -94,20 +112,20 @@ export const redrawCanvas = async () => {
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
-    if(!secondStep && offsetY > refreshSpot*(3/4)){
-        secondStep = true;
-        console.log('hihi')
-        const promise1 = updateCanvas('fill-canvas', refreshSpot);
-        const promise2 = updateCanvas('top-canvas', refreshSpot);
-
-        Promise.all([promise1, promise2])
-            .then(() => {
-                // Code to execute after both updateCanvas calls are completed
-            })
-            .catch((error) => {
-                // Handle any errors that occurred during the updateCanvas calls
-            });
-    }
+    // if(!secondStep && offsetY > refreshSpot*(3/4)){
+    //     secondStep = true;
+    //     console.log('hihi')
+    //     const promise1 = updateCanvas('fill-canvas', refreshSpot);
+    //     const promise2 = updateCanvas('top-canvas', refreshSpot);
+    //
+    //     Promise.all([promise1, promise2])
+    //         .then(() => {
+    //             // Code to execute after both updateCanvas calls are completed
+    //         })
+    //         .catch((error) => {
+    //             // Handle any errors that occurred during the updateCanvas calls
+    //         });
+    // }
     if (!thirdStep && offsetY > refreshSpot) {
         thirdStep = true;
         prevOffsetY += offsetY
