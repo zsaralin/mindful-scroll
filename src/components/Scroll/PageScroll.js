@@ -198,17 +198,16 @@ export const redrawCanvas = async () => {
 
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
-        return
     }
     if (!secondStep && offsetY >= (refreshSpot - 20) && !drawn){
         updateOffCanvas()
         secondStep = true;
-        return
 
     }
     if (!thirdStep && offsetY >= (refreshSpot)) {
         thirdStep = true;
         prevOffsetY += offsetY
+        console.log('redrawing')
         // updateCanvas(),
         // clearAndDraw('invis-canvas', newInvis);
         // clearAndDraw('tiling-canvas', newTiling);
@@ -248,7 +247,6 @@ export const redrawCanvas = async () => {
             })
             .catch((error) => {
             });
-        return
 
     } else {
         wrap.style.transform = `translate(0,-${offsetY}px)`;
