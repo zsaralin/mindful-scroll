@@ -106,29 +106,25 @@ export const updateOffCanvas = () =>{
 }
 
 function updateCanvas(){
-    const refreshSpot = top + offsetI - 100;
-
     if(!drawn){
         updateOffCanvas()}
-
-    // const fillC = document.getElementById('fill-canvas');
-    // const topC = document.getElementById('top-canvas');
-    const fillCtx = fillC.getContext('2d');
+    // const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
     // fillCtx.clearRect(0, 0, fillC.width, fillC.height);
-    topCtx.clearRect(0, 0, fillC.width, fillC.height);
-    // topCtx.fillStyle = "transparent"
-    // topCtx.fillRect(0, 0, fillC.width, fillC.height);
-
-    // fillC.width = fillC.width;
-    // fillC.height = fillC.height;
-
-    // topC.width = topC.width;
-    // topC.height = topC.height;
-    fillCtx.drawImage(newFill, 0, 0)
+    // topCtx.clearRect(0, 0, fillC.width, fillC.height);
+    // fillCtx.drawImage(newFill, 0, 0)
     topCtx.drawImage(newTop, 0, 0)
-
     drawn = false;
+}
+function updateCanvas2(){
+    const fillCtx = fillC.getContext('2d');
+    fillCtx.drawImage(newFill, 0, 0)
+
+}
+function updateCanvas0(){
+    const topCtx = topC.getContext('2d');
+    topCtx.clearRect(0, 0, fillC.width, fillC.height);
+
 }
 
 const clearAndDraw = (canvasId, image) => {
@@ -140,6 +136,18 @@ const clearAndDraw = (canvasId, image) => {
 const updateCanvasAsync = () => {
     return new Promise((resolve, reject) => {
         updateCanvas();
+        resolve();
+    });
+};
+const updateCanvas2Async = () => {
+    return new Promise((resolve, reject) => {
+        updateCanvas2();
+        resolve();
+    });
+};
+const updateCanvas0Async = () => {
+    return new Promise((resolve, reject) => {
+        updateCanvas0();
         resolve();
     });
 };
@@ -184,7 +192,7 @@ export const redrawCanvas = async () => {
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
-    if (!secondStep && offsetY >= refreshSpot) {
+    if (!secondStep && offsetY >= (refreshSpot)) {
         secondStep = true;
         // prevOffsetY += offsetY
         // updateCanvas(),
@@ -192,7 +200,11 @@ export const redrawCanvas = async () => {
         // clearAndDraw('tiling-canvas', newTiling);
         // drawSecondTiling();}
         Promise.all([
+            updateCanvas0Async(),
+            updateCanvas2Async(),
+
             updateCanvasAsync(),
+            // updateCanvas2Async(),
             clearAndDrawAsync('invis-canvas', newInvis),
             clearAndDrawAsync('tiling-canvas', newTiling),
             drawSecondTilingAsync()
@@ -204,17 +216,17 @@ export const redrawCanvas = async () => {
                 // redrawAnim()
                 // redrawTransparentStrokes()
                 // redrawDottedStrokes()
-                // firstStep = false;
-                // secondStep = false;
-                // thirdStep = false;
+                firstStep = false;
+                secondStep = false;
+                thirdStep = false;
                 // drawSecondTilingHelper()
 
-                // var rectangle = document.getElementById("gradRectangle");
-                // rectangle.style.top = 0 + "px";
-                // rectangle.style.width = topC.width + "px";
-                // rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
-                // const position = offsetI === 0 ? '65%' : '85%'
-                // rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
+                var rectangle = document.getElementById("gradRectangle");
+                rectangle.style.top = 0 + "px";
+                rectangle.style.width = topC.width + "px";
+                rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
+                const position = offsetI === 0 ? '65%' : '85%'
+                rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
 
                 // All functions have completed successfully
                 console.log('All functions completed successfully');
