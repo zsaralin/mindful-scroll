@@ -95,7 +95,7 @@ export const updateOffCanvas = () =>{
     // newFillCtx.clearRect(0, 0, topC.width, topC.height);
     // newTopCtx.clearRect(0, 0, topC.width, topC.height);
 
-    const h = window.innerHeight + 400
+    const h = fillC.height//window.innerHeight + 400
 
     // newFillCtx.fillStyle = "red"
     // newFillCtx.fillRect(0, 0, fillC.width, h, 0,0,fillC.width, h)
@@ -114,8 +114,8 @@ function updateCanvas(){
     const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
     fillCtx.clearRect(0, 0, fillC.width, fillC.height);
-    topCtx.clearRect(0, 0, fillC.width, fillC.height);
     fillCtx.drawImage(newFill, 0, 0)
+    topCtx.clearRect(0, 0, fillC.width, fillC.height);
     topCtx.drawImage(newTop, 0, 0)
 
     drawn = false;
