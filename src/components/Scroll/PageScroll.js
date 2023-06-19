@@ -188,24 +188,29 @@ export const redrawCanvas = async () => {
         firstStep = true;
         // const invisC = document.getElementById('invis-canvas');
         // const tilingC = document.getElementById('tiling-canvas');
-        newInvis = document.createElement('canvas');
         newTiling = document.createElement('canvas');
-        newInvis.width = newTiling.width = invisC.width;
-        newInvis.height = newTiling.height = invisC.height;
-
-        const newInvisCtx = newInvis.getContext('2d');
+        newTiling.width = invisC.width;
+        newTiling.height = invisC.height;
         const newTilingCtx = newTiling.getContext('2d');
-
-        newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
+    if(!thirdStep && offsetY > (refreshSpot * (3/4))){
+        console.log('first .2 step')
+        thirdStep = true;
+        newInvis = document.createElement('canvas');
+        newInvis.width = invisC.width;
+        newInvis.height = invisC.height;
+        const newInvisCtx = newInvis.getContext('2d');
+        newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
+
+    }
     if (!secondStep && offsetY >= (refreshSpot - 20) && !drawn){
+        console.log('heyyy')
         updateOffCanvas()
         secondStep = true;
 
     }
-    if (!thirdStep && offsetY >= (refreshSpot)) {
-        thirdStep = true;
+    if (offsetY >= (refreshSpot)) {
         prevOffsetY += offsetY
         console.log('redrawing')
         // updateCanvas(),
