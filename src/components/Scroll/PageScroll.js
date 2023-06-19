@@ -203,7 +203,7 @@ export const redrawCanvas = async () => {
     }
     if (!thirdStep && offsetY >= (refreshSpot)) {
         thirdStep = true;
-        // prevOffsetY += offsetY
+        prevOffsetY += offsetY
         // updateCanvas(),
         // clearAndDraw('invis-canvas', newInvis);
         // clearAndDraw('tiling-canvas', newTiling);
@@ -219,9 +219,11 @@ export const redrawCanvas = async () => {
             drawSecondTilingAsync()
         ])
             .then(() => {
-                // setOffsetY(400 + offsetI);
-                // wrap.style.transform = `translate(0,-${400 + offsetI}px)`
                 drawSecondTilingHelper()
+
+                setOffsetY(400 + offsetI);
+                wrap.style.transform = `translate(0,-${400 + offsetI}px)`
+                // drawSecondTilingHelper()
                 redrawAnim()
                 redrawTransparentStrokes()
                 redrawDottedStrokes()
@@ -236,8 +238,8 @@ export const redrawCanvas = async () => {
                 rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
                 const position = offsetI === 0 ? '65%' : '85%'
                 rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
-                setOffsetY(400 + offsetI);
-                wrap.style.transform = `translate(0,-${400 + offsetI}px)`
+                offsetI = 400;
+
             })
             .catch((error) => {
             });

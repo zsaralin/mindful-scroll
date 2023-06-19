@@ -190,6 +190,7 @@ export function getTiling(y, invisCol) {
             }
         }
     }
+    return false
 }
 
 export function refreshTilings() {

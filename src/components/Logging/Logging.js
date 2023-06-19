@@ -4,6 +4,7 @@ import {getAuth} from "firebase/auth";
 import html2canvas from "html2canvas";
 import {getStorage, ref, uploadBytes, uploadString, listAll, deleteObject } from "firebase/storage";
 import * as htmlToImage from 'html-to-image';
+import {dateString} from "./Time";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -73,12 +74,9 @@ function captureScreenshot() {
 
     const dataUrl = combinedCanvas.toDataURL()
     const fileName = `image_${Date.now() - startTime}.png`; // Append timestamp to the file name
-    const today = new Date();
-    const day = today.getDate();
-    const month = today.getMonth() + 1; // Months are zero-based, so we add 1
-    const year = today.getFullYear() ;
 
-    const storageRef = ref(storage, `${UID}/${year}_${day}_${month}/${fileName}`);
+    const storageRef = ref(storage, `${UID}/${dateString()}/${fileName}`);
+
     uploadString(storageRef, dataUrl, 'data_url').then((snapshot) => {
         console.log('Uploaded a data_url string!');
     }).catch((error) => {

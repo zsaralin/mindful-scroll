@@ -149,7 +149,7 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight * (basicVersion ? 3: 6);
+            canvas.height = window.innerHeight * (basicVersion ? 3 : 6);
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
@@ -173,22 +173,25 @@ function App() {
     let smallOffset;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
-        sendMessageFB("Hello")
+        // sendMessageFB("Hello")
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
         // console.log(`tilingIndex ${index}`)
 
         invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
-        const tiling = getTiling(y,invisCol)
-        if(tiling){
-        currTiling =tiling[0]
-        currTile = tiling[1]}
-        smallOffset = getOffSmall(index)
+        const tiling = getTiling(y, invisCol)
+        if (tiling !== false) {
+            currTiling = tiling[0]
+            currTile = tiling[1]
+        } else {
+            startX = prevCursorX;
+            startY = prevCursorY;
+            return
+        }
+        // smallOffset = getOffSmall(index)
         // currTile = getTile(y, invisCol)
 
-        // currTiling = getTiling(y, invisCol)
-        // currTile.strokeType = "dotted"
-        if (currTiling && currTiling.colourPal.length === 0) {
+        if (currTiling.colourPal.length === 0) {
             if (firstClick) {
                 currTiling.colourPal = getColourPal()
                 firstClick = false;
@@ -197,34 +200,22 @@ function App() {
                 currTiling.colourPal = generateColourPal().cols
             }
         }
-        if (currTiling && prevTiling !== currTiling) {
+        if (prevTiling !== currTiling) {
             setColourPal(currTiling.colourPal)
         }
         // console.log(currTiling.fillInfo.strokeW + ' and ' + currTiling.fillInfo.strokeTypes)
-        if (currTile) currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
+        if (currTile) {
+            smallOffset = getOffSmall(index)
+            currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
+        }
         currColor = getCurrColor()
         // stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
             stopColorChange()
-
-            let c = document.getElementById('top-canvas').getContext('2d')
-            // console.log('IN PATH')
-            // c.save()
-            // c.translate(0,-smallOffset)
-            // c.fillStyle = "blue"
-            // c.fill(currTile.path)
-            // c.restore()
-            // sendMidAlert()
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
             pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType);
-            // startDot(currTile, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType );
-
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
-            // console.log('fillRatio ' + getFillRatio(currTile,smallOffset))
-            // if (!currTile.watercolor && !currTile.filled && getFillRatio(currTile ,smallOffset) > getFillMin()) {
-            //     completeTile(currTile, currTiling, invisCol, smallOffset)
-            // }
             currTile.colors.push(currColor)
 
             // let tiles = getOrienTiles(currTile, currTiling)
@@ -238,9 +229,7 @@ function App() {
             // fillNeighGrad(currTile, tiles, currColor)
 
             // fillOrien(currTile, t)
-        } else {
-            startX = prevCursorX;
-            startY = prevCursorY;
+
         }
     }
 
@@ -596,7 +585,8 @@ function App() {
 
     return (
         <div className="App" id='app'>
-            <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');</style>
+            <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');
+            </style>
             <Helmet>
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
