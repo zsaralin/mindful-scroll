@@ -253,8 +253,8 @@ function App() {
             doubleTouch = true;
             // rightMouseDown = true;
             // startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
-        }   currTile.strokeType = "blurry"
-        if (currTile && isCircleInPath(currTile.path, prevScaledX, scaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
+        }
+        if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
             console.log('IN PATH AND MOVING ' + currTile.strokeType)
             strokeMove = true;
             if (!dotRemoved) {

@@ -98,14 +98,16 @@ export const updateOffCanvas = () =>{
 }
 
 function updateCanvas(){
-    if(drawn){
+    if(!drawn){
+        updateOffCanvas()}
+
     const fillC = document.getElementById('fill-canvas');
     const topC = document.getElementById('top-canvas');
     const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
     fillCtx.drawImage(newFill, 0, 0)
     topCtx.drawImage(newTop, 0, 0)
-    drawn = false; }
+    drawn = false;
 }
 
 const clearAndDraw = (canvasId, image) => {
