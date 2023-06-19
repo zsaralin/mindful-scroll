@@ -149,7 +149,7 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight * (basicVersion ? 3 : 6);
+            canvas.height = window.innerHeight * (basicVersion ? 3 : 5);
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
@@ -236,10 +236,11 @@ function App() {
     let dotRemoved = false;
 
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
-        insidePoly[0] += 1;
-        currColor = getCurrColor();
         // scroll when dragging on white space
-        if (invisCol && invisCol === '0,0,0,0' && ctx.getImageData(scaledX, scaledY, 1, 1).data.toString().trim() === '0,0,0,0') {
+        const imageData = ctx.getImageData(scaledX, scaledY, 1, 1).data;
+        const [r, g, b, a] = imageData;
+
+        if (invisCol && invisCol === '0,0,0,0' && [r, g, b, a].join(',') === '0,0,0,0') {
             doubleTouch = true;
             // rightMouseDown = true;
             // startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
