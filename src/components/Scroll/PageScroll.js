@@ -30,9 +30,10 @@ export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
     const off = getOffsetY()
     if (off - (currY - prevY) >= limitScroll) {
-        setOffsetY(off - (currY - prevY))
-        redrawCanvas();
-
+        // setOffsetY(off - (currY - prevY))
+        redrawCanvas().then(
+            setOffsetY(off - (currY - prevY))
+    )
     } else {
         setOffsetY(limitScroll)
     }
