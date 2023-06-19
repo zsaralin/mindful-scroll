@@ -33,6 +33,7 @@ code {
 .wrapper canvas {
   position: fixed; /* position the canvas wrapper element relative to the wrapper element */
   will-read-frequently : true;
+  will-change: transform
   /*height: 100%; !* make the canvas element fill the entire height of the canvas wrapper element *!*/
   /*width: 100%;*/
 }

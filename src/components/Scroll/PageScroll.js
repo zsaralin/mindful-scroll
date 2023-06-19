@@ -116,8 +116,10 @@ function updateCanvas(){
     const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
     // fillCtx.clearRect(0, 0, fillC.width, fillC.height);
-    // topCtx.clearRect(0, 0, fillC.width, fillC.height);
-    // topC.width  = fillC.width;
+    topCtx.clearRect(0, 0, fillC.width, fillC.height);
+    // topCtx.fillStyle = "transparent"
+    // topCtx.fillRect(0, 0, fillC.width, fillC.height);
+
     // fillC.width = fillC.width;
     // fillC.height = fillC.height;
 
@@ -162,20 +164,15 @@ export const redrawCanvas = async () => {
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
-    if(!thirdStep && offsetY > (refreshSpot - 3)){
-        thirdStep = true;
-        const topCtx = topC.getContext('2d');
-        topCtx.clearRect(0, 0, fillC.width, fillC.height);
-    }
-    if (!secondStep && offsetY > refreshSpot) {
+    if (!secondStep && offsetY >= refreshSpot-8) {
         updateCanvas()
         secondStep = true;
-        prevOffsetY += offsetY
+        // prevOffsetY += offsetY
 
         clearAndDraw('invis-canvas', newInvis);
         clearAndDraw('tiling-canvas', newTiling);
 
-        drawSecondTiling();
+        // drawSecondTiling();
         // await Promise.allSettled(promises).then(() => {
             setOffsetY(400 + offsetI);
             wrap.style.transform = `translate(0,-${400 + offsetI}px)`
@@ -186,14 +183,14 @@ export const redrawCanvas = async () => {
             secondStep = false;
             thirdStep = false;
 
-            drawSecondTilingHelper()
+            // drawSecondTilingHelper()
 
-            var rectangle = document.getElementById("gradRectangle");
-            rectangle.style.top = 0 + "px";
-            rectangle.style.width = topC.width + "px";
-            rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
-            const position = offsetI === 0 ? '65%' : '85%'
-            rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
+            // var rectangle = document.getElementById("gradRectangle");
+            // rectangle.style.top = 0 + "px";
+            // rectangle.style.width = topC.width + "px";
+            // rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
+            // const position = offsetI === 0 ? '65%' : '85%'
+            // rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
 
             offsetI = 400;
 
