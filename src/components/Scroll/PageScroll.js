@@ -137,6 +137,26 @@ const clearAndDraw = (canvasId, image) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(image, 0, 400 - scrollBackAmount + offsetI);
 };
+const updateCanvasAsync = () => {
+    return new Promise((resolve, reject) => {
+        updateCanvas();
+        resolve();
+    });
+};
+
+const clearAndDrawAsync = (canvasId, image) => {
+    return new Promise((resolve, reject) => {
+        clearAndDraw(canvasId, image);
+        resolve();
+    });
+};
+
+const drawSecondTilingAsync = () => {
+    return new Promise((resolve, reject) => {
+        drawSecondTiling();
+        resolve();
+    });
+};
 
 export function initializeCanv(){
         fillC = document.getElementById('fill-canvas');
@@ -164,36 +184,67 @@ export const redrawCanvas = async () => {
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
-    if (!secondStep && offsetY >= refreshSpot-8) {
-        updateCanvas()
+    if (!secondStep && offsetY >= refreshSpot) {
         secondStep = true;
         // prevOffsetY += offsetY
+        // updateCanvas(),
+        // clearAndDraw('invis-canvas', newInvis);
+        // clearAndDraw('tiling-canvas', newTiling);
+        // drawSecondTiling();}
+        Promise.all([
+            updateCanvasAsync(),
+            clearAndDrawAsync('invis-canvas', newInvis),
+            clearAndDrawAsync('tiling-canvas', newTiling),
+            drawSecondTilingAsync()
+        ])
+            .then(() => {
+                setOffsetY(400 + offsetI);
+                wrap.style.transform = `translate(0,-${400 + offsetI}px)`
 
-        clearAndDraw('invis-canvas', newInvis);
-        clearAndDraw('tiling-canvas', newTiling);
+                // redrawAnim()
+                // redrawTransparentStrokes()
+                // redrawDottedStrokes()
+                // firstStep = false;
+                // secondStep = false;
+                // thirdStep = false;
+                // drawSecondTilingHelper()
 
-        // drawSecondTiling();
+                // var rectangle = document.getElementById("gradRectangle");
+                // rectangle.style.top = 0 + "px";
+                // rectangle.style.width = topC.width + "px";
+                // rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
+                // const position = offsetI === 0 ? '65%' : '85%'
+                // rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
+
+                // All functions have completed successfully
+                console.log('All functions completed successfully');
+            })
+            .catch((error) => {
+                // Error occurred in at least one function
+                console.error('Error:', error);
+            });
         // await Promise.allSettled(promises).then(() => {
-            setOffsetY(400 + offsetI);
-            wrap.style.transform = `translate(0,-${400 + offsetI}px)`
-            redrawAnim()
-            redrawTransparentStrokes()
-            redrawDottedStrokes()
-            firstStep = false;
-            secondStep = false;
-            thirdStep = false;
-
-            // drawSecondTilingHelper()
-
-            // var rectangle = document.getElementById("gradRectangle");
-            // rectangle.style.top = 0 + "px";
-            // rectangle.style.width = topC.width + "px";
-            // rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
-            // const position = offsetI === 0 ? '65%' : '85%'
-            // rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
-
-            offsetI = 400;
-
+        //     setOffsetY(400 + offsetI);
+        //     wrap.style.transform = `translate(0,-${400 + offsetI}px)`
+        //
+        // redrawAnim()
+        //     redrawTransparentStrokes()
+        //     redrawDottedStrokes()
+        //     firstStep = false;
+        //     secondStep = false;
+        //     thirdStep = false;
+        //
+        //     // drawSecondTilingHelper()
+        //
+        //     // var rectangle = document.getElementById("gradRectangle");
+        //     // rectangle.style.top = 0 + "px";
+        //     // rectangle.style.width = topC.width + "px";
+        //     // rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
+        //     // const position = offsetI === 0 ? '65%' : '85%'
+        //     // rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
+        //
+        //     offsetI = 400;
+        //
         // });
 
     } else {
