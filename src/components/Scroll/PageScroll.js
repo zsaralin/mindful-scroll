@@ -213,13 +213,13 @@ export const redrawCanvas = async () => {
                 setOffsetY(400 + offsetI);
                 wrap.style.transform = `translate(0,-${400 + offsetI}px)`
 
-                // redrawAnim()
-                // redrawTransparentStrokes()
-                // redrawDottedStrokes()
+                redrawAnim()
+                redrawTransparentStrokes()
+                redrawDottedStrokes()
                 firstStep = false;
                 secondStep = false;
                 thirdStep = false;
-                // drawSecondTilingHelper()
+                drawSecondTilingHelper()
 
                 var rectangle = document.getElementById("gradRectangle");
                 rectangle.style.top = 0 + "px";
