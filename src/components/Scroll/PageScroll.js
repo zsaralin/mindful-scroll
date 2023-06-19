@@ -91,7 +91,7 @@ export const updateOffCanvas = () =>{
     newFillCtx.fillStyle = 'white';
     newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
     // newTopCtx.fillStyle = 'transparent';
-    // newTopCtx.fillRect(0, window.innerHeight, fillC.width, fillC.height);
+    // newTopCtx.fillRect(0, 0, fillC.width, fillC.height);
     // newFillCtx.clearRect(0, 0, topC.width, topC.height);
     // newTopCtx.clearRect(0, 0, topC.width, topC.height);
 
@@ -116,7 +116,8 @@ function updateCanvas(){
     const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
     // fillCtx.clearRect(0, 0, fillC.width, fillC.height);
-    topCtx.clearRect(0, 0, fillC.width, fillC.height);
+    // topCtx.clearRect(0, 0, fillC.width, fillC.height);
+    // topC.width  = fillC.width;
     // fillC.width = fillC.width;
     // fillC.height = fillC.height;
 
@@ -161,8 +162,12 @@ export const redrawCanvas = async () => {
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
+    if(!thirdStep && offsetY > (refreshSpot - 3)){
+        thirdStep = true;
+        const topCtx = topC.getContext('2d');
+        topCtx.clearRect(0, 0, fillC.width, fillC.height);
+    }
     if (!secondStep && offsetY > refreshSpot) {
-        console.log('second step')
         updateCanvas()
         secondStep = true;
         prevOffsetY += offsetY
