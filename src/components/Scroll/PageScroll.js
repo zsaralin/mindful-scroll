@@ -88,8 +88,8 @@ export const updateOffCanvas = () =>{
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
     // Set the fill color to white
-    // newFillCtx.fillStyle = 'white';
-    // newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
+    newFillCtx.fillStyle = 'white';
+    newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
     // newTopCtx.fillStyle = 'transparent';
     // newTopCtx.fillRect(0, window.innerHeight, fillC.width, fillC.height);
     // newFillCtx.clearRect(0, 0, topC.width, topC.height);
@@ -116,11 +116,11 @@ function updateCanvas(){
     const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
     // fillCtx.clearRect(0, 0, fillC.width, fillC.height);
-    // topCtx.clearRect(0, 0, fillC.width, fillC.height);
-    fillC.width = fillC.width;
+    topCtx.clearRect(0, 0, fillC.width, fillC.height);
+    // fillC.width = fillC.width;
     // fillC.height = fillC.height;
 
-    topC.width = topC.width;
+    // topC.width = topC.width;
     // topC.height = topC.height;
     fillCtx.drawImage(newFill, 0, 0)
     topCtx.drawImage(newTop, 0, 0)
