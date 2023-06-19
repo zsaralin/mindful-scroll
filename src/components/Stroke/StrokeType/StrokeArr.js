@@ -33,7 +33,7 @@ export function pushStroke(id, x0, y0, x1, y1, col, lw, type) {
     strokeArr[id].push(newStroke);
 }
 
-export function pushShrinkingLine(tile, x0, y0, x1, y1, col, type) {
+export function pushShrinkingLine(id, x0, y0, x1, y1, col, type) {
     const newStroke = {
         x0: x0,
         y0: y0,
@@ -45,8 +45,8 @@ export function pushShrinkingLine(tile, x0, y0, x1, y1, col, type) {
         type: type,
         stroke: true,
     }
-    strokeArr[tile.id] = strokeArr[tile.id] || [];
-    strokeArr[tile.id].push(newStroke);
+    strokeArr[id] = strokeArr[id] || [];
+    strokeArr[id].push(newStroke);
 }
 
 // removes mistake strokes during two-finger scroll
