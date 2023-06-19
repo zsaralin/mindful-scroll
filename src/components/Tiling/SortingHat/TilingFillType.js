@@ -22,8 +22,8 @@ export function getFillInfo() {
             const weights = [5, 3, 2, 1, 1]
             const totFillTypes = [1, 2, 3, 4, 5]
             const n = helper(weights, totFillTypes) // # of solid fill types
-            const fillTypes = chooseRandomElements(solidFill, n)
-            const fillW = generateRandomWeights(fillTypes.length)
+            const fillTypes = ["most"]//chooseRandomElements(solidFill, n)
+            const fillW = [1]//generateRandomWeights(fillTypes.length)
             const underW = generateRandomWeights(under.length)
             const combinW = Math.random()
             const otherStrokeType = ["blurry", "transparent", "dotted"][Math.floor(Math.random() * 3)]; // choose one at random

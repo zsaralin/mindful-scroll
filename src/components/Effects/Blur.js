@@ -137,13 +137,14 @@ export function redrawBlur(offsetY) {
 
 export function drawBlurryStroke(x0, y0, x1, y1, theColor, theLineWidth, context) {
     blurryHelper(x0, y0, x0, y0, theColor, theLineWidth, false)
-
     const dx = Math.abs(x1 - x0);
     const dy = Math.abs(y1 - y0);
     const xStep = (x0 < x1) ? 1 : -1;
     const yStep = (y0 < y1) ? 1 : -1;
-    let x = x0;
-    let y = y0;
+    let x = Math.round(x0);
+    let y = Math.round(y0);
+    x1 = Math.round(x1)
+    y1 = Math.round(y1)
 
     if (dx > dy) {
         let error = dx / 2;

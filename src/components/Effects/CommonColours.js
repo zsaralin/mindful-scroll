@@ -2,9 +2,9 @@ import {getStrokeArr, strokeArr} from "../Stroke/StrokeType/StrokeArr";
 import {pushCompleteTile} from "../Tile/CompleteTileArr";
 
 export function mostUsed(tile) {
-    if (tile.fillColors) {
-        return tile.fillColors
-    } else {
+    // if (tile.fillColors) {
+    //     return tile.fillColors
+    // } else {
         let colorCounts = getColorCounts(tile)
 
         // Find the least common color by finding the key in the colorCounts object with the smallest value
@@ -18,7 +18,7 @@ export function mostUsed(tile) {
         }
         tile.fillColors = mostCommonColor
         return mostCommonColor
-    }
+    // }
 }
 
 export function leastUsed(tile) {
