@@ -146,6 +146,7 @@ export const redrawCanvas = async () => {
     const offsetY = getOffsetY()
     const refreshSpot = top + offsetI - 100;
     if (!firstStep && offsetY > (refreshSpot / 2)) {
+        console.log('first step')
         firstStep = true;
         // const invisC = document.getElementById('invis-canvas');
         // const tilingC = document.getElementById('tiling-canvas');
@@ -161,6 +162,7 @@ export const redrawCanvas = async () => {
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
     if (!secondStep && offsetY > refreshSpot) {
+        console.log('second step')
         updateCanvas()
         secondStep = true;
         prevOffsetY += offsetY
