@@ -128,7 +128,7 @@ const clearAndDraw = (canvasId, image) => {
     ctx.drawImage(image, 0, 400 - scrollBackAmount + offsetI);
 };
 
-let doOnce = false;
+let doOnce = true;
 export const redrawCanvas = async () => {
     if(doOnce){
         fillC = document.getElementById('fill-canvas');
