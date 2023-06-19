@@ -95,7 +95,7 @@ export const updateOffCanvas = () =>{
     // newFillCtx.clearRect(0, 0, topC.width, topC.height);
     // newTopCtx.clearRect(0, 0, topC.width, topC.height);
 
-    const h = fillC.height//window.innerHeight + 400
+    const h = refreshSpot + window.innerHeight //+ 400
 
     // newFillCtx.fillStyle = "red"
     // newFillCtx.fillRect(0, 0, fillC.width, h, 0,0,fillC.width, h)
