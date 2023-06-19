@@ -17,9 +17,14 @@ import {redrawDots} from "../Stroke/Dot/DotArr";
 import {hideColourPreview} from "../Bubble/Bubble";
 import {bottom, drawSecondTiling, drawSecondTilingHelper, drawTwo, q, secondTiling, top} from "../Tiling/Tiling3";
 import {activeFillAnim, redrawAnim, stopAnim} from "../Tile/FillTile/FillAnim";
+import {basicVersion} from "../Tiling/SortingHat/CompleteTile2";
+import {getTileWidth} from "../Tiling/TileWidth";
 
 export let limitScroll = 0;
-
+let tilingC;
+let invisC;
+let topC;
+let fillC;
 
 export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
@@ -74,8 +79,8 @@ export function getStrokesTop(){
 }
 export const updateOffCanvas = () =>{
     const refreshSpot = top + offsetI - 100;
-    const fillC = document.getElementById('fill-canvas');
-    const topC = document.getElementById('top-canvas');
+    // const fillC = document.getElementById('fill-canvas');
+    // const topC = document.getElementById('top-canvas');
     newFill = document.createElement('canvas');
     newTop = document.createElement('canvas');
     newFill.width = newTop.width = fillC.width;
@@ -104,8 +109,8 @@ function updateCanvas(){
     if(!drawn){
         updateOffCanvas()}
 
-    const fillC = document.getElementById('fill-canvas');
-    const topC = document.getElementById('top-canvas');
+    // const fillC = document.getElementById('fill-canvas');
+    // const topC = document.getElementById('top-canvas');
     const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
     fillCtx.clearRect(0, 0, fillC.width, fillC.height);
@@ -123,14 +128,22 @@ const clearAndDraw = (canvasId, image) => {
     ctx.drawImage(image, 0, 400 - scrollBackAmount + offsetI);
 };
 
+let doOnce = false;
 export const redrawCanvas = async () => {
+    if(doOnce){
+        fillC = document.getElementById('fill-canvas');
+        topC = document.getElementById('top-canvas');
+        invisC = document.getElementById('invis-canvas');
+        tilingC = document.getElementById('tiling-canvas');
+        doOnce = false;
+    }
     const wrap = document.getElementById("wrapper")
     const offsetY = getOffsetY()
     const refreshSpot = top + offsetI - 100;
     if (!firstStep && offsetY > (refreshSpot / 2)) {
         firstStep = true;
-        const invisC = document.getElementById('invis-canvas');
-        const tilingC = document.getElementById('tiling-canvas');
+        // const invisC = document.getElementById('invis-canvas');
+        // const tilingC = document.getElementById('tiling-canvas');
         newInvis = document.createElement('canvas');
         newTiling = document.createElement('canvas');
         newInvis.width = newTiling.width = invisC.width;
@@ -166,7 +179,7 @@ export const redrawCanvas = async () => {
 
             var rectangle = document.getElementById("gradRectangle");
             rectangle.style.top = 0 + "px";
-            rectangle.style.width = document.getElementById('top-canvas').width + "px";
+            rectangle.style.width = topC.width + "px";
             rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
             const position = offsetI === 0 ? '65%' : '85%'
             rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
