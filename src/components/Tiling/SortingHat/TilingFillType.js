@@ -15,7 +15,7 @@ const under = [true, false]
 
 export function getFillInfo() {
     if (basicVersion) { //simple
-        return ["regular", [1]]
+        return { strokeTypes : ["reg"], strokeW: [1]}
     } else {
         const num = 0//sections[Math.floor(Math.random() * sections.length)];
         if (num === 0) {

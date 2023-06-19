@@ -21,9 +21,9 @@ import {
 import {addToTilingArr, getTilingIndex, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
 import {getOffsetY} from './components/Scroll/Offset'
 import {
-    doScroll, endScroll, prevOffsetY,
+    doScroll, endScroll, getStrokesTop, prevOffsetY,
     redrawCanvas,
-    redrawCanvas2, setUpCanvas, startScroll,
+    redrawCanvas2, setUpCanvas, startScroll, strokesTop,
     triggerScroll, updateCanvasNew, updateOffCanvas
 } from "./components/Scroll/PageScroll";
 import {watercolor} from "./components/Effects/Watercolor";
@@ -187,7 +187,6 @@ function App() {
         // currTile = getTile(y, invisCol)
 
         // currTiling = getTiling(y, invisCol)
-        // console.log(currTile + ' and ' + currTiling + ' and ' + currTiling.fillNum)
         // currTile.strokeType = "dotted"
         if (currTiling && currTiling.colourPal.length === 0) {
             if (firstClick) {
@@ -201,6 +200,7 @@ function App() {
         if (currTiling && prevTiling !== currTiling) {
             setColourPal(currTiling.colourPal)
         }
+        console.log(currTiling.fillInfo.strokeW + ' and ' + currTiling.fillInfo.strokeTypes)
         if (currTile) currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
         currColor = getCurrColor()
         stopColorChange()
@@ -291,6 +291,7 @@ function App() {
             rightMouseDown = false;
             const prevScaledX = prevCursorX;
             const prevScaledY = toTrueY(prevCursorY);
+
             onStrokeStart(prevScaledX, prevScaledY, cursorX, cursorY)
         }
         // detect right clicks
@@ -314,6 +315,7 @@ function App() {
         const scaledY = toTrueY(cursorY);
         const prevScaledX = prevCursorX;
         const prevScaledY = toTrueY(prevCursorY);
+
         mouseSpeed = [event.movementX, event.movementY] // speed of stroke
 
         clearTimeout(watercolorTimer)
@@ -428,7 +430,6 @@ function App() {
         const scaledY = toTrueY(touch0Y);
         const prevScaledX = prevTouch0X;
         const prevScaledY = toTrueY(prevTouch0Y);
-
         clearTimeout(watercolorTimer)
         touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
 

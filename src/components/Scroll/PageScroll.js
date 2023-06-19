@@ -69,6 +69,9 @@ export const updateCanvasOld = (canvasId, refreshSpot) => {
 };
 
 let drawn = false;
+export function getStrokesTop(){
+    return (top + offsetI - 100 - 400);
+}
 export const updateOffCanvas = () =>{
     drawn = true;
     const refreshSpot = top + offsetI - 100;
@@ -109,7 +112,6 @@ const clearAndDraw = (canvasId, image) => {
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    console.log('2 ' + (image.height))
     ctx.drawImage(image, 0, 400 - scrollBackAmount + offsetI);
 };
 
