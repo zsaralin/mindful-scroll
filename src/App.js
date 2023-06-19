@@ -183,6 +183,7 @@ function App() {
         if(tiling){
         currTiling =tiling[0]
         currTile = tiling[1]}
+        console.log('MEGAAA ' + currTile + ' and  ' + currTiling.fillInfo.fillTypes)
         smallOffset = getOffSmall(index)
         // currTile = getTile(y, invisCol)
 
@@ -206,6 +207,7 @@ function App() {
         stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
             let c = document.getElementById('top-canvas').getContext('2d')
+            console.log('IN PATH')
             // c.save()
             // c.translate(0,-smallOffset)
             // c.fillStyle = "blue"
@@ -251,8 +253,9 @@ function App() {
             doubleTouch = true;
             // rightMouseDown = true;
             // startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
-        }
-        if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
+        }   currTile.strokeType = "blurry"
+        if (currTile && isCircleInPath(currTile.path, prevScaledX, scaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
+            console.log('IN PATH AND MOVING ' + currTile.strokeType)
             strokeMove = true;
             if (!dotRemoved) {
                 removeLastDot(currTile)
