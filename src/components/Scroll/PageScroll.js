@@ -106,6 +106,8 @@ export const updateOffCanvas = () =>{
 }
 
 function updateCanvas(){
+    const refreshSpot = top + offsetI - 100;
+
     if(!drawn){
         updateOffCanvas()}
 
@@ -113,8 +115,13 @@ function updateCanvas(){
     // const topC = document.getElementById('top-canvas');
     const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
-    fillCtx.clearRect(0, 0, fillC.width, fillC.height);
-    topCtx.clearRect(0, 0, fillC.width, fillC.height);
+    // fillCtx.clearRect(0, 0, fillC.width, fillC.height);
+    // topCtx.clearRect(0, 0, fillC.width, fillC.height);
+    fillC.width = fillC.width;
+    // fillC.height = fillC.height;
+
+    topC.width = topC.width;
+    // topC.height = topC.height;
     fillCtx.drawImage(newFill, 0, 0)
     topCtx.drawImage(newTop, 0, 0)
 
