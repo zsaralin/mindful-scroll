@@ -5,7 +5,7 @@ let shortPause;
 let longPause;
 
 let colourPal = generateColourPal().cols
-let color = colourPal[Math.floor(Math.random()* 4)]
+let color = colourPal[Math.floor(Math.random() * 4)]
 let speed = 300;
 // let color = getRandomHSV()
 let randomColour = true;
@@ -50,24 +50,27 @@ export function colorDelay() {
     shortPause = setInterval(function () {
         let hsvArr = color.match(/\d+/g)
         colorChange = 3
+        let l = parseInt(hsvArr[2]);
+        if (l <= 30) l = 30;
+        else if (l >= 70) l = 70;
+
         // Check if l is currently decreasing or increasing
         if (decreasing) {
-            let l = parseInt(hsvArr[2]) - colorChange;
-            if (l <= 30) {
+            hsvArr[2] = (l - colorChange).toString();
+            if (hsvArr[2] <= 30) {
                 decreasing = false;
             }
-            hsvArr[2] = l.toString();
         } else {
-            let l = parseInt(hsvArr[2]) + colorChange;
-            if (l >= 70) {
+            hsvArr[2] = (l + colorChange).toString();
+            if (hsvArr[2] >= 70) {
                 decreasing = true;
             }
-            hsvArr[2] = l.toString();
         }
         color = 'hsl(' + hsvArr[0] + ',' + hsvArr[1] + '%,' + hsvArr[2] + '%)'
+        // console.log('color is ' + color)
         numIntervals++
         if (numIntervals === 20 && randomColour) { // 6 seconds (6000)
-            let oldCol = color
+            const oldCol = color
             while (color === oldCol) color = colourPal[Math.floor(Math.random() * 4)]
             numIntervals = 0
         }
@@ -132,11 +135,11 @@ function rgbToHsl(r, g, b) {
     return [h, s, l];
 }
 
-export function getColourPal(){
+export function getColourPal() {
     return colourPal
 }
 
-export function setColourPal(inp){
+export function setColourPal(inp) {
     colourPal = inp
     color = colourPal[Math.floor(Math.random() * colourPal.length)]
     // console.log(colourPal)

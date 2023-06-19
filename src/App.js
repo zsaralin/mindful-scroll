@@ -203,8 +203,10 @@ function App() {
         // console.log(currTiling.fillInfo.strokeW + ' and ' + currTiling.fillInfo.strokeTypes)
         if (currTile) currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
         currColor = getCurrColor()
-        stopColorChange()
+        // stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
+            stopColorChange()
+
             let c = document.getElementById('top-canvas').getContext('2d')
             // console.log('IN PATH')
             // c.save()
