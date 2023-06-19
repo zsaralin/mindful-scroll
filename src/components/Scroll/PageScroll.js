@@ -67,17 +67,19 @@ export const updateCanvasOld = (canvasId, refreshSpot) => {
     newCanvas.height = canvas.height;
     const newCtx = newCanvas.getContext('2d');
     const h = window.innerHeight + 400
-    newCtx.drawImage(canvas, 0, refreshSpot - 400 -offsetI, newCanvas.width, h, 0,0,canvas.width, h)
+    newCtx.drawImage(canvas, 0, refreshSpot - 400 - offsetI, newCanvas.width, h, 0, 0, canvas.width, h)
     // console.log('1 ' + h)
     // ctx.clearRect(0, 0, canvas.width, canvas.height );
     // ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
 };
 
 let drawn = false;
-export function getStrokesTop(){
+
+export function getStrokesTop() {
     return (top + offsetI - 100 - 400);
 }
-export const updateOffCanvas = () =>{
+
+export const updateOffCanvas = () => {
     const refreshSpot = top + offsetI - 100;
     // const fillC = document.getElementById('fill-canvas');
     // const topC = document.getElementById('top-canvas');
@@ -99,29 +101,31 @@ export const updateOffCanvas = () =>{
 
     // newFillCtx.fillStyle = "red"
     // newFillCtx.fillRect(0, 0, fillC.width, h, 0,0,fillC.width, h)
-    newFillCtx.drawImage(fillC, 0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
-    newTopCtx.drawImage(topC, 0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
+    newFillCtx.drawImage(fillC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
+    newTopCtx.drawImage(topC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
 
     drawn = true;
 }
 
-function updateCanvas(){
-    if(!drawn){
-        updateOffCanvas()}
+function updateCanvas() {
+
     // const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
     // fillCtx.clearRect(0, 0, fillC.width, fillC.height);
     // topCtx.clearRect(0, 0, fillC.width, fillC.height);
     // fillCtx.drawImage(newFill, 0, 0)
+    topCtx.clearRect(0, 0, fillC.width, fillC.height);
     topCtx.drawImage(newTop, 0, 0)
     drawn = false;
 }
-function updateCanvas2(){
+
+function updateCanvas2() {
     const fillCtx = fillC.getContext('2d');
     fillCtx.drawImage(newFill, 0, 0)
 
 }
-function updateCanvas0(){
+
+function updateCanvas0() {
     const topCtx = topC.getContext('2d');
     topCtx.clearRect(0, 0, fillC.width, fillC.height);
 
@@ -166,12 +170,13 @@ const drawSecondTilingAsync = () => {
     });
 };
 
-export function initializeCanv(){
-        fillC = document.getElementById('fill-canvas');
-        topC = document.getElementById('top-canvas');
-        invisC = document.getElementById('invis-canvas');
-        tilingC = document.getElementById('tiling-canvas');
+export function initializeCanv() {
+    fillC = document.getElementById('fill-canvas');
+    topC = document.getElementById('top-canvas');
+    invisC = document.getElementById('invis-canvas');
+    tilingC = document.getElementById('tiling-canvas');
 }
+
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     const offsetY = getOffsetY()
@@ -192,15 +197,19 @@ export const redrawCanvas = async () => {
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
-    if (!secondStep && offsetY >= (refreshSpot)) {
+    if (!secondStep && offsetY >= (refreshSpot - 20) && !drawn){
+        updateOffCanvas()
         secondStep = true;
+    }
+    if (!thirdStep && offsetY >= (refreshSpot)) {
+        thirdStep = true;
         // prevOffsetY += offsetY
         // updateCanvas(),
         // clearAndDraw('invis-canvas', newInvis);
         // clearAndDraw('tiling-canvas', newTiling);
         // drawSecondTiling();}
         Promise.all([
-            updateCanvas0Async(),
+            // updateCanvas0Async(),
             updateCanvas2Async(),
 
             updateCanvasAsync(),
@@ -210,8 +219,8 @@ export const redrawCanvas = async () => {
             drawSecondTilingAsync()
         ])
             .then(() => {
-                setOffsetY(400 + offsetI);
-                wrap.style.transform = `translate(0,-${400 + offsetI}px)`
+                // setOffsetY(400 + offsetI);
+                // wrap.style.transform = `translate(0,-${400 + offsetI}px)`
                 drawSecondTilingHelper()
                 redrawAnim()
                 redrawTransparentStrokes()
@@ -227,37 +236,11 @@ export const redrawCanvas = async () => {
                 rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
                 const position = offsetI === 0 ? '65%' : '85%'
                 rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
-
-                // All functions have completed successfully
-                console.log('All functions completed successfully');
+                setOffsetY(400 + offsetI);
+                wrap.style.transform = `translate(0,-${400 + offsetI}px)`
             })
             .catch((error) => {
-                // Error occurred in at least one function
-                console.error('Error:', error);
             });
-        // await Promise.allSettled(promises).then(() => {
-        //     setOffsetY(400 + offsetI);
-        //     wrap.style.transform = `translate(0,-${400 + offsetI}px)`
-        //
-        // redrawAnim()
-        //     redrawTransparentStrokes()
-        //     redrawDottedStrokes()
-        //     firstStep = false;
-        //     secondStep = false;
-        //     thirdStep = false;
-        //
-        //     // drawSecondTilingHelper()
-        //
-        //     // var rectangle = document.getElementById("gradRectangle");
-        //     // rectangle.style.top = 0 + "px";
-        //     // rectangle.style.width = topC.width + "px";
-        //     // rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
-        //     // const position = offsetI === 0 ? '65%' : '85%'
-        //     // rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
-        //
-        //     offsetI = 400;
-        //
-        // });
 
     } else {
         wrap.style.transform = `translate(0,-${offsetY}px)`;

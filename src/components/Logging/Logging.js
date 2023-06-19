@@ -76,7 +76,9 @@ function captureScreenshot() {
     const today = new Date();
     const day = today.getDate();
     const month = today.getMonth() + 1; // Months are zero-based, so we add 1
-    const storageRef = ref(storage, `${UID}/${day}_${month}/${fileName}`);
+    const year = today.getFullYear() ;
+
+    const storageRef = ref(storage, `${UID}/${year}_${day}_${month}/${fileName}`);
     uploadString(storageRef, dataUrl, 'data_url').then((snapshot) => {
         console.log('Uploaded a data_url string!');
     }).catch((error) => {
