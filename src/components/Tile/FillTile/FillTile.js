@@ -28,8 +28,7 @@ export function fillTile(tile, str, under, inputCol){
     // fillTileColors(tile)
     let canvStr = under ? 'fill-canvas' : 'top-canvas'
     let ctx = document.getElementById(canvStr).getContext('2d');
-    ctx.save()
-    ctx.translate(0,-smallOffset)
+
     const col = getCol(tile, str, inputCol)
     console.log('LOOK NOW '  + col + ' and '  + str)
 
@@ -46,11 +45,15 @@ export function fillTile(tile, str, under, inputCol){
         refreshDotted(tile.id)
     }
     else{
+        ctx.save()
+        ctx.translate(0,-smallOffset)
         ctx.fill(tile.path)
+        ctx.restore()
+
     }
     ctx.fillStyle = "rgba(0,0,0,0)"
     // strokeArr[tile.id] = [] // delete strokes
-    ctx.restore()
+    // ctx.restore()
 
     // pushCompleteTile(tile, col)
 }

@@ -21,7 +21,7 @@ import {
 import {addToTilingArr, getTilingIndex, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
 import {getOffsetY} from './components/Scroll/Offset'
 import {
-    doScroll, endScroll, getStrokesTop, prevOffsetY,
+    doScroll, endScroll, getStrokesTop, initializeCanv, prevOffsetY,
     redrawCanvas,
     redrawCanvas2, setUpCanvas, startScroll, strokesTop,
     triggerScroll, updateCanvasNew, updateOffCanvas
@@ -163,7 +163,7 @@ function App() {
         drawTwo()
         ctx = document.getElementById('invis-canvas').getContext("2d");
         startScreenshots()
-
+        initializeCanv()
     }, []);
 
     let currColor;

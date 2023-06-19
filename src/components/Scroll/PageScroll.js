@@ -114,8 +114,8 @@ function updateCanvas(){
     const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
     fillCtx.clearRect(0, 0, fillC.width, fillC.height);
-    fillCtx.drawImage(newFill, 0, 0)
     topCtx.clearRect(0, 0, fillC.width, fillC.height);
+    fillCtx.drawImage(newFill, 0, 0)
     topCtx.drawImage(newTop, 0, 0)
 
     drawn = false;
@@ -128,15 +128,13 @@ const clearAndDraw = (canvasId, image) => {
     ctx.drawImage(image, 0, 400 - scrollBackAmount + offsetI);
 };
 
-let doOnce = true;
-export const redrawCanvas = async () => {
-    if(doOnce){
+export function initializeCanv(){
         fillC = document.getElementById('fill-canvas');
         topC = document.getElementById('top-canvas');
         invisC = document.getElementById('invis-canvas');
         tilingC = document.getElementById('tiling-canvas');
-        doOnce = false;
-    }
+}
+export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     const offsetY = getOffsetY()
     const refreshSpot = top + offsetI - 100;
@@ -156,10 +154,9 @@ export const redrawCanvas = async () => {
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
     if (!secondStep && offsetY > refreshSpot) {
+        updateCanvas()
         secondStep = true;
         prevOffsetY += offsetY
-
-        updateCanvas()
 
         clearAndDraw('invis-canvas', newInvis);
         clearAndDraw('tiling-canvas', newTiling);

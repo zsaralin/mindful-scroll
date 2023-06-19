@@ -59,6 +59,8 @@ export function refreshTrans(id) {
     ctx.save()
     ctx.translate(0, -smallOffset)
     ctx.fill(tile?.path)
+    ctx.restore()
+
     if (tile.filled) {
         let hslMatch = tile.fillColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
         if (hslMatch) {
@@ -68,8 +70,13 @@ export function refreshTrans(id) {
             const rgbCol = hslToRgb(h, s, l)
             tile.fillColor = `rgba(${rgbCol.r}, ${rgbCol.g}, ${rgbCol.b}, 1)`;
         }
+        console.log('I AM FILLED ' + tile.fillColor)
         ctx.fillStyle = tile.fillColor.replace(/1\)$/, "0.5)");
+        ctx.save()
+        ctx.translate(0, -smallOffset)
         ctx.fill(tile.path)
+        ctx.restore()
+
     }
     ctx.restore()
     redrawTransStrokesTile(id)
