@@ -73,7 +73,6 @@ export function getStrokesTop(){
     return (top + offsetI - 100 - 400);
 }
 export const updateOffCanvas = () =>{
-    drawn = true;
     const refreshSpot = top + offsetI - 100;
     const fillC = document.getElementById('fill-canvas');
     const topC = document.getElementById('top-canvas');
@@ -84,16 +83,19 @@ export const updateOffCanvas = () =>{
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
     // Set the fill color to white
-    newFillCtx.fillStyle = 'white';
-    newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
-    newTopCtx.fillStyle = 'white';
-    newTopCtx.fillRect(0, 0, fillC.width, fillC.height);
+    // newFillCtx.fillStyle = 'white';
+    // newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
+    // newTopCtx.fillStyle = 'red';
+    // newTopCtx.fillRect(0, window.innerHeight, fillC.width, fillC.height);
     const h = window.innerHeight + 400
 
     // newFillCtx.fillStyle = "red"
     // newFillCtx.fillRect(0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
     newFillCtx.drawImage(fillC, 0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
     newTopCtx.drawImage(topC, 0, refreshSpot - 400 -offsetI, fillC.width, h, 0,0,fillC.width, h)
+
+    drawn = true;
+
     // console.log('1 ' + h)
 }
 
@@ -105,8 +107,11 @@ function updateCanvas(){
     const topC = document.getElementById('top-canvas');
     const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
+    fillCtx.clearRect(0, 0, fillC.width, fillC.height);
+    topCtx.clearRect(0, 0, fillC.width, fillC.height);
     fillCtx.drawImage(newFill, 0, 0)
     topCtx.drawImage(newTop, 0, 0)
+
     drawn = false;
 }
 

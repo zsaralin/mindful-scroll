@@ -33,7 +33,8 @@ export function drawTransparentStroke(id, x0, y0, x1, y1, theColor, theLineWidth
     if (!dragging) {
         drawTransparentDot(id, x0, y0, x1, y1, theColor)
         if (transStrokes[id] === undefined) {
-            transStrokes[id] = []}
+            transStrokes[id] = []
+        }
         dragging = true;
         return
     }
@@ -59,14 +60,19 @@ export function refreshTrans(id) {
     ctx.translate(0, -smallOffset)
     ctx.fill(tile?.path)
     if (tile.filled) {
-        // console.log('LOOK ' + tile.colors)
-        ctx.fillStyle = `${tile.fillColor.slice(0, -1)}, 0.5)`;
+        let hslMatch = tile.fillColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+        if (hslMatch) {
+            let h = parseInt(hslMatch[1]);
+            let s = parseInt(hslMatch[2]);
+            let l = parseInt(hslMatch[3]);
+            const rgbCol = hslToRgb(h, s, l)
+            tile.fillColor = `rgba(${rgbCol.r}, ${rgbCol.g}, ${rgbCol.b}, 1)`;
+        }
+        ctx.fillStyle = tile.fillColor.replace(/1\)$/, "0.5)");
         ctx.fill(tile.path)
     }
     ctx.restore()
     redrawTransStrokesTile(id)
-    // ctx.restore()
-
 }
 
 export function setDragging(input) {

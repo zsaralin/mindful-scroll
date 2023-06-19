@@ -36,13 +36,17 @@ export function fillTile(tile, str, under, inputCol){
     console.log('IS BLACK OR CLOSE ? : ' + isBlackOrClose(col))
     ctx.fillStyle =  isBlackOrClose(col) ? '#333333'  : col; // replace black colours with dark grey
     tile.fillColor = col
+    console.log('fillColor : ' + tile.fillColor)
     // console.log('LOOK NOW '  + ctx.fillStyle)
-    ctx.fill(tile.path)
+    // ctx.fill(tile.path)
     tile.filled = true;
     if(tile.strokeType === "transparent"){
         refreshTrans(tile.id)
     } else if(tile.strokeType === "dotted"){
         refreshDotted(tile.id)
+    }
+    else{
+        ctx.fill(tile.path)
     }
     ctx.fillStyle = "rgba(0,0,0,0)"
     // strokeArr[tile.id] = [] // delete strokes
@@ -60,6 +64,10 @@ export function clearTile(tile, col){
 }
 
 function isBlackOrClose(col, threshold = 40) {
+    if(col === undefined) {
+        console.log('COL IS UNDEFINED INSIDE BLACKROCLOSE')
+        return
+    }
     if(col.startsWith("hsl")){
         const [, hue, saturation, lightness] = col.match(/hsl\((.*?),\s*(.*?)%,\s*(.*?)%\)/) || [];
         // Check if lightness is close to 0

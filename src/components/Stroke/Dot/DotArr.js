@@ -90,7 +90,7 @@ export function drawJustDot(tile) {
     const arr = strokeArr[tile.id]
     if (arr) {
         const dot = arr[arr.length - 1]
-        startDot(tile.id, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, (dot.color), dot.lineWidth, tile.dotType)
+        if(dot) startDot(tile.id, dot.x0, dot.y0 - offsetY, dot.x1, dot.y1 - offsetY, (dot.color), dot.lineWidth, tile.dotType)
     }
 
 }

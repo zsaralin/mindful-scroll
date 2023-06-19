@@ -149,7 +149,7 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight * (basicVersion ? 3: 5);
+            canvas.height = window.innerHeight * (basicVersion ? 3: 6);
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
@@ -183,7 +183,6 @@ function App() {
         if(tiling){
         currTiling =tiling[0]
         currTile = tiling[1]}
-        console.log('MEGAAA ' + currTile + ' and  ' + currTiling.fillInfo.fillTypes)
         smallOffset = getOffSmall(index)
         // currTile = getTile(y, invisCol)
 
@@ -201,13 +200,13 @@ function App() {
         if (currTiling && prevTiling !== currTiling) {
             setColourPal(currTiling.colourPal)
         }
-        console.log(currTiling.fillInfo.strokeW + ' and ' + currTiling.fillInfo.strokeTypes)
+        // console.log(currTiling.fillInfo.strokeW + ' and ' + currTiling.fillInfo.strokeTypes)
         if (currTile) currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
         currColor = getCurrColor()
         stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
             let c = document.getElementById('top-canvas').getContext('2d')
-            console.log('IN PATH')
+            // console.log('IN PATH')
             // c.save()
             // c.translate(0,-smallOffset)
             // c.fillStyle = "blue"
