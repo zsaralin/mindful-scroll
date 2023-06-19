@@ -28,8 +28,9 @@ let fillC;
 
 export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
-    if (getOffsetY() - (currY - prevY) >= limitScroll) {
-        setOffsetY(getOffsetY() - (currY - prevY))
+    const off = getOffsetY()
+    if (off - (currY - prevY) >= limitScroll) {
+        setOffsetY(off - (currY - prevY))
         redrawCanvas();
 
     } else {
@@ -196,10 +197,13 @@ export const redrawCanvas = async () => {
 
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
+        return
     }
     if (!secondStep && offsetY >= (refreshSpot - 20) && !drawn){
         updateOffCanvas()
         secondStep = true;
+        return
+
     }
     if (!thirdStep && offsetY >= (refreshSpot)) {
         thirdStep = true;
@@ -243,6 +247,7 @@ export const redrawCanvas = async () => {
             })
             .catch((error) => {
             });
+        return
 
     } else {
         wrap.style.transform = `translate(0,-${offsetY}px)`;
