@@ -24,7 +24,7 @@ import {
     doScroll, endScroll, getStrokesTop, initializeCanv, prevOffsetY,
     redrawCanvas,
     redrawCanvas2, setUpCanvas, startScroll, strokesTop,
-    triggerScroll, updateCanvasNew, updateOffCanvas
+    triggerScroll, updateCanvasNew, updateOffCanvas, updateOffCanvasWrapper
 } from "./components/Scroll/PageScroll";
 import {watercolor} from "./components/Effects/Watercolor";
 import {
@@ -486,7 +486,7 @@ function App() {
             currTile.dotType = currTile.dotType ? currTile.dotType : dotTypesHelper(currTile.strokeType)
             drawJustDot(currTile)
         }
-        updateOffCanvas()
+        updateOffCanvasWrapper()
         dotRemoved = false;
         resetLineWidth()
         reduceAudio()

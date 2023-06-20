@@ -58,6 +58,7 @@ let offsetI = 0;
 let firstStep = false;
 let secondStep = false;
 let thirdStep = false;
+let fourthStep = false;
 
 const scrollBackAmount = 150;
 
@@ -80,33 +81,41 @@ let drawn = false;
 export function getStrokesTop() {
     return (top + offsetI - 100 - 400);
 }
-
+export function updateOffCanvasWrapper(){
+    if(thirdStep){
+        updateOffCanvas()
+        updateOffCanvasHelper()
+    }
+}
 export const updateOffCanvas = () => {
     const refreshSpot = top + offsetI - 100;
-    // const fillC = document.getElementById('fill-canvas');
-    // const topC = document.getElementById('top-canvas');
+    console.log('updated')
     newFill = document.createElement('canvas');
-    newTop = document.createElement('canvas');
-    newFill.width = newTop.width = fillC.width;
-    newFill.height = newTop.height = fillC.height;
+    // newTop = document.createElement('canvas');
+    newFill.width = fillC.width;
+    newFill.height = fillC.height;
     const newFillCtx = newFill.getContext('2d');
-    const newTopCtx = newTop.getContext('2d');
+    // const newTopCtx = newTop.getContext('2d');
     // Set the fill color to white
     newFillCtx.fillStyle = 'white';
     newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
-    // newTopCtx.fillStyle = 'transparent';
-    // newTopCtx.fillRect(0, 0, fillC.width, fillC.height);
-    // newFillCtx.clearRect(0, 0, topC.width, topC.height);
-    // newTopCtx.clearRect(0, 0, topC.width, topC.height);
 
     const h = refreshSpot + window.innerHeight //+ 400
 
-    // newFillCtx.fillStyle = "red"
-    // newFillCtx.fillRect(0, 0, fillC.width, h, 0,0,fillC.width, h)
     newFillCtx.drawImage(fillC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
-    newTopCtx.drawImage(topC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
+    // newTopCtx.drawImage(topC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
 
     drawn = true;
+}
+
+function updateOffCanvasHelper(){
+    const refreshSpot = top + offsetI - 100;
+    const h = refreshSpot + window.innerHeight //+ 400
+    newTop = document.createElement('canvas');
+    newTop.width = fillC.width;
+    newTop.height = fillC.height;
+    const newTopCtx = newTop.getContext('2d');
+    newTopCtx.drawImage(topC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
 }
 
 function updateCanvas() {
@@ -194,9 +203,9 @@ export const redrawCanvas = async () => {
         const newTilingCtx = newTiling.getContext('2d');
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
-    if(!thirdStep && offsetY > (refreshSpot * (3/4))){
+    if(!secondStep && offsetY > (refreshSpot * (3/4))){
         console.log('first .2 step')
-        thirdStep = true;
+        secondStep = true;
         newInvis = document.createElement('canvas');
         newInvis.width = invisC.width;
         newInvis.height = invisC.height;
@@ -204,11 +213,15 @@ export const redrawCanvas = async () => {
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
 
     }
-    if (!secondStep && offsetY >= (refreshSpot - 20) && !drawn){
+    if (!thirdStep && offsetY >= (refreshSpot - 250) && !drawn){
         console.log('heyyy')
         updateOffCanvas()
-        secondStep = true;
-
+        thirdStep = true;
+    }
+    if (!fourthStep && offsetY >= (refreshSpot - 50)){
+        console.log('heyyy2')
+        updateOffCanvasHelper()
+        fourthStep = true;
     }
     if (offsetY >= (refreshSpot)) {
         prevOffsetY += offsetY
@@ -239,6 +252,7 @@ export const redrawCanvas = async () => {
                 firstStep = false;
                 secondStep = false;
                 thirdStep = false;
+                fourthStep = false;
                 // drawSecondTilingHelper()
 
                 var rectangle = document.getElementById("gradRectangle");
