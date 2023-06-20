@@ -30,10 +30,11 @@ export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
     const off = getOffsetY()
     if (off - (currY - prevY) >= limitScroll) {
-        // setOffsetY(off - (currY - prevY))
-        redrawCanvas().then(
-            setOffsetY(off - (currY - prevY))
-    )
+        setOffsetY(off - (currY - prevY))
+        redrawCanvas()
+            // .then(
+            // setOffsetY(off - (currY - prevY))
+    // )
     } else {
         setOffsetY(limitScroll)
     }
@@ -191,10 +192,10 @@ export function initializeCanv() {
     refreshSpot = top + offsetI - 100;
 }
 
-export const redrawCanvas = async () => {
+export const redrawCanvas = () => {
     const wrap = document.getElementById("wrapper")
     const offsetY = getOffsetY()
-    if (!firstStep && offsetY > (refreshSpot / 2)) {
+    if (!firstStep && offsetY > (refreshSpot *(1/4))) {
         console.log('first step')
         firstStep = true;
         // const invisC = document.getElementById('invis-canvas');
@@ -205,7 +206,7 @@ export const redrawCanvas = async () => {
         const newTilingCtx = newTiling.getContext('2d');
         newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
     }
-    if(!secondStep && offsetY > (refreshSpot * (3/4))){
+    if(!secondStep && offsetY > (refreshSpot * (1/2))){
         console.log('first .2 step')
         secondStep = true;
         newInvis = document.createElement('canvas');
@@ -215,7 +216,7 @@ export const redrawCanvas = async () => {
         newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
 
     }
-    if (!thirdStep && offsetY >= (refreshSpot - 250) && !drawn){
+    if (!thirdStep && offsetY >= (refreshSpot * (3/4)) && !drawn){
         console.log('heyyy')
         updateOffCanvas()
         thirdStep = true;
