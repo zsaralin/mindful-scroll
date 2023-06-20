@@ -1,8 +1,8 @@
-import {addDoc, collection, getFirestore} from "firebase/firestore";
+import {addDoc, collection, getFirestore, getDocs, deleteDoc} from "firebase/firestore";
 import firebase from "firebase/compat/app";
 import {getAuth} from "firebase/auth";
 import html2canvas from "html2canvas";
-import {getStorage, ref, uploadBytes, uploadString, listAll, deleteObject } from "firebase/storage";
+import {getStorage, ref, uploadBytes, uploadString, listAll, deleteObject} from "firebase/storage";
 import * as htmlToImage from 'html-to-image';
 import {dateString, logIdString} from "./TimeLog";
 
@@ -19,10 +19,9 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = getFirestore(firebase.app);
+export const db = getFirestore(firebase.app);
 const auth = getAuth();
-const startTime = Date.now();
-const storage = getStorage()
+export const startTime = Date.now();
 export const UID = setupParticipant()
 
 export function setupParticipant() {
@@ -39,57 +38,32 @@ export async function sendMessageFB(message) {
         participantId: UID,
         original: "Hello, Firestore!",
         time: Date.now() - startTime,
+        stroke: {key1: 2, key2: 3}
     };
     const docRef = await addDoc(messagesCollection, newMessage);
 }
 
-export async function startScreenshots() {
-    setInterval(async function () {
-        if(UID && !document.hidden) captureScreenshot()
-    }, 10000);
-
+export async function logStrokeStart(type, col, lw, pos, tilingI) {
+    // deleteMessages()
+    const messagesCollection = collection(db, "messages");
+    const newMessage = {
+        time: Date.now() - startTime,
+        name: "strokeStart",
+        event: {"participant": UID,
+            "type": type,
+            "col": col,
+            "lw": lw,
+            "pos": pos.toString(),
+            "tiling": tilingI}
+    };
+    await addDoc(messagesCollection, newMessage);
 }
 
-// Function to capture and save a screenshot of a specific element
-function captureScreenshot() {
-    var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-    var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-    // Get the source canvas elements
-    const canvas1 = document.getElementById('fill-canvas');
-    const canvas2 = document.getElementById('top-canvas');
-    const canvas3 = document.getElementById('tiling-canvas');
+export async function deleteMessages() {
+    const messagesCollection = collection(db, "messages");
+    const querySnapshot = await getDocs(messagesCollection);
 
-    // Create a new canvas to combine the contents
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = viewportWidth; // Set the desired width
-    combinedCanvas.height = viewportHeight; // Set the desired height
-
-    // Get the 2D rendering context of the combined canvas
-    const combinedContext = combinedCanvas.getContext('2d');
-
-    // Draw the source canvases onto the combined canvas
-    combinedContext.drawImage(canvas1,  0, 0, viewportWidth, viewportHeight,0, 0, viewportWidth, viewportHeight);
-    combinedContext.drawImage(canvas2,  0, 0, viewportWidth, viewportHeight,0, 0, viewportWidth, viewportHeight);
-    combinedContext.drawImage(canvas3,  0, 0, viewportWidth, viewportHeight,0, 0, viewportWidth, viewportHeight);
-
-    const dataUrl = combinedCanvas.toDataURL()
-    const fileName = `image_${Date.now() - startTime}.png`; // Append timestamp to the file name
-
-    const storageRef = ref(storage, `${UID}/${logIdString()}/${fileName}`);
-
-    uploadString(storageRef, dataUrl, 'data_url').then((snapshot) => {
-        console.log('Uploaded a data_url string!');
-    }).catch((error) => {
-        console.error('Error uploading data URL:', error);
+    querySnapshot.forEach((doc) => {
+        deleteDoc(doc.ref);
     });
-
-}
-
-async function deleteAllImages() {
-    const folderRef = ref(storage, 'images');
-    const folderFiles = await listAll(folderRef);
-
-    // Delete each file in the folder
-    folderFiles.items.map((fileRef) =>
-        deleteObject(fileRef))
 }

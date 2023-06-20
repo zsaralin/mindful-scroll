@@ -19,13 +19,18 @@ let pathArr = [] //array of path dict for each tiling
 
 let offsetX, offsetY;
 let xMin, xMax, yMin, yMax;
-export let tilingsDrawn = 0;
+export let tilingsDrawn = -1;
 
 export let secondDrawn = false;
 
 export let smallOffset = 0;
 
+export function getHeightTiling(){
+    firstTiling()
+    return top;
+}
 export function drawTwo(pathArrI) {
+    console.log('YUUUUH ')
     firstTiling(pathArrI?.[0]?.segArr)
     secondTiling(pathArrI?.[1]?.segArr, 0)
     // checkOverlap( pathArr[0].pathDict,  pathArr[1].pathDict)
@@ -65,6 +70,7 @@ function toTiling(t) {
     tiling.vert = vert;
     tiling.orien = orien;
     tiling.colourPal = [];
+    tiling.i = tilingsDrawn
     return tiling
 }
 

@@ -35,7 +35,15 @@ import {
     setLineWidth
 } from "./components/Stroke/StrokeWidth";
 import {changeBool, getFillMin, getFillRatio, isCircleInPath} from "./components/Tile/FillTile/FillRatio";
-import {BUBBLE_DIST, FILL_RATIO, SCROLL_DELTA, SCROLL_DIST, SHAPE_COLOR, SWIPE_THRESHOLD} from "./components/Constants";
+import {
+    BETWEEN_SPACE,
+    BUBBLE_DIST,
+    FILL_RATIO,
+    SCROLL_DELTA,
+    SCROLL_DIST,
+    SHAPE_COLOR,
+    SWIPE_THRESHOLD
+} from "./components/Constants";
 import {completeTile, fillEachPixel, triggerCompleteTile} from "./components/Tile/CompleteTile";
 import {gsap} from "gsap";
 import {shapeGlow} from "./components/Tile/Shape";
@@ -45,7 +53,16 @@ import Bubble, {
     showColourPreview, teleportFeedback,
 
 } from "./components/Bubble/Bubble";
-import {bottom, drawTwo, getOffSmall, getTile, getTiling, tilingIndex} from "./components/Tiling/Tiling3";
+import {
+    bottom,
+    drawTwo,
+    getHeightTiling,
+    getOffSmall,
+    getTile,
+    getTiling,
+    tilingIndex,
+    top
+} from "./components/Tiling/Tiling3";
 import {isSlowScrollOn} from "./components/Scroll/SlowScroll";
 import {startAutoScroll} from "./components/Scroll/AutoScroll";
 import {getHandChange, handChanged, isRightHand, setHand, setHandChanged} from "./components/Effects/Handedness";
@@ -90,7 +107,8 @@ import {getTileWidth} from "./components/Tiling/TileWidth";
 import {completeTile2, basicVersion} from "./components/Tiling/SortingHat/CompleteTile2";
 import {dotTypesHelper, helper} from "./components/Tiling/SortingHat/TilingFillType";
 
-import {sendMessageFB, startScreenshots} from "./components/Logging/Logging";
+import {startScreenshots} from "./components/Logging/Screenshot";
+import {logStrokeStart, logStrokeEnd, logStrokeMove} from "./components/Logging/StrokeLog";
 
 function App() {
     const canvas = useRef();
@@ -149,7 +167,21 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = (window.innerHeight*6)//(basicVersion ? 3 : 4)+ 400;
+            canvas.height = (window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;
+            // const ctx = document.getElementById(id).getContext("2d");
+            // ctx.lineCap = "round";
+            // ctx.lineJoin = "round";
+            // if (id === 'tiling-canvas') {
+            //     ctx.fillStyle = 'transparent';
+            //     ctx.lineWidth = getTileWidth();
+            // } else if (id === 'invis-canvas') {
+            //     ctx.lineWidth = ctx.lineWidth / 2;
+            // }
+        });
+        canvasIds.forEach(id => {
+            const canvas = document.getElementById(id);
+            canvas.height = getHeightTiling() * 3 //+ 200  //+ window.innerHeight;
+            console.log('HEYY! ' + canvas.height + ' and before ' + window.innerHeight * 6)
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
@@ -159,8 +191,9 @@ function App() {
             } else if (id === 'invis-canvas') {
                 ctx.lineWidth = ctx.lineWidth / 2;
             }
-        });
+        })
         drawTwo()
+
         ctx = document.getElementById('invis-canvas').getContext("2d");
         startScreenshots()
         initCanv()
@@ -173,7 +206,6 @@ function App() {
     let smallOffset;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
-        // sendMessageFB("Hello")
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
         // console.log(`tilingIndex ${index}`)
@@ -217,6 +249,9 @@ function App() {
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
             currTile.colors.push(currColor)
+
+            console.log('INDEX??????????? ' + currTiling.i)
+            logStrokeStart((currTile.strokeType), currColor, lw, [prevScaledX, prevScaledY], currTiling.i)
 
             // let tiles = getOrienTiles(currTile, currTiling)
             // let tiles = getRow(currTile, currTiling)
@@ -264,6 +299,10 @@ function App() {
             }
             changeAudio(mouseSpeed)
             startAutoScroll(cursorY);
+            logStrokeMove((currTile.strokeType), currColor, lw,
+                [prevScaledX, prevScaledY, scaledX, scaledY], currTiling.i,
+                Math.sqrt(speed[0] * speed[0] + speed[1] * speed[1]))
+
         } else {
             insidePoly[1] += 1;
         }
@@ -506,6 +545,8 @@ function App() {
         setHandChanged(false)
         setDragging(false)
         strokeMove = false;
+
+        logStrokeEnd((currTile.strokeType), currColor, lw, currTiling.i)
     }
 
     let reduceOpac;
