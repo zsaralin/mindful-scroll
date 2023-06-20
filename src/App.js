@@ -16,7 +16,7 @@ import {
     pushStroke,
     pushShrinkingLine,
     removeLastStroke,
-    redrawTileStrokes,
+    redrawTileStrokes, strokeArr,
 } from './components/Stroke/StrokeType/StrokeArr'
 import {addToTilingArr, getTilingIndex, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
 import {getOffsetY} from './components/Scroll/Offset'
@@ -108,7 +108,7 @@ import {completeTile2, basicVersion} from "./components/Tiling/SortingHat/Comple
 import {dotTypesHelper, helper} from "./components/Tiling/SortingHat/TilingFillType";
 
 import {startScreenshots} from "./components/Logging/Screenshot";
-import {logStrokeStart, logStrokeEnd, logStrokeMove} from "./components/Logging/StrokeLog";
+import {logStrokeStart, logStrokeEnd, logStrokeMove, logDot} from "./components/Logging/StrokeLog";
 
 function App() {
     const canvas = useRef();
@@ -167,21 +167,7 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = (window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;
-            // const ctx = document.getElementById(id).getContext("2d");
-            // ctx.lineCap = "round";
-            // ctx.lineJoin = "round";
-            // if (id === 'tiling-canvas') {
-            //     ctx.fillStyle = 'transparent';
-            //     ctx.lineWidth = getTileWidth();
-            // } else if (id === 'invis-canvas') {
-            //     ctx.lineWidth = ctx.lineWidth / 2;
-            // }
-        });
-        canvasIds.forEach(id => {
-            const canvas = document.getElementById(id);
-            canvas.height = getHeightTiling() * 3 //+ 200  //+ window.innerHeight;
-            console.log('HEYY! ' + canvas.height + ' and before ' + window.innerHeight * 6)
+            canvas.height = Math.min(1700 * 3, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
@@ -191,7 +177,23 @@ function App() {
             } else if (id === 'invis-canvas') {
                 ctx.lineWidth = ctx.lineWidth / 2;
             }
-        })
+        });
+        // const height = getHeightTiling()
+        // console.log('height is ' + height)
+        // canvasIds.forEach(id => {
+        //     const canvas = document.getElementById(id);
+        //     canvas.height = height * 3 + 200  //+ window.innerHeight;
+        //  console.log('HEYY! ' + (1700*3) + ' and before ' + window.innerHeight * 6)
+        //     const ctx = document.getElementById(id).getContext("2d");
+        //     ctx.lineCap = "round";
+        //     ctx.lineJoin = "round";
+        //     if (id === 'tiling-canvas') {
+        //         ctx.fillStyle = 'transparent';
+        //         ctx.lineWidth = getTileWidth();
+        //     } else if (id === 'invis-canvas') {
+        //         ctx.lineWidth = ctx.lineWidth / 2;
+        //     }
+        // })
         drawTwo()
 
         ctx = document.getElementById('invis-canvas').getContext("2d");
@@ -281,7 +283,6 @@ function App() {
             // startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
         }
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
-            console.log('IN PATH AND MOVING ' + currTile.strokeType)
             strokeMove = true;
             if (!dotRemoved) {
                 removeLastDot(currTile)
@@ -299,7 +300,7 @@ function App() {
             }
             changeAudio(mouseSpeed)
             startAutoScroll(cursorY);
-            logStrokeMove((currTile.strokeType), currColor, lw,
+            logStrokeMove((currTile.strokeType), currColor, getLineWidth(),
                 [prevScaledX, prevScaledY, scaledX, scaledY], currTiling.i,
                 Math.sqrt(speed[0] * speed[0] + speed[1] * speed[1]))
 
@@ -524,7 +525,10 @@ function App() {
         if (currTile && !strokeMove && !currTile.watercolor) {
             currTile.dotType = currTile.dotType ? currTile.dotType : dotTypesHelper(currTile.strokeType)
             drawJustDot(currTile)
+            const dot = strokeArr[currTile.id][strokeArr[currTile.id].length-1]
+            logDot(currTile.dotType,currColor, dot.lineWidth, [dot.x0, dot.y0 + getOffsetY()], currTiling.i)
         }
+
         updateOffCanvasWrapper()
         dotRemoved = false;
         resetLineWidth()

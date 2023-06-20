@@ -47,7 +47,6 @@ export function drawTwo(pathArrI) {
 
 export function getOffSmall(i) {
     if (!secondDrawn) return 0
-    console.log('is ' + currI)
     if(currI === 0){
         smallOffset = -overlapOffset - oldOverlapOffset
     }else if(currI === 1){
@@ -95,6 +94,7 @@ export function firstTiling(inputArr) {
         top = bottom
     }
     tilingsDrawn++;
+
 }
 
 let oldOffset = [0]
@@ -129,9 +129,11 @@ export function secondTiling(inputArr, offset) {
         oldOffset.shift();
         oldOffset.push(offsetY + yMin);
     }
-    tilingsDrawn++;
+
     pathArr.push(toTiling(t))
-    if (pathArr.length === 4) {
+        tilingsDrawn++;
+
+        if (pathArr.length === 4) {
         pathArr.shift()
     }
     bottom = yMax - yMin + TOP_PAGE_SPACE + finOffset
@@ -190,7 +192,6 @@ export function getTiling(y, invisCol) {
             const currTiling = ret.pathDict
             const tile = currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
             if(tile !== undefined){
-                console.log('i is ' + i)
                 currI = i;
                 return [ret, tile]
             }

@@ -59,9 +59,8 @@ export async function logStrokeStart(type, col, lw, pos, tilingI) {
     await addDoc(messagesCollection, newMessage);
 }
 
-export async function deleteMessages() {
-    const messagesCollection = collection(db, "messages");
-    const querySnapshot = await getDocs(messagesCollection);
+export async function deleteMessages(coll) {
+    const querySnapshot = await getDocs(coll);
 
     querySnapshot.forEach((doc) => {
         deleteDoc(doc.ref);
