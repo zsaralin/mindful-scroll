@@ -62,7 +62,7 @@ let secondStep = false;
 let thirdStep = false;
 let fourthStep = false;
 
-const scrollBackAmount = 150;
+const scrollBackAmount = 400;
 const whiteSpace = 400;
 let refreshSpot;
 
@@ -136,7 +136,9 @@ function updateCanvas2() {
 
 function updateCanvas0() {
     const topCtx = topC.getContext('2d');
-    topCtx.clearRect(0, 0, fillC.width, fillC.height);
+    // topCtx.fillStyle = "red"
+    topCtx.clearRect(0, 500, fillC.width, fillC.height-500);
+    // topCtx.height = refreshSpot + window.innerHeight;
 
 }
 
