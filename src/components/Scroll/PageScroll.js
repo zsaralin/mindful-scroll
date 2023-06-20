@@ -126,7 +126,7 @@ function updateCanvas() {
     // fillCtx.clearRect(0, 0, fillC.width, fillC.height);
     // topCtx.clearRect(0, 0, fillC.width, fillC.height);
     // fillCtx.drawImage(newFill, 0, 0)
-    topCtx.clearRect(0, 0, fillC.width, fillC.height);
+    // topCtx.clearRect(0, 0, fillC.width, fillC.height);
     topCtx.drawImage(newTop, 0, 0)
     drawn = false;
 }
@@ -231,6 +231,11 @@ export const redrawCanvas = async () => {
         // clearAndDraw('invis-canvas', newInvis);
         // clearAndDraw('tiling-canvas', newTiling);
         // drawSecondTiling();}
+        const topCtx = topC.getContext('2d');
+        // fillCtx.clearRect(0, 0, fillC.width, fillC.height);
+        // topCtx.clearRect(0, 0, fillC.width, fillC.height);
+        // fillCtx.drawImage(newFill, 0, 0)
+        topCtx.clearRect(0, 0, fillC.width, fillC.height);
         Promise.all([
             // updateCanvas0Async(),
             updateCanvas2Async(),
@@ -239,10 +244,10 @@ export const redrawCanvas = async () => {
             // updateCanvas2Async(),
             clearAndDrawAsync('invis-canvas', newInvis),
             clearAndDrawAsync('tiling-canvas', newTiling),
-            // drawSecondTilingAsync()
+            drawSecondTilingAsync()
         ])
             .then(() => {
-                drawSecondTiling()
+                // drawSecondTiling()
                 drawSecondTilingHelper()
 
                 setOffsetY(whiteSpace + offsetI);
