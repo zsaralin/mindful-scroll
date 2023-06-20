@@ -109,6 +109,7 @@ import {dotTypesHelper, helper} from "./components/Tiling/SortingHat/TilingFillT
 
 import {startScreenshots} from "./components/Logging/Screenshot";
 import {logStrokeStart, logStrokeEnd, logStrokeMove, logDot} from "./components/Logging/StrokeLog";
+import {logScrollEnd, logScrollMove, logScrollStart} from "./components/Logging/ScrollLog";
 
 function App() {
     const canvas = useRef();
@@ -167,7 +168,8 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = Math.min(1700 * 2 + 400, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;
+            // canvas.height = Math.min(1700 * 2 + 400, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;
+            canvas.height = window.innerHeight * 6;
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
@@ -212,7 +214,14 @@ function App() {
         index = tilingIndex(prevScaledY)
         // console.log(`tilingIndex ${index}`)
 
-        invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
+        // invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
+        const [r, g, b, a] = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data;
+        const invisCol = [r, g, b, a].join(',')
+        if (invisCol === '0,0,0,0') {
+            doubleTouch = true;
+            logScrollStart(1)
+            return
+        }
         const tiling = getTiling(y, invisCol)
         if (tiling !== false) {
             currTiling = tiling[0]
@@ -251,8 +260,6 @@ function App() {
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
             currTile.colors.push(currColor)
-
-            console.log('INDEX??????????? ' + currTiling.i)
             logStrokeStart((currTile.strokeType), currColor, lw, [prevScaledX, prevScaledY], currTiling.i)
 
             // let tiles = getOrienTiles(currTile, currTiling)
@@ -275,13 +282,13 @@ function App() {
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
         // scroll when dragging on white space
         const imageData = ctx.getImageData(scaledX, scaledY, 1, 1).data;
-        const [r, g, b, a] = imageData;
+        // const [r, g, b, a] = imageData;
 
-        if (invisCol && invisCol === '0,0,0,0' && [r, g, b, a].join(',') === '0,0,0,0') {
-            doubleTouch = true;
-            // rightMouseDown = true;
-            // startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
-        }
+        // if (invisCol && invisCol === '0,0,0,0' && [r, g, b, a].join(',') === '0,0,0,0') {
+        //     doubleTouch = true;
+        //     // rightMouseDown = true;
+        //     // startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
+        // }
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
             strokeMove = true;
             if (!dotRemoved) {
@@ -433,6 +440,7 @@ function App() {
             // moveFeedback()
             singleTouch = false;
             doubleTouch = true;
+            logScrollStart(2)
         }
 
         // store the last touches
@@ -477,6 +485,7 @@ function App() {
         }
         if (doubleTouch) {
             startScroll(Math.abs(touchSpeed[1]), prevTouch0Y, touch0Y)
+            logScrollMove(touchSpeed[1])
 
         }
         prevTouches[0] = event.touches[0];
@@ -502,6 +511,8 @@ function App() {
                 showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY, prevTile !== currTile, getHandChange())
                 onStrokeEnd()
             }
+        } else{
+            logScrollEnd()
         }
         isDrawing = false;
         if (requestId) {
