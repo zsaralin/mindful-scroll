@@ -212,7 +212,7 @@ function App() {
         // stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
             stopColorChange()
-            // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
+            moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
             pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType);
             watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
@@ -459,7 +459,7 @@ function App() {
     function onTouchEnd(event) {
         if (!doubleTouch) {
             if (!isPanelOn()) {
-                // showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY, prevTile !== currTile, getHandChange())
+                showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY, prevTile !== currTile, getHandChange())
                 onStrokeEnd()
             }
         }

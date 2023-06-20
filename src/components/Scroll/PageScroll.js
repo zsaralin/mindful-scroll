@@ -62,6 +62,7 @@ let fourthStep = false;
 
 const scrollBackAmount = 150;
 const whiteSpace = 400;
+let refreshSpot;
 
 export const updateCanvasOld = (canvasId, refreshSpot) => {
     const canvas = document.getElementById(canvasId);
@@ -89,7 +90,7 @@ export function updateOffCanvasWrapper(){
     }
 }
 export const updateOffCanvas = () => {
-    const refreshSpot = top + offsetI - 100;
+    // const refreshSpot = top + offsetI - 100;
     console.log('updated')
     newFill = document.createElement('canvas');
     // newTop = document.createElement('canvas');
@@ -110,7 +111,7 @@ export const updateOffCanvas = () => {
 }
 
 function updateOffCanvasHelper(){
-    const refreshSpot = top + offsetI - 100;
+    // const refreshSpot = top + offsetI - 100;
     const h = refreshSpot + window.innerHeight //+ 400
     newTop = document.createElement('canvas');
     newTop.width = fillC.width;
@@ -187,12 +188,12 @@ export function initializeCanv() {
     topC = document.getElementById('top-canvas');
     invisC = document.getElementById('invis-canvas');
     tilingC = document.getElementById('tiling-canvas');
+    refreshSpot = top + offsetI - 100;
 }
 
 export const redrawCanvas = async () => {
     const wrap = document.getElementById("wrapper")
     const offsetY = getOffsetY()
-    const refreshSpot = top + offsetI - 100;
     if (!firstStep && offsetY > (refreshSpot / 2)) {
         console.log('first step')
         firstStep = true;
@@ -269,7 +270,7 @@ export const redrawCanvas = async () => {
                 const position = offsetI === 0 ? '65%' : '85%'
                 rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
                 offsetI = 400;
-
+                refreshSpot = top + offsetI - 100;
             })
             .catch((error) => {
             });
