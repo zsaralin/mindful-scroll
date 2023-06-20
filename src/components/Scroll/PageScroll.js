@@ -33,9 +33,11 @@ export function doScroll(currY, prevY) {
     if (off - (currY - prevY) >= limitScroll) {
         // setOffsetY(off - (currY - prevY))
         redrawCanvas()
-            .then(
-            setOffsetY(off - (currY - prevY))
-    )
+            .then((data) => {
+                if (data !== false) {
+                    setOffsetY(off - (currY - prevY))
+                }
+            })
     } else {
         setOffsetY(limitScroll)
     }
@@ -247,6 +249,8 @@ export const redrawCanvas =  async() => {
         // topCtx.clearRect(0, 0, fillC.width, fillC.height);
         // fillCtx.drawImage(newFill, 0, 0)
         // topCtx.clearRect(0, 0, fillC.width, fillC.height);
+        setOffsetY(refreshSpot);
+        wrap.style.transform = `translate(0,-${refreshSpot}px)`
         Promise.all([
             updateCanvas0Async(),
             updateCanvas2Async(),
@@ -257,13 +261,14 @@ export const redrawCanvas =  async() => {
             // drawSecondTilingAsync()
         ])
             .then(() => {
+                setOffsetY(whiteSpace + offsetI);
+                wrap.style.transform = `translate(0,-${whiteSpace + offsetI}px)`
                 clearAndDraw('invis-canvas', newInvis)
                 clearAndDraw('tiling-canvas', newTiling)
                 drawSecondTiling()
                 drawSecondTilingHelper()
 
-                setOffsetY(whiteSpace + offsetI);
-                wrap.style.transform = `translate(0,-${whiteSpace + offsetI}px)`
+
                 // drawSecondTilingHelper()
                 redrawAnim()
                 redrawTransparentStrokes()
@@ -282,6 +287,7 @@ export const redrawCanvas =  async() => {
                 rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
                 offsetI = 400;
                 refreshSpot = top + offsetI - 100;
+                return false
             })
             .catch((error) => {
             });
