@@ -25,16 +25,17 @@ let tilingC;
 let invisC;
 let topC;
 let fillC;
+let wrap;
 
 export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
     const off = getOffsetY()
     if (off - (currY - prevY) >= limitScroll) {
-        setOffsetY(off - (currY - prevY))
+        // setOffsetY(off - (currY - prevY))
         redrawCanvas()
-            // .then(
-            // setOffsetY(off - (currY - prevY))
-    // )
+            .then(
+            setOffsetY(off - (currY - prevY))
+    )
     } else {
         setOffsetY(limitScroll)
     }
@@ -92,7 +93,7 @@ export function updateOffCanvasWrapper(){
 }
 export const updateOffCanvas = () => {
     // const refreshSpot = top + offsetI - 100;
-    console.log('updated')
+    // console.log('updated')
     newFill = document.createElement('canvas');
     // newTop = document.createElement('canvas');
     newFill.width = fillC.width;
@@ -122,13 +123,7 @@ function updateOffCanvasHelper(){
 }
 
 function updateCanvas() {
-
-    // const fillCtx = fillC.getContext('2d');
     const topCtx = topC.getContext('2d');
-    // fillCtx.clearRect(0, 0, fillC.width, fillC.height);
-    // topCtx.clearRect(0, 0, fillC.width, fillC.height);
-    // fillCtx.drawImage(newFill, 0, 0)
-    // topCtx.clearRect(0, 0, fillC.width, fillC.height);
     topCtx.drawImage(newTop, 0, 0)
     drawn = false;
 }
@@ -184,51 +179,63 @@ const drawSecondTilingAsync = () => {
     });
 };
 
-export function initializeCanv() {
+export function initCanv(){
     fillC = document.getElementById('fill-canvas');
     topC = document.getElementById('top-canvas');
     invisC = document.getElementById('invis-canvas');
     tilingC = document.getElementById('tiling-canvas');
+    wrap = document.getElementById("wrapper")
     refreshSpot = top + offsetI - 100;
 }
 
-export const redrawCanvas = () => {
-    const wrap = document.getElementById("wrapper")
+export const redrawCanvas =  async() => {
     const offsetY = getOffsetY()
     if (!firstStep && offsetY > (refreshSpot *(1/4))) {
-        console.log('first step')
+        // console.log('first step')
         firstStep = true;
-        // const invisC = document.getElementById('invis-canvas');
-        // const tilingC = document.getElementById('tiling-canvas');
-        newTiling = document.createElement('canvas');
-        newTiling.width = invisC.width;
-        newTiling.height = invisC.height;
-        const newTilingCtx = newTiling.getContext('2d');
-        newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
-    }
-    if(!secondStep && offsetY > (refreshSpot * (1/2))){
-        console.log('first .2 step')
-        secondStep = true;
-        newInvis = document.createElement('canvas');
-        newInvis.width = invisC.width;
-        newInvis.height = invisC.height;
-        const newInvisCtx = newInvis.getContext('2d');
-        newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
 
+        newInvis = document.createElement('canvas');
+        newTiling = document.createElement('canvas');
+
+        newInvis.width = newTiling.width = invisC.width;
+        newInvis.height = newTiling.height = invisC.height;
+
+        const newInvisCtx = newInvis.getContext('2d');
+        const newTilingCtx = newTiling.getContext('2d');
+
+        const drawTiling = () => {
+            return new Promise((resolve) => {
+                newTilingCtx.drawImage(tilingC, 0, -(refreshSpot - scrollBackAmount));
+                resolve();
+            });
+        };
+
+        const drawInvis = () => {
+            return new Promise((resolve) => {
+                newInvisCtx.drawImage(invisC, 0, -(refreshSpot - scrollBackAmount));
+                resolve();
+            });
+        };
+
+        // Measure the execution time for parallel approach
+        Promise.all([drawTiling(), drawInvis()]).then(() => {
+            return
+            // Code to execute after both drawImage operations are complete
+        });
     }
     if (!thirdStep && offsetY >= (refreshSpot * (3/4)) && !drawn){
-        console.log('heyyy')
+        // console.log('heyyy')
         updateOffCanvas()
         thirdStep = true;
     }
     if (!fourthStep && offsetY >= (refreshSpot - 50)){
-        console.log('heyyy2')
+        // console.log('heyyy2')
         updateOffCanvasHelper()
         fourthStep = true;
     }
     if (offsetY >= (refreshSpot)) {
         prevOffsetY += offsetY
-        console.log('redrawing')
+        // console.log('redrawing')
         // updateCanvas(),
         // clearAndDraw('invis-canvas', newInvis);
         // clearAndDraw('tiling-canvas', newTiling);
@@ -241,15 +248,16 @@ export const redrawCanvas = () => {
         Promise.all([
             // updateCanvas0Async(),
             updateCanvas2Async(),
-
             updateCanvasAsync(),
             // updateCanvas2Async(),
-            clearAndDrawAsync('invis-canvas', newInvis),
-            clearAndDrawAsync('tiling-canvas', newTiling),
-            drawSecondTilingAsync()
+            // clearAndDrawAsync('invis-canvas', newInvis),
+            // clearAndDrawAsync('tiling-canvas', newTiling),
+            // drawSecondTilingAsync()
         ])
             .then(() => {
-                // drawSecondTiling()
+                clearAndDraw('invis-canvas', newInvis)
+                clearAndDraw('tiling-canvas', newTiling)
+                drawSecondTiling()
                 drawSecondTilingHelper()
 
                 setOffsetY(whiteSpace + offsetI);

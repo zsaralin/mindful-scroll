@@ -21,7 +21,7 @@ import {
 import {addToTilingArr, getTilingIndex, getYMax, redrawTilings, sumArray} from "./components/Tiling/TilingArr";
 import {getOffsetY} from './components/Scroll/Offset'
 import {
-    doScroll, endScroll, getStrokesTop, initializeCanv, prevOffsetY,
+    doScroll, endScroll, getStrokesTop, initCanv, initializeCanv, prevOffsetY,
     redrawCanvas,
     redrawCanvas2, setUpCanvas, startScroll, strokesTop,
     triggerScroll, updateCanvasNew, updateOffCanvas, updateOffCanvasWrapper
@@ -149,7 +149,7 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = (window.innerHeight*4)//(basicVersion ? 3 : 4)+ 400;
+            canvas.height = (window.innerHeight*6)//(basicVersion ? 3 : 4)+ 400;
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
@@ -163,7 +163,7 @@ function App() {
         drawTwo()
         ctx = document.getElementById('invis-canvas').getContext("2d");
         startScreenshots()
-        initializeCanv()
+        initCanv()
     }, []);
 
     let currColor;
