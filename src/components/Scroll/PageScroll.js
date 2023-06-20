@@ -240,11 +240,11 @@ export const redrawCanvas =  async() => {
         // clearAndDraw('invis-canvas', newInvis);
         // clearAndDraw('tiling-canvas', newTiling);
         // drawSecondTiling();}
-        const topCtx = topC.getContext('2d');
+        // const topCtx = topC.getContext('2d');
         // fillCtx.clearRect(0, 0, fillC.width, fillC.height);
         // topCtx.clearRect(0, 0, fillC.width, fillC.height);
         // fillCtx.drawImage(newFill, 0, 0)
-        topCtx.clearRect(0, 0, fillC.width, fillC.height);
+        // topCtx.clearRect(0, 0, fillC.width, fillC.height);
         Promise.all([
             updateCanvas0Async(),
             updateCanvas2Async(),
