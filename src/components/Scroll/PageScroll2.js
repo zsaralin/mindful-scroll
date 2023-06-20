@@ -23,8 +23,10 @@ let fourthStep = false;
 
 let newTiling;
 let newInvis;
+let newFill;
+let newTop;
 
-window.onload = function () {
+export function initCanv(){
     fillC = document.getElementById('fill-canvas');
     topC = document.getElementById('top-canvas');
     invisC = document.getElementById('invis-canvas');
@@ -37,17 +39,14 @@ window.onload = function () {
 export const redrawCanvas = () => {
     const offsetY = getOffsetY()
     if (!firstStep && offsetY > (refreshSpot *(1/4))) {
-        // console.log('first step')
-        firstStep = true;
         drawOffTiling()
+        firstStep = true;
     }
     if (!thirdStep && offsetY >= (refreshSpot * (3 / 4)) && !drawn) {
-        // console.log('heyyy')
         updateOffCanvas()
         thirdStep = true;
     }
     if (!fourthStep && offsetY >= (refreshSpot - 50)) {
-        // console.log('heyyy2')
         updateOffCanvasHelper()
         fourthStep = true;
     }
@@ -88,29 +87,40 @@ export const redrawCanvas = () => {
         wrap.style.transform = `translate(0,-${offsetY}px)`;
     }
 }
-
-
-
 export const updateOffCanvas = () => {
-    // const refreshSpot = top + offsetI - 100;
-    // console.log('updated')
     newFill = document.createElement('canvas');
-    // newTop = document.createElement('canvas');
+    newTop = document.createElement('canvas');
     newFill.width = fillC.width;
     newFill.height = fillC.height;
+    newTop.width = fillC.width;
+    newTop.height = fillC.height;
     const newFillCtx = newFill.getContext('2d');
-    // const newTopCtx = newTop.getContext('2d');
-    // Set the fill color to white
+    const newTopCtx = newTop.getContext('2d');
     newFillCtx.fillStyle = 'white';
     newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
 
-    const h = refreshSpot + window.innerHeight //+ 400
+    const h = refreshSpot + window.innerHeight;
 
-    newFillCtx.drawImage(fillC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h)
-    // newTopCtx.drawImage(topC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
+    const drawFillImage = () => {
+        return new Promise((resolve) => {
+            newFillCtx.drawImage(fillC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h);
+            resolve();
+        });
+    };
 
-    drawn = true;
-}
+    const drawTopImage = () => {
+        return new Promise((resolve) => {
+            newTopCtx.drawImage(topC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h);
+            resolve();
+        });
+    };
+
+    drawn = false;
+    Promise.all([drawFillImage(), drawTopImage()])
+        .then(() => {
+            drawn = true;
+        });
+};
 
 function drawOffTiling(){
     newInvis = document.createElement('canvas');
@@ -143,15 +153,6 @@ function drawOffTiling(){
     });
 }
 
-function updateOffCanvasHelper(){
-    // const refreshSpot = top + offsetI - 100;
-    const h = refreshSpot + window.innerHeight //+ 400
-    newTop = document.createElement('canvas');
-    newTop.width = fillC.width;
-    newTop.height = fillC.height;
-    const newTopCtx = newTop.getContext('2d');
-    newTopCtx.drawImage(topC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h)
-}
 
 function resetFlags() {
     firstStep = false;

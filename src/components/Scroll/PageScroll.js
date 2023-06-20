@@ -91,26 +91,26 @@ export function updateOffCanvasWrapper(){
         updateOffCanvasHelper()
     }
 }
-export const updateOffCanvas = () => {
-    // const refreshSpot = top + offsetI - 100;
-    // console.log('updated')
-    newFill = document.createElement('canvas');
-    // newTop = document.createElement('canvas');
-    newFill.width = fillC.width;
-    newFill.height = fillC.height;
-    const newFillCtx = newFill.getContext('2d');
-    // const newTopCtx = newTop.getContext('2d');
-    // Set the fill color to white
-    newFillCtx.fillStyle = 'white';
-    newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
-
-    const h = refreshSpot + window.innerHeight //+ 400
-
-    newFillCtx.drawImage(fillC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h)
-    // newTopCtx.drawImage(topC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
-
-    drawn = true;
-}
+// export const updateOffCanvas = () => {
+//     // const refreshSpot = top + offsetI - 100;
+//     // console.log('updated')
+//     newFill = document.createElement('canvas');
+//     // newTop = document.createElement('canvas');
+//     newFill.width = fillC.width;
+//     newFill.height = fillC.height;
+//     const newFillCtx = newFill.getContext('2d');
+//     // const newTopCtx = newTop.getContext('2d');
+//     // Set the fill color to white
+//     newFillCtx.fillStyle = 'white';
+//     newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
+//
+//     const h = refreshSpot + window.innerHeight //+ 400
+//
+//     newFillCtx.drawImage(fillC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h)
+//     // newTopCtx.drawImage(topC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
+//
+//     drawn = true;
+// }
 
 function updateOffCanvasHelper(){
     // const refreshSpot = top + offsetI - 100;
@@ -228,11 +228,11 @@ export const redrawCanvas =  async() => {
         updateOffCanvas()
         thirdStep = true;
     }
-    if (!fourthStep && offsetY >= (refreshSpot - 50)){
-        // console.log('heyyy2')
-        updateOffCanvasHelper()
-        fourthStep = true;
-    }
+    // if (!fourthStep && offsetY >= (refreshSpot - 50)){
+    //     // console.log('heyyy2')
+    //     updateOffCanvasHelper()
+    //     fourthStep = true;
+    // }
     if (offsetY >= (refreshSpot)) {
         prevOffsetY += offsetY
         // console.log('redrawing')
@@ -292,6 +292,42 @@ export const redrawCanvas =  async() => {
 
 let i = 1;
 
+export const updateOffCanvas = () => {
+    newFill = document.createElement('canvas');
+    newTop = document.createElement('canvas');
+    newFill.width = fillC.width;
+    newFill.height = fillC.height;
+    newTop.width = fillC.width;
+    newTop.height = fillC.height;
+    const newFillCtx = newFill.getContext('2d');
+    const newTopCtx = newTop.getContext('2d');
+    newFillCtx.fillStyle = 'white';
+    newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
+
+    const h = refreshSpot + window.innerHeight;
+
+    const drawFillImage = () => {
+        return new Promise((resolve) => {
+            newFillCtx.drawImage(fillC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h);
+            resolve();
+        });
+    };
+
+    const drawTopImage = () => {
+        return new Promise((resolve) => {
+            newTopCtx.drawImage(topC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h);
+            resolve();
+        });
+    };
+
+    drawn = false;
+    Promise.all([drawFillImage(), drawTopImage()])
+        .then(() => {
+            console.log('hey')
+            drawn = true;
+            return
+        });
+};
 export const redrawCanvas2 = async () => {
     const wrap = document.getElementById("wrapper")
     let offsetY = getOffsetY()
