@@ -61,6 +61,7 @@ let thirdStep = false;
 let fourthStep = false;
 
 const scrollBackAmount = 150;
+const whiteSpace = 400;
 
 export const updateCanvasOld = (canvasId, refreshSpot) => {
     const canvas = document.getElementById(canvasId);
@@ -69,8 +70,8 @@ export const updateCanvasOld = (canvasId, refreshSpot) => {
     newCanvas.width = canvas.width;
     newCanvas.height = canvas.height;
     const newCtx = newCanvas.getContext('2d');
-    const h = window.innerHeight + 400
-    newCtx.drawImage(canvas, 0, refreshSpot - 400 - offsetI, newCanvas.width, h, 0, 0, canvas.width, h)
+    const h = window.innerHeight + whiteSpace
+    newCtx.drawImage(canvas, 0, refreshSpot - whiteSpace - offsetI, newCanvas.width, h, 0, 0, canvas.width, h)
     // console.log('1 ' + h)
     // ctx.clearRect(0, 0, canvas.width, canvas.height );
     // ctx.drawImage(newCanvas, 0, 0, newCanvas.width, h, 0,0,newCanvas.width, h)
@@ -79,7 +80,7 @@ export const updateCanvasOld = (canvasId, refreshSpot) => {
 let drawn = false;
 
 export function getStrokesTop() {
-    return (top + offsetI - 100 - 400);
+    return (top + offsetI - 100 - whiteSpace);
 }
 export function updateOffCanvasWrapper(){
     if(thirdStep){
@@ -102,7 +103,7 @@ export const updateOffCanvas = () => {
 
     const h = refreshSpot + window.innerHeight //+ 400
 
-    newFillCtx.drawImage(fillC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
+    newFillCtx.drawImage(fillC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h)
     // newTopCtx.drawImage(topC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
 
     drawn = true;
@@ -115,7 +116,7 @@ function updateOffCanvasHelper(){
     newTop.width = fillC.width;
     newTop.height = fillC.height;
     const newTopCtx = newTop.getContext('2d');
-    newTopCtx.drawImage(topC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
+    newTopCtx.drawImage(topC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h)
 }
 
 function updateCanvas() {
@@ -146,7 +147,7 @@ const clearAndDraw = (canvasId, image) => {
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(image, 0, 400 - scrollBackAmount + offsetI);
+    ctx.drawImage(image, 0, whiteSpace - scrollBackAmount + offsetI);
 };
 const updateCanvasAsync = () => {
     return new Promise((resolve, reject) => {
@@ -238,13 +239,14 @@ export const redrawCanvas = async () => {
             // updateCanvas2Async(),
             clearAndDrawAsync('invis-canvas', newInvis),
             clearAndDrawAsync('tiling-canvas', newTiling),
-            drawSecondTilingAsync()
+            // drawSecondTilingAsync()
         ])
             .then(() => {
+                drawSecondTiling()
                 drawSecondTilingHelper()
 
-                setOffsetY(400 + offsetI);
-                wrap.style.transform = `translate(0,-${400 + offsetI}px)`
+                setOffsetY(whiteSpace + offsetI);
+                wrap.style.transform = `translate(0,-${whiteSpace + offsetI}px)`
                 // drawSecondTilingHelper()
                 redrawAnim()
                 redrawTransparentStrokes()
@@ -258,7 +260,7 @@ export const redrawCanvas = async () => {
                 var rectangle = document.getElementById("gradRectangle");
                 rectangle.style.top = 0 + "px";
                 rectangle.style.width = topC.width + "px";
-                rectangle.style.height = (400 - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
+                rectangle.style.height = (whiteSpace - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
                 const position = offsetI === 0 ? '65%' : '85%'
                 rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
                 offsetI = 400;
