@@ -198,7 +198,7 @@ export const redrawCanvas =  async() => {
         newTiling = document.createElement('canvas');
 
         newInvis.width = newTiling.width = invisC.width;
-        newInvis.height = newTiling.height = invisC.height;
+        newInvis.height = newTiling.height = refreshSpot + window.innerHeight//invisC.height;
 
         const newInvisCtx = newInvis.getContext('2d');
         const newTilingCtx = newTiling.getContext('2d');
@@ -234,7 +234,7 @@ export const redrawCanvas =  async() => {
     //     fourthStep = true;
     // }
     if (offsetY >= (refreshSpot)) {
-        prevOffsetY += offsetY
+        // prevOffsetY += offsetY
         // console.log('redrawing')
         // updateCanvas(),
         // clearAndDraw('invis-canvas', newInvis);
@@ -246,7 +246,7 @@ export const redrawCanvas =  async() => {
         // fillCtx.drawImage(newFill, 0, 0)
         topCtx.clearRect(0, 0, fillC.width, fillC.height);
         Promise.all([
-            // updateCanvas0Async(),
+            updateCanvas0Async(),
             updateCanvas2Async(),
             updateCanvasAsync(),
             // updateCanvas2Async(),
@@ -296,9 +296,9 @@ export const updateOffCanvas = () => {
     newFill = document.createElement('canvas');
     newTop = document.createElement('canvas');
     newFill.width = fillC.width;
-    newFill.height = fillC.height;
+    newFill.height = refreshSpot + window.innerHeight//fillC.height;
     newTop.width = fillC.width;
-    newTop.height = fillC.height;
+    newTop.height = refreshSpot + window.innerHeight//fillC.height;
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
     newFillCtx.fillStyle = 'white';
