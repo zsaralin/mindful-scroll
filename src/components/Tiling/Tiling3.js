@@ -157,7 +157,7 @@ export function drawSecondTiling() {
 }
 
 export function drawSecondTilingHelper(){
-    // checkOverlap( pathArr[pathArr.length - 2].pathDict,  pathArr[pathArr.length - 1].pathDict, overlapOffset)
+    checkOverlap( pathArr[pathArr.length - 2].pathDict,  pathArr[pathArr.length - 1].pathDict, overlapOffset)
     top = getBoundsTiling2(pathArr[pathArr.length - 1].pathDict)[2] - 400
     drawTiling(pathArr[pathArr.length - 1])
     pathArr[pathArr.length - 1].fillInfo = getFillInfo()
