@@ -269,7 +269,6 @@ export const redrawCanvas =  async() => {
                 clearAndDraw('invis-canvas', newInvis)
                 clearAndDraw('tiling-canvas', newTiling)
                 drawSecondTiling()
-                drawSecondTilingHelper()
 
 
                 // drawSecondTilingHelper()
@@ -280,7 +279,7 @@ export const redrawCanvas =  async() => {
                 secondStep = false;
                 thirdStep = false;
                 fourthStep = false;
-                // drawSecondTilingHelper()
+                drawSecondTilingHelper()
 
                 var rectangle = document.getElementById("gradRectangle");
                 rectangle.style.top = 0 + "px";
