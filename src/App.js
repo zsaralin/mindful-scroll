@@ -196,6 +196,11 @@ function App() {
         //         ctx.lineWidth = ctx.lineWidth / 2;
         //     }
         // })
+        var links = document.getElementsByTagName('a');
+        for (var i = 0; i < links.length; i++) {
+            console.log('NOTE ')
+            links[i].style.touchAction = 'auto';
+        }
         drawTwo()
 
         ctx = document.getElementById('invis-canvas').getContext("2d");
