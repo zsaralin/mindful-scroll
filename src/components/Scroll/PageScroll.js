@@ -153,18 +153,21 @@ const clearAndDraw = (canvasId, image) => {
 const updateCanvasAsync = () => {
     return new Promise((resolve, reject) => {
         updateCanvas();
+        console.log(3)
         resolve();
     });
 };
 const updateCanvas2Async = () => {
     return new Promise((resolve, reject) => {
         updateCanvas2();
+        console.log(2)
         resolve();
     });
 };
 const updateCanvas0Async = () => {
     return new Promise((resolve, reject) => {
         updateCanvas0();
+        console.log(0)
         resolve();
     });
 };
@@ -252,7 +255,6 @@ export const redrawCanvas =  async() => {
         // setOffsetY(refreshSpot);
         // wrap.style.transform = `translate(0,-${refreshSpot}px)`
         Promise.all([
-            updateOffCanvas(),
             updateCanvas0Async(),
             updateCanvas2Async(),
             updateCanvasAsync(),
