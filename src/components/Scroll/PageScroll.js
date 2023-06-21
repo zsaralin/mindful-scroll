@@ -90,7 +90,7 @@ export function getStrokesTop() {
 export function updateOffCanvasWrapper(){
     if(thirdStep){
         updateOffCanvas()
-        updateOffCanvasHelper()
+        // updateOffCanvasHelper()
     }
 }
 // export const updateOffCanvas = () => {
@@ -304,9 +304,9 @@ export const updateOffCanvas = () => {
     newFill = document.createElement('canvas');
     newTop = document.createElement('canvas');
     newFill.width = fillC.width;
-    newFill.height = fillC.height;
+    newFill.height = refreshSpot + window.innerHeight//fillC.height;
     newTop.width = fillC.width;
-    newTop.height = fillC.height;
+    newTop.height = refreshSpot + window.innerHeight//fillC.height;
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
     newFillCtx.fillStyle = 'white';
