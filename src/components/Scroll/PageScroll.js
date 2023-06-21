@@ -310,13 +310,13 @@ export const updateOffCanvas = () => {
     newTop.height = refreshSpot + window.innerHeight//fillC.height;
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
-    newFillCtx.fillStyle = 'white';
-    newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
 
     const h = refreshSpot + window.innerHeight;
 
     const drawFillImage = () => {
         return new Promise((resolve) => {
+            newFillCtx.fillStyle = 'white';
+            newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
             newFillCtx.drawImage(fillC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h);
             resolve();
         });
@@ -324,6 +324,8 @@ export const updateOffCanvas = () => {
 
     const drawTopImage = () => {
         return new Promise((resolve) => {
+            // newTopCtx.fillStyle = "red"
+            // newTopCtx.fillRect(0, refreshSpot - whiteSpace - offsetI - scrollBackAmount, fillC.width, h, 0, 0, fillC.width, h);
             newTopCtx.drawImage(topC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h);
             resolve();
         });
@@ -332,7 +334,7 @@ export const updateOffCanvas = () => {
     drawn = false;
     Promise.all([drawFillImage(), drawTopImage()])
         .then(() => {
-            console.log('hey')
+            console.log('hey I just FILLED RED')
             drawn = true;
             return
         });

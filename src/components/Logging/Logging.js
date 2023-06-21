@@ -1,4 +1,4 @@
-import {addDoc, collection, getFirestore, getDocs, deleteDoc} from "firebase/firestore";
+import {addDoc, collection, getFirestore, getDocs, deleteDoc, listCollections} from "firebase/firestore";
 import firebase from "firebase/compat/app";
 import {getAuth} from "firebase/auth";
 import html2canvas from "html2canvas";
@@ -43,26 +43,26 @@ export async function sendMessageFB(message) {
     const docRef = await addDoc(messagesCollection, newMessage);
 }
 
-export async function logStrokeStart(type, col, lw, pos, tilingI) {
-    // deleteMessages()
-    const messagesCollection = collection(db, "messages");
-    const newMessage = {
-        time: Date.now() - startTime,
-        name: "strokeStart",
-        event: {"participant": UID,
-            "type": type,
-            "col": col,
-            "lw": lw,
-            "pos": pos.toString(),
-            "tiling": tilingI}
-    };
-    await addDoc(messagesCollection, newMessage);
-}
-
 export async function deleteMessages(coll) {
     const querySnapshot = await getDocs(coll);
 
     querySnapshot.forEach((doc) => {
         deleteDoc(doc.ref);
     });
+}
+
+async function deleteAllCollections() {
+    const db = getFirestore();
+    const collectionNames = ['dot', 'scrollEnd', 'scrollMove',
+    'scrollStart', 'strokeEnd', 'strokeMove', 'strokeStart']; // Add the names of your collections
+
+    // Delete each collection and its documents
+    for (const collectionName of collectionNames) {
+        const collectionRef = collection(db, collectionName);
+        const querySnapshot = await getDocs(collectionRef);
+
+        querySnapshot.forEach((doc) => {
+            deleteDoc(doc.ref);
+        });
+    }
 }
