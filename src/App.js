@@ -296,7 +296,7 @@ function App() {
         //     // rightMouseDown = true;
         //     // startScroll(Math.abs(speed[1]), prevCursorY, cursorY)
         // }
-        if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
+        if (!doubleTouch && currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
             strokeMove = true;
             if (!dotRemoved) {
                 removeLastDot(currTile)
