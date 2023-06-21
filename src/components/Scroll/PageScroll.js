@@ -249,10 +249,10 @@ export const redrawCanvas =  async() => {
         // topCtx.clearRect(0, 0, fillC.width, fillC.height);
         // fillCtx.drawImage(newFill, 0, 0)
         // topCtx.clearRect(0, 0, fillC.width, fillC.height);
-        setOffsetY(refreshSpot);
-        wrap.style.transform = `translate(0,-${refreshSpot}px)`
-        Promise.all([
-            updateCanvas0Async(),
+        updateCanvas0()
+
+            Promise.all([
+            // updateCanvas0Async(),
             updateCanvas2Async(),
             updateCanvasAsync(),
             // updateCanvas2Async(),

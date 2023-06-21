@@ -14,6 +14,7 @@ import {
     fillStripesVertGrad
 } from "../../Tile/FillTile/FillPattern";
 import {fillLinearGradient, fillRadialGradient} from "../../Effects/Gradient";
+import {logFillTile} from "../../Logging/FillTileLog";
 
 const under = [true, false]
 const ditherI = [1, 2, 3, 4, 5]
@@ -37,6 +38,7 @@ export function completeTile2(tile, tiling) {
 
         if (tile.colors > 2 && Math.random() < fillInfo.combinW) {
             fillEachPixel(tile);
+            logFillTile("fillEachPixel", underType, tiling.I)
             return;
         }
         solidFillFn(tile, fillType, underType);
