@@ -168,7 +168,7 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height =  Math.min(1700 * 3, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;
+            canvas.height =  Math.min(1700 * 3.5, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;
             // canvas.height = window.innerHeight * 6;
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
@@ -185,7 +185,7 @@ function App() {
         // canvasIds.forEach(id => {
         //     const canvas = document.getElementById(id);
         //     canvas.height = height * 3 + 200  //+ window.innerHeight;
-        //  console.log('HEYY! ' + (1700*3) + ' and before ' + window.innerHeight * 6)
+         console.log('HEYY! ' + (1700*3.5) + ' and before ' + window.innerHeight * 6)
         //     const ctx = document.getElementById(id).getContext("2d");
         //     ctx.lineCap = "round";
         //     ctx.lineJoin = "round";
