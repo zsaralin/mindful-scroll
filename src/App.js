@@ -168,7 +168,7 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth;
-            canvas.height = Math.min(1700 * 2 + 400, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;
+            canvas.height =  Math.min(1700 * 2 + 400, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;
             // canvas.height = window.innerHeight * 6;
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
@@ -222,6 +222,7 @@ function App() {
         // invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
         const [r, g, b, a] = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data;
         const invisCol = [r, g, b, a].join(',')
+        console.log('invis ' + invisCol)
         if (invisCol === '0,0,0,0') {
             doubleTouch = true;
             logScrollStart(1)
@@ -254,6 +255,7 @@ function App() {
         // console.log(currTiling.fillInfo.strokeW + ' and ' + currTiling.fillInfo.strokeTypes)
         if (currTile) {
             smallOffset = getOffSmall(index)
+            console.log('OOK ' + currTiling.fillInfo.strokeW)
             currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
         }
         currColor = getCurrColor()
@@ -300,6 +302,7 @@ function App() {
                 removeLastDot(currTile)
                 dotRemoved = true;
             }
+            console.log('in path ' + currTile.strokeType)
             // console.log(Math.abs(speed[0]) + ' and ' + Math.abs(speed[1]))
             if ((currTile.strokeType === "reg" && isShrinkStroke() && (Math.abs(speed[0]) > 10 || Math.abs(speed[1]) > 10))) {
                 pushShrinkingLine(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, currTiling.strokeType);

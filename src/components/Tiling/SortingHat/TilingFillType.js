@@ -7,7 +7,7 @@ import {dither} from "../../Effects/Dither";
 const sections = [0, 1, 2, 3]
 const solidFill = ["first", "last", "meanHue", "most", "least"]
 const afterFill = ["complem", "inverseHue"]
-const afterBackFill = ["dither", "blur", "pixel", ["blur", "dither"], ["dither", "blur"], ["pixel", "blur"], ["pixel", "dither"]]
+const afterBackFill = ["dither", "blurry", "pixel", ["blurry", "dither"], ["dither", "blurry"], ["pixel", "blurry"], ["pixel", "dither"]]
 const pattern = ["outline", "stripes", "gradient"]
 const stripes = ["horiz", "vert", "diag"]
 const gradient = ["radial", "diag", "vert", "horiz"]
@@ -17,7 +17,7 @@ export function getFillInfo() {
     if (basicVersion) { //simple
         return { strokeTypes : ["reg"], strokeW: [1]}
     } else {
-        const num = 0//sections[Math.floor(Math.random() * sections.length)];
+        const num = 2//sections[Math.floor(Math.random() * sections.length)];
         if (num === 0) {
             const weights = [5, 3, 2, 1, 1]
             const totFillTypes = [1, 2, 3, 4, 5]
@@ -69,17 +69,20 @@ export function getFillInfo() {
             const col0 = generateRandomWeights(6, true)
             let col1 = generateRandomWeights(15, true)
             col1 = adjustCol(col0, col1)
-
+            console.log('patternTypes '  +  patternTypes)
             if (patternTypes.includes("stripes")) {
                 const numAnglesW = [.1, .4, .5] // .1% only 1 from pattern arr, etc.
                 const numAngles = [1, 2, 3]
                 const m = helper(numAnglesW, numAngles) // # of angles
                 const angleTypes = chooseRandomElements(stripes, m)
                 const angleW = generateRandomWeights(angleTypes.length)
+                const [afterFillTypes, afterBackW] = afterFillTypesHelper()
+                const [strokeTypes, strokeW] = strokeTypesHelper(afterFillTypes)
                 if (angleTypes.includes("diag")) {
                     const angleArr = generateAngleArray()
-                    const [afterFillTypes, afterBackW] = afterFillTypesHelper()
-                    const [strokeTypes, strokeW] = strokeTypesHelper(afterFillTypes)
+                    // const [afterFillTypes, afterBackW] = afterFillTypesHelper()
+                    // const [strokeTypes, strokeW] = strokeTypesHelper(afterFillTypes)
+                    console.log('strokeW ' + strokeW)
                     return {
                         fillNum: 3,
                         fillTypes,
@@ -95,11 +98,13 @@ export function getFillInfo() {
                         strokeW
                     }
                 }
-                return {fillNum: 3, fillTypes, fillW, angleTypes, angleW, col0, col1}
+                console.log('important ' + strokeTypes + ' adn ' + strokeW)
+                return {fillNum: 3, fillTypes, fillW, angleTypes, angleW, col0, col1, afterFillTypes, afterBackW, strokeTypes, strokeW}
             } else if (patternTypes.includes("gradient")) {
                 const gradTypes = chooseRandomElements(gradient, Math.floor(Math.random() * gradient.length) + 1,); // random num 1-gradient.length
                 const gradW = generateRandomWeights(gradTypes.length)
                 const [afterFillTypes, afterBackW] = afterFillTypesHelper()
+                console.log('after in gradient ' + afterFillTypes)
                 const [strokeTypes, strokeW] = strokeTypesHelper(afterFillTypes)
                 return {
                     fillNum: 3,
@@ -117,7 +122,9 @@ export function getFillInfo() {
             } else {
                 const [afterFillTypes, afterBackW] = afterFillTypesHelper()
                 const [strokeTypes, strokeW] = strokeTypesHelper(afterFillTypes)
-                return {fillNum: 3, fillTypes, fillW, col0, col1, afterFillTypes, afterBackW, strokeTypes, strokeW}
+                console.log('HELLO ' + strokeTypes + ' and '  + strokeW)
+
+                return {fillNum: 3, fillTypes, fillW, col0, col1, afterFillTypes, afterBackW, strokeTypes,strokeW}
             }
         }
     }
@@ -261,19 +268,19 @@ function afterFillTypesHelper() {
 }
 
 function strokeTypesHelper(afterFillTypes) {
-    if (afterFillTypes.includes("blur")) {
-        const strokeTypes = ["reg", "blur"]
+    if (afterFillTypes.includes("blurry")) {
+        const strokeTypes = ["reg", "blurry"]
         const rand = Math.random()
         const regW = rand >= .5 ? rand : 1 - rand
         const strokeW = [regW, 1 - regW]
         return [strokeTypes, strokeW]
     }
-    return [["reg", [1]]]
+    return [["reg"], [1]]
 }
 
 export function dotTypesHelper(strokeType) {
     if(basicVersion) return "reg"
-    if (strokeType === "blur" || strokeType === "dotted" || strokeType === "transparent") {
+    if (strokeType === "blurry" || strokeType === "dotted" || strokeType === "transparent") {
         return strokeType
     } else {
         if (Math.random() < .8) return "reg"

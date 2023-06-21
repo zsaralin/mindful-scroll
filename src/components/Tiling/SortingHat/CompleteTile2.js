@@ -17,7 +17,7 @@ import {fillLinearGradient, fillRadialGradient} from "../../Effects/Gradient";
 import {logFillTile} from "../../Logging/FillTileLog";
 
 const under = [true, false]
-const ditherI = [1, 2, 3, 4, 5]
+const ditherI = [2,3,4,5,6]
 const ditherW = [1, 2, 3, 2, 1];
 
 const queryString = window.location.search;
@@ -38,7 +38,7 @@ export function completeTile2(tile, tiling) {
 
         if (tile.colors > 2 && Math.random() < fillInfo.combinW) {
             fillEachPixel(tile);
-            logFillTile("fillEachPixel", underType, tiling.I)
+            logFillTile("fillEachPixel", underType, tiling.i)
             return;
         }
         solidFillFn(tile, fillType, underType);
@@ -60,7 +60,7 @@ export function completeTile2(tile, tiling) {
             dither(tile, i);
             logString += ',' + "dither"
         }
-        logFillTile(logString, underType, tiling.I)
+        logFillTile(logString, underType, tiling.i)
     } else if (fillInfo.fillNum === 2) {
         solidFillFn(tile, fillType, true);
         afterBackFillFnMain(tiling, tile, fillType);
@@ -145,7 +145,8 @@ function afterBackFillFnMain(tiling, tile, fillType){
         afterBackFillFn(tile, "pixel", helper(ditherW, ditherI), getCol(tile, fillType))
         afterBackFillFn(tile, "dither", helper(ditherW, ditherI))
     }
-    logFillTile(fillType + ", " + afterBackFillType.join(", "), true, tiling.I)
+    const str = Array.isArray(afterBackFillType) ? afterBackFillType.join(", ") : afterBackFillType
+    logFillTile(fillType + ", " + str, true, tiling.i)
 }
 
 function compareArrays(arr1, arr2) {
