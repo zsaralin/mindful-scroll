@@ -319,6 +319,7 @@ export const updateOffCanvas = () => {
         return new Promise((resolve) => {
             newFillCtx.fillStyle = 'white';
             newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
+            console.log('heyyy ' + (refreshSpot - whiteSpace - offsetI))
             newFillCtx.drawImage(fillC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h);
             resolve();
         });
