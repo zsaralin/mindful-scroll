@@ -118,7 +118,7 @@ export function secondTiling(inputArr, offset) {
     }
     else{
     const finOffset = offset !== undefined ? offset : 400;
-    top = bottom + BETWEEN_SPACE + finOffset ;
+    top = bottom + BETWEEN_SPACE //+ finOffset ;
     let t = makeRandomTiling(inputArr);
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
     offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
@@ -158,7 +158,7 @@ export function drawSecondTiling() {
 
 export function drawSecondTilingHelper(){
     // checkOverlap( pathArr[pathArr.length - 2].pathDict,  pathArr[pathArr.length - 1].pathDict, overlapOffset)
-    // top = getBoundsTiling2(pathArr[pathArr.length - 1].pathDict)[2] - 400
+    top = getBoundsTiling2(pathArr[pathArr.length - 1].pathDict)[2] - 400
     drawTiling(pathArr[pathArr.length - 1])
     pathArr[pathArr.length - 1].fillInfo = getFillInfo()
     secondDrawn = true;
