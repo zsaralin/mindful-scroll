@@ -136,7 +136,7 @@ function updateCanvas2() {
 
 }
 
-async function updateCanvas0() {
+function updateCanvas0() {
     const topCtx = topC.getContext('2d');
     // topCtx.fillStyle = "red"
     topCtx.clearRect(0, 400, fillC.width, fillC.height-400);
@@ -249,19 +249,18 @@ export const redrawCanvas =  async() => {
         // topCtx.clearRect(0, 0, fillC.width, fillC.height);
         // fillCtx.drawImage(newFill, 0, 0)
         // topCtx.clearRect(0, 0, fillC.width, fillC.height);
-        updateCanvas0()
-        updateCanvas2()
-        updateCanvas()
-        //     Promise.all([
-        //     // updateCanvas0Async(),
-        //     // updateCanvas2Async(),
-        //     // updateCanvasAsync(),
-        //     // updateCanvas2Async(),
-        //     // clearAndDrawAsync('invis-canvas', newInvis),
-        //     // clearAndDrawAsync('tiling-canvas', newTiling),
-        //     // drawSecondTilingAsync()
-        // ])
-        //     .then(() => {
+        // setOffsetY(refreshSpot);
+        // wrap.style.transform = `translate(0,-${refreshSpot}px)`
+        Promise.all([
+            updateCanvas0Async(),
+            updateCanvas2Async(),
+            updateCanvasAsync(),
+            // updateCanvas2Async(),
+            // clearAndDrawAsync('invis-canvas', newInvis),
+            // clearAndDrawAsync('tiling-canvas', newTiling),
+            // drawSecondTilingAsync()
+        ])
+            .then(() => {
                 setOffsetY(whiteSpace + offsetI);
                 wrap.style.transform = `translate(0,-${whiteSpace + offsetI}px)`
                 clearAndDraw('invis-canvas', newInvis)
@@ -289,9 +288,9 @@ export const redrawCanvas =  async() => {
                 offsetI = 400;
                 refreshSpot = top + offsetI - 100;
                 return false
-            // })
-            // .catch((error) => {
-            // });
+            })
+            .catch((error) => {
+            });
 
     } else {
         wrap.style.transform = `translate(0,-${offsetY}px)`;
@@ -305,9 +304,9 @@ export const updateOffCanvas = () => {
     newFill = document.createElement('canvas');
     newTop = document.createElement('canvas');
     newFill.width = fillC.width;
-    newFill.height = refreshSpot + window.innerHeight//fillC.height;
+    newFill.height = fillC.height;
     newTop.width = fillC.width;
-    newTop.height = refreshSpot + window.innerHeight//fillC.height;
+    newTop.height = fillC.height;
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
     newFillCtx.fillStyle = 'white';
