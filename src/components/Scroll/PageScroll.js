@@ -252,6 +252,7 @@ export const redrawCanvas =  async() => {
         // setOffsetY(refreshSpot);
         // wrap.style.transform = `translate(0,-${refreshSpot}px)`
         Promise.all([
+            updateOffCanvas(),
             updateCanvas0Async(),
             updateCanvas2Async(),
             updateCanvasAsync(),
