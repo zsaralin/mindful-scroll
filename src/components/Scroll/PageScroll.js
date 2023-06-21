@@ -250,23 +250,23 @@ export const redrawCanvas =  async() => {
         // fillCtx.drawImage(newFill, 0, 0)
         // topCtx.clearRect(0, 0, fillC.width, fillC.height);
         updateCanvas0()
-
-            Promise.all([
-            // updateCanvas0Async(),
-            updateCanvas2Async(),
-            updateCanvasAsync(),
-            // updateCanvas2Async(),
-            // clearAndDrawAsync('invis-canvas', newInvis),
-            // clearAndDrawAsync('tiling-canvas', newTiling),
-            // drawSecondTilingAsync()
-        ])
-            .then(() => {
-
+        updateCanvas2()
+        updateCanvas()
+        //     Promise.all([
+        //     // updateCanvas0Async(),
+        //     // updateCanvas2Async(),
+        //     // updateCanvasAsync(),
+        //     // updateCanvas2Async(),
+        //     // clearAndDrawAsync('invis-canvas', newInvis),
+        //     // clearAndDrawAsync('tiling-canvas', newTiling),
+        //     // drawSecondTilingAsync()
+        // ])
+        //     .then(() => {
+                setOffsetY(whiteSpace + offsetI);
+                wrap.style.transform = `translate(0,-${whiteSpace + offsetI}px)`
                 clearAndDraw('invis-canvas', newInvis)
                 clearAndDraw('tiling-canvas', newTiling)
                 drawSecondTiling()
-                setOffsetY(whiteSpace + offsetI);
-                wrap.style.transform = `translate(0,-${whiteSpace + offsetI}px)`
                 drawSecondTilingHelper()
 
 
@@ -289,9 +289,9 @@ export const redrawCanvas =  async() => {
                 offsetI = 400;
                 refreshSpot = top + offsetI - 100;
                 return false
-            })
-            .catch((error) => {
-            });
+            // })
+            // .catch((error) => {
+            // });
 
     } else {
         wrap.style.transform = `translate(0,-${offsetY}px)`;

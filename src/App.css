@@ -1,7 +1,7 @@
 /*@import "compass/css3";*/
 
 .App {
-    touch-action: auto;
+    touch-action: none;
     font-family: 'Montserrat', sans-serif;
     -webkit-appearance: none;
 }
