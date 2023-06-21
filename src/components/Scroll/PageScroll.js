@@ -136,7 +136,7 @@ function updateCanvas2() {
 
 }
 
-function updateCanvas0() {
+async function updateCanvas0() {
     const topCtx = topC.getContext('2d');
     // topCtx.fillStyle = "red"
     topCtx.clearRect(0, 400, fillC.width, fillC.height-400);
@@ -249,7 +249,7 @@ export const redrawCanvas =  async() => {
         // topCtx.clearRect(0, 0, fillC.width, fillC.height);
         // fillCtx.drawImage(newFill, 0, 0)
         // topCtx.clearRect(0, 0, fillC.width, fillC.height);
-        updateCanvas0()
+        updateCanvas0().then(
 
             Promise.all([
             // updateCanvas0Async(),
@@ -259,7 +259,7 @@ export const redrawCanvas =  async() => {
             // clearAndDrawAsync('invis-canvas', newInvis),
             // clearAndDrawAsync('tiling-canvas', newTiling),
             // drawSecondTilingAsync()
-        ])
+        ]))
             .then(() => {
                 setOffsetY(whiteSpace + offsetI);
                 wrap.style.transform = `translate(0,-${whiteSpace + offsetI}px)`

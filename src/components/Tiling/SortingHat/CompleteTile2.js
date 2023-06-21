@@ -44,19 +44,23 @@ export function completeTile2(tile, tiling) {
         solidFillFn(tile, fillType, underType);
     } else if (fillInfo.fillNum === 1) {
         const underType = helper(fillInfo.underW, under);
-
+        let logString;
         if (fillInfo.afterW === 0) {
             solidFillFn(tile, fillType, underType);
+            logString = fillType
         } else {
             const col = getCol(tile, fillType);
             const afterType = helper(fillInfo.afterW, ["complem", "inverseHue"]);
             afterFillFn(tile, afterType, underType, col);
+            logString = fillType + ',' + afterType
         }
         const ditherBool = Math.random() < fillInfo.ditherW;
         const i = helper(ditherW, ditherI);
         if (ditherBool) {
             dither(tile, i);
+            logString += ',' + "dither"
         }
+        logFillTile(logString, underType, tiling.I)
     } else if (fillInfo.fillNum === 2) {
         solidFillFn(tile, fillType, true);
         afterBackFillFnMain(tiling, tile);
