@@ -205,7 +205,7 @@ export const redrawCanvas =  async() => {
         newTiling = document.createElement('canvas');
 
         newInvis.width = newTiling.width = invisC.width;
-        newInvis.height = newTiling.height = refreshSpot + window.innerHeight//invisC.height;
+        newInvis.height = newTiling.height = basicVersion ? invisC.height : refreshSpot + window.innerHeight//invisC.height;
 
         const newInvisCtx = newInvis.getContext('2d');
         const newTilingCtx = newTiling.getContext('2d');
@@ -306,9 +306,9 @@ export const updateOffCanvas = () => {
     newFill = document.createElement('canvas');
     newTop = document.createElement('canvas');
     newFill.width = fillC.width;
-    newFill.height = refreshSpot + window.innerHeight//fillC.height;
+    newFill.height = basicVersion ? fillC.height:refreshSpot + window.innerHeight//fillC.height;
     newTop.width = fillC.width;
-    newTop.height = refreshSpot + window.innerHeight//fillC.height;
+    newTop.height = basicVersion ? fillC.height: refreshSpot + window.innerHeight//fillC.height;
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
 
@@ -336,7 +336,6 @@ export const updateOffCanvas = () => {
     drawn = false;
     Promise.all([drawFillImage(), drawTopImage()])
         .then(() => {
-            console.log('hey I just FILLED RED')
             drawn = true;
             return
         });

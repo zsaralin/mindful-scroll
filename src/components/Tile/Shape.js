@@ -12,12 +12,15 @@ function getRandomNum(min, max) {
 }
 
 export function getRandomShapeOld(currYMax) {
+    const c = document.getElementById('top-canvas').getContext('2d')
+    c.fillStyle = "Red"
     let path = new Path2D()
     let dimension = []
-    let index = getRandomNum(0, 15)
+    let index = 0//getRandomNum(0, 15)
     if (index === 0) { //circle
         path.ellipse(window.innerWidth / 2, currYMax + 200, 100, 100, 0, 0, Math.PI * 2);
         dimension = [window.innerWidth / 2 - 100, window.innerWidth / 2 + 100, currYMax + 100, currYMax + 300]
+        c.fillRect(dimension[0], dimension[2], dimension[1]-dimension[0], dimension[3]-dimension[2])
     }
     if (index === 1) { // horizontal ellipse
         path.ellipse(window.innerWidth / 2, currYMax + 200, 115, 80, 0, 0, Math.PI * 2);

@@ -1,7 +1,9 @@
 export function getRandomShape(currYMax) {
+    const c = document.getElementById('top-canvas').getContext('2d')
+    c.fillStyle = "red"
     let path = new Path2D()
     let dimension = []
-    let index = getRandomNum(0, 16)
+    let index =8// getRandomNum(0, 16)
 
     if (index === 0) {
         // circle
@@ -10,20 +12,21 @@ export function getRandomShape(currYMax) {
         const r = window.innerWidth / 8 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 8 + 100
         path.ellipse(x, y, r, r, 0, 0, Math.PI * 2);
         dimension = [x - r, x + r, y - r, y + r];
+
     } else if (index === 1) {
         // horizontal ellipse
         const x = window.innerWidth / 2;
         const y = currYMax + window.innerHeight / 2;
         const r = window.innerWidth / 8 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 8 + 100
         path.ellipse(x, y, r , r- 50, 0, 0, Math.PI * 2);
-        dimension = [x - r, x + r, y - r - 50, y + r];
+        dimension = [x - r, x + r, y - r + 50, y + r-50];
     } else if (index === 2) {
         // vertical ellipse
         const x = window.innerWidth / 2;
         const y = currYMax + window.innerHeight / 2;
         const r = window.innerWidth / 8 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 8 + 100
         path.ellipse(x, y, r-50 , r, 0, 0, Math.PI * 2);
-        dimension = [x - r, x + r-50, y - r, y + r];
+        dimension = [x - (r-50), x + r-50, y - r, y + r];
     } else if (index === 3) {
         // square
         const width = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The width of the rectangle
@@ -66,7 +69,7 @@ export function getRandomShape(currYMax) {
         dimension = [x - base / 2, x + base / 2, y - height, y];
     } else if (index === 6) {
         // rhombus
-        const baseSize = window.innerWidth / 2 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 2 + 100;
+        const baseSize = ((window.innerWidth / 2 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 2 + 100) * 1.2); // Adjust the base size scaling factor
         const width = baseSize; // Width of the rhombus
         const height = baseSize; // Height of the rhombus
         const x = window.innerWidth / 2; // X-coordinate of the center
@@ -83,8 +86,8 @@ export function getRandomShape(currYMax) {
 
     if (index === 7) {
         // parallelogram
-        const width = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The width of the parallelogram
-        const height = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The height of the parallelogram
+        const width = Math.min(window.innerWidth / 4 + 100, window.innerWidth - 200); // The width of the parallelogram
+        const height = Math.min(window.innerWidth / 4 + 100, window.innerHeight - 200); // The height of the parallelogram
         const x = window.innerWidth / 2 - width / 2 + height / 4;
         const y = currYMax + window.innerHeight / 2 - height / 2;
 
@@ -94,23 +97,23 @@ export function getRandomShape(currYMax) {
         path.lineTo(x - height / 2, y + height);
         path.lineTo(x, y);
 
-        dimension = [x - height / 2, x + width, y - height / 2, y + height / 2];
+        dimension = [x - height / 2, x + width, y, y + height];
 
 
     } else if (index === 8) {
         // parallelogram
-        const width1 = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The width of the parallelogram
-        const height1 = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The height of the parallelogram
-        const x1 = window.innerWidth / 2 - width1 / 2;
-        const y1 = currYMax + window.innerHeight / 2 - height1 / 2;
+        const width = Math.min(window.innerWidth / 4 + 100, window.innerWidth - 200); // The width of the parallelogram
+        const height = Math.min(window.innerWidth / 4 + 100, window.innerHeight - 200); // The height of the parallelogram
+        const x = window.innerWidth / 2 - (width + height / 2) / 2; // Adjusted x-coordinate for centering
+        const y = currYMax + window.innerHeight / 2 - height / 2;
 
-        path.moveTo(x1, y1);
-        path.lineTo(x1 + width1 - height1 / 2, y1);
-        path.lineTo(x1 + width1, y1 + height1);
-        path.lineTo(x1 + height1 / 2, y1 + height1);
-        path.lineTo(x1, y1);
+        path.moveTo(x, y);
+        path.lineTo(x + width, y);
+        path.lineTo(x + width + height / 2, y + height); // Changed x-coordinate here
+        path.lineTo(x + height / 2, y + height); // Changed x-coordinate here
+        path.lineTo(x, y);
 
-        dimension = [x1, x1 + width1, y1, y1 + height1];
+        dimension = [x, x + width + height / 2, y, y + height]; // Adjusted the dimension accordingly
     } else if (index === 9) {
         // trapezoid
         const baseWidth = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The base width of the trapezoid
@@ -204,9 +207,9 @@ export function getRandomShape(currYMax) {
 
         dimension = [xCenter - radius, xCenter + radius, yCenter - radius, yCenter + radius];
     } else if (index === 14) {
-        // rectangle
-        const width = (window.innerWidth / 2 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 2 + 100) * 0.8; // The width of the rectangle (adjusted)
-        const height = (window.innerWidth / 2 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 2 + 100) * 0.5; // The height of the rectangle (adjusted)
+        // horizontal rectangle
+        const width = (window.innerWidth / 2 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 2 + 100) * 1.5; // The width of the rectangle (adjusted)
+        const height = (window.innerWidth / 2 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 2 + 100) * 1; // The height of the rectangle (adjusted)
         const x = window.innerWidth / 2 - width / 2;
         const y = currYMax + window.innerHeight / 2 - height / 2;
 
@@ -218,8 +221,9 @@ export function getRandomShape(currYMax) {
 
         dimension = [x, x + width, y, y + height];
     } else if(index === 15){
-        const width = (window.innerWidth / 2 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 2 + 100) * 0.5; // The width of the rectangle (adjusted)
-        const height = (window.innerWidth / 2 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 2 + 100) * 0.8; // The height of the rectangle (adjusted)
+        // vertical rectangle
+        const width = (window.innerWidth / 2 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 2 + 100) * 1; // The width of the rectangle (adjusted)
+        const height = (window.innerWidth / 2 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 2 + 100) * 1.5; // The height of the rectangle (adjusted)
         const x = window.innerWidth / 2 - width / 2;
         const y = currYMax + window.innerHeight / 2 - height / 2;
 
@@ -231,6 +235,7 @@ export function getRandomShape(currYMax) {
 
         dimension = [x, x + width, y, y + height];
     }
+    // c.fillRect(dimension[0], dimension[2], dimension[1]-dimension[0], dimension[3]-dimension[2])
 
     return [path, dimension];
 }

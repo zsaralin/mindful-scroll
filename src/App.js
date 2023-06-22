@@ -168,11 +168,14 @@ function App() {
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth
+            if(basicVersion) {
+                canvas.height = window.innerHeight * 6
+            } else{
             if(id === 'fill-canvas' || id === "top-canvas") {
                 canvas.height = Math.min(1700 * 3 + 400, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;}
             } else{
                 canvas.height = 1700*2 +400
-            }
+            }}
             // canvas.height = window.innerHeight * 6;
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
