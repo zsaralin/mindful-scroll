@@ -256,20 +256,7 @@ function App() {
         // stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
             // Check if the browser supports the WebHaptic API
-            if ('hapticActuators' in navigator) {
-                // Request access to haptic actuators
-                navigator.haptic.requestActuators().then((actuators) => {
-                    // Check if haptic actuators are available
-                    if (actuators.length > 0) {
-                        // Trigger a haptic feedback
-                        actuators[0].pulse();
-                    }
-                }).catch((error) => {
-                    console.error('Error accessing haptic actuators:', error);
-                });
-            } else {
-                console.error('WebHaptic API is not supported in this browser.');
-            }
+            window.Haptics.heartbeat(2)
             stopColorChange()
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
             pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType);
