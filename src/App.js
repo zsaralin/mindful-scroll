@@ -256,7 +256,7 @@ function App() {
         // stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
             // Check if the browser supports the WebHaptic API
-            window.Haptics.heartbeat(2)
+            window.Haptics.vibrate(2)
             stopColorChange()
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
             pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType);
