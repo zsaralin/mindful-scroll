@@ -113,6 +113,7 @@ import {logScrollEnd, logScrollMove, logScrollStart} from "./components/Logging/
 import {drawTwoShapes} from "./components/BasicVersion/AddShapes";
 import {logRefresh, logStart} from "./components/Logging/TimeLog";
 
+
 function App() {
     const canvas = useRef();
     let ctx;
@@ -256,7 +257,6 @@ function App() {
         // stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
             // Check if the browser supports the WebHaptic API
-            window.Haptics.vibrate(2)
             stopColorChange()
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
             pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType);
@@ -285,8 +285,13 @@ function App() {
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
         if (!doubleTouch && currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
             strokeMove = true;
-            window.Haptics.vibrate(2)
+            if (navigator.vibrate) {
+                // Prepare the vibration pattern shortly before playing
+                navigator.vibrate([10]);
 
+                // Play the vibration
+                navigator.vibrate(50);
+            }
             if (!dotRemoved) {
                 removeLastDot(currTile)
                 dotRemoved = true;

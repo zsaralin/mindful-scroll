@@ -18,7 +18,7 @@ export default function Music() {
     const [intro, setIntro] = useState(true); // do not remove useState
 
     function playMusic() {
-        music.handleUserAction()
+        // music.handleUserAction()
         // music.start()
         // audio.volume = 0.1
         // audio.addEventListener("ended", () => {
