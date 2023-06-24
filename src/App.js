@@ -285,6 +285,8 @@ function App() {
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
         if (!doubleTouch && currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
             strokeMove = true;
+            window.Haptics.vibrate(2)
+
             if (!dotRemoved) {
                 removeLastDot(currTile)
                 dotRemoved = true;

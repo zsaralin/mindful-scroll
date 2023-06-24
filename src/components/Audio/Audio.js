@@ -18,24 +18,24 @@ export default function Music() {
     const [intro, setIntro] = useState(true); // do not remove useState
 
     function playMusic() {
-        // music.handleUserAction()
+        music.handleUserAction()
         // music.start()
-        audio.volume = 0.1
-        audio.addEventListener("ended", () => {
-            let audio = new Audio(getRandomTrack());
-            audio.play()
-            // Do something here when the audio has ended
-        });
-        let playPromise = audio.play()
-        if (playPromise !== undefined) {
-            playPromise.then(function () {
-                // Automatic playback started!
-            }).catch(function (error) {
-                // Automatic playback failed.
-                // Show a UI element to let the user manually start playback.
-            });
+        // audio.volume = 0.1
+        // audio.addEventListener("ended", () => {
+        //     let audio = new Audio(getRandomTrack());
+        //     audio.play()
+        //     // Do something here when the audio has ended
+        // });
+        // let playPromise = audio.play()
+        // if (playPromise !== undefined) {
+        //     playPromise.then(function () {
+        //         // Automatic playback started!
+        //     }).catch(function (error) {
+        //         // Automatic playback failed.
+        //         // Show a UI element to let the user manually start playback.
+        //     });
             setIntro(false)
-        }
+        // }
     }
     return (
         <div className="introPage"  style={{visibility: intro ? 'visible' : 'hidden', }}>
