@@ -19,6 +19,7 @@ import {bottom, drawSecondTiling, drawSecondTilingHelper, drawTwo, q, secondTili
 import {activeFillAnim, redrawAnim, stopAnim} from "../Tile/FillTile/FillAnim";
 import {basicVersion} from "../Tiling/SortingHat/CompleteTile2";
 import {getTileWidth} from "../Tiling/TileWidth";
+import {redrawCanvasB} from "../BasicVersion/AddShapes";
 
 export let limitScroll = 0;
 let tilingC;
@@ -30,14 +31,20 @@ let wrap;
 export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
     const off = getOffsetY()
+    console.log('off ' + off)
     if (off - (currY - prevY) >= limitScroll) {
         // setOffsetY(off - (currY - prevY))
+        if(basicVersion){
+            setOffsetY(off - (currY - prevY))
+            redrawCanvasB()
+            // setOffsetY(off - (currY - prevY))
+        } else{
         redrawCanvas()
             .then((data) => {
                 if (data !== false) {
                     setOffsetY(off - (currY - prevY))
                 }
-            })
+            })}
     } else {
         setOffsetY(limitScroll)
     }
@@ -87,12 +94,14 @@ let drawn = false;
 export function getStrokesTop() {
     return (top + offsetI - 100 - whiteSpace);
 }
-export function updateOffCanvasWrapper(){
-    if(thirdStep){
+
+export function updateOffCanvasWrapper() {
+    if (thirdStep) {
         updateOffCanvas()
         // updateOffCanvasHelper()
     }
 }
+
 // export const updateOffCanvas = () => {
 //     // const refreshSpot = top + offsetI - 100;
 //     // console.log('updated')
@@ -114,7 +123,7 @@ export function updateOffCanvasWrapper(){
 //     drawn = true;
 // }
 
-function updateOffCanvasHelper(){
+function updateOffCanvasHelper() {
     // const refreshSpot = top + offsetI - 100;
     const h = refreshSpot + window.innerHeight //+ 400
     newTop = document.createElement('canvas');
@@ -139,7 +148,7 @@ function updateCanvas2() {
 function updateCanvas0() {
     const topCtx = topC.getContext('2d');
     // topCtx.fillStyle = "red"
-    topCtx.clearRect(0, 400, fillC.width, fillC.height-400);
+    topCtx.clearRect(0, 400, fillC.width, fillC.height - 400);
     // topCtx.height = refreshSpot + window.innerHeight;
 
 }
@@ -186,7 +195,7 @@ const drawSecondTilingAsync = () => {
     });
 };
 
-export function initCanv(){
+export function initCanv() {
     fillC = document.getElementById('fill-canvas');
     topC = document.getElementById('top-canvas');
     invisC = document.getElementById('invis-canvas');
@@ -195,9 +204,9 @@ export function initCanv(){
     refreshSpot = top + offsetI - 100;
 }
 
-export const redrawCanvas =  async() => {
+export const redrawCanvas = async () => {
     const offsetY = getOffsetY()
-    if (!firstStep && offsetY > (refreshSpot *(1/4))) {
+    if (!firstStep && offsetY > (refreshSpot * (1 / 4))) {
         // console.log('first step')
         firstStep = true;
 
@@ -205,7 +214,7 @@ export const redrawCanvas =  async() => {
         newTiling = document.createElement('canvas');
 
         newInvis.width = newTiling.width = invisC.width;
-        newInvis.height = newTiling.height = basicVersion ? invisC.height : refreshSpot + window.innerHeight//invisC.height;
+        newInvis.height = newTiling.height = refreshSpot + window.innerHeight//invisC.height;
 
         const newInvisCtx = newInvis.getContext('2d');
         const newTilingCtx = newTiling.getContext('2d');
@@ -230,7 +239,7 @@ export const redrawCanvas =  async() => {
             // Code to execute after both drawImage operations are complete
         });
     }
-    if (!thirdStep && offsetY >= (refreshSpot * (3/4)) && !drawn){
+    if (!thirdStep && offsetY >= (refreshSpot * (3 / 4)) && !drawn) {
         // console.log('heyyy')
         updateOffCanvas()
         thirdStep = true;
@@ -306,9 +315,9 @@ export const updateOffCanvas = () => {
     newFill = document.createElement('canvas');
     newTop = document.createElement('canvas');
     newFill.width = fillC.width;
-    newFill.height = basicVersion ? fillC.height:refreshSpot + window.innerHeight//fillC.height;
+    newFill.height = refreshSpot + window.innerHeight//fillC.height;
     newTop.width = fillC.width;
-    newTop.height = basicVersion ? fillC.height: refreshSpot + window.innerHeight//fillC.height;
+    newTop.height = refreshSpot + window.innerHeight//fillC.height;
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
 
@@ -328,7 +337,7 @@ export const updateOffCanvas = () => {
         return new Promise((resolve) => {
             // newTopCtx.fillStyle = "red"
             // newTopCtx.fillRect(0, refreshSpot - whiteSpace - offsetI - scrollBackAmount, fillC.width, h, 0, 0, fillC.width, h);
-            newTopCtx.drawImage(topC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h);
+                newTopCtx.drawImage(topC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h);
             resolve();
         });
     };

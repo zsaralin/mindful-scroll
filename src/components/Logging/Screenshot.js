@@ -1,17 +1,18 @@
-
 // Function to capture and save a screenshot of a specific element
 import {deleteObject, getStorage, listAll, ref, uploadString} from "firebase/storage";
 import {logIdString} from "./TimeLog";
-import {startTime, UID} from "./Logging";
+import {db, isLogging, startTime, UID} from "./Logging";
+import {addDoc, collection} from "firebase/firestore";
 
 const storage = getStorage()
 
 export async function startScreenshots() {
     setInterval(async function () {
-        if(UID && !document.hidden) captureScreenshot()
+        if (UID && !document.hidden) captureScreenshot()
     }, 10000);
 
 }
+
 function captureScreenshot() {
     var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
     var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
@@ -29,17 +30,18 @@ function captureScreenshot() {
     const combinedContext = combinedCanvas.getContext('2d');
 
     // Draw the source canvases onto the combined canvas
-    combinedContext.drawImage(canvas1,  0, 0, viewportWidth, viewportHeight,0, 0, viewportWidth, viewportHeight);
-    combinedContext.drawImage(canvas2,  0, 0, viewportWidth, viewportHeight,0, 0, viewportWidth, viewportHeight);
-    combinedContext.drawImage(canvas3,  0, 0, viewportWidth, viewportHeight,0, 0, viewportWidth, viewportHeight);
+    combinedContext.drawImage(canvas1, 0, 0, viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight);
+    combinedContext.drawImage(canvas2, 0, 0, viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight);
+    combinedContext.drawImage(canvas3, 0, 0, viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight);
 
     const dataUrl = combinedCanvas.toDataURL()
-    const fileName = `image_${Date.now() - startTime}.png`; // Append timestamp to the file name
+    const time= Date.now()
+    const fileName = `image_${time}.png`; // Append timestamp to the file name
 
     const storageRef = ref(storage, `${UID}/${logIdString()}/${fileName}`);
 
     uploadString(storageRef, dataUrl, 'data_url').then((snapshot) => {
-        console.log('Uploaded a data_url string!');
+        logScreenshotTime(time, `${UID}/${logIdString()}/${fileName}`)
     }).catch((error) => {
         console.error('Error uploading data URL:', error);
     });
@@ -53,4 +55,18 @@ async function deleteAllImages() {
     // Delete each file in the folder
     folderFiles.items.map((fileRef) =>
         deleteObject(fileRef))
+}
+
+function logScreenshotTime(time, path) {
+    if (isLogging) {
+        const coll = collection(db, "log");
+        const newMessage = {
+            time: time,
+            type: "E",
+            action: "pic",
+            path: path
+        }
+        addDoc(coll, newMessage);
+    }
+
 }

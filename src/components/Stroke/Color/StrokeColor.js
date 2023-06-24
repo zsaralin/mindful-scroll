@@ -1,11 +1,12 @@
 import {generateColourPal} from "./ColourPalette";
+import {basicVersion} from "../../Tiling/SortingHat/CompleteTile2";
 
 let colorChange = 15;
 let shortPause;
 let longPause;
 
-let colourPal = generateColourPal().cols
-let color = colourPal[Math.floor(Math.random() * 4)]
+let colourPal;// = basicVersion ? generateColourPal() : generateColourPal().cols
+let color ;//= basicVersion ? colourPal[0] :colourPal[Math.floor(Math.random() * 4)]
 let speed = 300;
 // let color = getRandomHSV()
 let randomColour = true;
@@ -43,6 +44,7 @@ export function colorDelayOld() {
 }
 
 export function colorDelay() {
+    if(!basicVersion && color){
     // changes color after a 2s pause, or changes hue slightly after a 500ms pause
     stopColorChange()
     let decreasing = false;
@@ -75,7 +77,7 @@ export function colorDelay() {
             numIntervals = 0
         }
     }, speed);
-}
+}}
 
 // triggered onMouseDown / onTouchStart
 export function stopColorChange() {
@@ -140,8 +142,8 @@ export function getColourPal() {
 }
 
 export function setColourPal(inp) {
-    colourPal = inp
-    color = colourPal[Math.floor(Math.random() * colourPal.length)]
+    colourPal = inp ? inp : basicVersion ? generateColourPal() : generateColourPal().cols
+    color = basicVersion ? colourPal[0] : colourPal[Math.floor(Math.random() * colourPal.length)]
     // console.log(colourPal)
     clearInterval(shortPause)
     colorDelay()

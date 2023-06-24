@@ -4,15 +4,19 @@ import {LINE_WIDTH} from "../../Constants";
 
 let shrinkStroke = true;
 
-export function drawShrinkingStroke(x0, y0, x1, y1, theColor) {
+export function drawShrinkingStroke(x0, y0, x1, y1, theColor, size) {
     let context = document.getElementById('top-canvas').getContext("2d");
-    let line = createShrinkingStroke(x0, y0, x1, y1, getLineWidth())
+    let line = createShrinkingStroke(x0, y0, x1, y1, size)
     context.fillStyle = theColor ? theColor : getCurrColor();
     context.fill(line);
 }
 
-export function createShrinkingStroke(x1, y1, x2, y2, theLineWidth) {
-    let endWidth = theLineWidth > 10 ? theLineWidth - 5 : 10;
+export function createShrinkingStroke(x1, y1, x2, y2, size) {
+    const theLineWidth = getLineWidth()
+    let endWidth = theLineWidth;
+    if(size === "small" )  endWidth = theLineWidth > 10 ? theLineWidth - 5 : 10;
+    else if(size === "big") endWidth = theLineWidth < 35 ? theLineWidth + .2 : 35;
+
     // calculate direction vector of point 1 and 2
     const directionVectorX = x2 - x1,
         directionVectorY = y2 - y1;

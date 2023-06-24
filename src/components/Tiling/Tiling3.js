@@ -1,6 +1,6 @@
-import {drawTiling, makeRandomTiling} from "./TilingGenerator";
+import {drawTiling, makeRandomTiling, tilingType} from "./TilingGenerator";
 import {getBoundsTiling, getBoundsTiling2} from "./TilingBounds";
-import {addShape, getShapeColor, getTilingPathDict} from "./TilingPathDict";
+import {addShape, getShapeColor, getTilingPathDict, tileIds} from "./TilingPathDict";
 import {getGrid, getTilingProp} from "./TilingProperties";
 import {setTiling} from "./SortingHat";
 import {getOffsetY} from "../Scroll/Offset";
@@ -12,44 +12,33 @@ import {checkOverlap} from "./TilingPath";
 import {getRandomShape} from "../BasicVersion/GetShape.js";
 import {v4 as uuidv4} from "uuid";
 import {basicVersion} from "./SortingHat/CompleteTile2";
+import {oldOverlapB, overlapB, secondDrawnB} from "../BasicVersion/AddShapes";
+import {generateColourPal} from "../Stroke/Color/ColourPalette";
+import {logTiling} from "../Logging/LogTilling";
 
 export let bottom; // bottom of current tiling
 export let top; // top of next tiling
-let pathArr = [] //array of path dict for each tiling
+export let pathArr = [] //array of path dict for each tiling
 
 let offsetX, offsetY;
 let xMin, xMax, yMin, yMax;
-export let tilingsDrawn = -1;
+export let tilingsDrawn = 0;
 
 export let secondDrawn = false;
 
 export let smallOffset = 0;
 
-export function getHeightTiling(){
+export function getHeightTiling() {
     firstTiling()
     return top;
 }
 
-const diff = 950;
+const diff = window.innerHeight;
+console.log('DIFF IS ' + diff + 'vs ' + window.innerHeight)
 
 export function drawTwo(pathArrI) {
     firstTiling(pathArrI?.[0]?.segArr)
-    if(basicVersion) {
-        firstTiling(pathArrI?.[0]?.segArr)
-        bottom = window.innerHeight * .8
-        secondTiling(pathArrI?.[1]?.segArr, 0)
-        const beforeTop = top;
-
-        bottom = window.innerHeight * 1.6
-        secondTiling(pathArrI?.[2]?.segArr, 0)
-        top = beforeTop
-        // bottom = window.innerHeight * 1.4
-        // secondTiling(pathArrI?.[3]?.segArr, 0)
-    }
-    else{
-        firstTiling(pathArrI?.[0]?.segArr)
-        secondTiling(pathArrI?.[1]?.segArr, 0)
-    }
+    secondTiling(pathArrI?.[1]?.segArr, 0)
 
     // bottom = 980*3;
     // secondTiling(pathArrI?.[1]?.segArr, 0)
@@ -60,24 +49,39 @@ export function drawTwo(pathArrI) {
     // top = newYmin
 
     pathArr.forEach(tiling => {
-        console.log('heyyyy')
         drawTiling(tiling)
-        tiling.fillInfo = getFillInfo()
         // setTiling(tiling)
         // ditherTiling(6, tiling.pathDict)
     });
 }
 
 export function getOffSmall(i) {
-    if (!secondDrawn) return 0
-    if(currI === 0){
-        smallOffset = -overlapOffset - oldOverlapOffset
-    }else if(currI === 1){
-        smallOffset = -overlapOffset
-    } else{
-        smallOffset = 0;
+    if (!basicVersion && !secondDrawn || basicVersion && !secondDrawnB) return 0
+    if (!basicVersion) {
+        if (currI === 0) {
+            smallOffset = -overlapOffset - oldOverlapOffset
+        } else if (currI === 1) {
+            smallOffset = -overlapOffset
+        } else {
+            smallOffset = 0;
+        }
+        return smallOffset
+    } else {
+        if (currI === 1) {
+            smallOffset = -overlapB - oldOverlapB
+        } else if (currI === 2) {
+            smallOffset = -overlapB
+        } else if (currI === 3) {
+            smallOffset = -overlapB
+
+        } else {
+            smallOffset = 0;
+        }
+        // smallOffset = window.innerHeight//-800
+
+        return smallOffset
+
     }
-    return smallOffset
 }
 
 function toTiling(t) {
@@ -86,69 +90,49 @@ function toTiling(t) {
     tiling.pathDict = getTilingPathDict(t, offsetX, offsetY);
     tiling.grid = getGrid(tiling.pathDict)
     tiling.bounds = [xMin, xMax, yMin, yMax]
-
+    tiling.offset = [offsetX, offsetY]
     const [midSeg, vert, orien] = getTilingProp(tiling.pathDict);
     tiling.midSeg = midSeg;
     tiling.vert = vert;
     tiling.orien = orien;
-    tiling.colourPal = [];
+    tiling.colourPal = generateColourPal().cols
     tiling.i = tilingsDrawn
+    tiling.fillInfo = getFillInfo()
+
+    logTiling(tiling.i, tileIds[tiling.i], tiling.bounds, tiling.offset, tiling.colourPal, tiling.fillInfo, tilingType)
     return tiling
 }
 
 export function firstTiling(inputArr) {
+
     pathArr = []
-    if(basicVersion) {
-        const shape = getRandomShape(0)
-        const pathDict = addShape(shape)
-        const tiling = {pathDict: pathDict}
-        tiling.colourPal = [];
-        tiling.i = tilingsDrawn;
-        pathArr.push(tiling);
-        [xMin, xMax, yMin, yMax] = shape[1]
-        bottom = yMin + window.innerHeight;//+ 400 - 400;
-        top = yMin + 100;
-    }
-    else{
-        let t = makeRandomTiling(inputArr);
-        [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
-        offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
-        offsetY = -yMin + TOP_PAGE_SPACE ;
-        pathArr.push(toTiling(t));
-        bottom = yMax - yMin + TOP_PAGE_SPACE //+ BETWEEN_SPACE
-        top = bottom
-    }
+    let t = makeRandomTiling(inputArr);
+    [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
+    console.log('bounnds ' + getBoundsTiling(t))
+
+    offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
+    offsetY = -yMin + TOP_PAGE_SPACE;
+    console.log('bounds2 ' + [xMin + offsetX, xMax + offsetX, yMin + offsetY, yMax + offsetY])
+
+    pathArr.push(toTiling(t));
+    bottom = yMax - yMin + TOP_PAGE_SPACE //+ BETWEEN_SPACE
+    top = bottom
     tilingsDrawn++;
 
 }
 
 let oldOffset = [0]
-export let  q  = 0;
+export let q = 0;
+
 export function secondTiling(inputArr, offset) {
-    if(basicVersion) {
-        const finOffset = offset !== undefined ? offset : 400;
-        const shape = getRandomShape(bottom)
-        const pathDict = addShape(shape)
-        const tiling = {pathDict: pathDict}
-        tiling.colourPal = [];
-        tiling.i = tilingsDrawn;
-        pathArr.push(tiling);
-        [xMin, xMax, yMin, yMax] = shape[1]
-        // offsetY = window.innerHeight + yMax - yMin//+ BETWEEN_SPACE
-        top = yMin - 300;
-        bottom = window.innerHeight*2//*1.5 //+ finOffset - 400;
-        tilingsDrawn++;
-        if (pathArr.length === 4) {
-            pathArr.shift()
-        }
-    }
-    else{
     const finOffset = offset !== undefined ? offset : 400;
     top = bottom + BETWEEN_SPACE //+ finOffset ;
     let t = makeRandomTiling(inputArr);
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
+    console.log('bounnds ' + getBoundsTiling(t))
     offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
     offsetY = bottom - yMin + finOffset + BETWEEN_SPACE
+    console.log('bounds2 ' + [xMin + offsetX, xMax + offsetX, yMin + offsetY, yMax + offsetY])
     if (oldOffset.length < 2) {
         oldOffset.push(offsetY + yMin);
     } else {
@@ -157,17 +141,19 @@ export function secondTiling(inputArr, offset) {
     }
 
     pathArr.push(toTiling(t))
-        tilingsDrawn++;
+    tilingsDrawn++;
 
-        if (pathArr.length === 4) {
+    if (pathArr.length === 4) {
         pathArr.shift()
     }
     bottom = yMax - yMin + TOP_PAGE_SPACE + finOffset
-}}
+}
+
 let counter = 0;
 let oldoldOverlap = 0;
 let oldOverlapOffset = 0
 export let overlapOffset = 0;
+
 export function drawSecondTiling() {
 
     // let x = pathArr[pathArr.length - 2].bounds[3] - pathArr[pathArr.length - 2].bounds[2] ;//+ pathArr[pathArr.length-2].bounds[2];
@@ -179,17 +165,12 @@ export function drawSecondTiling() {
     oldoldOverlap = oldOverlapOffset;
     oldOverlapOffset = overlapOffset
     overlapOffset = -(top - 400 - 100) //+ BETWEEN_SPACE//-(pathArr[pathArr.length - 2].bounds[3] - pathArr[pathArr.length - 1].bounds[2])
-
-    bottom = window.innerHeight * 2.8 ;
     secondTiling()
-    drawSecondTilingHelper()
-    secondTiling()
-    drawSecondTilingHelper()
 }
 
-export function drawSecondTilingHelper(){
-    // checkOverlap( pathArr[pathArr.length - 2].pathDict,  pathArr[pathArr.length - 1].pathDict, overlapOffset)
-    // top = getBoundsTiling2(pathArr[pathArr.length - 1].pathDict)[2] - 400
+export function drawSecondTilingHelper() {
+    checkOverlap(pathArr[pathArr.length - 2].pathDict, pathArr[pathArr.length - 1].pathDict, overlapOffset)
+    top = getBoundsTiling2(pathArr[pathArr.length - 1].pathDict)[2] - 400
     console.log('TOP IS ' + top)
     drawTiling(pathArr[pathArr.length - 1])
     pathArr[pathArr.length - 1].fillInfo = getFillInfo()
@@ -204,10 +185,10 @@ export function tilingIndex(y) {
 // used scaledY
 export function getTile(y, invisCol) {
     if (invisCol) {
-            const currTiling = pathArr[currI].pathDict
-            const tile = currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
-            if(tile !== undefined){
-                return tile
+        const currTiling = pathArr[currI].pathDict
+        const tile = currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
+        if (tile !== undefined) {
+            return tile
         }
         console.log('DID NOT GET TILE'
         )
@@ -217,18 +198,21 @@ export function getTile(y, invisCol) {
 }
 
 let currI = 0;
+
 export function getTiling(y, invisCol) {
     if (invisCol) {
-        for(let i=0;i<pathArr.length;i++){
+        for (let i = 0; i < pathArr.length; i++) {
             const ret = pathArr[i]
             const currTiling = ret.pathDict
             const tile = currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
-            if(tile !== undefined){
+            if (tile !== undefined) {
                 currI = i;
                 return [ret, tile]
             }
         }
     }
+    console.log('DID NOT GET TILING'
+    )
     return false
 }
 

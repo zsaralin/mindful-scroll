@@ -1,8 +1,9 @@
 import {getBoundsTile, getRows} from "./TilingBounds";
-import {tilingIndex} from "./TilingGenerator";
+import {tilingType} from "./TilingGenerator";
 import {EdgeShape, IsohedralTiling, tilingTypes} from "../../lib";
 import {v4 as uuidv4} from 'uuid';
 import {prevOffsetY} from "../Scroll/PageScroll";
+import {tilingsDrawn} from "./Tiling3";
 
 const SQUARE_INDEX = 67
 let transition1x = 1;
@@ -12,6 +13,7 @@ let transition2y = 1;
 let transition = 1;
 
 let idDict = {}
+export const tileIds = {} // contains all tile ids for each tiling
 const colourArr = fillArrayWithUniqueRGB()
 
 export function getTilingPathDict(segArr, offsetX, offsetY) {
@@ -20,7 +22,7 @@ export function getTilingPathDict(segArr, offsetX, offsetY) {
     let colorIndex = 0
     const cols = colourArr.splice(0, segArr.length);
     colourArr.push(...cols);
-    if (tilingIndex === SQUARE_INDEX) transition = [0.98, 1.02][Math.floor(Math.random() * 2)]
+    if (tilingType === SQUARE_INDEX) transition = [0.98, 1.02][Math.floor(Math.random() * 2)]
     for (let i = 0; i < segArr.length; i++) { // for each tile in tiling
         let path = new Path2D()
         let start = true;
@@ -93,6 +95,8 @@ export function getTilingPathDict(segArr, offsetX, offsetY) {
             strokeType: null,
         }
         idDict[id] = pathDict[cols[colorIndex]]
+        tileIds[tilingsDrawn] = tileIds[tilingsDrawn] || [];
+        tileIds[tilingsDrawn].push(JSON.stringify({id: id, bounds: bounds, offset: [offsetX, offsetY]}));
         colorIndex++;
     }
     return pathDict //return false if no tile was drawn (i.e., no tile was within the bounds)

@@ -6,6 +6,7 @@ import {getStorage, ref, uploadBytes, uploadString, listAll, deleteObject} from 
 import * as htmlToImage from 'html-to-image';
 import {dateString, logIdString} from "./TimeLog";
 
+export let isLogging  = false;
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -25,6 +26,7 @@ export const startTime = Date.now();
 export const UID = setupParticipant()
 
 export function setupParticipant() {
+    // deleteAllCollections()
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     // Retrieving the participant number
@@ -54,7 +56,7 @@ export async function deleteMessages(coll) {
 async function deleteAllCollections() {
     const db = getFirestore();
     const collectionNames = ['dot', 'scrollEnd', 'scrollMove',
-    'scrollStart', 'strokeEnd', 'strokeMove', 'strokeStart']; // Add the names of your collections
+    'scrollStart', 'strokeEnd', 'strokeMove', 'strokeStart', 'fillTile']; // Add the names of your collections
 
     // Delete each collection and its documents
     for (const collectionName of collectionNames) {

@@ -1,90 +1,110 @@
 import {addDoc, collection} from "firebase/firestore";
-import {db, deleteMessages, startTime, UID} from "./Logging";
+import {db, deleteMessages, isLogging, startTime, UID} from "./Logging";
 
-let startT;
-let speedArr = []
-export function logStrokeStart(type, col, lw, pos, tilingI) {
-    startT = Date.now() - startTime
-    const coll = collection(db, "strokeStart");
-    // deleteMessages(coll)
-
-    const newMessage = {
-        time: startT,
-        name: "strokeStart",
-        event: {"participant": UID,
-            "type": type,
-            "col": col,
-            "lw": lw,
-            "pos": pos.toString(),
-            "tiling": tilingI}
-    };
-    addDoc(coll, newMessage);
-}
-export async function logStrokeMove(type, col, lw, pos, tilingI, speed) {
-    const coll = collection(db, "strokeMove");
-    const newMessage = {
-        time: Date.now() - startTime,
-        name: "strokeMove",
-        event: {"participant": UID,
-            "type": type,
-            "col": col,
-            "lw": lw,
-            "pos": pos.toString(),
-            "tiling": tilingI,
-            // "speed" : speed,
+export function logStrokeStart(x, y, touchType, angle, force, lw, tileId, tilingId, col, filled, totCol) {
+    if (isLogging) {
+        const coll = collection(db, "log");
+        const newMessage = {
+            time: Date.now(),
+            type: "I",
+            action: "st",
+            uid: UID,
+            event: "D",
+            x: x,
+            y: y,
+            typeTouch: touchType ? touchType : "null",
+            angle: angle,
+            force: force,
+            lw: lw,
+            tileId: tileId,
+            tilingId: tilingId,
+            col: col,
+            filled: filled,
+            totCol: totCol,
         }
-    };
-    speedArr.push(speed)
-    addDoc(coll, newMessage);
-}
-export async function logStrokeEnd(type, col, lw, tilingI) {
-    const coll = collection(db, "strokeEnd");
-    const endTime = Date.now() - startTime;
-    const newMessage = {
-        time: endTime,
-        name: "strokeEnd",
-        event: {"participant": UID,
-            "type": type,
-            "col": col,
-            "lw": lw,
-            // "pos": pos.toString(),
-            "tiling": tilingI,
-            "speed" : calculateAverage(speedArr),
-            "duration": endTime - startT,
-        }
-    };
-    speedArr = []
-    addDoc(coll, newMessage);
-}
-
-function calculateAverage(numbers) {
-    if (numbers.length === 0) {
-        return 0; // Handle the case of an empty array to avoid division by zero
+        addDoc(coll, newMessage);
     }
-
-    let sum = 0;
-    for (let i = 0; i < numbers.length; i++) {
-        sum += numbers[i];
-    }
-
-    const average = sum / numbers.length;
-    return average;
 }
 
-export async function logDot(type, col, lw, pos, tilingI){
-    const coll = collection(db, "dot");
-    const endTime = Date.now() - startTime;
-    const newMessage = {
-        time: endTime,
-        name: "strokeEnd",
-        event: {"participant": UID,
-            "type": type,
-            "col": col,
-            "lw": lw,
-            "pos": pos.toString(),
-            "tiling": tilingI,
+export async function logStrokeMove(x0, y0, x1, y1, speedX, speedY, touchType, angle, force, lw, tileId, tilingId, col, stType, shrink, filled, totCol) {
+    if (isLogging) {
+        const coll = collection(db, "log");
+        const newMessage = {
+            time: Date.now(),
+            type: "I",
+            action: "st",
+            uid: UID,
+            event: "M",
+            x0: x0,
+            y0: y0,
+            x1: x1,
+            y1: y1,
+            vx: speedX,
+            vy: speedY,
+            typeTouch: touchType ? touchType : "null",
+            angle: angle,
+            force: force,
+            lw: lw,
+            tileId: tileId,
+            tilingId: tilingId,
+            col: col,
+            stType: stType,
+            shrink: shrink,
+            filled: filled,
+            totCol: totCol,
         }
-    };
-    addDoc(coll, newMessage);
+        addDoc(coll, newMessage);
+    }
+}
+
+export async function logStrokeEnd(x, y, touchType, angle, force, lw, tileId, tilingId, col, filled, totCol) {
+    if (isLogging) {
+        const coll = collection(db, "log");
+        const newMessage = {
+            time: Date.now(),
+            type: "I",
+            action: "st",
+            uid: UID,
+            event: "U",
+            x: x,
+            y: y,
+            typeTouch: touchType ? touchType : "null",
+            angle: angle,
+            force: force,
+            lw: lw,
+            tileId: tileId,
+            tilingId: tilingId,
+            col: col,
+            filled: filled,
+            totCol: totCol,
+        };
+        addDoc(coll, newMessage);
+    }
+}
+
+export async function logDot(x, y, touchType, angle, force, lw, tileId, tilingId, col, dotType, filled, totCol) {
+    if (isLogging) {
+        const coll = collection(db, "log");
+        const newMessage = {
+            time: Date.now(),
+            type: "I",
+            action: "st",
+            uid: UID,
+            event: "U",
+            x: x,
+            y: y,
+            typeTouch: touchType ? touchType : "null",
+            angle: angle,
+            force: force,
+            lw: lw,
+            tileId: tileId,
+            tilingId: tilingId,
+            col: col,
+            dotType: dotType,
+            filled: filled,
+            totCol: totCol,
+        };
+        addDoc(coll, newMessage);
+    }
 
 }

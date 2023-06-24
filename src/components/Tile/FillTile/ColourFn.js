@@ -13,7 +13,7 @@ import {leastUsed4, mostUsed, mostUsed4} from "../../Effects/CommonColours";
 import {getColourPal} from "../../Stroke/Color/StrokeColor";
 
 export function setCols(tile, col0, col1){
-    let cols;
+    let cols; colorCode = "null"
     if (tile.colors.length === 1) {
         cols = setCol1(tile, col0)
     } else {
@@ -47,6 +47,7 @@ function getShades(col) {
     return cols;
 }
 
+export let colorCode = "null"
 function setCol1(tile, weightsI) {
     // let equ = 1/6
     // let weights = [equ, equ, equ, equ, equ, equ];
@@ -56,7 +57,7 @@ function setCol1(tile, weightsI) {
     for (let i = 0; i < weights.length; i++) {
         cumulativeWeight += weights[i];
         if (randomNum < cumulativeWeight) {
-            console.log(`I is ${i}`)
+            colorCode = `1_${i}`;
             switch (i) {
                 case 0:
                     console.log('case 0')
@@ -96,6 +97,7 @@ function setCol2Plus(tile) {
     for (let i = 0; i < weights.length; i++) {
         cumulativeWeight += weights[i];
         if (randomNum < cumulativeWeight) {
+            colorCode = `2Plus_${i}`;
             switch (i) {
                 // [2,3,4,5] at random
                 case 0:

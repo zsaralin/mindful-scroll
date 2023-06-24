@@ -1,5 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import {UID} from "./Logging/Logging";
+import {logTimer} from "./Logging/TimeLog";
 
 export default function TimerClock() {
     // Timer configuration
@@ -59,6 +60,7 @@ export default function TimerClock() {
                 elapsedTime++;
                 setTimeout(updateTimer, 1000);
             } else {
+                logTimer()
                 isTimerDone = true;
                 drawTimer();
                 canvas.addEventListener('click', handleClick);

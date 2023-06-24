@@ -29,7 +29,7 @@ let scale = 1;
 let ST;
 let list;
 
-export let tilingIndex;
+export let tilingType;
 
 function getSegArr(tiling, edges) {
     let segArr = [] // array of paths for a tile
@@ -115,8 +115,8 @@ export function makeRandomTilingHelper(t) {
         scale = getScaler(t.t)
         return getSegArr(t.t, t.e)
     }
-    tilingIndex = generateRandomNum()
-    const tp = tilingTypes[tilingIndex];
+    tilingType = generateRandomNum()
+    const tp = tilingTypes[tilingType];
      tiling = new IsohedralTiling(tp);
 
     // Randomize the tiling vertex parameters

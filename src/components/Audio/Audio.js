@@ -1,8 +1,11 @@
 import {useState} from "react";
 import {getRandomTrack} from "./Tracks";
+import GenerativeMusic from './GenerativeMusic.js';
 
 let audio = new Audio(getRandomTrack());
 let audioOn = true;
+
+const music = new GenerativeMusic();
 
 export function getAbsArray(arr) {
     for (let i = 0; i < arr.length; i++) {
@@ -15,7 +18,9 @@ export default function Music() {
     const [intro, setIntro] = useState(true); // do not remove useState
 
     function playMusic() {
-        audio.volume = 0.2
+        // music.handleUserAction()
+        // music.start()
+        audio.volume = 0.1
         audio.addEventListener("ended", () => {
             let audio = new Audio(getRandomTrack());
             audio.play()

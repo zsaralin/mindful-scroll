@@ -15,13 +15,13 @@ export function fillPattern(tile, col0, col1) {
     // let cols = tile.fillColors ? tile.fillColors : (tile.fillColors = setCols(tile));
     const cols = tile.fillColors ? tile.fillColors : setCols(tile, col0, col1)
     const [midX, midY] = findMid(tile)
-    // ctx.save()
-    // ctx.clip(tile.path)
+    ctx.save()
+    ctx.clip(tile.path)
     fillTile(tile, "input", false, cols[0])
     scaledStroke(ctx, tile, cols[0], 30, .5, midX, midY)
     scaledStroke(ctx, tile, cols[1], 70, .4, midX, midY)
     scaledStroke(ctx, tile, cols[2] ? cols[2] : cols[0], 60, .2, midX, midY)
-    // ctx.restore()
+    ctx.restore()
 }
 
 function findMid(tile) {
