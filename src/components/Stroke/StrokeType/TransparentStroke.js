@@ -6,7 +6,7 @@ import {getPathWithId, getTileWithId} from "../../Tiling/TilingPathDict";
 import {getOffsetY} from "../../Scroll/Offset";
 import {getTile} from "../../Tiling/Tiling2";
 import {findTile, findTile1, redrawTileStrokes} from "./StrokeArr";
-import {getOffSmall, overlapOffset, smallOffset} from "../../Tiling/Tiling3";
+import {getOffSmall, oldOverlapOffset, overlapOffset, smallOffset} from "../../Tiling/Tiling3";
 
 let transStrokes = {}
 let dragging = false;
@@ -73,7 +73,7 @@ export function refreshTrans(id) {
         console.log('I AM FILLED ' + tile.fillColor)
         ctx.fillStyle = tile.fillColor.replace(/1\)$/, "0.5)");
         ctx.save()
-        ctx.translate(0, -smallOffset)
+        ctx.translate(0, -smallOffset )
         ctx.fill(tile.path)
         ctx.restore()
 

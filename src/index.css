@@ -1,6 +1,6 @@
 body {
   overflow: hidden;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-touch-callout: none; /* Safari */
@@ -9,9 +9,12 @@ body {
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none;
 }
-
+@font-face {
+  font-family: 'Montserrat';
+  src: url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400')
+}
 code {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Montserrat';
 
 }
 .wrapper {
@@ -50,6 +53,8 @@ code {
   background-color: white;
   z-index: 5;
   font-size: 25px;
+  font-family: 'Montserrat';
+
   animation: move 6s ease infinite;
 }
 

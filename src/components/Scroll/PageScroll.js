@@ -1,7 +1,7 @@
 import {drawBottomTiling, drawTwoTilings, refreshTilings, refreshTilings2, topSecondTiling} from "../Tiling/Tiling2";
 import {redrawStrokes} from "../Stroke/StrokeType/StrokeArr";
 import {redrawCompleteTiles} from "../Tile/CompleteTileArr";
-import {redrawActiveTiles} from "../Effects/Watercolor";
+import {redrawActiveTiles, stopWatercolor} from "../Effects/Watercolor";
 import {setInternalOffset} from "../Tile/CompleteTile";
 import {BETWEEN_SPACE, SCROLL_DELTA, SCROLL_DIST, TOP_PAGE_SPACE} from "../Constants";
 import {endAutoScroll, isAutoScrollActive} from "./AutoScroll";
@@ -31,7 +31,6 @@ let wrap;
 export function doScroll(currY, prevY) {
     // limitScroll = tilingArrLength() <= 2 ? 0 : (sumArrayPrev() - LINE_WIDTH)
     const off = getOffsetY()
-    console.log('off ' + off)
     if (off - (currY - prevY) >= limitScroll) {
         // setOffsetY(off - (currY - prevY))
         if(basicVersion){
@@ -162,21 +161,18 @@ const clearAndDraw = (canvasId, image) => {
 const updateCanvasAsync = () => {
     return new Promise((resolve, reject) => {
         updateCanvas();
-        console.log(3)
         resolve();
     });
 };
 const updateCanvas2Async = () => {
     return new Promise((resolve, reject) => {
         updateCanvas2();
-        console.log(2)
         resolve();
     });
 };
 const updateCanvas0Async = () => {
     return new Promise((resolve, reject) => {
         updateCanvas0();
-        console.log(0)
         resolve();
     });
 };
@@ -207,7 +203,6 @@ export function initCanv() {
 export const redrawCanvas = async () => {
     const offsetY = getOffsetY()
     if (!firstStep && offsetY > (refreshSpot * (1 / 4))) {
-        // console.log('first step')
         firstStep = true;
 
         newInvis = document.createElement('canvas');
@@ -240,7 +235,6 @@ export const redrawCanvas = async () => {
         });
     }
     if (!thirdStep && offsetY >= (refreshSpot * (3 / 4)) && !drawn) {
-        // console.log('heyyy')
         updateOffCanvas()
         thirdStep = true;
     }
@@ -298,6 +292,9 @@ export const redrawCanvas = async () => {
                 rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
                 offsetI = 400;
                 refreshSpot = top + offsetI - 100;
+
+                redrawActiveTiles()
+
                 return false
             })
             .catch((error) => {
@@ -327,7 +324,6 @@ export const updateOffCanvas = () => {
         return new Promise((resolve) => {
             newFillCtx.fillStyle = 'white';
             newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
-            console.log('heyyy ' + (refreshSpot - whiteSpace - offsetI))
             newFillCtx.drawImage(fillC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h);
             resolve();
         });

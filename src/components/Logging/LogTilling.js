@@ -1,8 +1,10 @@
 import {db, isLogging, UID} from "./Logging";
 import {addDoc, collection} from "firebase/firestore";
 import {tileIds} from "../Tiling/TilingPathDict";
+import {path} from "../Tiling/TilingPath";
 
 export function logTiling(tilingI, tiles, bounds, offset, colourPal, fillInfo, tilingType) {
+    console.log('path is ' + path)
     if (isLogging) {
         const coll = collection(db, "log");
         const newMessage = {
@@ -16,6 +18,7 @@ export function logTiling(tilingI, tiles, bounds, offset, colourPal, fillInfo, t
             offset: offset,
             colourPal: colourPal,
             tilingType: tilingType,
+            tilingPath: path,
             fillInfo: JSON.stringify(fillInfo),
         }
         addDoc(coll, newMessage);

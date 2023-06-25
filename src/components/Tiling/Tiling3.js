@@ -84,6 +84,9 @@ export function getOffSmall(i) {
     }
 }
 
+export function setSmallOffset(temp){
+    smallOffset -= temp;
+}
 function toTiling(t) {
     let tiling = {segArr: [], pathDict: {}, grid: []}
     tiling.segArr = t
@@ -108,11 +111,11 @@ export function firstTiling(inputArr) {
     pathArr = []
     let t = makeRandomTiling(inputArr);
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
-    console.log('bounnds ' + getBoundsTiling(t))
+    // console.log('bounnds ' + getBoundsTiling(t))
 
     offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
     offsetY = -yMin + TOP_PAGE_SPACE;
-    console.log('bounds2 ' + [xMin + offsetX, xMax + offsetX, yMin + offsetY, yMax + offsetY])
+    // console.log('bounds2 ' + [xMin + offsetX, xMax + offsetX, yMin + offsetY, yMax + offsetY])
 
     pathArr.push(toTiling(t));
     bottom = yMax - yMin + TOP_PAGE_SPACE //+ BETWEEN_SPACE
@@ -129,10 +132,10 @@ export function secondTiling(inputArr, offset) {
     top = bottom + BETWEEN_SPACE //+ finOffset ;
     let t = makeRandomTiling(inputArr);
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
-    console.log('bounnds ' + getBoundsTiling(t))
+    // console.log('bounnds ' + getBoundsTiling(t))
     offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
     offsetY = bottom - yMin + finOffset + BETWEEN_SPACE
-    console.log('bounds2 ' + [xMin + offsetX, xMax + offsetX, yMin + offsetY, yMax + offsetY])
+    // console.log('bounds2 ' + [xMin + offsetX, xMax + offsetX, yMin + offsetY, yMax + offsetY])
     if (oldOffset.length < 2) {
         oldOffset.push(offsetY + yMin);
     } else {
@@ -151,7 +154,7 @@ export function secondTiling(inputArr, offset) {
 
 let counter = 0;
 let oldoldOverlap = 0;
-let oldOverlapOffset = 0
+export let oldOverlapOffset = 0
 export let overlapOffset = 0;
 
 export function drawSecondTiling() {

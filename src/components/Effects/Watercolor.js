@@ -1,4 +1,4 @@
-import {getTile, smallOffset} from "../Tiling/Tiling3";
+import {getTile, oldOverlapOffset, overlapOffset, setSmallOffset, smallOffset} from "../Tiling/Tiling3";
 import {getCurrColor} from "../Stroke/Color/StrokeColor";
 import {LINE_WIDTH, TOP_CANV} from "../Constants";
 import {pushCompleteTile, redrawCompleteTile, redrawTiles} from "../Tile/CompleteTileArr";
@@ -9,6 +9,7 @@ import {fillTile} from "../Tile/FillTile/FillTile";
 import {gsap} from "gsap";
 import {strokeArr} from "../Stroke/StrokeType/StrokeArr";
 import {removeLastDot} from "../Stroke/Dot/DotArr";
+import {oldOverlapB} from "../BasicVersion/AddShapes";
 
 let activeTileArr = {} // semi coloured tiles (gradient)
 const ORIG_RADIUS = LINE_WIDTH;
@@ -20,10 +21,9 @@ let canvStr = TOP_CANV
 
 let animation;
 
-export function watercolor(x, y, r2, currTile) {
-    // removeLastDot(currTile)
+export function watercolor(x, y, r2, currTile, color) {
     currTile.watercolor = true;
-    let currColor = getCurrColor();
+    let currColor = color ? color: getCurrColor();
     let currPath = currTile.path;
     numActiveTiles += 1;
     var count = 0;
@@ -33,21 +33,23 @@ export function watercolor(x, y, r2, currTile) {
     let startTime = new Date().getTime();
 
     let ctx = document.getElementById(canvStr).getContext('2d');
-    ctx.save()
-    ctx.translate(0,-smallOffset)
+
     animation = gsap.to({value: r2 ?? ORIG_RADIUS}, {
         duration: 10,
         value: targetRadius,
         onUpdate: function () {
             // Update the radius of the gradient and redraw the path
             let r = this.targets()[0].value
-            let grd = ctx.createRadialGradient(x, y, ORIG_RADIUS, x, y, r);
+            let grd = ctx.createRadialGradient(x, y+ smallOffset, ORIG_RADIUS, x, y + smallOffset, r);
             grd.addColorStop(0, currColor);
             grd.addColorStop(.5, "white");
             ctx.fillStyle = grd;
+            ctx.save()
+            ctx.translate(0,-smallOffset)
             ctx.fill(currPath);
+            ctx.restore()
 
-            activeTileArr[currTile.id] = {tile: currTile, x, y, r, col: currColor}
+            if(!color) activeTileArr[currTile.id] = {tile: currTile, x, y, r, col: currColor}
 
             let currentTime = new Date().getTime();
             if (currentTime - startTime >= 1000) {
@@ -60,6 +62,7 @@ export function watercolor(x, y, r2, currTile) {
                         pushCompleteTile(currTile, currColor);
                         fillTile(currTile, "input", false, currColor);
                         currTile.watercolor = false;
+                        delete activeTileArr[currTile.id]
                     }
                 } else {
                     fillRatio = getFillRatio(currTile)
@@ -67,44 +70,36 @@ export function watercolor(x, y, r2, currTile) {
             }
         }
     });
-    ctx.restore()
-}
+    animations.push(animation); // Add the animation to the array
+    // console.log('LENGHTTTT ' + Object.keys(activeTileArr).length)
 
-function stopWatercolor() {
-    if (animation) {
-        animation.kill();
+}
+let animations = []; // Array to store all animation instances
+
+export function stopWatercolor() {
+    for (let i = 0; i < animations.length; i++) {
+        animations[i].kill(); // Kill each animation instance
     }
 }
 
-export function redrawActiveTiles(offsetY) {
+export function redrawActiveTiles() {
+    stopWatercolor();
+    // console.log('LENGHTTTT ' + Object.keys(activeTileArr).length)
     for (let tileId in activeTileArr) {
-        redrawActiveTile(tileId, offsetY)
+        redrawActiveTile(tileId)
     }
 }
 
 export function redrawActiveTile(tileId, offsetY) {
-    let ctx = document.getElementById(canvStr).getContext('2d');
-    stopWatercolor();
+    // let ctx = document.getElementById(canvStr).getContext('2d');
     let currTile;
     const tile = activeTileArr[tileId]
     if (tile) {
-        if (!offsetY) offsetY = 0;
-        else {
-            currTile = findTile(tileId, offsetY)
-        }
-        ctx.save();
-        ctx.translate(0, -offsetY);
-        // console.log('UM? ')
-
-        ctx.restore();
-        if (offsetY !== 0 && currTile) {
-            activeTileArr[currTile.id] = {tile: currTile, x: tile.x, y: tile.y, r: tile.r, col: getCurrColor()}
-            watercolor(tile.x, tile.y - offsetY, tile.r, currTile)
-
-            // ctx.fillStyle = "blue"
-            // ctx.fill(currTile.path)
-        }
-
+        currTile = tile.tile
+        tile.y = tile.y + overlapOffset
+        setSmallOffset(overlapOffset)
+        watercolor(tile.x, tile.y, tile.r, currTile, tile.col)
+        delete activeTileArr[tileId];
     }
 }
 

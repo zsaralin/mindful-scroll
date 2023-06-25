@@ -3,7 +3,7 @@ import './components/Bubble/Bubble.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import TimerClock from './components/Timer.js';
-import Music, {changeAudio, reduceAudio, triggerAudio, UID} from './components/Audio/Audio.js'
+import Music, {changeAudio, outsidePoly, reduceAudio, triggerAudio, UID} from './components/Audio/Audio.js'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/StrokeType/ShrinkingStroke'
 import {
     stopColorChange,
@@ -260,7 +260,7 @@ function App() {
             stopColorChange()
             moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
             pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType);
-            watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
+            if(!basicVersion) watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
             currTile.colors.push(currColor)
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
@@ -285,13 +285,6 @@ function App() {
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
         if (!doubleTouch && currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
             strokeMove = true;
-            if (navigator.vibrate) {
-                // Prepare the vibration pattern shortly before playing
-                navigator.vibrate([10]);
-
-                // Play the vibration
-                navigator.vibrate(50);
-            }
             if (!dotRemoved) {
                 removeLastDot(currTile)
                 dotRemoved = true;
@@ -325,6 +318,7 @@ function App() {
 
 else
     {
+        changeAudio()
         insidePoly[1] += 1;
     }
 }
@@ -658,8 +652,10 @@ const isAdmin = getAdminStatus();
 
 return (
     <div className="App" id='app'>
-        <style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');
-        </style>
+        {/*<style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');*/}
+        {/*</style>*/}
+        {/*<link rel="preload" href="assets/fonts/montserrat.woff" as="font" type="font/montserrat" crossOrigin>*/}
+
         <Helmet>
             <meta name="viewport"
                   content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>

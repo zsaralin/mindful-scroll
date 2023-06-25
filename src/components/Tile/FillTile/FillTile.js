@@ -30,12 +30,11 @@ export function fillTile(tile, str, under, inputCol){
     let ctx = document.getElementById(canvStr).getContext('2d');
 
     const col = getCol(tile, str, inputCol)
-    console.log('LOOK NOW '  + col + ' and '  + str)
-
-    console.log('IS BLACK OR CLOSE ? : ' + isBlackOrClose(col))
+    // console.log('LOOK NOW '  + col + ' and '  + str)
+    // console.log('IS BLACK OR CLOSE ? : ' + isBlackOrClose(col))
     ctx.fillStyle =  isBlackOrClose(col) ? '#333333'  : col; // replace black colours with dark grey
     tile.fillColor = col
-    console.log('fillColor : ' + tile.fillColor)
+    // console.log('fillColor : ' + tile.fillColor)
     // console.log('LOOK NOW '  + ctx.fillStyle)
     // ctx.fill(tile.path)
     tile.filled = true;
