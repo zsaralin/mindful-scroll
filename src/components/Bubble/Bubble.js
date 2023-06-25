@@ -38,18 +38,22 @@ export function setIsHiding(input) {
     isHiding = input
 }
 
-export function showColourPreview(x, y, newTile, handChange) {
-    if (isMoving) {
-        dontShow = true;
-        return
-    }
-    if (bubble.style.opacity === 0 && (newTile || handChange)) {
-        let loc = bubbleHelper(x, y)
-        gsap.to("#bubble", {
-            duration: 0, x: loc[0] + 'px', y: loc[1] + 'px', onComplete:
-                gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0, onComplete: startColourPreview})
-        })
-    } else gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0, onComplete: startColourPreview})
+export function showColourPreview(tile, newTile, handChange) {
+    // if (isMoving) {
+    //     dontShow = true;
+    //     return
+    // }
+    // if (bubble.style.opacity === 0 && (newTile || handChange)) {
+    //     const x = tile.bounds[0]
+    //     const y = tile.bounds[2]
+    //     bubble.style.opacity = 1;
+    //     let loc = bubbleHelper(x, y)
+    //     // gsap.to("#bubble", {
+    //     //     duration: 0, x: loc[0] + 'px', y: loc[1] + 'px', onComplete:
+       gsap.to("#bubble", {opacity: 1, duration:0, delay: 0, onComplete: startColourPreview})
+    //     // })
+    //     // } else gsap.to("#bubble", {opacity: 1, duration: 0, delay: 0, onComplete: startColourPreview})
+    // }
 }
 
 
@@ -79,7 +83,7 @@ export async function hideColourPreview() {
 }
 
 function bubbleHelper(x, y) {
-    let xDist = isRightHand() ? -85 : 10;
+    let xDist = isRightHand() ? -140 : 10;
     let newX = x + xDist
     let newY = y - BUBBLE_DIST;
     if (newX < 30) newX = 30;
@@ -98,7 +102,7 @@ export function startColourPreview() {
     clearInterval(colourInterval)
     colourInterval = setInterval(function () {
         bubble.style.setProperty('--col', getCurrColor());
-    }, 300);
+    }, 100);
 }
 
 export function resetColourPreview() {
@@ -146,7 +150,7 @@ export const moveFeedback = async (prevX, prevY, x, y, newTile) => {
 const moveFeedbackHelper = async (prevX, prevY, x, y, newTile) => {
     if (x === undefined) {
         gsap.to("#bubble", {
-            duration: .5, delay: 0, opacity: 0, onComplete() {
+            duration: 0, delay: 0, opacity: 0, onComplete() {
                 return
             }
         })
@@ -159,7 +163,7 @@ const moveFeedbackHelper = async (prevX, prevY, x, y, newTile) => {
     let loc = bubbleHelper(x, y)
     let dist = sqrt((prevY - loc[1]) ** 2 + (prevX - loc[0]) ** 2)
     gsap.to("#bubble", {
-        duration: Math.round(dist / 15),
+        duration: Math.round(dist / 30),
         x: loc[0] + 'px',
         y: loc[1] + 'px',
         ease: "power1.inOut",
@@ -197,13 +201,14 @@ export default function Bubble() {
         setSpeechPoints(speech?.node.getAttribute('d'));
         setCloudPoints(cloud?.node.getAttribute('d'));
 
-        colorDelay()
+        // colorDelay()
+        bubble.style.opacity = 0
         // gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0})
         startColourPreview()
 
     }, []);
     return (
-        <svg id="bubble" opacity='0'> >
+        <svg id="bubble" opacity='1'> >
             <path id="circle" d=
                 "M100.235 68.6081C100.235 68.6081 103.822 70.7256 106.335 74.8052C108.59 79.137 109.086 80.9176 108.798 85.7394C108.798 85.7394 108.516 89.7995 106.461 93.3396C104.405 96.8797 100.743 99.1008 100.743 99.1008C100.743 99.1008 98.5393 100.647 94.9781 101.638C91.4168 102.629 87.108 101.583 87.108 101.583C87.108 101.583 84.0633 101.308 79.7705 97.978C75.4776 94.6477 74.3966 90.7935 74.3966 90.7935C74.3966 90.7935 72.2355 86.247 73.5454 80.4168C74.4358 75.1299 77.8293 71.7761 77.8293 71.7761C77.8293 71.7761 82.2724 66.7676 89.3843 66.3092C95.7381 65.3379 100.235 68.6081 100.235 68.6081Z"
                   opacity={basicVersion ? '0' : '1'}/>

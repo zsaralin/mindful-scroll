@@ -37,7 +37,7 @@ import {
 import {changeBool, getFillMin, getFillRatio, isCircleInPath} from "./components/Tile/FillTile/FillRatio";
 import {
     BETWEEN_SPACE,
-    BUBBLE_DIST,
+    BUBBLE_DIST, FIFTH_WINDOW,
     FILL_RATIO,
     SCROLL_DELTA,
     SCROLL_DIST,
@@ -64,7 +64,7 @@ import {
     top
 } from "./components/Tiling/Tiling3";
 import {isSlowScrollOn} from "./components/Scroll/SlowScroll";
-import {startAutoScroll} from "./components/Scroll/AutoScroll";
+import {endAutoScroll, isAutoScrollActive, startAutoScroll} from "./components/Scroll/AutoScroll";
 import {getHandChange, handChanged, isRightHand, setHand, setHandChanged} from "./components/Effects/Handedness";
 import {startDot} from "./components/Stroke/Dot/DotType";
 import {drawBlurryStroke, drawDiagonalLine} from "./components/Effects/Blur";
@@ -112,6 +112,8 @@ import {logStrokeStart, logStrokeEnd, logStrokeMove, logDot} from "./components/
 import {logScrollEnd, logScrollMove, logScrollStart} from "./components/Logging/ScrollLog";
 import {drawTwoShapes} from "./components/BasicVersion/AddShapes";
 import {logRefresh, logStart} from "./components/Logging/TimeLog";
+import {hideBubble, showBubble} from "./components/Bubble/Bubble2";
+import {logAutoScrollEnd, logAutoScrollStart, logAutoScrollStop} from "./components/Logging/LogAutoScroll";
 
 
 function App() {
@@ -216,7 +218,6 @@ function App() {
         // invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
         const [r, g, b, a] = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data;
         const invisCol = [r, g, b, a].join(',')
-        console.log('invis ' + invisCol)
         if (invisCol === '0,0,0,0') {
             doubleTouch = true;
             logScrollStart(cursorX, cursorY, touchType, numTouches, angle, force, getOffsetY())
@@ -231,6 +232,7 @@ function App() {
             startY = prevCursorY;
             return
         }
+        if (currTile.watercolor) return
         // smallOffset = getOffSmall(index)
         // currTile = getTile(y, invisCol)
 
@@ -249,7 +251,6 @@ function App() {
         }
         // console.log(currTiling.fillInfo.strokeW + ' and ' + currTiling.fillInfo.strokeTypes)
         if (currTile) {
-            console.log('currTile')
             smallOffset = getOffSmall(index)
             currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
         }
@@ -257,12 +258,17 @@ function App() {
         // stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
             // Check if the browser supports the WebHaptic API
-            stopColorChange()
-            moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
+            // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
+
             pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType);
-            if(!basicVersion) watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
+            if (!basicVersion) watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
             currTile.colors.push(currColor)
+
+            if (cursorY > FIFTH_WINDOW) {
+                startAutoScroll();
+                logAutoScrollStart()
+            }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
 
             // let tiles = getOrienTiles(currTile, currTiling)
@@ -283,8 +289,11 @@ function App() {
     let dotRemoved = false;
 
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
-        if (!doubleTouch && currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
+        if (!doubleTouch && currTile && !currTile.watercolor && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
             strokeMove = true;
+            hideBubble()
+            stopColorChange()
+
             if (!dotRemoved) {
                 removeLastDot(currTile)
                 dotRemoved = true;
@@ -303,118 +312,175 @@ function App() {
                 }
                 pushShrinkingLine(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, sizeChange);
                 drawShrinkingStroke(prevScaledX, prevScaledY, scaledX, scaledY, currColor, sizeChange);
-            tooFast = true;
+                tooFast = true;
+
+            } else {
+                pushStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, getLineWidth(), currTile.strokeType);
+                startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), getLineWidth(), currTile.strokeType);
+            }
+            changeAudio(mouseSpeed)
+            if (cursorY > FIFTH_WINDOW) {
+                startAutoScroll();
+                logAutoScrollStart()
+            }
+            logStrokeMove(prevCursorX, prevCursorY, cursorX, cursorY, speed[0], speed[1], touchType, angle, force,
+                getLineWidth(), currTile.id, currTiling.i, currColor, currTile.strokeType, tooFast.toString(), currTile.filled.toString(), currTile.colors)
 
         } else {
-            pushStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, getLineWidth(), currTile.strokeType);
-            startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), getLineWidth(), currTile.strokeType);
+            changeAudio()
+            insidePoly[1] += 1;
         }
-        changeAudio(mouseSpeed)
-        startAutoScroll(cursorY);
-        logStrokeMove(prevCursorX, prevCursorY, cursorX, cursorY, speed[0], speed[1], touchType, angle, force,
-            getLineWidth(), currTile.id, currTiling.i, currColor, currTile.strokeType, tooFast.toString(), currTile.filled.toString(), currTile.colors)
+    }
+
+    let midId;
+
+    function onMouseDown(event) {
+        let strokeR = getLineWidth() / 2 // stroke radius
+        // detect left clicks
+        if (event.button === 0) {
+            leftMouseDown = true;
+            rightMouseDown = false;
+            const prevScaledX = prevCursorX;
+            const prevScaledY = toTrueY(prevCursorY);
+
+            onStrokeStart(prevScaledX, prevScaledY, cursorX, cursorY)
+        }
+        // detect right clicks
+        if (event.button === 2) {
+            hideBubble()
+            rightMouseDown = true;
+            leftMouseDown = false;
+        }
+        // update the cursor coordinates
+        prevCursorX = event.pageX - strokeR;
+        prevCursorY = event.pageY - strokeR;
 
     }
 
-else
-    {
-        changeAudio()
-        insidePoly[1] += 1;
-    }
-}
-
-let midId;
-
-function sendMidAlert() {
-    midId = setInterval(function () {
-        sendAlert()
-    }, 3000);
-}
-
-function onMouseDown(event) {
-    let strokeR = getLineWidth() / 2 // stroke radius
-    // detect left clicks
-    if (event.button === 0) {
-        leftMouseDown = true;
-        rightMouseDown = false;
+    function onMouseMove(event) {
+        // get mouse position
+        let strokeR = getLineWidth() / 2
+        cursorX = event.pageX - strokeR;
+        cursorY = event.pageY - strokeR;
+        const scaledX = cursorX;
+        const scaledY = toTrueY(cursorY);
         const prevScaledX = prevCursorX;
         const prevScaledY = toTrueY(prevCursorY);
 
-        onStrokeStart(prevScaledX, prevScaledY, cursorX, cursorY)
-    }
-    // detect right clicks
-    if (event.button === 2) {
-        moveFeedback()
-        rightMouseDown = true;
-        leftMouseDown = false;
-    }
-    // update the cursor coordinates
-    prevCursorX = event.pageX - strokeR;
-    prevCursorY = event.pageY - strokeR;
+        mouseSpeed = [event.movementX, event.movementY] // speed of stroke
 
-}
+        clearTimeout(watercolorTimer)
+        if (leftMouseDown) {
+            onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, mouseSpeed)
+        } else if (rightMouseDown) {
+            startScroll(Math.abs(mouseSpeed[1]), prevCursorY, cursorY)
 
-function onMouseMove(event) {
-    // get mouse position
-    let strokeR = getLineWidth() / 2
-    cursorX = event.pageX - strokeR;
-    cursorY = event.pageY - strokeR;
-    const scaledX = cursorX;
-    const scaledY = toTrueY(cursorY);
-    const prevScaledX = prevCursorX;
-    const prevScaledY = toTrueY(prevCursorY);
-
-    mouseSpeed = [event.movementX, event.movementY] // speed of stroke
-
-    clearTimeout(watercolorTimer)
-    if (leftMouseDown) {
-        onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, mouseSpeed)
-    } else if (rightMouseDown) {
-        startScroll(Math.abs(mouseSpeed[1]), prevCursorY, cursorY)
-
-    }
-    prevCursorX = cursorX;
-    prevCursorY = cursorY;
-
-}
-
-function onMouseUp() {
-    if (rightMouseDown === false) { // do not move colour preview when triggering control panel
-        if (!isPanelOn()) {
-            showColourPreview(cursorX, cursorY, prevTile !== currTile, getHandChange);
-            onStrokeEnd()
         }
-    } else {
-        // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
+        prevCursorX = cursorX;
+        prevCursorY = cursorY;
+
     }
 
-    startX = undefined;
-    startY = undefined;
-    leftMouseDown = false;
-    rightMouseDown = false;
-    endScroll();
-}
+    function onMouseUp() {
+        if (rightMouseDown === false) { // do not move colour preview when triggering control panel
+            if (!isPanelOn()) {
+                // showColourPreview(cursorX, cursorY, prevTile !== currTile, getHandChange);
+                onStrokeEnd()
+            }
+        } else {
+            // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
+        }
+
+        startX = undefined;
+        startY = undefined;
+        leftMouseDown = false;
+        rightMouseDown = false;
+        endScroll();
+    }
 
 // touch functions
-const prevTouches = [null, null]; // up to 2 touches
-let singleTouch = false;
-let doubleTouch = false;
-let timerId;
+    const prevTouches = [null, null]; // up to 2 touches
+    let singleTouch = false;
+    let doubleTouch = false;
+    let timerId;
 
-let angle = "null"
-let force = "null"
-let touchType = "null"
-let numTouches = "null"
+    let angle = "null"
+    let force = "null"
+    let touchType = "null"
+    let numTouches = "null"
 
-let requestId;
+    let requestId;
 
 
-function onTouchStart(event) {
-    touchType = event.touches[0]?.touchType;
-    numTouches = event.touches.length
-    cursorX = event.touches[0].pageX
-    cursorY = event.touches[0].pageY
-    if (numTouches === 1) {
+    function onTouchStart(event) {
+        touchType = event.touches[0]?.touchType;
+        numTouches = event.touches.length
+        cursorX = event.touches[0].pageX
+        cursorY = event.touches[0].pageY
+        if (numTouches === 1) {
+            if (touchType === "stylus") {
+                const touch = event.touches[0];
+                angle = touch.azimuthAngle;
+                if (touch.force > 0) {
+                    force = touch.force;
+                }
+            }
+            let r = getLineWidth() / 2
+            singleTouch = true;
+            doubleTouch = false;
+            const touch0X = cursorX = event.touches[0]?.pageX - r;
+            const touch0Y = cursorY = event.touches[0]?.pageY - r;
+
+            const scaledX = touch0X;
+            const scaledY = toTrueY(touch0Y);
+
+            prevCursorX = !prevCursorX ? 0 : prevTouches[0]?.pageX
+            prevCursorY = !prevCursorY ? 0 : prevTouches[0]?.pageY
+            // prevCursorX = !prevCursorX ? 0 : prevTouches[0].pageX
+            // prevCursorY = !prevCursorY ? 0 : touch0Y
+            onStrokeStart(scaledX, scaledY, touch0X, touch0Y)
+
+        } else if (event.touches.length >= 2) {
+            removeLastStroke(event.touches[0], event.touches[1], getOffsetY())
+            // moveFeedback()
+            singleTouch = false;
+            doubleTouch = true;
+            logScrollStart(cursorX, cursorY, touchType, numTouches, angle, force, getOffsetY())
+            console.log(`x: ${prevCursorX} + y: ${prevCursorY}`)
+        }
+
+        // store the last touches
+        prevTouches[0] = event.touches[0]
+        prevTouches[1] = event.touches[1]
+
+        // prevCursorX = cursorX
+        // prevCursorY = cursorY
+
+        // cursorX = event.touches[0].pageX
+        // cursorY = event.touches[0].pageY
+
+    }
+
+    let firstMove = false;
+
+    function onTouchMove(event) {
+        let r = getLineWidth() / 2
+
+        const touch0X = event.touches[0].pageX - r;
+        const touch0Y = event.touches[0].pageY - r;
+        const prevTouch0X = prevTouches[0]?.pageX - r;
+        const prevTouch0Y = prevTouches[0]?.pageY - r;
+
+        cursorX = event.touches[0].pageX //- r;
+        cursorY = event.touches[0].pageY //- r;
+
+        const scaledX = touch0X;
+        const scaledY = toTrueY(touch0Y);
+        const prevScaledX = prevTouch0X;
+        const prevScaledY = toTrueY(prevTouch0Y);
+        clearTimeout(watercolorTimer)
+        touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
+
         if (touchType === "stylus") {
             const touch = event.touches[0];
             angle = touch.azimuthAngle;
@@ -422,286 +488,228 @@ function onTouchStart(event) {
                 force = touch.force;
             }
         }
-        let r = getLineWidth() / 2
-        singleTouch = true;
-        doubleTouch = false;
-        const touch0X = cursorX = event.touches[0]?.pageX - r;
-        const touch0Y = cursorY = event.touches[0]?.pageY - r;
 
-        const scaledX = touch0X;
-        const scaledY = toTrueY(touch0Y);
-
-        prevCursorX = !prevCursorX ? 0 : prevTouches[0]?.pageX
-        prevCursorY = !prevCursorY ? 0 : prevTouches[0]?.pageY
-        // prevCursorX = !prevCursorX ? 0 : prevTouches[0].pageX
-        // prevCursorY = !prevCursorY ? 0 : touch0Y
-        onStrokeStart(scaledX, scaledY, touch0X, touch0Y)
-
-    } else if (event.touches.length >= 2) {
-        removeLastStroke(event.touches[0], event.touches[1], getOffsetY())
-        // moveFeedback()
-        singleTouch = false;
-        doubleTouch = true;
-        logScrollStart(cursorX, cursorY, touchType, numTouches, angle, force, getOffsetY())
-        console.log(`x: ${prevCursorX} + y: ${prevCursorY}`)
-    }
-
-    // store the last touches
-    prevTouches[0] = event.touches[0]
-    prevTouches[1] = event.touches[1]
-
-    // prevCursorX = cursorX
-    // prevCursorY = cursorY
-
-    // cursorX = event.touches[0].pageX
-    // cursorY = event.touches[0].pageY
-
-}
-
-let firstMove = false;
-
-function onTouchMove(event) {
-    let r = getLineWidth() / 2
-
-    const touch0X = event.touches[0].pageX - r;
-    const touch0Y = event.touches[0].pageY - r;
-    const prevTouch0X = prevTouches[0]?.pageX - r;
-    const prevTouch0Y = prevTouches[0]?.pageY - r;
-
-    cursorX = event.touches[0].pageX //- r;
-    cursorY = event.touches[0].pageY //- r;
-
-    const scaledX = touch0X;
-    const scaledY = toTrueY(touch0Y);
-    const prevScaledX = prevTouch0X;
-    const prevScaledY = toTrueY(prevTouch0Y);
-    clearTimeout(watercolorTimer)
-    touchSpeed = [touch0X - prevTouch0X, touch0Y - prevTouch0Y]
-
-    if (touchType === "stylus") {
-        const touch = event.touches[0];
-        angle = touch.azimuthAngle;
-        if (touch.force > 0) {
-            force = touch.force;
+        if (singleTouch) {
+            onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, touchSpeed)
         }
-    }
-
-    if (singleTouch) {
-        onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, touchSpeed)
-    }
-    if (doubleTouch) {
-        startScroll(Math.abs(touchSpeed[1]), prevTouch0Y, touch0Y)
-        logScrollMove(prevCursorX, prevCursorY, cursorX, cursorY, touchSpeed[0], touchSpeed[1], touchType, numTouches, angle, force, getOffsetY())
-    }
-    prevTouches[0] = event.touches[0];
-    prevTouches[1] = event.touches[1];
-
-    prevCursorX = cursorX
-    prevCursorY = cursorY
-
-}
-
-function callRatio(currTile) {
-    clearInterval(timerId)
-
-    timerId = setInterval(function () {
-        ratio = getFillRatio(currTile)
-    }, 500);
-
-}
-
-function onTouchEnd(event) {
-    if (!doubleTouch) {
-        if (!isPanelOn()) {
-            showColourPreview(prevTouches[0]?.pageX, prevTouches[0]?.pageY, prevTile !== currTile, getHandChange())
-            onStrokeEnd()
+        if (doubleTouch) {
+            startScroll(Math.abs(touchSpeed[1]), prevTouch0Y, touch0Y)
+            if (isAutoScrollActive) {
+                endAutoScroll()
+                logAutoScrollStop()
+            }
+            logScrollMove(prevCursorX, prevCursorY, cursorX, cursorY, touchSpeed[0], touchSpeed[1], touchType, numTouches, angle, force, getOffsetY())
         }
-    } else {
-        logScrollEnd(prevCursorX, prevCursorY, touchType, numTouches, angle, force, getOffsetY())
-    }
-    if (requestId) {
-        cancelAnimationFrame(requestId);
-        requestId = undefined;
-    }
-    singleTouch = false;
-    doubleTouch = false;
-    endScroll();
+        prevTouches[0] = event.touches[0];
+        prevTouches[1] = event.touches[1];
 
-    startX = undefined;
-    startY = undefined;
+        prevCursorX = cursorX
+        prevCursorY = cursorY
 
-    angle = "null"
-    force = "null"
-    touchType = "null"
-    numTouches = "null"
-
-}
-
-function onStrokeEnd() {
-    if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled && getFillRatio(currTile, smallOffset) > getFillMin()) {
-        currTile.filled = true;
-        completeTile2(currTile, currTiling, invisCol)
-    }
-    if (currTile && !strokeMove && !currTile.watercolor) {
-        currTile.dotType = currTile.dotType ? currTile.dotType : dotTypesHelper(currTile.strokeType)
-        drawJustDot(currTile)
-        logDot(cursorX, cursorY, touchType,
-            angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.dotType, currTile.filled.toString(), currTile.colors)
     }
 
-    updateOffCanvasWrapper()
-    dotRemoved = false;
-    resetLineWidth()
-    reduceAudio()
-    colorDelay()
-    clearTimeout(watercolorTimer)
-    clearInterval(reduceOpac)
-    sendAlert()
-    insidePoly = [0, 0]
-    tooFast = false;
-    prevTile = currTile;
-    prevTiling = currTiling;
-    clearTimeout(hidePreviewInterval)
-    clearInterval(timerId)
-    clearInterval(midId)
-    ratio = 0;
-    firstMove = false;
-    setHandChanged(false)
-    setDragging(false)
-    strokeMove = false;
+    function callRatio(currTile) {
+        clearInterval(timerId)
 
-    logStrokeEnd(cursorX, cursorY, touchType,
-        angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
-}
+        timerId = setInterval(function () {
+            ratio = getFillRatio(currTile)
+        }, 500);
 
-let reduceOpac;
+    }
 
-function reduceOpacityFeedback() {
-    let opacity = 0
-    let increaseOpac = true;
-    reduceOpac = setInterval(function () {
-        if (opacity < 1 && increaseOpac) {
-            opacity = opacity + .1;
+    function onTouchEnd(event) {
+        if (!doubleTouch) {
+            if (!isPanelOn()) {
+                // showColourPreview(currTile, prevTile !== currTile, getHandChange())
+                showBubble(currTile, prevTile !== currTile, getHandChange())
+                onStrokeEnd()
+            }
         } else {
-            increaseOpac = false;
-            opacity = opacity - .1
+            logScrollEnd(prevCursorX, prevCursorY, touchType, numTouches, angle, force, getOffsetY())
         }
-        document.getElementById("feedbackBar").style.color = 'rgba(0,0,0,' + opacity + ')'
-        if (opacity <= 0) {
-            clearInterval(reduceOpac)
+        if (requestId) {
+            cancelAnimationFrame(requestId);
+            requestId = undefined;
         }
-    }, 100)
-}
+        singleTouch = false;
+        doubleTouch = false;
+        endScroll();
 
+        startX = undefined;
+        startY = undefined;
 
-function showFeedback(x, y) {
-    // circle?.animate({ d: cloudPoints }, 1500, mina.easeout);
-    // bubble.style.transition = 'top 10s, left 10s'
-    // bubbleHelper(x,y)
-    // gsap.to(".thought", {opacity: 1, duration: 1, delay: 0,})
-}
+        angle = "null"
+        force = "null"
+        touchType = "null"
+        numTouches = "null"
 
-let slowArr = ['slow', 'soften', 'release', 'calm', 'rest', 'ease', 'soothe', 'relax']
-let goodArr = ['good', 'feel', 'grow', 'unwind', 'embrace', 'observe', 'reflect',]
-let focusArr = ['focus', 'notice', 'recognize', "center"]
-
-let word = ''
-
-const delay = ms => new Promise(res => setTimeout(res, ms));
-
-let sendingAlert = false;
-
-async function generateAlert() {
-    let insideRatio = insidePoly[1] / insidePoly[0]
-    // console.log(insideRatio)
-    if (tooFast) {
-        word = slowArr[Math.floor(Math.random() * slowArr.length)]
-        toSpeech(word)
-        sendingAlert = true;
-    } else if (insideRatio >= .6) {
-        toSpeech(focusArr[Math.floor(Math.random() * focusArr.length)])
-        sendingAlert = true;
-    } else if (insideRatio < 0.5 && insidePoly[0] !== 0) {
-        toCloud(goodArr[Math.floor(Math.random() * goodArr.length)])
-        sendingAlert = true;
     }
-    await delay(8000)
-    sendingAlert = false;
-}
 
-let alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
-let count = 0;
+    function onStrokeEnd() {
+        if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled && getFillRatio(currTile, smallOffset) > getFillMin()) {
+            currTile.filled = true;
+            completeTile2(currTile, currTiling, invisCol)
+        }
+        if (currTile && !strokeMove && !currTile.watercolor) {
+            currTile.dotType = currTile.dotType ? currTile.dotType : dotTypesHelper(currTile.strokeType)
+            drawJustDot(currTile)
+            logDot(cursorX, cursorY, touchType,
+                angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.dotType, currTile.filled.toString(), currTile.colors)
+        }
 
-async function sendAlert() {
-    if (!isPanelOn() && !sendingAlert) {
-        if (count === alertInterval) {
-            generateAlert();
-            alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
-            count = 0;
-        } else count++
+        updateOffCanvasWrapper()
+        dotRemoved = false;
+        resetLineWidth()
+        reduceAudio()
+        colorDelay()
+        clearTimeout(watercolorTimer)
+        clearInterval(reduceOpac)
+        insidePoly = [0, 0]
+        tooFast = false;
+        prevTile = currTile;
+        prevTiling = currTiling;
+        clearTimeout(hidePreviewInterval)
+        clearInterval(timerId)
+        clearInterval(midId)
+        ratio = 0;
+        firstMove = false;
+        setHandChanged(false)
+        setDragging(false)
+        strokeMove = false;
+        if (currTile) {
+            logStrokeEnd(cursorX, cursorY, touchType,
+                angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
+        }
     }
-}
 
-function getAdminStatus() {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    return urlParams.get('admin');
-}
+    let reduceOpac;
 
-const isAdmin = getAdminStatus();
+    function reduceOpacityFeedback() {
+        let opacity = 0
+        let increaseOpac = true;
+        reduceOpac = setInterval(function () {
+            if (opacity < 1 && increaseOpac) {
+                opacity = opacity + .1;
+            } else {
+                increaseOpac = false;
+                opacity = opacity - .1
+            }
+            document.getElementById("feedbackBar").style.color = 'rgba(0,0,0,' + opacity + ')'
+            if (opacity <= 0) {
+                clearInterval(reduceOpac)
+            }
+        }, 100)
+    }
 
-return (
-    <div className="App" id='app'>
-        {/*<style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');*/}
-        {/*</style>*/}
-        {/*<link rel="preload" href="assets/fonts/montserrat.woff" as="font" type="font/montserrat" crossOrigin>*/}
 
-        <Helmet>
-            <meta name="viewport"
-                  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-        </Helmet>
-        <div id="cp-wrapper" style={{display: isAdmin === 'true' ? 'block' : 'none'}}>
-            <button id="cp-button" onClick={showControlPanel}></button>
-            <ControlPanel/>
-        </div>
-        <TimerClock/>
-        <div id="angle" style={{position: "absolute", top: 0, display: 'none'}}> {angle}</div>
-        <div id="thought" style={{transform: 'scale(.9)',}}></div>
-        <Music/>
-        <div id="dots"></div>
+    function showFeedback(x, y) {
+        // circle?.animate({ d: cloudPoints }, 1500, mina.easeout);
+        // bubble.style.transition = 'top 10s, left 10s'
+        // bubbleHelper(x,y)
+        // gsap.to(".thought", {opacity: 1, duration: 1, delay: 0,})
+    }
 
-        <div className="wrapper" id="wrapper">
-            <div id="canvas-wrapper">
-                <canvas ref={canvas} id="fill-canvas"></canvas>
-                <canvas id="top-canvas" style={{display: ''}}></canvas>
+    let slowArr = ['slow', 'soften', 'release', 'calm', 'rest', 'ease', 'soothe', 'relax']
+    let goodArr = ['good', 'feel', 'grow', 'unwind', 'embrace', 'observe', 'reflect',]
+    let focusArr = ['focus', 'notice', 'recognize', "center"]
 
-                <canvas id="invis-canvas" style={{display: 'none',}}
-                ></canvas>
-                <canvas id="tiling-canvas" style={{display: '', background: '', zIndex: 2}}
-                        onMouseDown={onMouseDown}
-                        onMouseUp={onMouseUp}
-                        onMouseMove={onMouseMove}
-                        onTouchStart={onTouchStart}
-                        onTouchEnd={onTouchEnd}
-                        onTouchCancel={onTouchEnd}
-                        onTouchMove={onTouchMove}
-                >
-                </canvas>
+    let word = ''
+
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    let sendingAlert = false;
+
+    async function generateAlert() {
+        let insideRatio = insidePoly[1] / insidePoly[0]
+        // console.log(insideRatio)
+        if (tooFast) {
+            word = slowArr[Math.floor(Math.random() * slowArr.length)]
+            toSpeech(word)
+            sendingAlert = true;
+        } else if (insideRatio >= .6) {
+            toSpeech(focusArr[Math.floor(Math.random() * focusArr.length)])
+            sendingAlert = true;
+        } else if (insideRatio < 0.5 && insidePoly[0] !== 0) {
+            toCloud(goodArr[Math.floor(Math.random() * goodArr.length)])
+            sendingAlert = true;
+        }
+        await delay(8000)
+        sendingAlert = false;
+    }
+
+// let alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // random num between 5 and 10
+// let count = 0;
+
+// async function sendAlert() {
+//     if (!isPanelOn() && !sendingAlert) {
+//         if (count === alertInterval) {
+//             generateAlert();
+//             alertInterval = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+//             count = 0;
+//         } else count++
+//     }
+// }
+
+    function getAdminStatus() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        return urlParams.get('admin');
+    }
+
+    const isAdmin = getAdminStatus();
+
+    return (
+        <div className="App" id='app'>
+            {/*<style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&display=swap');*/}
+            {/*</style>*/}
+            {/*<link rel="preload" href="assets/fonts/montserrat.woff" as="font" type="font/montserrat" crossOrigin>*/}
+
+            <Helmet>
+                <meta name="viewport"
+                      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+            </Helmet>
+            <div id="cp-wrapper" style={{display: isAdmin === 'true' ? 'block' : 'none'}}>
+                <button id="cp-button" onClick={showControlPanel}></button>
+                <ControlPanel/>
             </div>
-            {/*<div id = "overlay">*/}
-            {/*    <div id = 'overlayTop'> </div>*/}
-            {/*    <div id = 'overlayBottom'> </div>*/}
-            {/*</div>*/}
-            <div id="gradRectangle"></div>
+            <TimerClock/>
+            <div id="angle" style={{position: "absolute", top: 0, display: 'none'}}> {angle}</div>
+            <div id="thought" style={{transform: 'scale(.9)',}}></div>
+            <Music/>
+            <div id="dots"></div>
 
+            <div className="wrapper" id="wrapper">
+                <div id="canvas-wrapper">
+                    <canvas ref={canvas} id="fill-canvas"></canvas>
+                    <canvas id="top-canvas" style={{display: ''}}></canvas>
+
+                    <canvas id="invis-canvas" style={{display: 'none',}}
+                    ></canvas>
+                    <canvas id="tiling-canvas" style={{display: '', background: '', zIndex: 2}}
+                            onMouseDown={onMouseDown}
+                            onMouseUp={onMouseUp}
+                            onMouseMove={onMouseMove}
+                            onTouchStart={onTouchStart}
+                            onTouchEnd={onTouchEnd}
+                            onTouchCancel={onTouchEnd}
+                            onTouchMove={onTouchMove}
+                    >
+                    </canvas>
+                </div>
+                {/*<div id = "overlay">*/}
+                {/*    <div id = 'overlayTop'> </div>*/}
+                {/*    <div id = 'overlayBottom'> </div>*/}
+                {/*</div>*/}
+                <div id="gradRectangle"></div>
+
+            </div>
+            {/*<div id="hidden">*/}
+            {/*    <div id = "hiddenTop"></div>*/}
+            {/*    <div id = "hiddenBottom"></div>*/}
+            {/*</div>*/}
+            <Bubble/>
         </div>
-        {/*<div id="hidden">*/}
-        {/*    <div id = "hiddenTop"></div>*/}
-        {/*    <div id = "hiddenBottom"></div>*/}
-        {/*</div>*/}
-        <Bubble/>
-    </div>
-);
+    );
 }
 
 export default App;

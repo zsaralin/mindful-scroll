@@ -20,6 +20,7 @@ import {activeFillAnim, redrawAnim, stopAnim} from "../Tile/FillTile/FillAnim";
 import {basicVersion} from "../Tiling/SortingHat/CompleteTile2";
 import {getTileWidth} from "../Tiling/TileWidth";
 import {redrawCanvasB} from "../BasicVersion/AddShapes";
+import {hideBubble} from "../Bubble/Bubble2";
 
 export let limitScroll = 0;
 let tilingC;
@@ -47,7 +48,10 @@ export function doScroll(currY, prevY) {
     } else {
         setOffsetY(limitScroll)
     }
-    if (isAutoScrollActive) endAutoScroll()
+    // if (isAutoScrollActive) {
+    //     endAutoScroll()
+    //     logAutoScrollEnd(currY)
+    // }
 }
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -373,7 +377,8 @@ let d = SCROLL_DIST
 
 export function startScroll(ySpeed, prevCursorY, cursorY) {
     // startEffect(prevCursorY, cursorY)
-    hideColourPreview()
+    hideBubble()
+    // hideColourPreview()
     // console.log(ySpeed)
     if ((ySpeed < 50 || !isSlowScrollOn()) && d === SCROLL_DIST) {
         requestAnimationFrame(() => {

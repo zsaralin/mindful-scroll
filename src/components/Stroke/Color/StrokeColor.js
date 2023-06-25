@@ -44,6 +44,7 @@ export function colorDelayOld() {
 }
 
 export function colorDelay() {
+    console.log('HI')
     if(!basicVersion && color){
     // changes color after a 2s pause, or changes hue slightly after a 500ms pause
     stopColorChange()
@@ -146,5 +147,5 @@ export function setColourPal(inp) {
     color = basicVersion ? colourPal[0] : colourPal[Math.floor(Math.random() * colourPal.length)]
     // console.log(colourPal)
     clearInterval(shortPause)
-    colorDelay()
+    // colorDelay()
 }

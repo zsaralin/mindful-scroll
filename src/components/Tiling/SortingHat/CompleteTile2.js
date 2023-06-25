@@ -38,7 +38,7 @@ export function completeTile2(tile, tiling) {
         underType = helper(fillInfo.underW, under);
         if (tile.colors > 2 && Math.random() < fillInfo.combinW) {
             fillEachPixel(tile);
-            logFillTile("fillEachPixel", underType.toString(), tile.i, tile.colors, tile.fillColor, tile.fillColors, colorCode, fillInfo.fillNum)
+            logFillTile("fillEachPixel", underType.toString(), tile.i, tile.colors, tile.fillColor, tile.fillColors, colorCode)
             return;
         }
         solidFillFn(tile, fillType, underType);
@@ -100,7 +100,7 @@ export function completeTile2(tile, tiling) {
         logStr += "," + afterStr
     }
     console.log(fillInfo.fillNum )
-    logFillTile(logStr, underType.toString(), tile.id, tile.colors, tile.fillColor, tile.fillColors, colorCode,fillInfo.fillNum)
+    logFillTile(logStr, underType.toString(), tile.id, tile.colors, tile.fillColor, tile.fillColors, colorCode)
 }
 
 function getCol(tile, str) {

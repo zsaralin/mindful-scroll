@@ -25,7 +25,7 @@ export function hideControlPanel() {
     controlPanelBackground.style.visibility  = 'hidden'
     gsap.to("#controlPanel", {left: -window.innerWidth + 'px', duration: 1, delay: 0})
     panelOn = false;
-    colorDelay()
+    // colorDelay()
 }
 
 export function showControlPanel() {

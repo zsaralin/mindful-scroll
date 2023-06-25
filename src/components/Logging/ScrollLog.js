@@ -3,7 +3,7 @@ import {db, deleteMessages, isLogging, startTime, UID} from "./Logging";
 
 export function logScrollStart(x, y, touchType, numTouches, angle, force,) {
     if (isLogging) {
-        const coll = collection(db, "touch");
+        const coll = collection(db, "log");
         const newMessage = {
             time: Date.now(),
             type: "I",
@@ -23,7 +23,7 @@ export function logScrollStart(x, y, touchType, numTouches, angle, force,) {
 
 export function logScrollMove(x0,y0,x1,y1, speedX, speedY, touchType, numTouches, angle, force,) {
     if (isLogging) {
-        const coll = collection(db, "touch");
+        const coll = collection(db, "log");
         const newMessage = {
             time: Date.now(),
             type: "I",
@@ -47,7 +47,7 @@ export function logScrollMove(x0,y0,x1,y1, speedX, speedY, touchType, numTouches
 
 export async function logScrollEnd(x, y, touchType, numTouches, angle, force) {
     if (isLogging) {
-        const coll = collection(db, "touch");
+        const coll = collection(db, "log");
         const newMessage = {
             time: Date.now(),
             type: "I",

@@ -1,10 +1,7 @@
 import {db, isLogging, startTime, UID} from "./Logging";
 import {addDoc, collection} from "firebase/firestore";
 
-export function logFillTile(type, under, tileId, colors, fillColor, fillColors, colorCode, fillNum) {
-    console.log(
-        'EY'
-    )
+export function logFillTile(type, under, tileId, colors, fillColor, fillColors, colorCode) {
     if(isLogging) {
         const coll = collection(db, "log");
         const newMessage = {
@@ -18,9 +15,35 @@ export function logFillTile(type, under, tileId, colors, fillColor, fillColors, 
             colors: colors,
             fillColor: fillColors,
             colorCode: colorCode,
-            fillNum : fillNum
         };
         addDoc(coll, newMessage);
     }
-    //, tile.i, tile.colors, tile.fillColor, tile.fillColors, colorCode)
+}
+export function logWaterStart(tileId, color){
+if(isLogging) {
+    const coll = collection(db, "log");
+    const newMessage = {
+        uid: UID,
+        time: Date.now(),
+        type: "E",
+        action: "ws",
+        tileId: tileId,
+        color: color
+    };
+    addDoc(coll, newMessage);
+}
+}
+export function logWaterEnd(tileId, color){
+    if(isLogging) {
+        const coll = collection(db, "log");
+        const newMessage = {
+            uid: UID,
+            time: Date.now(),
+            type: "E",
+            action: "ws",
+            tileId: tileId,
+            color: color
+        };
+        addDoc(coll, newMessage);
+    }
 }
