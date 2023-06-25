@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {getRandomTrack} from "./Tracks";
 import {gsap} from "gsap";
-
+import {getAudio} from './AudioFile'
 let audio = new Audio(getRandomTrack());
 let audioOn = true;
 audio.volume = 0;
@@ -19,21 +19,30 @@ export default function Music() {
     const [intro, setIntro] = useState(true); // do not remove useState
 
     function playMusic() {
-        audio.addEventListener("ended", () => {
-            audioChange = false;
-            let audio = new Audio(getRandomTrack());
-            audio.volume = 0;
-            audio.play()
-            playFromRandomTime()
-            gsap.to(audio,{volume: .1, duration: 10, onComplete: function(){
-                    audioChange = true;
-                }}) // // Final volume level (range: 0 to 1)
-            // Do something here when the audio has ended
-        });
-        playFromRandomTime()
-        gsap.to(audio,{volume: .1, duration: 10, onComplete: function(){
-            audioChange = true;
-            }}) // // Final volume level (range: 0 to 1)
+        const audioBuffer = getAudio()
+        const audioContext = new AudioContext();
+        const sourceNode = audioContext.createBufferSource();
+        sourceNode.buffer = audioBuffer;
+
+        sourceNode.connect(audioContext.destination);
+        console.log('HY')
+        sourceNode.start(0);
+
+        // audio.addEventListener("ended", () => {
+        //     audioChange = false;
+        //     let audio = new Audio(getRandomTrack());
+        //     audio.volume = 0;
+        //     audio.play()
+        //     playFromRandomTime()
+        //     gsap.to(audio,{volume: .1, duration: 10, onComplete: function(){
+        //             audioChange = true;
+        //         }}) // // Final volume level (range: 0 to 1)
+        //     // Do something here when the audio has ended
+        // });
+        // playFromRandomTime()
+        // gsap.to(audio,{volume: .1, duration: 10, onComplete: function(){
+        //     audioChange = true;
+        //     }}) // // Final volume level (range: 0 to 1)
         setIntro(false)
     }
 

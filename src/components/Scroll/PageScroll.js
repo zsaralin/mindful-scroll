@@ -151,7 +151,7 @@ function updateCanvas2() {
 function updateCanvas0() {
     const topCtx = topC.getContext('2d');
     // topCtx.fillStyle = "red"
-    topCtx.clearRect(0, 400, fillC.width, fillC.height - 400);
+    topCtx.clearRect(0, 200, fillC.width, fillC.height - 200);
     // topCtx.height = refreshSpot + window.innerHeight;
 
 }
