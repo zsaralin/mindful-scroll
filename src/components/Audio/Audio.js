@@ -4,7 +4,7 @@ import {gsap} from "gsap";
 
 let audio = new Audio(getRandomTrack());
 let audioOn = true;
-
+audio.volume = 0;
 let font = false;
 
 export function getAbsArray(arr) {
@@ -19,7 +19,6 @@ export default function Music() {
     const [intro, setIntro] = useState(true); // do not remove useState
 
     function playMusic() {
-        audio.volume = 0.0
         audio.addEventListener("ended", () => {
             audioChange = false;
             let audio = new Audio(getRandomTrack());
