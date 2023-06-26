@@ -47,8 +47,7 @@ export function completeTile2(tile, tiling) {
         }
 
         let nTiles = getNeighTiles(tile, tiling)
-        console.log(tiling.fillInfo.strokeTypes)
-        if (!tiling.fillInfo.strokeTypes.includes("transparent") && !tiling.fillInfo.strokeTypes.includes("dotted")
+        if (Math.random() < .2 && !tiling.fillInfo.strokeTypes.includes("transparent") && !tiling.fillInfo.strokeTypes.includes("dotted")
             && !animActive && Math.random() < 1 && tile.colors.length === 1) {
             fillNeighTiles(tile, nTiles, tile.colors[0], smallOffset, false)
         } else solidFillFn(tile, fillType, underType);

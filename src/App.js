@@ -173,7 +173,7 @@ function App() {
         //     });
         // Assuming the query string is "?participant=123"
         logStart();
-
+    console.log(window.innerWidth)
         const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);

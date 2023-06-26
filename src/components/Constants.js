@@ -1,7 +1,7 @@
 export const LINE_WIDTH = 25;
 export const TILE_WIDTH = 25;
 
-export const FILL_RATIO = .5;
+export const FILL_RATIO = .85;
 export const SHAPE_COLOR = 'rgb(0,255,0)';
 export const BUBBLE_DIST = 120
 
@@ -9,7 +9,7 @@ export const SCROLL_DIST = window.innerHeight/170
 export const SCROLL_DELTA = .03
 
 export const TOP_PAGE_SPACE = 75
-export const BETWEEN_SPACE = window.innerWidth > 450 ? 150 : -150
+export const BETWEEN_SPACE = window.innerWidth < 450 ? 150 : -150
 
 export const FIFTH_WINDOW = window.innerHeight * 4 / 5;
 

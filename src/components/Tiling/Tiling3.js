@@ -40,10 +40,6 @@ export function drawTwo(pathArrI) {
     firstTiling(pathArrI?.[0]?.segArr)
     secondTiling(pathArrI?.[1]?.segArr, 0)
 
-    // bottom = 980*3;
-    // secondTiling(pathArrI?.[1]?.segArr, 0)
-    // bottom = window.innerHeight + 600;
-    // secondTiling(pathArrI?.[1]?.segArr, 0)
     if(BETWEEN_SPACE < 0) {
         checkOverlap(pathArr[0].pathDict, pathArr[1].pathDict)
         let newYmin = getBoundsTiling2(pathArr[1].pathDict)[2]
