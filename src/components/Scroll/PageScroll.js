@@ -302,7 +302,7 @@ export const redrawCanvas = async () => {
                 refreshSpot = top + offsetI - 100;
 
                 redrawActiveTiles()
-                // redrawActiveNeigh()
+                redrawActiveNeigh()
 
                 return false
             })
