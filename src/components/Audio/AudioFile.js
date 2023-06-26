@@ -1,6 +1,7 @@
 import {getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage";
 import {UID} from "../Logging/Logging";
 import {logIdString} from "../Logging/TimeLog";
+import {getAbsArray} from "./Audio";
 
 const storage = getStorage()
 
@@ -30,60 +31,122 @@ export function addAudio() {
             console.error('Error fetching audio file:', error);
         });
 }
+
+let audioElement;
+let audioContext;
+let gainNode;
+let audioChange = true;
+let requestId;
+
 export function getAudio() {
     const audioPath = 'audio/filename.mp3';
     const storageRef = ref(storage, audioPath);
 
-    // Get the download URL for the audio file
-    getDownloadURL(storageRef)
+    return getDownloadURL(storageRef)
         .then((url) => {
             console.log('Download URL:', url);
 
-            // Fetch the audio file as a Blob
-            return fetch(url, { responseType: 'blob' });
+            return fetch(url, {responseType: 'blob'});
         })
         .then(response => response.blob())
         .then(blob => {
-            // Create a new AudioContext
-            const audioContext = new (window.AudioContext );
-            const audioElement = new Audio();  // Create an audio element
-            // Create a MediaElementAudioSourceNode from the audio element
+            audioContext = new AudioContext();
+            audioElement = new Audio();
+
             const sourceNode = audioContext.createMediaElementSource(audioElement);
+            gainNode = audioContext.createGain();
 
-            // Create a GainNode for volume control
-            const gainNode = audioContext.createGain();
-
-            // Connect the nodes: source -> gain -> destination
             sourceNode.connect(gainNode);
             gainNode.connect(audioContext.destination);
 
-            // Set up the MediaElementSourceNode with the audio blob
-            // const audioElement = sourceNode.mediaElement;
-            audioElement.src = URL.createObjectURL(blob);
             audioElement.src = URL.createObjectURL(blob);
 
-            // Adjust the volume (0.0 to 1.0)
-            const volume = .1; // Adjust the volume as needed
-            gainNode.gain.value = volume;
-            audioElement.play();
+            // Set initial volume to 0
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
 
-            return audioContext;
-        })
-        .then(audioContext => {
-            // Audio streaming and playback is set up
-            console.log('Audio streaming started.');
+            audioElement.addEventListener('loadedmetadata', () => {
+                const duration = audioElement.duration;
+
+                // Set a random starting time
+                const randomTime = Math.random() * duration;
+                audioElement.currentTime = randomTime;
+
+                // Increase the volume to 0.1 over 5 seconds
+                const targetVolume = 0.1;
+                const fadeDuration = 10; // Duration in seconds
+                const targetTime = audioContext.currentTime + fadeDuration;
+                gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
+                // Play the audio
+                audioElement.play();
+                document.addEventListener('visibilitychange', handleVisibilityChange);
+
+            });
+
+            return {audioElement, audioContext};
         })
         .catch((error) => {
             console.error('Error retrieving audio file:', error);
         });
 }
 
+const handleVisibilityChange = () => {
+    if (document.hidden) {
+        // Pause the audio when the tab becomes hidden
+        audioElement.pause();
+    } else {
+        // Resume playing the audio when the tab becomes visible again
+        audioElement.play();
+    }
+};
 
+export function changeAudio(speedArr) {
+    if (gainNode && audioChange) {
+        clearTimeout(reduce)
+        // gsap.killTweensOf(audio)
+        if (arguments.length === 0) {
+            reduceAudioMini();
+            return;
+        }
 
+        const speed = getAbsArray(speedArr);
+        if ((speed[0] > 5 || speed[1] > 5) && gainNode.gain.value  > 0.05) {
+            reduceAudioMini();
+        } else if ((speed[0] < 5 || speed[1] < 5) && gainNode.gain.value  < 0.3) {
+            console.log('INCREASING')
+            gainNode.gain.setValueAtTime(gainNode.gain.value + .001, audioContext.currentTime);
+            console.log(gainNode.gain.value )
 
+        }
+    }
 
+    function reduceAudioMini() {
+        const targetVolume = Math.max(gainNode.gain.value - 0.005, 0);
+        gainNode.gain.setValueAtTime(targetVolume, audioContext.currentTime);
 
+        if (targetVolume <= 0.05) {
+            audioChange = false;
+            setTimeout(function () {
+                audioChange = true;
+            }, 5000);
+        }
+    }
+}
 
+let reduce;
 
+export function reduceAudio() {
+    if (audioElement) {
+        audioChange = false;
+        reduce = setInterval(function () {
+            if (gainNode.gain.value > 0.1) {
+                gainNode.gain.setValueAtTime(gainNode.gain.value - .02, audioContext.currentTime);
+            } else {
+                clearInterval(reduce)
+                audioChange = true;
+                return
+            }
+        }, 200);
+    }
+}
 
 

@@ -3,7 +3,8 @@ import './components/Bubble/Bubble.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import TimerClock from './components/Timer.js';
-import Music, {changeAudio, outsidePoly, reduceAudio, triggerAudio, UID} from './components/Audio/Audio.js'
+import Music, {outsidePoly, triggerAudio, UID} from './components/Audio/Audio.js'
+import {changeAudio,reduceAudio} from './components/Audio/AudioFile'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/StrokeType/ShrinkingStroke'
 import {
     stopColorChange,
@@ -203,7 +204,6 @@ function App() {
         startScreenshots()
         initCanv()
         setColourPal()
-        getAudio()
         // addAudio()
     }, []);
 
@@ -321,7 +321,7 @@ function App() {
                 pushStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, currColor, getLineWidth(), currTile.strokeType);
                 startStroke(currTile.id, prevScaledX, prevScaledY, scaledX, scaledY, getCurrColor(), getLineWidth(), currTile.strokeType);
             }
-            changeAudio(mouseSpeed)
+            changeAudio(touchSpeed)
             if (cursorY > FIFTH_WINDOW) {
                 startAutoScroll();
                 logAutoScrollStart()
@@ -564,6 +564,7 @@ function App() {
         dotRemoved = false;
         resetLineWidth()
         reduceAudio()
+        // changeAudio()
         colorDelay()
         clearTimeout(watercolorTimer)
         clearInterval(reduceOpac)

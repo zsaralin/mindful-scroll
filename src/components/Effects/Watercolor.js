@@ -22,6 +22,8 @@ let numActiveTiles = -1;
 let canvStr = TOP_CANV
 
 let animation;
+let lastUpdate = 0;
+const throttleDelay = 1000 / 40; // Maximum 60 frames per second
 
 export function watercolor(x, y, r2, currTile, color) {
     let currColor = color ? color : getCurrColor();
@@ -44,6 +46,15 @@ export function watercolor(x, y, r2, currTile, color) {
         duration: 10,
         value: targetRadius,
         onUpdate: function () {
+            if (isAnimationComplete) {
+                console.log(Object.keys(activeTileArr).length)
+                animation.kill(); // Stop the animation
+                isAnimationComplete = false;
+                return;
+            }
+            const currentTime = new Date().getTime();
+            if (currentTime - lastUpdate >= throttleDelay) {
+                lastUpdate = currentTime;
             // Update the radius of the gradient and redraw the path
             let r = this.targets()[0].value
             let grd = ctx.createRadialGradient(x, y + smallOffset, ORIG_RADIUS, x, y + smallOffset, r);
@@ -57,10 +68,10 @@ export function watercolor(x, y, r2, currTile, color) {
 
             if (!color) activeTileArr[currTile.id] = {tile: currTile, x, y, r, col: currColor}
 
-            let currentTime = new Date().getTime();
+            // let currentTime = new Date().getTime();
             if (currentTime - startTime >= 1000) {
                 startTime = currentTime; // Update the start time
-                fillRatio = getFillRatio(currTile);
+                // fillRatio = getFillRatio(currTile);
                 if (fillRatio === 1) {
                     count++; // Increment the counter variable
                     if (count >= 4) {
@@ -70,18 +81,21 @@ export function watercolor(x, y, r2, currTile, color) {
                         currTile.watercolor = false;
                         logFillTile('watercolor', "true", currTile.id, currTile.colors, currTile.fillColor, currTile.fillColors, "null")
                         delete activeTileArr[currTile.id]
+                        console.log(Object.keys(activeTileArr).length)
+                        isAnimationComplete = true;
+                        return
                     }
                 } else {
                     fillRatio = getFillRatio(currTile)
                 }
-            }
+            }}
         }
     });
     animations.push(animation); // Add the animation to the array
     // console.log('LENGHTTTT ' + Object.keys(activeTileArr).length)
 
 }
-
+let isAnimationComplete = false;
 let animations = []; // Array to store all animation instances
 
 export function stopWatercolor() {

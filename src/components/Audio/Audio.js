@@ -19,7 +19,7 @@ export default function Music() {
     const [intro, setIntro] = useState(true); // do not remove useState
 
     function playMusic() {
-        const audioBuffer = getAudio()
+        const audio = getAudio()
         // const audioContext = new AudioContext();
         // const sourceNode = audioContext.createBufferSource();
         // sourceNode.buffer = audioBuffer;
