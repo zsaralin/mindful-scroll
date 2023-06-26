@@ -177,6 +177,7 @@ export function getNeighTiles(tile, tiling) {
             neigh.push(value);
         });
     }
+    // console.log(JSON.stringify(neigh));
     return neigh
 }
 

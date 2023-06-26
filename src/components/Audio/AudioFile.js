@@ -112,9 +112,7 @@ export function changeAudio(speedArr) {
         if ((speed[0] > 5 || speed[1] > 5) && gainNode.gain.value  > 0.05) {
             reduceAudioMini();
         } else if ((speed[0] < 5 || speed[1] < 5) && gainNode.gain.value  < 0.3) {
-            console.log('INCREASING')
             gainNode.gain.setValueAtTime(gainNode.gain.value + .001, audioContext.currentTime);
-            console.log(gainNode.gain.value )
 
         }
     }

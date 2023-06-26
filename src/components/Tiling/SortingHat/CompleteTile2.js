@@ -16,15 +16,19 @@ import {
 import {fillLinearGradient, fillRadialGradient} from "../../Effects/Gradient";
 import {logFillTile} from "../../Logging/FillTileLog";
 import {colorCode} from "../../Tile/FillTile/ColourFn";
+import {getNeighTiles} from "../TilingProperties";
+import {fillNeighGrad} from "../../Tile/FillTile/FillAnim";
+import {animActive, fillNeighTiles} from "../../Effects/NeighTiles";
+import {smallOffset} from "../Tiling3";
 
 const under = [true, false]
-const ditherI = [2,3,4,5,6]
+const ditherI = [2, 3, 4, 5, 6]
 const ditherW = [1, 2, 3, 2, 1];
 
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const basic = urlParams.get('basic');
-export let basicVersion = basic === 'true' ? true: false;
+export let basicVersion = basic === 'true' ? true : false;
 
 export function completeTile2(tile, tiling) {
     fillTileColors(tile);
@@ -41,7 +45,12 @@ export function completeTile2(tile, tiling) {
             logFillTile("fillEachPixel", underType.toString(), tile.i, tile.colors, tile.fillColor, tile.fillColors, colorCode)
             return;
         }
-        solidFillFn(tile, fillType, underType);
+
+        let nTiles = getNeighTiles(tile, tiling)
+        if (!animActive && Math.random() < 1 && tile.colors.length === 1) {
+            fillNeighTiles(tile, nTiles, tile.colors[0], smallOffset, false)
+        } else solidFillFn(tile, fillType, underType);
+
     } else if (fillInfo.fillNum === 1) {
         underType = helper(fillInfo.underW, under);
         if (fillInfo.afterW === 0) {
@@ -50,7 +59,7 @@ export function completeTile2(tile, tiling) {
             const col = getCol(tile, fillType);
             const afterType = helper(fillInfo.afterW, ["complem", "inverseHue"]);
             afterFillFn(tile, afterType, underType, col);
-            logStr+= ',' + afterType
+            logStr += ',' + afterType
         }
         const ditherBool = Math.random() < fillInfo.ditherW;
         const i = helper(ditherW, ditherI);
@@ -99,7 +108,7 @@ export function completeTile2(tile, tiling) {
         const afterStr = afterBackFillFnMain(tiling, tile, fillType);
         logStr += "," + afterStr
     }
-    console.log(fillInfo.fillNum )
+    console.log(fillInfo.fillNum)
     logFillTile(logStr, underType.toString(), tile.id, tile.colors, tile.fillColor, tile.fillColors, colorCode)
 }
 
@@ -132,37 +141,35 @@ export function afterBackFillFn(currTile, fillType, i, background) {
     else if (fillType === "pixel") pixelated(currTile, i, background)
 }
 
-function afterBackFillFnMain(tiling, tile, fillType){
+function afterBackFillFnMain(tiling, tile, fillType) {
     const afterBackFillType = helper(tiling.fillInfo.afterBackW, tiling.fillInfo.afterFillTypes)
     if (afterBackFillType === "dither") {
         const i = helper(ditherW, ditherI)
         afterBackFillFn(tile, afterBackFillType, i)
         return ',dither_' + i
-    }
-    else if (afterBackFillType === "pixel" && tile.colors > 1) {
+    } else if (afterBackFillType === "pixel" && tile.colors > 1) {
         const i = helper(ditherW, [3, 4, 5, 6, 7])
         afterBackFillFn(tile, afterBackFillType, i, getCol(tile, fillType))
         return ',pixel' + i
     } else if (afterBackFillType === "blur") {
         afterBackFillFn(tile, afterBackFillType)
         return ',blur'
-    }
-    else if(Array.isArray(afterBackFillType) && compareArrays(afterBackFillType, ["blur", "dither"])) {
+    } else if (Array.isArray(afterBackFillType) && compareArrays(afterBackFillType, ["blur", "dither"])) {
         afterBackFillFn(tile, "blur")
         const i = helper(ditherW, ditherI)
         afterBackFillFn(tile, "dither", i)
         return ',blur,dither_' + i
-    } else if(Array.isArray(afterBackFillType) && compareArrays(afterBackFillType, ["dither", "blur"])) {
+    } else if (Array.isArray(afterBackFillType) && compareArrays(afterBackFillType, ["dither", "blur"])) {
         const i = helper(ditherW, ditherI)
         afterBackFillFn(tile, "dither", i)
         afterBackFillFn(tile, "blur")
         return ',dither_' + i + ',blur'
-    } else if(Array.isArray(afterBackFillType) && compareArrays(afterBackFillType, ["pixel", "blur"])) {
+    } else if (Array.isArray(afterBackFillType) && compareArrays(afterBackFillType, ["pixel", "blur"])) {
         const i = helper(ditherW, [3, 4, 5, 6, 7])
         afterBackFillFn(tile, "pixel", i, getCol(tile, fillType))
         afterBackFillFn(tile, "blur")
         return ',pixel' + i + ',blur'
-    } else if(Array.isArray(afterBackFillType) && compareArrays(afterBackFillType, ["pixel", "dither"])) {
+    } else if (Array.isArray(afterBackFillType) && compareArrays(afterBackFillType, ["pixel", "dither"])) {
         const i0 = helper(ditherW, [3, 4, 5, 6, 7])
         const i1 = helper(ditherW, [3, 4, 5, 6, 7])
         afterBackFillFn(tile, "pixel", i0, getCol(tile, fillType))

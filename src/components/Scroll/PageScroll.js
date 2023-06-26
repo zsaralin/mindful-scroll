@@ -21,6 +21,7 @@ import {basicVersion} from "../Tiling/SortingHat/CompleteTile2";
 import {getTileWidth} from "../Tiling/TileWidth";
 import {redrawCanvasB} from "../BasicVersion/AddShapes";
 import {hideBubble} from "../Bubble/Bubble2";
+import {redrawActiveNeigh} from "../Effects/NeighTiles";
 
 export let limitScroll = 0;
 let tilingC;
@@ -283,6 +284,7 @@ export const redrawCanvas = async () => {
                 redrawTransparentStrokes()
                 redrawDottedStrokes()
                 // redrawActiveTiles()
+                // redrawActiveNeigh()
 
                 firstStep = false;
                 secondStep = false;
@@ -300,6 +302,7 @@ export const redrawCanvas = async () => {
                 refreshSpot = top + offsetI - 100;
 
                 redrawActiveTiles()
+                // redrawActiveNeigh()
 
                 return false
             })

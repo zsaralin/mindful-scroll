@@ -264,7 +264,7 @@ function App() {
             // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
 
             pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType);
-            if (!basicVersion) watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile, currColor, smallOffset)
+            if (!basicVersion) watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile, currColor, smallOffset, false, "down")
             if (currTile.firstCol === "white") currTile.firstCol = currColor
             currTile.colors.push(currColor)
 
@@ -281,9 +281,6 @@ function App() {
             // let tiles = getCornerTiles(currTiling)
 
             // fillTilesTogeth(tiles, currColor, "center")
-            // let tiles = getNeighTiles(currTile, currTiling)
-            // fillNeighGrad(currTile, tiles, currColor)
-
             // fillOrien(currTile, t)
 
         }

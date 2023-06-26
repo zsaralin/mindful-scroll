@@ -191,14 +191,14 @@ export function fillTilesTogeth(tiles, col, dir) { // fill tiles together
 export function fillNeighGrad(currTile, tiles, col) {
     let [x0, x1, y0, y1] = currTile.bounds;
     let mid = [x0 + Math.abs(x1 - x0) / 2, y0 + Math.abs(y1 - y0) / 2]
-    let ctx = document.getElementById(canvStr).getContext('2d');
-
+    let ctx = document.getElementById('top-canvas').getContext('2d');
     // animate the gradient position to the right
     let offset = 50;
     const int = setInterval(() => {
         offset += 5; // adjust the value to control the speed of the animation
 
         tiles.forEach(function (t) {
+            if(t.id !== currTile.id && t.filled) return;
             let grd = ctx.createRadialGradient(`${mid[0]}`, `${mid[1]}`, 0, `${mid[0]}`, `${mid[1]}`, offset);
             grd.addColorStop(0, col);
             grd.addColorStop(1, "white");

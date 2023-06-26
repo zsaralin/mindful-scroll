@@ -49,6 +49,16 @@ export function drawTwo(pathArrI) {
         let newYmin = getBoundsTiling2(pathArr[1].pathDict)[2]
         top = newYmin
     }
+    pathArr[0].grid = getGrid(pathArr[0].pathDict)
+    const [midSeg0, vert0, orien0] = getTilingProp(pathArr[0].pathDict);
+    pathArr[0].midSeg = midSeg0;
+    pathArr[0].vert = vert0;
+    pathArr[0].orien = orien0;
+    pathArr[0].grid = getGrid(pathArr[1].pathDict)
+    const [midSeg, vert, orien] = getTilingProp(pathArr[1].pathDict);
+    pathArr[1].midSeg = midSeg;
+    pathArr[1].vert = vert;
+    pathArr[1].orien = orien;
 
     pathArr.forEach(tiling => {
         drawTiling(tiling)
@@ -93,13 +103,8 @@ function toTiling(t) {
     let tiling = {segArr: [], pathDict: {}, grid: []}
     tiling.segArr = t
     tiling.pathDict = getTilingPathDict(t, offsetX, offsetY);
-    tiling.grid = getGrid(tiling.pathDict)
     tiling.bounds = [xMin, xMax, yMin, yMax]
     tiling.offset = [offsetX, offsetY]
-    const [midSeg, vert, orien] = getTilingProp(tiling.pathDict);
-    tiling.midSeg = midSeg;
-    tiling.vert = vert;
-    tiling.orien = orien;
     tiling.colourPal = generateColourPal().cols
     tiling.i = tilingsDrawn
     tiling.fillInfo = getFillInfo()
@@ -178,6 +183,12 @@ export function drawSecondTilingHelper() {
         checkOverlap(pathArr[pathArr.length - 2].pathDict, pathArr[pathArr.length - 1].pathDict, overlapOffset)
         top = getBoundsTiling2(pathArr[pathArr.length - 1].pathDict)[2] - 400
     }
+    pathArr[pathArr.length - 1].grid = getGrid(pathArr[pathArr.length - 1].pathDict)
+    const [midSeg, vert, orien] = getTilingProp(pathArr[pathArr.length - 1].pathDict);
+    pathArr[pathArr.length - 1].midSeg = midSeg;
+    pathArr[pathArr.length - 1].vert = vert;
+    pathArr[pathArr.length - 1].orien = orien;
+
     drawTiling(pathArr[pathArr.length - 1])
     pathArr[pathArr.length - 1].fillInfo = getFillInfo()
     secondDrawn = true;

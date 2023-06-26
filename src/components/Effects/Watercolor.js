@@ -15,36 +15,27 @@ import {colorCode} from "../Tile/FillTile/ColourFn";
 
 let activeTileArr = {} // semi coloured tiles (gradient)
 const ORIG_RADIUS = LINE_WIDTH;
-let initFill;
-let fillCol;
-let numActiveTiles = -1;
-
-let canvStr = TOP_CANV
-let animation;
+let canvStr = 'fill-canvas'//TOP_CANV
 
 const throttleDelay = 1000 / 100; // Maximum 60 frames per second
 // let isAnimationComplete = false;
 let animations = []; // Array to store all animation instances
+let ctx;
 
-export function watercolor(x, y, r2, currTile, color, off, redraw) {
-    console.log('off ' + off);
-    fillRatio = getFillRatio(currTile);
-
-    let currColor = color ? color : getCurrColor();
-    if (!redraw) {
-        logWaterStart(currTile.id, currColor);
-        if (activeTileArr[currTile.id]) return; // already active watercolor in tile
-    }
-    currTile.watercolor = true;
-    let currPath = currTile.path;
-    numActiveTiles += 1;
-    var count = 0;
+export function watercolor(x, y, r2, currTile, currColor, off, redraw, type) {
     var fillRatio = 0; // Store the initial fill ratio
+    var count = 0;
+    if (!redraw) {
+        fillRatio = getFillRatio(currTile);
+        if (activeTileArr[currTile.id] || currTile.filled) return; // already active watercolor in tile
+        logWaterStart(currTile.id, currColor);
+        currTile.watercolor = true;
+    }
+    let currPath = currTile.path;
     let lastUpdate = 0;
-
     let targetRadius = 500; // New radius to be reached by the animation
     let startTime = new Date().getTime();
-    let ctx = document.getElementById(canvStr).getContext('2d');
+    if(!ctx) ctx = document.getElementById(canvStr).getContext('2d');
     let animation = gsap.to({ value: r2 ?? ORIG_RADIUS }, {
         duration: 10,
         value: targetRadius,
@@ -54,16 +45,9 @@ export function watercolor(x, y, r2, currTile, color, off, redraw) {
                 lastUpdate = currentTime;
                 // Update the radius of the gradient and redraw the path
                 let r = this.targets()[0].value;
-                if (!redraw) activeTileArr[currTile.id] = { tile: currTile, x, y, r, col: currColor, smallOff: off };
-                let grd = ctx.createRadialGradient(x, y + off, ORIG_RADIUS, x, y + off, r);
-                grd.addColorStop(0, currColor);
-                grd.addColorStop(0.5, "white");
-                ctx.fillStyle = grd;
-                ctx.save();
-                ctx.translate(0, -off);
-                ctx.fill(currPath);
-                ctx.restore();
-
+                if (!redraw) activeTileArr[currTile.id] = { tile: currTile, x, y, r, col: currColor, smallOff: off, animType : type };
+                let grd = getGradient(currTile, currColor, r, type, off, x, y)
+                fillTileOff(currPath, grd, off)
                 if (currentTime - startTime >= 1000) {
                     startTime = currentTime; // Update the start time
                     if (fillRatio === 1) {
@@ -86,11 +70,7 @@ export function watercolor(x, y, r2, currTile, color, off, redraw) {
     function onComplete() {
         logWaterEnd(currTile.id, currColor);
         pushCompleteTile(currTile, currColor);
-        ctx.fillStyle = currColor;
-        ctx.save();
-        ctx.translate(0, -off);
-        ctx.fill(currPath);
-        ctx.restore();
+        fillTileOff(currPath, currColor, off)
         currTile.watercolor = false;
         logFillTile('watercolor', "true", currTile.id, currTile.colors, currTile.fillColor, currTile.fillColors, "null");
         delete activeTileArr[currTile.id];
@@ -107,7 +87,6 @@ export function stopWatercolor() {
 
 export function redrawActiveTiles() {
     stopWatercolor();
-    // console.log('LENGHTTTT ' + Object.keys(activeTileArr).length)
     for (let tileId in activeTileArr) {
         redrawActiveTile(tileId)
     }
@@ -121,27 +100,46 @@ export function redrawActiveTile(tileId, offsetY) {
         currTile = tile.tile
         tile.y = tile.y + overlapOffset
         // setSmallOffset(tile.smallOff - overlapOffset)
-        watercolor(tile.x, tile.y, tile.r, currTile, tile.col,tile.smallOff - overlapOffset, true )
+        watercolor(tile.x, tile.y, tile.r, currTile, tile.col,tile.smallOff - overlapOffset, true, tile.animType )
         delete activeTileArr[tileId];
     }
 }
 
-
-function fillActiveTile(x, y, color, r2_, path, off) {
-    // let off = 0//getOffsetY()
-    let ctx = document.getElementById(canvStr).getContext('2d');
-    if (off) ctx.translate(0, -off);
-
-    let grd = ctx.createRadialGradient(x, y, ORIG_RADIUS, x, y, r2_);
-    grd.addColorStop(0, color);
-    grd.addColorStop(.5, "white");
-
-    ctx.fillStyle = grd
-    ctx.fill(path)
-    if (off) ctx.translate(0, +off);
-
-}
-
 export function getActiveTileArr() {
     return activeTileArr;
+}
+
+function fillTileOff(currPath, currColor, off){
+    ctx.fillStyle = currColor;
+    ctx.save();
+    ctx.translate(0, -off);
+    ctx.fill(currPath);
+    ctx.restore();
+}
+
+function getGradient(currTile, currColor, offset, type, off, x, y){
+    let [xmin,xmax,ymin,ymax] = currTile.bounds;
+    let grd;
+    switch (type) {
+        case "watercolor":
+            grd = ctx.createRadialGradient(x, y + off, ORIG_RADIUS, x, y + off, offset);;
+            break;
+        case "right":
+            grd = ctx.createLinearGradient(`${xmin - 300 + offset}`, 0, `${xmax + offset}`, 0);
+            break;
+        case "left":
+            grd = ctx.createLinearGradient(`${xmin - 300 - offset}`, "0", `${xmax - offset}`, "0");
+            break;
+        case "down":
+            grd = ctx.createLinearGradient("0", `${ymin - 300 + offset}`, "0", `${ymax + offset}`);
+            break;
+        case "up":
+            grd = ctx.createLinearGradient("0", `${ymin - 300 - offset+off}`, "0", `${ymax - offset+off}`);
+            break;
+        default:
+            break;
+    }
+    grd.addColorStop(0, currColor);
+    grd.addColorStop(0.5, "white");
+    return grd;
 }
