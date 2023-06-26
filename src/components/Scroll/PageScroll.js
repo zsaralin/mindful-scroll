@@ -278,7 +278,7 @@ export const redrawCanvas = async () => {
                 drawSecondTiling()
 
 
-                // drawSecondTilingHelper()
+                drawSecondTilingHelper()
                 redrawAnim()
                 redrawTransparentStrokes()
                 redrawDottedStrokes()
@@ -286,7 +286,7 @@ export const redrawCanvas = async () => {
                 secondStep = false;
                 thirdStep = false;
                 fourthStep = false;
-                drawSecondTilingHelper()
+                // drawSecondTilingHelper()
 
                 var rectangle = document.getElementById("gradRectangle");
                 rectangle.style.top = 0 + "px";

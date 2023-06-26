@@ -126,10 +126,10 @@ export function checkOverlap(pathDict1, pathDict2, offset) {
             const ymin2 = box2[2];
             const ymax2 = box2[3];
             if (
-                xmin1 > xmax2 + 25 ||
-                xmax1 + 25 < xmin2 ||
-                ymin1 > ymax2 + 25 ||
-                ymax1 + 25 < ymin2
+                xmin1 > xmax2 + 50 ||
+                xmax1 + 50 < xmin2 ||
+                ymin1 > ymax2 + 50 ||
+                ymax1 + 50 < ymin2
             ) {
                 // Boxes do not overlap
                 continue;

@@ -23,7 +23,7 @@ let canvStr = TOP_CANV
 
 let animation;
 let lastUpdate = 0;
-const throttleDelay = 1000 / 40; // Maximum 60 frames per second
+const throttleDelay = 1000 / 100; // Maximum 60 frames per second
 // let isAnimationComplete = false;
 let animations = []; // Array to store all animation instances
 
@@ -48,7 +48,7 @@ export function watercolor(x, y, r2, currTile, color) {
     let ctx = document.getElementById(canvStr).getContext('2d');
 
     animation = gsap.to({value: r2 ?? ORIG_RADIUS}, {
-        duration: 10,
+        duration: 7,
         value: targetRadius,
         onUpdate: function () {
             if (isAnimationComplete) {
@@ -79,7 +79,7 @@ export function watercolor(x, y, r2, currTile, color) {
                     startTime = currentTime; // Update the start time
                     if (fillRatio === 1) {
                         count++; // Increment the counter variable
-                        if (count >= 4) {
+                        if (count === 4) {
                             isAnimationComplete = true;
                             logWaterEnd(currTile.id, currColor);
                             pushCompleteTile(currTile, currColor);

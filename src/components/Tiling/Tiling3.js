@@ -44,9 +44,11 @@ export function drawTwo(pathArrI) {
     // secondTiling(pathArrI?.[1]?.segArr, 0)
     // bottom = window.innerHeight + 600;
     // secondTiling(pathArrI?.[1]?.segArr, 0)
-    // checkOverlap( pathArr[0].pathDict,  pathArr[1].pathDict)
-    // let newYmin = getBoundsTiling2(pathArr[1].pathDict)[2]
-    // top = newYmin
+    if(BETWEEN_SPACE < 0) {
+        checkOverlap(pathArr[0].pathDict, pathArr[1].pathDict)
+        let newYmin = getBoundsTiling2(pathArr[1].pathDict)[2]
+        top = newYmin
+    }
 
     pathArr.forEach(tiling => {
         drawTiling(tiling)
@@ -172,9 +174,10 @@ export function drawSecondTiling() {
 }
 
 export function drawSecondTilingHelper() {
-    checkOverlap(pathArr[pathArr.length - 2].pathDict, pathArr[pathArr.length - 1].pathDict, overlapOffset)
-    top = getBoundsTiling2(pathArr[pathArr.length - 1].pathDict)[2] - 400
-    console.log('TOP IS ' + top)
+    if(BETWEEN_SPACE < 0) {
+        checkOverlap(pathArr[pathArr.length - 2].pathDict, pathArr[pathArr.length - 1].pathDict, overlapOffset)
+        top = getBoundsTiling2(pathArr[pathArr.length - 1].pathDict)[2] - 400
+    }
     drawTiling(pathArr[pathArr.length - 1])
     pathArr[pathArr.length - 1].fillInfo = getFillInfo()
     secondDrawn = true;
