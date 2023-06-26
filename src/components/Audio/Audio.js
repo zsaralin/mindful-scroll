@@ -20,13 +20,13 @@ export default function Music() {
 
     function playMusic() {
         const audioBuffer = getAudio()
-        const audioContext = new AudioContext();
-        const sourceNode = audioContext.createBufferSource();
-        sourceNode.buffer = audioBuffer;
-
-        sourceNode.connect(audioContext.destination);
-        console.log('HY')
-        sourceNode.start(0);
+        // const audioContext = new AudioContext();
+        // const sourceNode = audioContext.createBufferSource();
+        // sourceNode.buffer = audioBuffer;
+        //
+        // sourceNode.connect(audioContext.destination);
+        // console.log('HY')
+        // sourceNode.start(0);
 
         // audio.addEventListener("ended", () => {
         //     audioChange = false;

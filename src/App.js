@@ -114,7 +114,7 @@ import {drawTwoShapes} from "./components/BasicVersion/AddShapes";
 import {logRefresh, logStart} from "./components/Logging/TimeLog";
 import {hideBubble, showBubble} from "./components/Bubble/Bubble2";
 import {logAutoScrollEnd, logAutoScrollStart, logAutoScrollStop} from "./components/Logging/LogAutoScroll";
-import {addAudio} from "./components/Audio/AudioFile";
+import {addAudio, getAudio} from "./components/Audio/AudioFile";
 
 
 function App() {
@@ -203,6 +203,7 @@ function App() {
         startScreenshots()
         initCanv()
         setColourPal()
+        getAudio()
         // addAudio()
     }, []);
 

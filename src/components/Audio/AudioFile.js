@@ -45,10 +45,10 @@ export function getAudio() {
         .then(response => response.blob())
         .then(blob => {
             // Create a new AudioContext
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
+            const audioContext = new (window.AudioContext );
+            const audioElement = new Audio();  // Create an audio element
             // Create a MediaElementAudioSourceNode from the audio element
-            const sourceNode = audioContext.createMediaElementSource(new Audio());
+            const sourceNode = audioContext.createMediaElementSource(audioElement);
 
             // Create a GainNode for volume control
             const gainNode = audioContext.createGain();
@@ -58,12 +58,14 @@ export function getAudio() {
             gainNode.connect(audioContext.destination);
 
             // Set up the MediaElementSourceNode with the audio blob
-            const audioElement = sourceNode.mediaElement;
+            // const audioElement = sourceNode.mediaElement;
+            audioElement.src = URL.createObjectURL(blob);
             audioElement.src = URL.createObjectURL(blob);
 
             // Adjust the volume (0.0 to 1.0)
-            const volume = 0.5; // Adjust the volume as needed
+            const volume = .1; // Adjust the volume as needed
             gainNode.gain.value = volume;
+            audioElement.play();
 
             return audioContext;
         })
