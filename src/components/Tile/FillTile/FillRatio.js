@@ -39,13 +39,14 @@ export function isCircleInPath(path, x, y, lineWidth) {
     return false
 }
 
-export function getFillRatio(currTile) {
+export function getFillRatio(currTile, off) {
+    const offS = off ? off : smallOffset
     let ctx = document.getElementById(strokeCanvas).getContext("2d")
     // ctx.translate(0,-smallOffset)
 
     let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixels(currTile) : currTile.inPath.length] // [filledPixels, totalPixels]
     currTile.inPath.forEach(i => {
-        let col = ctx.getImageData(i[0], i[1]-smallOffset, 1, 1, {willReadFrequently: true}).data.toString()
+        let col = ctx.getImageData(i[0], i[1]-offS, 1, 1, {willReadFrequently: true}).data.toString()
         if (col !== '0,0,0,0' && col !== '255,255,255,255') {
             fillRatio[0]++
         }

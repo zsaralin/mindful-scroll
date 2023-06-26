@@ -282,6 +282,8 @@ export const redrawCanvas = async () => {
                 redrawAnim()
                 redrawTransparentStrokes()
                 redrawDottedStrokes()
+                // redrawActiveTiles()
+
                 firstStep = false;
                 secondStep = false;
                 thirdStep = false;

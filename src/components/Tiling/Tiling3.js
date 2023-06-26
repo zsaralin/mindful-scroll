@@ -87,7 +87,7 @@ export function getOffSmall(i) {
 }
 
 export function setSmallOffset(temp){
-    smallOffset -= temp;
+    smallOffset = temp;
 }
 function toTiling(t) {
     let tiling = {segArr: [], pathDict: {}, grid: []}
