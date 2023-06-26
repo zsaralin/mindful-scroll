@@ -21,8 +21,6 @@ let numActiveTiles = -1;
 
 let canvStr = TOP_CANV
 
-let animation;
-let lastUpdate = 0;
 const throttleDelay = 1000 / 100; // Maximum 60 frames per second
 // let isAnimationComplete = false;
 let animations = []; // Array to store all animation instances
@@ -44,7 +42,7 @@ export function watercolor(x, y, r2, currTile, color) {
     let targetRadius = 500; // New radius to be reached by the animation
     let startTime = new Date().getTime();
     let animation;
-
+    const smallOffsetCopy = smallOffset
     let ctx = document.getElementById(canvStr).getContext('2d');
 
     animation = gsap.to({value: r2 ?? ORIG_RADIUS}, {
@@ -83,7 +81,12 @@ export function watercolor(x, y, r2, currTile, color) {
                             isAnimationComplete = true;
                             logWaterEnd(currTile.id, currColor);
                             pushCompleteTile(currTile, currColor);
-                            fillTile(currTile, "input", false, currColor);
+                            ctx.fillStyle = currColor;
+                            ctx.save();
+                            ctx.translate(0, -smallOffsetCopy);
+                            ctx.fill(currPath);
+                            ctx.restore();
+                            // fillTile(currTile, "input", false, currColor);
                             currTile.watercolor = false;
                             logFillTile('watercolor', "true", currTile.id, currTile.colors, currTile.fillColor, currTile.fillColors, "null");
                             delete activeTileArr[currTile.id];

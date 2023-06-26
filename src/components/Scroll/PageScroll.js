@@ -291,7 +291,7 @@ export const redrawCanvas = async () => {
                 var rectangle = document.getElementById("gradRectangle");
                 rectangle.style.top = 0 + "px";
                 rectangle.style.width = topC.width + "px";
-                rectangle.style.height = (whiteSpace - scrollBackAmount - 1 + offsetI) + scrollBackAmount + "px";
+                rectangle.style.height = (whiteSpace - scrollBackAmount - 1 + offsetI) + scrollBackAmount + 15 + "px";
                 const position = offsetI === 0 ? '65%' : '85%'
                 rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
                 offsetI = 400;
