@@ -26,6 +26,8 @@ const throttleDelay = 1000 / 100; // Maximum 60 frames per second
 let animations = []; // Array to store all animation instances
 
 export function watercolor(x, y, r2, currTile, color) {
+    fillRatio = getFillRatio(currTile);
+
     let isAnimationComplete = false;
     let currColor = color ? color : getCurrColor();
     if (!color) {
@@ -44,7 +46,6 @@ export function watercolor(x, y, r2, currTile, color) {
     let animation;
     const smallOffsetCopy = smallOffset
     let ctx = document.getElementById(canvStr).getContext('2d');
-
     animation = gsap.to({value: r2 ?? ORIG_RADIUS}, {
         duration: 7,
         value: targetRadius,
