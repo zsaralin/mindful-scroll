@@ -14,13 +14,15 @@ export function fillPattern(tile, col0, col1) {
     const ctx = document.getElementById("top-canvas").getContext("2d");
     // let cols = tile.fillColors ? tile.fillColors : (tile.fillColors = setCols(tile));
     const cols = tile.fillColors ? tile.fillColors : setCols(tile, col0, col1)
-    const [midX, midY] = findMid(tile)
-    ctx.save()
-    ctx.clip(tile.path)
+    let [midX, midY] = findMid(tile)
     fillTile(tile, "input", false, cols[0])
+    ctx.save()
+    // ctx.clip(tile.path)
+    ctx.translate(0,-smallOffset)
     scaledStroke(ctx, tile, cols[0], 30, .5, midX, midY)
     scaledStroke(ctx, tile, cols[1], 70, .4, midX, midY)
     scaledStroke(ctx, tile, cols[2] ? cols[2] : cols[0], 60, .2, midX, midY)
+
     ctx.restore()
 }
 
@@ -37,7 +39,7 @@ function scaledStroke(ctx, tile, col, lw, scale, midX, midY) {
     ctx.lineWidth = lw;
     ctx.translate(midX, midY - smallOffset * scale)
     ctx.scale(scale, scale)
-    ctx.translate(-midX, -midY);
+    ctx.translate(-midX, -midY+smallOffset);
     ctx.stroke(tile.path)
     ctx.fill(tile.path)
     ctx.restore()

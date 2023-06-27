@@ -43,7 +43,7 @@ import {
     SCROLL_DELTA,
     SCROLL_DIST,
     SHAPE_COLOR,
-    SWIPE_THRESHOLD
+    SWIPE_THRESHOLD, TOP_CANV
 } from "./components/Constants";
 import {completeTile, fillEachPixel, triggerCompleteTile} from "./components/Tile/CompleteTile";
 import {gsap} from "gsap";
@@ -256,6 +256,7 @@ function App() {
         if (currTile) {
             smallOffset = getOffSmall(index)
             currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
+            console.log('dTROKE TYPEEE ' + currTile.strokeType)
         }
         currColor = getCurrColor()
         // stopColorChange()
@@ -264,7 +265,7 @@ function App() {
             // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
 
             pushDot(currTile.id, prevScaledX, prevScaledY, prevScaledX, touchType === "direct" ? prevScaledY + .5 : prevScaledY, currColor, lw, currTiling.dotType);
-            if (!basicVersion) watercolorTimer = setTimeout(watercolor, 1500, prevScaledX, prevScaledY, 25, currTile, currColor, smallOffset, false, "down")
+            if (!basicVersion) watercolorTimer = setTimeout(watercolor, 1500, 25, currTile, currColor, smallOffset, false, "watercolor", prevScaledX, prevScaledY)
             if (currTile.firstCol === "white") currTile.firstCol = currColor
             currTile.colors.push(currColor)
 
@@ -327,7 +328,9 @@ function App() {
                 getLineWidth(), currTile.id, currTiling.i, currColor, currTile.strokeType, tooFast.toString(), currTile.filled.toString(), currTile.colors)
 
         } else {
-            changeAudio()
+            if(!doubleTouch) {
+                changeAudio()
+            }
             insidePoly[1] += 1;
         }
     }
@@ -508,15 +511,6 @@ function App() {
 
     }
 
-    function callRatio(currTile) {
-        clearInterval(timerId)
-
-        timerId = setInterval(function () {
-            ratio = getFillRatio(currTile)
-        }, 500);
-
-    }
-
     function onTouchEnd(event) {
         if (!doubleTouch) {
             if (!isPanelOn()) {
@@ -546,8 +540,7 @@ function App() {
     }
 
     function onStrokeEnd() {
-        if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled && getFillRatio(currTile, smallOffset) > getFillMin()) {
-            currTile.filled = true;
+        if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled && getFillRatio(currTile, smallOffset, TOP_CANV) > getFillMin()) {
             completeTile2(currTile, currTiling, invisCol)
         }
         if (currTile && !strokeMove && !currTile.watercolor) {

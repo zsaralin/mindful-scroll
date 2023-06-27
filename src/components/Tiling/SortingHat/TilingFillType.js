@@ -15,7 +15,7 @@ const under = [true, false]
 
 export function getFillInfo() {
     if (basicVersion) { //simple
-        return { strokeTypes : ["reg"], strokeW: [1]}
+        return {strokeTypes: ["reg"], strokeW: [1]}
     } else {
         const num = sections[Math.floor(Math.random() * sections.length)];
         if (num === 0) {
@@ -62,14 +62,13 @@ export function getFillInfo() {
             const n = helper(weights, totFillTypes) // # of solid fill types
             const solidTypes = chooseRandomElements(solidFill, n)
             // Randomly choose either one element or the first two elements
-            const patternTypes = Math.random() < 0.7 ? pattern[Math.floor(Math.random() * pattern.length)] : pattern.slice(0, 2);
+            const patternTypes = Math.random() < .7 ? pattern[Math.floor(Math.random() * pattern.length)] : pattern.slice(0, 2);
             const fillTypes = solidTypes.concat(patternTypes);
             const fillW = generateRandomWeights(fillTypes.length)
             fillW.sort((a, b) => b - a); // want higher weights for solidTypes
-            const col0 = generateRandomWeights(6, true)
+            let col0 = generateRandomWeights(6, true)
             let col1 = generateRandomWeights(15, true)
             col1 = adjustCol(col0, col1)
-            console.log('patternTypes '  +  patternTypes)
             if (patternTypes.includes("stripes")) {
                 const numAnglesW = [.1, .4, .5] // .1% only 1 from pattern arr, etc.
                 const numAngles = [1, 2, 3]
@@ -97,14 +96,25 @@ export function getFillInfo() {
                         strokeTypes,
                         strokeW
                     }
+                } else {
+                    return {
+                        fillNum: 3,
+                        fillTypes,
+                        fillW,
+                        angleTypes,
+                        angleW,
+                        col0,
+                        col1,
+                        afterFillTypes,
+                        afterBackW,
+                        strokeTypes,
+                        strokeW
+                    }
                 }
-                console.log('important ' + strokeTypes + ' adn ' + strokeW)
-                return {fillNum: 3, fillTypes, fillW, angleTypes, angleW, col0, col1, afterFillTypes, afterBackW, strokeTypes, strokeW}
             } else if (patternTypes.includes("gradient")) {
                 const gradTypes = chooseRandomElements(gradient, Math.floor(Math.random() * gradient.length) + 1,); // random num 1-gradient.length
                 const gradW = generateRandomWeights(gradTypes.length)
                 const [afterFillTypes, afterBackW] = afterFillTypesHelper()
-                console.log('after in gradient ' + afterFillTypes)
                 const [strokeTypes, strokeW] = strokeTypesHelper(afterFillTypes)
                 return {
                     fillNum: 3,
@@ -122,9 +132,7 @@ export function getFillInfo() {
             } else {
                 const [afterFillTypes, afterBackW] = afterFillTypesHelper()
                 const [strokeTypes, strokeW] = strokeTypesHelper(afterFillTypes)
-                console.log('HELLO ' + strokeTypes + ' and '  + strokeW)
-
-                return {fillNum: 3, fillTypes, fillW, col0, col1, afterFillTypes, afterBackW, strokeTypes,strokeW}
+                return {fillNum: 3, fillTypes, fillW, col0, col1, afterFillTypes, afterBackW, strokeTypes, strokeW}
             }
         }
     }
@@ -148,7 +156,6 @@ export function helper(weights, arr) {
 function chooseRandomElements(array, n) {
     const randomElements = [];
     const arrayCopy = array.slice(); // Create a copy of the original array
-
     while (randomElements.length < n && arrayCopy.length > 0) {
         const randomIndex = Math.floor(Math.random() * arrayCopy.length);
         const element = arrayCopy.splice(randomIndex, 1)[0];
@@ -159,18 +166,25 @@ function chooseRandomElements(array, n) {
 }
 
 function generateRandomWeights(n, cols) {
-    const randomWeights = [];
+    let randomWeights = [];
 
     // Generate random decimal values
+    function pushWeights(){
     for (let i = 0; i < n; i++) {
         let randomValue = Math.random();
         if (cols) {
-            const modifiedValue = randomValue < 0.8 ? 0 : randomValue; // do not want inverse + inverse hue at the same time
+            const modifiedValue = randomValue < 0.7 ? 0 : randomValue; // do not want inverse + inverse hue at the same time
             randomWeights.push(modifiedValue);
         } else {
             randomWeights.push(randomValue)
         }
+    }}
+    pushWeights()
+    while(randomWeights.every(value => value === 0)){
+        randomWeights = [];
+        pushWeights()
     }
+
     if (cols) {
         if (n === 6) {
             if (randomWeights[1] !== 0) randomWeights[2] = 0
@@ -188,10 +202,8 @@ function generateRandomWeights(n, cols) {
     }
     // Calculate the sum of the random values
     const sum = randomWeights.reduce((total, value) => total + value, 0);
-
     // Normalize the values to ensure they add up to 1
     const normalizedWeights = randomWeights.map(value => value / sum);
-
     return normalizedWeights;
 }
 
@@ -252,14 +264,20 @@ function adjustCol(w1, w2) {
 }
 
 function afterFillTypesHelper() {
-    const afterW = [1, .4, .1, .06, .02]
+    const afterW = [.8, .4, .1, .1, .1]
     const totAfterFillTypes = [1, 2, 3, 4, 5]
     const m = helper(afterW, totAfterFillTypes) // # of after fill types
     let afterFillTypes = chooseRandomElements(afterBackFill.slice(0, 3), m > 3 ? 3 : m)
     if (m > 3) {
         const mixFills = afterBackFill.slice(-4)
         const mixFillTypes = chooseRandomElements(mixFills, m - 3)
-        afterFillTypes.push(mixFillTypes.length === 1 ? mixFillTypes[0] : (mixFillTypes[0], mixFillTypes[1]))
+        if(mixFillTypes === 1) afterFillTypes.push(mixFillTypes[0])
+        else{
+            for(let i = 0; i < mixFillTypes.length; i++){
+                afterFillTypes.push(mixFillTypes[i])
+            }
+        }
+
     }
     afterFillTypes.push('none')
     const afterBackW = generateRandomWeights(afterFillTypes.length)
@@ -279,7 +297,7 @@ function strokeTypesHelper(afterFillTypes) {
 }
 
 export function dotTypesHelper(strokeType) {
-    if(basicVersion) return "reg"
+    if (basicVersion) return "reg"
     if (strokeType === "blurry" || strokeType === "dotted" || strokeType === "transparent") {
         return strokeType
     } else {

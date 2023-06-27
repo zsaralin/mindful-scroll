@@ -39,9 +39,8 @@ export function isCircleInPath(path, x, y, lineWidth) {
     return false
 }
 
-export function getFillRatio(currTile, off) {
-    const offS = off ? off : smallOffset
-    let ctx = document.getElementById(strokeCanvas).getContext("2d")
+export function getFillRatio(currTile, offS, canv) {
+    let ctx = document.getElementById(canv).getContext("2d")
     // ctx.translate(0,-smallOffset)
 
     let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixels(currTile) : currTile.inPath.length] // [filledPixels, totalPixels]

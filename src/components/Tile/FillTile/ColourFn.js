@@ -178,7 +178,7 @@ function setCol2Plus(tile) {
                     most = mostUsed4(tile).slice(0, 2)
                     let col0 = getColourPal()[Math.floor(Math.random() * 4)]
                     while(most === col0) col0 = getColourPal()[Math.floor(Math.random() * 4)]
-                    return [most, col0]
+                    return [most[0], most[1], col0]
                 case 15:
                     console.log('case 15')
                     mean = meanHue(tile.allColors)

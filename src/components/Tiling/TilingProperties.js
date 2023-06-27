@@ -171,10 +171,14 @@ export function getNeighTiles(tile, tiling) {
         x2 = Math.floor(x2 / 2) + 1;
         y2 = Math.floor(y2 / 2) + 1;
         tiling.vert[[x1, y1]].forEach(value => {
-            neigh.push(value);
+            if (!neigh.some(item => item.id === value.id)) {
+                neigh.push(value);
+            }
         });
         tiling.vert[[x2, y2]].forEach(value => {
-            neigh.push(value);
+            if (!neigh.some(item => item.id === value.id)) {
+                neigh.push(value);
+            }
         });
     }
     // console.log(JSON.stringify(neigh));

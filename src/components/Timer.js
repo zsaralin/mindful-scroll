@@ -4,7 +4,7 @@ import {logTimer} from "./Logging/TimeLog";
 
 export default function TimerClock() {
     // Timer configuration
-    const totalTime = 10*60; // Total time in seconds
+    const totalTime = 10//*60; // Total time in seconds
     let elapsedTime = 0; // Elapsed time in seconds
     let isTimerDone = false;
     const canvasRef = useRef(null);

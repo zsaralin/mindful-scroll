@@ -6,6 +6,7 @@ import {getStrokeArr, getStrokeArrUnder, pushStrokeUnder, redrawBlurryStrokes} f
 import {drawStroke, drawStrokeUnder} from "../Stroke/DrawStroke";
 import {fillEachPixel} from "../Tile/FillTile/FillGaps";
 import {fillTile} from "../Tile/FillTile/FillTile";
+import {smallOffset} from "../Tiling/Tiling3";
 
 let blurryArr = {}
 
@@ -87,6 +88,7 @@ export function blurTile(tile) {
     let i = 1;
     for (let y = 0; y < imageData.height; y += i) {
         for (let x = 0; x < imageData.width; x += i) {
+            y += smallOffset
             if (isCircleInPath(tile.path, startX + x, startY + y)) {
 
                 let index = (y * imageData.width + x) * 4;

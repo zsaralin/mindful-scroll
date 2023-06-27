@@ -1,4 +1,5 @@
 import {overlapOffset, smallOffset} from "../Tiling/Tiling3";
+import {logNeighEnd, logNeighStart} from "../Logging/LogNeigh";
 
 export let animActive = false;
 let activeNeigh;
@@ -8,7 +9,10 @@ let anim;
 let currOffset;
 export function fillNeighTiles(currTile, tiles, col, smallOff, redraw){
     animActive = true;
-    if(!redraw) activeNeigh = {currTile, tiles, col, smallOff}
+    if(!redraw) {
+        activeNeigh = {currTile, tiles, col, smallOff}
+        logNeighStart(currTile.id, tiles.map(tile => tile.id), col)
+    }
     currOffset = smallOff
     let [x0, x1, y0, y1] = currTile.bounds;
     let mid = [x0 + Math.abs(x1 - x0) / 2, y0 + Math.abs(y1 - y0) / 2]
@@ -20,7 +24,6 @@ export function fillNeighTiles(currTile, tiles, col, smallOff, redraw){
 
         tiles.forEach(function (t) {
             if(t.id !== currTile.id && t.filled) return;
-            console.log(mid[0] + ' and ' + mid[1])
             let grd = ctx.createRadialGradient(mid[0], mid[1], 0, mid[0], mid[1] , offset);
             grd.addColorStop(0, col);
             grd.addColorStop(1, "white");
@@ -42,6 +45,7 @@ export function fillNeighTiles(currTile, tiles, col, smallOff, redraw){
                 ctx.restore()
             })
             clearInterval(anim)
+            logNeighEnd(currTile.id, tiles.map(tile => tile.id), col)
             animActive = false;
             offset = 50;
         }

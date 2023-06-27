@@ -6,6 +6,7 @@ import {strokeArr} from "../../Stroke/StrokeType/StrokeArr";
 import {redrawTransStrokesTile, refreshTrans} from "../../Stroke/StrokeType/TransparentStroke";
 import {redrawDottedStrokesTile, refreshDotted} from "../../Stroke/StrokeType/DottedStroke";
 import {smallOffset} from "../../Tiling/Tiling3";
+import {watercolor} from "../../Effects/Watercolor";
 
 function getCol(tile, str, inputCol){
     let tempCol;
@@ -37,7 +38,6 @@ export function fillTile(tile, str, under, inputCol){
     // console.log('fillColor : ' + tile.fillColor)
     // console.log('LOOK NOW '  + ctx.fillStyle)
     // ctx.fill(tile.path)
-    tile.filled = true;
     if(tile.strokeType === "transparent"){
         refreshTrans(tile.id)
     } else if(tile.strokeType === "dotted"){
@@ -50,12 +50,26 @@ export function fillTile(tile, str, under, inputCol){
         ctx.restore()
 
     }
+    tile.filled = true;
+
     ctx.fillStyle = "rgba(0,0,0,0)"
     // strokeArr[tile.id] = [] // delete strokes
     // ctx.restore()
 
     // pushCompleteTile(tile, col)
 }
+ export function fillTileFade(tile, str, under){
+     let canvStr = under ? 'fill-canvas' : 'top-canvas'
+     let ctx = document.getElementById(canvStr).getContext('2d');
+
+     const col = getCol(tile, str)
+     ctx.fillStyle =  isBlackOrClose(col) ? '#333333'  : col; // replace black colours with dark grey
+     tile.fillColor = col
+     const directions = ["right", "left", "down", "up"];
+     const randomIndex = Math.floor(Math.random() * directions.length);
+     watercolor(25, tile, tile.fillColor, smallOffset, false, directions[randomIndex])
+     tile.filled = true;
+ }
 
 export function clearTile(tile, col){
     let canvStr = 'canvas'
@@ -70,7 +84,8 @@ function isBlackOrClose(col, threshold = 40) {
         console.log('COL IS UNDEFINED INSIDE BLACKROCLOSE')
         return
     }
-    if(col.startsWith("hsl")){
+    console.log('COL IS ' + col)
+    if(typeof col === 'string' && col.startsWith("hsl")){
         const [, hue, saturation, lightness] = col.match(/hsl\((.*?),\s*(.*?)%,\s*(.*?)%\)/) || [];
         // Check if lightness is close to 0
         // Check if lightness is below the threshold

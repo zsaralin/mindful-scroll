@@ -104,7 +104,7 @@ function toTiling(t) {
     tiling.colourPal = generateColourPal().cols
     tiling.i = tilingsDrawn
     tiling.fillInfo = getFillInfo()
-
+    console.log(JSON.stringify(tiling.fillInfo))
     logTiling(tiling.i, tileIds[tiling.i], tiling.bounds, tiling.offset, tiling.colourPal, tiling.fillInfo, tilingType)
     return tiling
 }
