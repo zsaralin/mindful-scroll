@@ -10,7 +10,7 @@ export function getRandomShape(currYMax) {
     if (shapeType === 0) {
         // circle
         const x = window.innerWidth / 2;
-        const r = window.innerWidth / 6 //+ 100 //> window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 11 + 100
+        const r = window.innerWidth / 4 //+ 100 //> window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 11 + 100
         const y = currYMax  + window.innerHeight / 2;
         path.ellipse(x, y, r, r, 0, 0, Math.PI * 2);
         dimension = [x - r, x + r, y-r, y+r];
@@ -155,7 +155,7 @@ export function getRandomShape(currYMax) {
 //     }
     else if (shapeType === 9) {
         // pentagon
-        const sideLength = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : (window.innerWidth / 4 + 100) * .7; // The length of each side of the pentagon
+        const sideLength = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : (window.innerWidth / 4 + 100) * .5; // The length of each side of the pentagon
         const radius = sideLength / (2 * Math.sin(Math.PI / 5)); // The radius of the circumcircle of the pentagon
         const angleOffset = -Math.PI / 2; // Offset angle to rotate the pentagon
         const xCenter = window.innerWidth / 2; // x-coordinate of the center of the pentagon
