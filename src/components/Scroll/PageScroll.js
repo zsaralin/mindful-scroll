@@ -36,9 +36,9 @@ export function doScroll(currY, prevY) {
     if (off - (currY - prevY) >= limitScroll) {
         // setOffsetY(off - (currY - prevY))
         if(basicVersion){
-            setOffsetY(off - (currY - prevY))
-            redrawCanvasB()
             // setOffsetY(off - (currY - prevY))
+            redrawCanvasB()
+            setOffsetY(off - (currY - prevY))
         } else{
         redrawCanvas()
             .then((data) => {

@@ -50,7 +50,7 @@ export function drawTwoShapes(){
 
 let scrollBackOff = 0;
 let refresh = window.innerHeight + scrollBackOff
-let scrollBack = 0//400//window.innerHeight/2;
+let scrollBack = 400//window.innerHeight/2;
 
 export let oldOverlapB = 0;
 export let overlapB = 0;
@@ -83,7 +83,7 @@ export function redrawCanvasB(){
         const newCtx = newCanvas.getContext('2d');
         newCtx.drawImage(canvas, 0, 0);
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(newCanvas, 0, refresh - scrollBack, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
 
         const clearAndDraw = (canvasId, image) => {

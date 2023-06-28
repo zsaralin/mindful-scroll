@@ -4,7 +4,6 @@ import {tileIds} from "../Tiling/TilingPathDict";
 import {path} from "../Tiling/TilingPath";
 
 export function logTiling(tilingI, tiles, bounds, offset, colourPal, fillInfo, tilingType) {
-    console.log('path is ' + path)
     if (isLogging) {
         const coll = collection(db, "log");
         const newMessage = {
