@@ -81,11 +81,13 @@ export function redrawCanvasB(){
         newCanvas.width = canvas.width;
         newCanvas.height = canvas.height;
         const newCtx = newCanvas.getContext('2d');
-        newCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height);
+        newCtx.drawImage(canvas, 0, 0);
+        const h = refresh + window.innerHeight;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(newCanvas, 0, refresh - scrollBack, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-
+        ctx.drawImage(newCanvas, 0, refresh - scrollBack, canvas.width, h, 0, 0, canvas.width, h);
+        // ctx.fillStyle = "red"
+        // ctx.fillRect(0,0, canvas.width, canvas.height)
         const clearAndDraw = (canvasId, image) => {
             const canvas = document.getElementById(canvasId);
             const ctx = canvas.getContext('2d');
