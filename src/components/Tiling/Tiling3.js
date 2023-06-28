@@ -104,7 +104,6 @@ function toTiling(t) {
     tiling.colourPal = generateColourPal().cols
     tiling.i = tilingsDrawn
     tiling.fillInfo = getFillInfo()
-    console.log(JSON.stringify(tiling.fillInfo))
     logTiling(tiling.i, tileIds[tiling.i], tiling.bounds, tiling.offset, tiling.colourPal, tiling.fillInfo, tilingType)
     return tiling
 }
@@ -133,6 +132,7 @@ export let q = 0;
 export function secondTiling(inputArr, offset) {
     const finOffset = offset !== undefined ? offset : 400;
     top = bottom + BETWEEN_SPACE //+ finOffset ;
+    console.log('TOP ISSSS ' + top)
     let t = makeRandomTiling(inputArr);
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
     // console.log('bounnds ' + getBoundsTiling(t))

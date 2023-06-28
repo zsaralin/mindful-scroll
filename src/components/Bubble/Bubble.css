@@ -6,12 +6,12 @@
 #bubble {
     position: fixed;
     /*-webkit-transform: translateZ(0);*/
-    transform-origin: top left;
-    transform: scale(.4);
-    display: block;
+    /*transform-origin: top left;*/
+    /*transform: scale(.4);*/
+    /*display: block;*/
     /*width: 200px;*/
     /*height: 180px;*/
-    /*top: 0; right: 0;*/
+    top: 0; right: 0;
     /*top: 30px; left: 30px;*/
     /*transition: opacity .5s linear, x 6s ease-in-out, y 6s ease-in-out;*/
     pointer-events: none;

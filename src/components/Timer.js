@@ -18,8 +18,8 @@ let drawn = true;
 export function drawTimer() {
     canvas = document.getElementById('bub-canv')
     const ctx = canvas.getContext('2d');
-    const centerY = 35
-    const centerX = 40;
+    const centerY = 35;
+    const centerX = 33;
     const radius = 7.8;
     const percentage = calculatePercentage();
     let fillColor = 'rgba(128, 128, 128, 0.5)';
