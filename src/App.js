@@ -273,7 +273,9 @@ function App() {
                 logAutoScrollStart()
             }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
-
+            checkFill = setInterval(() => {
+                getFillRatio(currTile, smallOffset, TOP_CANV);
+            }, 500);
             // let tiles = getOrienTiles(currTile, currTiling)
             // let tiles = getRow(currTile, currTiling)
             // let tiles = getColumn(currTile, currTiling)
@@ -285,7 +287,7 @@ function App() {
 
         }
     }
-
+    let checkFill;
     let dotRemoved = false;
 
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
@@ -293,7 +295,6 @@ function App() {
             strokeMove = true;
             hideBubble()
             stopColorChange()
-
             if (!dotRemoved) {
                 removeLastDot(currTile)
                 dotRemoved = true;
@@ -539,6 +540,7 @@ function App() {
     }
 
     function onStrokeEnd() {
+        clearInterval(checkFill)
         if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled && getFillRatio(currTile, smallOffset, TOP_CANV) > getFillMin()) {
             completeTile2(currTile, currTiling, invisCol)
         }
