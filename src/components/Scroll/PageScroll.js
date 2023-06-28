@@ -385,7 +385,7 @@ export function startScroll(ySpeed, prevCursorY, cursorY) {
     hideBubble()
     // hideColourPreview()
     // console.log(ySpeed)
-    if ((ySpeed < 50 || !isSlowScrollOn()) && d === SCROLL_DIST) {
+    if ((ySpeed < 25 || !isSlowScrollOn()) && d === SCROLL_DIST) {
         requestAnimationFrame(() => {
             doScroll(cursorY, prevCursorY);
         });

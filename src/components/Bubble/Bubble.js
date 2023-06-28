@@ -190,7 +190,7 @@ export function getCircle() {
 
 let bubbX; let bubbY; let d;
 export default function Bubble() {
-const radius = 6;
+const radius = 6.3;
     useEffect(() => {
         bubble = document.getElementById("bubble");
         bubble.style.width = window.innerWidth;
