@@ -82,7 +82,7 @@ export function redrawCanvasB(){
         newCanvas.height = canvas.height;
         const newCtx = newCanvas.getContext('2d');
         newCtx.drawImage(canvas, 0, 0);
-        const h = refresh + window.innerHeight;
+        const h = refresh + window.innerHeight - scrollBackOff;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(newCanvas, 0, refresh - scrollBack, canvas.width, h, 0, 0, canvas.width, h);
