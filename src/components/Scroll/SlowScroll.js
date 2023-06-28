@@ -1,4 +1,4 @@
-let slowScrollOn = true;
+let slowScrollOn = false;
 
 export function triggerSlowScroll() {
     slowScrollOn = !slowScrollOn

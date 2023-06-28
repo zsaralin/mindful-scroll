@@ -4,6 +4,7 @@ import {EdgeShape, IsohedralTiling, tilingTypes} from "../../lib";
 import {v4 as uuidv4} from 'uuid';
 import {prevOffsetY} from "../Scroll/PageScroll";
 import {tilingsDrawn} from "./Tiling3";
+import {getTotalPixels} from "../Tile/FillTile/FillRatio";
 
 const SQUARE_INDEX = 67
 let transition1x = 1;

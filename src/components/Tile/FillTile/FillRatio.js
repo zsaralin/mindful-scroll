@@ -10,6 +10,9 @@ let BB_PADDING = 35; // bounding box padding
 let fillMin = FILL_RATIO
 let strokeCanvas = TOP_CANV
 
+async function runInBackground(currTile) {
+    await getTotalPixels(currTile);
+}
 export function getTotalPixels(currTile) {
     let tileDim = currTile.bounds
     let startX = tileDim[0] - BB_PADDING;
@@ -17,14 +20,18 @@ export function getTotalPixels(currTile) {
     let endX = tileDim[1] + BB_PADDING;
     let endY = tileDim[3] + BB_PADDING;
 
-    for (let x = startX; x < endX; x += 1) {
-        for (let y = startY; y < endY; y += 1) {
-            if (isCircleInPath(currTile.path, x, y)) {
-                currTile.inPath.push([x, y])
+    const centerX = (tileDim[0] + tileDim[1]) / 2;
+    const centerY = (tileDim[2] + tileDim[3]) / 2;
+    const radius = (tileDim[1] - tileDim[0]) / 2 + BB_PADDING;
+
+    for (let x = startX; x < endX; x++) {
+        for (let y = startY; y < endY; y++) {
+            const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+            if (distance <= radius && isCircleInPath(currTile.path, x, y)) {
+                currTile.inPath.push([x, y]);
             }
         }
     }
-    console.log('LOOK ' + currTile.inPath.length)
     return currTile.inPath.length
 }
 
@@ -50,7 +57,6 @@ export function getFillRatio(currTile, offS, canv) {
             fillRatio[0]++
         }
     })
-    // ctx.restore()
     console.log('filRatio ' + (fillRatio[0] / fillRatio[1]) )
     return fillRatio[0] / fillRatio[1]
 }

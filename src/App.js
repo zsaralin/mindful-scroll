@@ -4,7 +4,7 @@ import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import TimerClock, {updateTimer} from './components/Timer.js';
 import Music, {outsidePoly, triggerAudio, UID} from './components/Audio/Audio.js'
-import {changeAudio,reduceAudio} from './components/Audio/AudioFile'
+import {changeAudio, reduceAudio} from './components/Audio/AudioFile'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/StrokeType/ShrinkingStroke'
 import {
     stopColorChange,
@@ -35,7 +35,13 @@ import {
     resetLineWidth,
     setLineWidth
 } from "./components/Stroke/StrokeWidth";
-import {changeBool, getFillMin, getFillRatio, isCircleInPath} from "./components/Tile/FillTile/FillRatio";
+import {
+    changeBool,
+    getFillMin,
+    getFillRatio,
+    getTotalPixels,
+    isCircleInPath
+} from "./components/Tile/FillTile/FillRatio";
 import {
     BETWEEN_SPACE,
     BUBBLE_DIST, FIFTH_WINDOW,
@@ -161,17 +167,6 @@ function App() {
 
 
     useEffect(() => {
-        // signInAnonymously(auth)
-        //     .then(() => {
-        //         // Signed in..
-        //     })
-        //     .catch((error) => {
-        //         const errorCode = error.code;
-        //         const errorMessage = error.message;
-        //         console.log(errorMessage)
-        //         // ...
-        //     });
-        // Assuming the query string is "?participant=123"
         logStart();
         const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
         canvasIds.forEach(id => {
@@ -207,6 +202,7 @@ function App() {
         colorDelay()
         updateTimer()
         // addAudio()
+
     }, []);
 
     let currColor;
@@ -273,9 +269,6 @@ function App() {
                 logAutoScrollStart()
             }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
-            checkFill = setInterval(() => {
-                getFillRatio(currTile, smallOffset, TOP_CANV);
-            }, 500);
             // let tiles = getOrienTiles(currTile, currTiling)
             // let tiles = getRow(currTile, currTiling)
             // let tiles = getColumn(currTile, currTiling)
@@ -289,6 +282,7 @@ function App() {
     }
     let checkFill;
     let dotRemoved = false;
+    let currFill;
 
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
         if (!doubleTouch && currTile && !currTile.watercolor && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
@@ -328,7 +322,7 @@ function App() {
                 getLineWidth(), currTile.id, currTiling.i, currColor, currTile.strokeType, tooFast.toString(), currTile.filled.toString(), currTile.colors)
 
         } else {
-            if(!doubleTouch) {
+            if (!doubleTouch) {
                 changeAudio()
             }
             insidePoly[1] += 1;
@@ -671,7 +665,7 @@ function App() {
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
             <div id="dots"></div>
-            <canvas id="bub-canv" style = {{}}></canvas>
+            <canvas id="bub-canv" style={{}}></canvas>
 
             <div className="wrapper" id="wrapper">
                 <div id="canvas-wrapper">
