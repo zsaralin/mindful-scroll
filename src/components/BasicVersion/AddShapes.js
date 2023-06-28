@@ -50,7 +50,7 @@ export function drawTwoShapes(){
 
 let scrollBackOff = 0;
 let refresh = window.innerHeight + scrollBackOff
-let scrollBack = 400//window.innerHeight/2;
+let scrollBack = 0//400//window.innerHeight/2;
 
 export let oldOverlapB = 0;
 export let overlapB = 0;
