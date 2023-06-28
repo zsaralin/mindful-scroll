@@ -2,7 +2,7 @@ import './App.css';
 import './components/Bubble/Bubble.css';
 import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
-import TimerClock from './components/Timer.js';
+import TimerClock, {updateTimer} from './components/Timer.js';
 import Music, {outsidePoly, triggerAudio, UID} from './components/Audio/Audio.js'
 import {changeAudio,reduceAudio} from './components/Audio/AudioFile'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/StrokeType/ShrinkingStroke'
@@ -60,7 +60,7 @@ import {
     getHeightTiling,
     getOffSmall,
     getTile,
-    getTiling,
+    getTiling, pathArr,
     tilingIndex,
     top
 } from "./components/Tiling/Tiling3";
@@ -113,7 +113,7 @@ import {logStrokeStart, logStrokeEnd, logStrokeMove, logDot} from "./components/
 import {logScrollEnd, logScrollMove, logScrollStart} from "./components/Logging/ScrollLog";
 import {drawTwoShapes} from "./components/BasicVersion/AddShapes";
 import {logRefresh, logStart} from "./components/Logging/TimeLog";
-import {hideBubble, showBubble} from "./components/Bubble/Bubble2";
+import Bubble2, {hideBubble, showBubble, showBubble2} from "./components/Bubble/Bubble2";
 import {logAutoScrollEnd, logAutoScrollStart, logAutoScrollStop} from "./components/Logging/LogAutoScroll";
 import {addAudio, getAudio} from "./components/Audio/AudioFile";
 
@@ -173,7 +173,6 @@ function App() {
         //     });
         // Assuming the query string is "?participant=123"
         logStart();
-    console.log(window.innerWidth)
         const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
@@ -203,7 +202,10 @@ function App() {
         ctx = document.getElementById('invis-canvas').getContext("2d");
         startScreenshots()
         initCanv()
-        setColourPal()
+        currTiling = prevTiling = pathArr[0]
+        setColourPal(currTiling.colourPal)
+        colorDelay()
+        updateTimer()
         // addAudio()
     }, []);
 
@@ -239,16 +241,13 @@ function App() {
         // smallOffset = getOffSmall(index)
         // currTile = getTile(y, invisCol)
 
-        if (currTiling.colourPal.length === 0) {
-            if (firstClick) {
-                currTiling.colourPal = getColourPal()
-                firstClick = false;
-                setColourPal(currTiling.colourPal)
-            }
-            // else {
-            //     currTiling.colourPal = basicVersion ? generateColourPal() : generateColourPal().cols
-            // }
-        }
+        // if (currTiling.colourPal.length === 0) {
+        //     if (firstClick) {
+        //         currTiling.colourPal = getColourPal()
+        //         firstClick = false;
+        //         setColourPal(currTiling.colourPal)
+        //     }
+        // }
         if (prevTiling !== currTiling) {
             setColourPal(currTiling.colourPal)
         }
@@ -666,11 +665,11 @@ function App() {
                 <button id="cp-button" onClick={showControlPanel}></button>
                 <ControlPanel/>
             </div>
-            <TimerClock/>
             <div id="angle" style={{position: "absolute", top: 0, display: 'none'}}> {angle}</div>
             <div id="thought" style={{transform: 'scale(.9)',}}></div>
             <Music/>
             <div id="dots"></div>
+            <canvas id="bub-canv" style = {{}}></canvas>
 
             <div className="wrapper" id="wrapper">
                 <div id="canvas-wrapper">
@@ -697,11 +696,15 @@ function App() {
                 <div id="gradRectangle"></div>
 
             </div>
+            {/*<canvas id="bub-canv" style = {{pointerEvent: 'none', zIndex: 4}}></canvas>*/}
+
             {/*<div id="hidden">*/}
             {/*    <div id = "hiddenTop"></div>*/}
             {/*    <div id = "hiddenBottom"></div>*/}
             {/*</div>*/}
             <Bubble/>
+
+
         </div>
     );
 }

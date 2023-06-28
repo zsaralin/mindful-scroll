@@ -9,9 +9,9 @@
     transform-origin: top left;
     transform: scale(.4);
     display: block;
-    width: 200px;
-    height: 180px;
-    top: 0; left: 0;
+    /*width: 200px;*/
+    /*height: 180px;*/
+    /*top: 0; right: 0;*/
     /*top: 30px; left: 30px;*/
     /*transition: opacity .5s linear, x 6s ease-in-out, y 6s ease-in-out;*/
     pointer-events: none;
@@ -34,7 +34,7 @@
 
 #circle {
     stroke : white;
-    stroke-width: 10;
+    stroke-width: 5;
     paint-order: stroke;
 }
 

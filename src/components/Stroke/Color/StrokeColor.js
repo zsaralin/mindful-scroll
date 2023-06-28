@@ -44,7 +44,6 @@ export function colorDelayOld() {
 }
 
 export function colorDelay() {
-    console.log('HI')
     if(!basicVersion && color){
     // changes color after a 2s pause, or changes hue slightly after a 500ms pause
     stopColorChange()

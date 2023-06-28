@@ -98,7 +98,7 @@ export function pauseColourPreview() {
 }
 
 export function startColourPreview() {
-    if (getIsChanging()) return
+    // if (getIsChanging()) return
     clearInterval(colourInterval)
     colourInterval = setInterval(function () {
         bubble.style.setProperty('--col', getCurrColor());
@@ -189,29 +189,32 @@ export function getCircle() {
 }
 
 export default function Bubble() {
+
     useEffect(() => {
         bubble = document.getElementById("bubble");
-        s = Snap(bubble)
-        circle = s.select('#circle');
-        speech = s.select('#speechR');
-        cloud = s.select('#cloud');
+        bubble.style.width = window.innerWidth;
+        bubble.style.height = window.innerHeight;
+        bubble.style.top = '-5px';
+        bubble.style.right = (-window.innerWidth + 83)  + 'px'
+        // s = Snap(bubble)
+        // circle = s.select('#circle');
+        // speech = s.select('#speechR');
+        // cloud = s.select('#cloud');
+        // circlePoints = circle?.node.getAttribute('d');
+        // setCirclePoints(circlePoints);
+        // setSpeechPoints(speech?.node.getAttribute('d'));
+        // setCloudPoints(cloud?.node.getAttribute('d'));
 
-        circlePoints = circle?.node.getAttribute('d');
-        setCirclePoints(circlePoints);
-        setSpeechPoints(speech?.node.getAttribute('d'));
-        setCloudPoints(cloud?.node.getAttribute('d'));
-
-        // colorDelay()
         bubble.style.opacity = 0
-        // gsap.to("#bubble", {opacity: 1, duration: 1, delay: 0})
+        gsap.to("#bubble", {opacity: 1, duration: 2, delay: 0})
         startColourPreview()
 
     }, []);
     return (
         <svg id="bubble" opacity='1'> >
             <path id="circle" d=
-                "M100.235 68.6081C100.235 68.6081 103.822 70.7256 106.335 74.8052C108.59 79.137 109.086 80.9176 108.798 85.7394C108.798 85.7394 108.516 89.7995 106.461 93.3396C104.405 96.8797 100.743 99.1008 100.743 99.1008C100.743 99.1008 98.5393 100.647 94.9781 101.638C91.4168 102.629 87.108 101.583 87.108 101.583C87.108 101.583 84.0633 101.308 79.7705 97.978C75.4776 94.6477 74.3966 90.7935 74.3966 90.7935C74.3966 90.7935 72.2355 86.247 73.5454 80.4168C74.4358 75.1299 77.8293 71.7761 77.8293 71.7761C77.8293 71.7761 82.2724 66.7676 89.3843 66.3092C95.7381 65.3379 100.235 68.6081 100.235 68.6081Z"
-                  opacity={basicVersion ? '0' : '1'}/>
+                "M100,100 m-20,0 a20,20 0 1,0 40,0 a20,20 0 1,0 -40,0"
+                  opacity={basicVersion ? '1' : '1'}/>
             <path id="speechR" d=
                 "M141 46.9738C141 46.9738 159.5 45.5021 159.5 63.0019C159.5 72.0021 159.5 81.6073 159.5 103.502C159.5 103.502 157.5 121.002 133 121.002C124.5 133.502 118.5 141.502 118.5 141.502C118.5 141.502 111 131.002 104 121.002C94.9999 121.002 87.0004 121.002 87.0004 121.002C87.0004 121.002 78.9999 121.002 71.0003 121.002C60.9999 121.002 40.0003 121.002 40.0003 121.002C40.0003 121.002 21.5004 122.002 21.5004 100.002C21.5004 75.0017 22.0002 66.0019 22.0002 66.0019C22.0002 66.0019 20.5004 46.5021 40.0003 46.5021C53.0007 46.9738 141 46.9738 141 46.9738Z"
                   opacity='0'/>
@@ -234,3 +237,4 @@ export default function Bubble() {
         </svg>
     );
 }
+// /*"M100.235 68.6081C100.235 68.6081 103.822 70.7256 106.335 74.8052C108.59 79.137 109.086 80.9176 108.798 85.7394C108.798 85.7394 108.516 89.7995 106.461 93.3396C104.405 96.8797 100.743 99.1008 100.743 99.1008C100.743 99.1008 98.5393 100.647 94.9781 101.638C91.4168 102.629 87.108 101.583 87.108 101.583C87.108 101.583 84.0633 101.308 79.7705 97.978C75.4776 94.6477 74.3966 90.7935 74.3966 90.7935C74.3966 90.7935 72.2355 86.247 73.5454 80.4168C74.4358 75.1299 77.8293 71.7761 77.8293 71.7761C77.8293 71.7761 82.2724 66.7676 89.3843 66.3092C95.7381 65.3379 100.235 68.6081 100.235 68.6081Z"*/
