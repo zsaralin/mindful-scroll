@@ -75,8 +75,8 @@ let secondStep = false;
 let thirdStep = false;
 let fourthStep = false;
 
-const scrollBackAmount = 400;
-const whiteSpace = 400;
+export const scrollBackAmount = 600;
+const whiteSpace = 600;
 let refreshSpot;
 
 export const updateCanvasOld = (canvasId, refreshSpot) => {
@@ -296,9 +296,9 @@ export const redrawCanvas = async () => {
                 rectangle.style.top = 0 + "px";
                 rectangle.style.width = topC.width + "px";
                 rectangle.style.height = (whiteSpace - scrollBackAmount - 1 + offsetI) + scrollBackAmount + 15 + "px";
-                const position = offsetI === 0 ? '65%' : '85%'
+                const position = offsetI === 0 ? '15%' : '55%'
                 rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
-                offsetI = 400;
+                offsetI = scrollBackAmount;
                 refreshSpot = top + offsetI - 100;
 
                 redrawActiveTiles()

@@ -5,7 +5,7 @@ import {getGrid, getTilingProp} from "./TilingProperties";
 import {setTiling} from "./SortingHat";
 import {getOffsetY} from "../Scroll/Offset";
 import {clearCanvas, drawTwoTilings, getTilingIndex2} from "./Tiling2";
-import {prevOffsetY} from "../Scroll/PageScroll";
+import {prevOffsetY, scrollBackAmount} from "../Scroll/PageScroll";
 import {TOP_PAGE_SPACE, BETWEEN_SPACE, SHAPE_COLOR} from "../Constants";
 import {getFillInfo, getFillType} from "./SortingHat/TilingFillType";
 import {checkOverlap} from "./TilingPath";
@@ -130,7 +130,7 @@ let oldOffset = [0]
 export let q = 0;
 
 export function secondTiling(inputArr, offset) {
-    const finOffset = offset !== undefined ? offset : 400;
+    const finOffset = offset !== undefined ? offset : scrollBackAmount;
     top = bottom + BETWEEN_SPACE //+ finOffset ;
     console.log('TOP ISSSS ' + top)
     let t = makeRandomTiling(inputArr);
@@ -170,14 +170,14 @@ export function drawSecondTiling() {
     // x += BETWEEN_SPACE + TOP_PAGE_SPACE// - 100;
     oldoldOverlap = oldOverlapOffset;
     oldOverlapOffset = overlapOffset
-    overlapOffset = -(top - 400 - 100) //+ BETWEEN_SPACE//-(pathArr[pathArr.length - 2].bounds[3] - pathArr[pathArr.length - 1].bounds[2])
+    overlapOffset = -(top - scrollBackAmount - 100) //+ BETWEEN_SPACE//-(pathArr[pathArr.length - 2].bounds[3] - pathArr[pathArr.length - 1].bounds[2])
     secondTiling()
 }
 
 export function drawSecondTilingHelper() {
     if(BETWEEN_SPACE < 0) {
         checkOverlap(pathArr[pathArr.length - 2].pathDict, pathArr[pathArr.length - 1].pathDict, overlapOffset)
-        top = getBoundsTiling2(pathArr[pathArr.length - 1].pathDict)[2] - 400
+        top = getBoundsTiling2(pathArr[pathArr.length - 1].pathDict)[2] - scrollBackAmount
     }
     pathArr[pathArr.length - 1].grid = getGrid(pathArr[pathArr.length - 1].pathDict)
     const [midSeg, vert, orien] = getTilingProp(pathArr[pathArr.length - 1].pathDict);

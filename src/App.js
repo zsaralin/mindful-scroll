@@ -24,7 +24,7 @@ import {getOffsetY} from './components/Scroll/Offset'
 import {
     doScroll, endScroll, getStrokesTop, initCanv, initializeCanv, prevOffsetY,
     redrawCanvas,
-    redrawCanvas2, setUpCanvas, startScroll, strokesTop,
+    redrawCanvas2, scrollBackAmount, setUpCanvas, startScroll, strokesTop,
     triggerScroll, updateCanvasNew, updateOffCanvas, updateOffCanvasWrapper
 } from "./components/Scroll/PageScroll";
 import {watercolor} from "./components/Effects/Watercolor";
@@ -181,9 +181,9 @@ function App() {
                 canvas.height = window.innerHeight * 3
             } else {
                 if (id === 'fill-canvas' || id === "top-canvas") {
-                    canvas.height = Math.min(1700 * 3 + 400, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;}
+                    canvas.height = Math.min(1700 * 3 + scrollBackAmount, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;}
                 } else {
-                    canvas.height = 1700 * 2 + 400
+                    canvas.height = 1700 * 2 + scrollBackAmount
                 }
             }
             // canvas.height = window.innerHeight * 6;
