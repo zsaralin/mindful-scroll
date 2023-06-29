@@ -18,15 +18,15 @@ export function startFillSound() {
     gainNode.connect(audioContext.destination);
 
     // Set initial gain value to 0
-    gainNode.gain.value = 0;
+    gainNode.gain.value = 0.01;
 
     // Event listener for when metadata is loaded
     audio.addEventListener('loadedmetadata', function() {
         // Generate a random start time within the valid range
-        var randomStartTime = Math.random() * (audio.duration - 5);
+        // var randomStartTime = Math.random() * (audio.duration - 5);
 
         // Start playing the audio file
-        audio.currentTime = randomStartTime;
+        // audio.currentTime = randomStartTime;
         // audio.volume = .01;
         audio.play();
     });
@@ -36,21 +36,25 @@ export function startFillSound() {
 
     audio.addEventListener('ended', function() {
         gainNode.gain.value = 0;
-        var randomStartTime = Math.random() * (audio.duration - 5);
-        audio.currentTime = randomStartTime;
+        // var randomStartTime = Math.random() * (audio.duration - 5);
+        // audio.currentTime = randomStartTime;
         audio.play();
     });
 }
 
 export function playFillSound(){
     // Fade-in effect
-    var fadeInDuration = 1; // Fade-in duration in seconds
-    var fadeInStartTime = audioContext.currentTime;
-    gainNode.gain.exponentialRampToValueAtTime(.5, fadeInStartTime + fadeInDuration);
-
+    // var fadeInDuration = 1; // Fade-in duration in seconds
+    // var fadeInStartTime = audioContext.currentTime;
+    // gainNode.gain.exponentialRampToValueAtTime(.5, fadeInStartTime + fadeInDuration);
+    audio.currentTime = 0;
+    audio.play()
+    gainNode.gain.value = 1;
     // Schedule the fade-out effect
-    var fadeOutDuration = 1; // Fade-out duration in seconds
-    var fadeOutStartTime = audioContext.currentTime + 4 - fadeOutDuration;
+    var fadeOutDuration = 3; // Fade-out duration in seconds
+    var fadeOutStartTime = audioContext.currentTime+fadeOutDuration;
     gainNode.gain.exponentialRampToValueAtTime(0.1, fadeOutStartTime);
-
+    setTimeout(() => {
+        audio.pause();
+    }, fadeOutDuration * 1000);
 }

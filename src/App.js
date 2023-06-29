@@ -270,13 +270,11 @@ function App() {
                 logAutoScrollStart()
             }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
-
-            if (prevTile !== currTile) {
-                if (!basicVersion) {
+            if (!basicVersion) {
                     timeoutFillSound = setTimeout(() => {
-                        const numPath = getTotalPixelsSlow(currTile);
-                        let checkFill = setInterval(() => {
-                            if (currTile.inPath.length === numPath) {
+                        totPixels = getTotalPixelsSlow(currTile);
+                        checkFill = setInterval(() => {
+                            if (currTile.inPath.length === totPixels) {
                                 const currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
                                 console.log(currFill)
                                 if (!twinklePlayed && currFill > getFillMin()) {
@@ -287,7 +285,7 @@ function App() {
                                 }
                             }
                         }, 500);
-                    }, 3000); // Delay execution by 5 seconds (5000 milliseconds)
+                    }, 2500); // Delay execution by 5 seconds (5000 milliseconds)
                 }
                 // let tiles = getOrienTiles(currTile, currTiling)
                 // let tiles = getRow(currTile, currTiling)
@@ -296,13 +294,12 @@ function App() {
                 // let tiles = getCornerTiles(currTiling)
                 // fillTilesTogeth(tiles, currColor, "center")
                 // fillOrien(currTile, t)
-
-            }
         }
     }
 
     let checkFill;
     let timeoutFillSound;
+    let totPixels;
     let dotRemoved = false;
     let currFill;
     let twinklePlayed = false;
