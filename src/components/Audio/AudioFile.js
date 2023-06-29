@@ -3,13 +3,13 @@ import {UID} from "../Logging/Logging";
 import {logIdString} from "../Logging/TimeLog";
 import {getAbsArray} from "./Audio";
 
-const musicOn = false;
+const musicOn = true;
 const storage = getStorage()
 
 export function addAudio() {
-    const audioUrl = 'https://audio.jukehost.co.uk/R2jnmSdbIKmBQuqvTV4rAlDwnYdxve7n';
+    const audioUrl = 'https://audio.jukehost.co.uk/d9hqiGrxHZ0FqSEWDeE0acE8Es3lddtt';
     const storage = getStorage();
-    const storageRef = ref(storage, 'audio/filename.mp3');
+    const storageRef = ref(storage, 'audio/waves.mp3');
 
     fetch(audioUrl)
         .then(response => response.blob())
@@ -42,7 +42,7 @@ let targetTime;
 
 export function getAudio() {
     if (musicOn) {
-        const audioPath = 'audio/filename.mp3';
+        const audioPath = 'audio/waves.mp3';
         const storageRef = ref(storage, audioPath);
 
         return getDownloadURL(storageRef)
@@ -87,7 +87,10 @@ export function getAudio() {
                     targetTime = audioContext.currentTime + fadeDuration;
                     gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
                     // Play the audio
-                    audioElement.play();
+                    try {
+                        audioElement.play();
+                    }
+                    catch(error){}
                     document.addEventListener('visibilitychange', handleVisibilityChange);
 
                 });

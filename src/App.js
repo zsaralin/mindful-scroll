@@ -39,7 +39,7 @@ import {
     changeBool,
     getFillMin,
     getFillRatio,
-    getTotalPixels,
+    getTotalPixels, getTotalPixelsSlow,
     isCircleInPath
 } from "./components/Tile/FillTile/FillRatio";
 import {
@@ -122,6 +122,7 @@ import {logRefresh, logStart} from "./components/Logging/TimeLog";
 import Bubble2, {hideBubble, showBubble, showBubble2} from "./components/Bubble/Bubble2";
 import {logAutoScrollEnd, logAutoScrollStart, logAutoScrollStop} from "./components/Logging/LogAutoScroll";
 import {addAudio, getAudio} from "./components/Audio/AudioFile";
+import {playFillSound} from "./components/Audio/FillSound";
 
 
 function App() {
@@ -269,6 +270,18 @@ function App() {
                 logAutoScrollStart()
             }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
+
+            const numPath = getTotalPixelsSlow(currTile)
+            checkFill = setInterval(() => {
+                if(currTile.inPath.length !== numPath) {
+                    currFill = getFillRatio(currTile, smallOffset, TOP_CANV)
+                }
+                if(!twinklePlayed && currFill > FILL_RATIO){
+                    clearInterval(checkFill)
+                    playFillSound()
+                    twinklePlayed = true;
+                }
+            }, 500);
             // let tiles = getOrienTiles(currTile, currTiling)
             // let tiles = getRow(currTile, currTiling)
             // let tiles = getColumn(currTile, currTiling)
@@ -283,6 +296,7 @@ function App() {
     let checkFill;
     let dotRemoved = false;
     let currFill;
+    let twinklePlayed = false;
 
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
         if (!doubleTouch && currTile && !currTile.watercolor && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
@@ -535,8 +549,11 @@ function App() {
 
     function onStrokeEnd() {
         clearInterval(checkFill)
-        if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled && getFillRatio(currTile, smallOffset, TOP_CANV) > getFillMin()) {
+        if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled &&
+            (currFill > getFillMin() || getFillRatio(currTile, smallOffset, TOP_CANV) > getFillMin())) {
             completeTile2(currTile, currTiling, invisCol)
+            twinklePlayed = false;
+            currFill = 0;
         }
         if (currTile && !strokeMove && !currTile.watercolor) {
             currTile.dotType = currTile.dotType ? currTile.dotType : dotTypesHelper(currTile.strokeType)

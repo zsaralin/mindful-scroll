@@ -10,29 +10,64 @@ let BB_PADDING = 35; // bounding box padding
 let fillMin = FILL_RATIO
 let strokeCanvas = TOP_CANV
 
-async function runInBackground(currTile) {
-    await getTotalPixels(currTile);
+export function getTotalPixelsFast(currTile){
+        let tileDim = currTile.bounds
+        let startX = tileDim[0] - BB_PADDING;
+        let startY = tileDim[2] - BB_PADDING;
+        let endX = tileDim[1] + BB_PADDING;
+        let endY = tileDim[3] + BB_PADDING;
+
+        const centerX = (tileDim[0] + tileDim[1]) / 2;
+        const centerY = (tileDim[2] + tileDim[3]) / 2;
+        const radius = (tileDim[1] - tileDim[0]) / 2 + BB_PADDING;
+
+        for (let x = startX; x < endX; x++) {
+            for (let y = startY; y < endY; y++) {
+                const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+                if (distance <= radius && isCircleInPath(currTile.path, x, y)) {
+                    currTile.inPath.push([x, y]);
+                }
+            }
+        }
+        return currTile.inPath.length
 }
-export function getTotalPixels(currTile) {
-    let tileDim = currTile.bounds
-    let startX = tileDim[0] - BB_PADDING;
-    let startY = tileDim[2] - BB_PADDING;
-    let endX = tileDim[1] + BB_PADDING;
-    let endY = tileDim[3] + BB_PADDING;
+
+export function getTotalPixelsSlow(currTile) {
+    const tileDim = currTile.bounds;
+    const startX = tileDim[0] - BB_PADDING;
+    const startY = tileDim[2] - BB_PADDING;
+    const endX = tileDim[1] + BB_PADDING;
+    const endY = tileDim[3] + BB_PADDING;
 
     const centerX = (tileDim[0] + tileDim[1]) / 2;
     const centerY = (tileDim[2] + tileDim[3]) / 2;
     const radius = (tileDim[1] - tileDim[0]) / 2 + BB_PADDING;
 
-    for (let x = startX; x < endX; x++) {
-        for (let y = startY; y < endY; y++) {
-            const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
-            if (distance <= radius && isCircleInPath(currTile.path, x, y)) {
-                currTile.inPath.push([x, y]);
+    let currentX = startX;
+    let currentY = startY;
+
+    const processChunk = () => {
+        for (let i = 0; i < 100; i++) { // Adjust the chunk size as needed
+            const distance = Math.sqrt((currentX - centerX) ** 2 + (currentY - centerY) ** 2);
+            if (distance <= radius && isCircleInPath(currTile.path, currentX, currentY)) {
+                currTile.inPath.push([currentX, currentY]);
+            }
+
+            currentX++;
+            if (currentX > endX) {
+                currentX = startX;
+                currentY++;
+                if (currentY > endY) {
+                    // We've finished processing all pixels
+                    return currTile.inPath.length
+                }
             }
         }
-    }
-    return currTile.inPath.length
+
+        requestAnimationFrame(processChunk);
+    };
+
+    requestAnimationFrame(processChunk);
 }
 
 export function isCircleInPath(path, x, y, lineWidth) {
@@ -50,14 +85,18 @@ export function getFillRatio(currTile, offS, canv) {
     let ctx = document.getElementById(canv).getContext("2d")
     // ctx.translate(0,-smallOffset)
 
-    let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixels(currTile) : currTile.inPath.length] // [filledPixels, totalPixels]
+    let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixelsFast(currTile) : currTile.inPath.length];
+
     currTile.inPath.forEach(i => {
-        let col = ctx.getImageData(i[0], i[1]-offS, 1, 1, {willReadFrequently: true}).data.toString()
-        if (col !== '0,0,0,0' && col !== '255,255,255,255') {
-            fillRatio[0]++
+        let pixelData = ctx.getImageData(i[0], i[1] - offS, 1, 1, { willReadFrequently: true }).data;
+        let isTransparent = pixelData[0] === 0 && pixelData[1] === 0 && pixelData[2] === 0 && pixelData[3] === 0;
+        let isOpaque = pixelData[0] === 255 && pixelData[1] === 255 && pixelData[2] === 255 && pixelData[3] === 255;
+
+        if (!isTransparent && !isOpaque) {
+            fillRatio[0]++;
         }
-    })
-    console.log('filRatio ' + (fillRatio[0] / fillRatio[1]) )
+    });
+    // console.log('filRatio ' + (fillRatio[0] / fillRatio[1]) )
     return fillRatio[0] / fillRatio[1]
 }
 

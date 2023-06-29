@@ -4,7 +4,7 @@ import {getActiveTileArr} from "../Effects/Watercolor";
 import {getTile} from "../Tiling/Tiling3";
 import {getBoundsTile} from "../Tiling/TilingBounds";
 import {strokeArr} from "../Stroke/StrokeType/StrokeArr";
-import {getTotalPixels} from "./FillTile/FillRatio";
+import { getTotalPixelsFast} from "./FillTile/FillRatio";
 
 let fillTileArr = {} // fully coloured tiles
 
@@ -35,7 +35,7 @@ export function redrawCompleteTile(tileId, offsetY) {
             currTile.colors = tile.tile.colors
             currTile.allColors = tile.tile.allColors
             currTile.fillColors = tile.tile.fillColors
-            getTotalPixels(currTile) // set inPath
+            getTotalPixelsFast(currTile) // set inPath
             pushCompleteTile(currTile, tile.color)
             recompleteTile(currTile)
 

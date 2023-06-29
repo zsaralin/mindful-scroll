@@ -1,6 +1,5 @@
 import {drawBottomTiling, drawTwoTilings, refreshTilings, refreshTilings2, topSecondTiling} from "../Tiling/Tiling2";
 import {redrawStrokes} from "../Stroke/StrokeType/StrokeArr";
-import {redrawCompleteTiles} from "../Tile/CompleteTileArr";
 import {redrawActiveTiles, stopWatercolor} from "../Effects/Watercolor";
 import {setInternalOffset} from "../Tile/CompleteTile";
 import {BETWEEN_SPACE, SCROLL_DELTA, SCROLL_DIST, TOP_PAGE_SPACE} from "../Constants";

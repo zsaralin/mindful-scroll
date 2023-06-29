@@ -1,8 +1,9 @@
 import {useEffect, useState} from "react";
 import {getRandomTrack} from "./Tracks";
 import {gsap} from "gsap";
-import {getAudio} from './AudioFile'
+import {addAudio, getAudio} from './AudioFile'
 import {basicVersion} from "../Tiling/SortingHat/CompleteTile2";
+import {startTone} from "./FillSound";
 let audio = new Audio(getRandomTrack());
 let audioOn = true;
 audio.volume = 0;
@@ -20,7 +21,7 @@ export default function Music() {
     const [intro, setIntro] = useState(true); // do not remove useState
 
     function playMusic() {
-        if(!basicVersion) getAudio()
+        getAudio()
         // const audioContext = new AudioContext();
         // const sourceNode = audioContext.createBufferSource();
         // sourceNode.buffer = audioBuffer;
