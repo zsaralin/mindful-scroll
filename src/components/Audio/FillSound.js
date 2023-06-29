@@ -30,7 +30,7 @@ export function playFillSound() {
         // Fade-in effect
         var fadeInDuration = 1; // Fade-in duration in seconds
         var fadeInStartTime = audioContext.currentTime;
-        gainNode.gain.exponentialRampToValueAtTime(.1, fadeInStartTime + fadeInDuration);
+        gainNode.gain.exponentialRampToValueAtTime(1, fadeInStartTime + fadeInDuration);
 
         // Schedule the fade-out effect
         var fadeOutDuration = 1; // Fade-out duration in seconds
