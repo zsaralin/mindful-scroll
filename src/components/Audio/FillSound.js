@@ -45,11 +45,11 @@ export function playFillSound(){
     // Fade-in effect
     var fadeInDuration = 1; // Fade-in duration in seconds
     var fadeInStartTime = audioContext.currentTime;
-    gainNode.gain.exponentialRampToValueAtTime(1, fadeInStartTime + fadeInDuration);
+    gainNode.gain.exponentialRampToValueAtTime(.5, fadeInStartTime + fadeInDuration);
 
     // Schedule the fade-out effect
     var fadeOutDuration = 1; // Fade-out duration in seconds
     var fadeOutStartTime = audioContext.currentTime + 4 - fadeOutDuration;
-    gainNode.gain.exponentialRampToValueAtTime(0.01, fadeOutStartTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.0, fadeOutStartTime);
 
 }
