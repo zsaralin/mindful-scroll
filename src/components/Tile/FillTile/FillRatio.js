@@ -68,26 +68,35 @@ export function isCircleInPath(path, x, y, lineWidth) {
     // ctx.restore()
     return false
 }
-
 export function getFillRatio(currTile, offS, canv) {
-    let ctx = document.getElementById(canv).getContext("2d")
-    // ctx.translate(0,-smallOffset)
+    let ctx = document.getElementById(canv).getContext("2d");
+    let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixelsFast(currTile) : currTile.inPath.length/2];
 
-    let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixelsFast(currTile) : currTile.inPath.length];
+    let subsetSize = Math.ceil(currTile.inPath.length / 2); // Half of currTile.inPath length
 
-    currTile.inPath.forEach(i => {
-        let pixelData = ctx.getImageData(i[0], i[1] - offS, 1, 1, { willReadFrequently: true }).data;
-        let isTransparent = pixelData[0] === 0 && pixelData[1] === 0 && pixelData[2] === 0 && pixelData[3] === 0;
-        let isOpaque = pixelData[0] === 255 && pixelData[1] === 255 && pixelData[2] === 255 && pixelData[3] === 255;
+    let shuffledIndices = shuffleArray(Array.from(Array(currTile.inPath.length).keys())); // Generate shuffled indices
+
+    for (let i = 0; i < subsetSize; i++) {
+        let index = shuffledIndices[i];
+        let pixelData = ctx.getImageData(currTile.inPath[index][0], currTile.inPath[index][1] - offS, 1, 1).data;
+        let isTransparent = pixelData[0] === 0 && pixelData[1] === 0 && pixelData[2] === 0;
+        let isOpaque = pixelData[0] === 255 && pixelData[1] === 255 && pixelData[2] === 255;
 
         if (!isTransparent && !isOpaque) {
             fillRatio[0]++;
         }
-    });
-    // console.log('filRatio ' + (fillRatio[0] / fillRatio[1]) )
-    return fillRatio[0] / fillRatio[1]
+    }
+
+    return fillRatio[0] / fillRatio[1];
 }
 
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 function isColorMatch(col0, col1) {
     let h0 = col0[0];
     let h1 = col1[0];

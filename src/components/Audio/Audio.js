@@ -3,7 +3,7 @@ import {getRandomTrack} from "./Tracks";
 import {gsap} from "gsap";
 import {addAudio, getAudio} from './AudioFile'
 import {basicVersion} from "../Tiling/SortingHat/CompleteTile2";
-import {startTone} from "./FillSound";
+import {playFillSound, startTone} from "./FillSound";
 let audio = new Audio(getRandomTrack());
 let audioOn = true;
 audio.volume = 0;
@@ -22,6 +22,7 @@ export default function Music() {
 
     function playMusic() {
         getAudio()
+        playFillSound()
         // const audioContext = new AudioContext();
         // const sourceNode = audioContext.createBufferSource();
         // sourceNode.buffer = audioBuffer;
@@ -50,7 +51,7 @@ export default function Music() {
 
     return (
         <div className="introPage" style={{visibility: intro ? 'visible' : 'hidden',}}>
-            <div className="introPage"
+            <div id = 'introPage' className="introPage"
                  onClick={playMusic}
                  style={{visibility: intro ? 'visible' : 'hidden',}}
             > {intro ? "click anywhere to start" : ""} </div>

@@ -40,12 +40,14 @@ export function doScroll(currY, prevY) {
             redrawCanvasB()
             // setOffsetY(off - (currY - prevY))
         } else{
-        redrawCanvas()
-            .then((data) => {
-                if (data !== false) {
-                    setOffsetY(off - (currY - prevY))
-                }
-            })}
+            setOffsetY(off - (currY - prevY))
+            redrawCanvas()
+            // .then((data) => {
+            //     if (data !== false) {
+            //         setOffsetY(off - (currY - prevY))
+            //     }
+            // })
+    }
     } else {
         setOffsetY(limitScroll)
     }
