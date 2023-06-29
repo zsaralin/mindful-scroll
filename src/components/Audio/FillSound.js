@@ -1,16 +1,19 @@
 import successBellSound from './success_bell.mp3';
 import * as Tone from 'tone';
 
-export function playFillSound() {
-    var audio = new Audio(successBellSound);
+let audio;
+let gainNode;
+let audioContext;
+export function startFillSound() {
+    audio = new Audio(successBellSound);
 // Create an AudioContext
-    var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
     // Create a MediaElementAudioSourceNode from the audio element
     var source = audioContext.createMediaElementSource(audio);
 
     // Create a GainNode for controlling the volume
-    var gainNode = audioContext.createGain();
+    gainNode = audioContext.createGain();
     source.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
@@ -24,25 +27,29 @@ export function playFillSound() {
 
         // Start playing the audio file
         audio.currentTime = randomStartTime;
-        // audio.volume = .3;
+        // audio.volume = .01;
         audio.play();
-
-        // Fade-in effect
-        var fadeInDuration = 1; // Fade-in duration in seconds
-        var fadeInStartTime = audioContext.currentTime;
-        gainNode.gain.exponentialRampToValueAtTime(1, fadeInStartTime + fadeInDuration);
-
-        // Schedule the fade-out effect
-        var fadeOutDuration = 1; // Fade-out duration in seconds
-        var fadeOutStartTime = audioContext.currentTime + 4 - fadeOutDuration;
-        gainNode.gain.exponentialRampToValueAtTime(0.01, fadeOutStartTime);
-
-        // Stop the audio playback after the fade-out duration
-        audio.addEventListener('ended', function() {
-            audio.pause();
-        }, { once: true });
     });
 
     // Load the audio metadata
     audio.load();
+
+    audio.addEventListener('ended', function() {
+        var randomStartTime = Math.random() * (audio.duration - 5);
+        audio.currentTime = randomStartTime;
+        audio.play();
+    });
+}
+
+export function playFillSound(){
+    // Fade-in effect
+    var fadeInDuration = 1; // Fade-in duration in seconds
+    var fadeInStartTime = audioContext.currentTime;
+    gainNode.gain.exponentialRampToValueAtTime(1, fadeInStartTime + fadeInDuration);
+
+    // Schedule the fade-out effect
+    var fadeOutDuration = 1; // Fade-out duration in seconds
+    var fadeOutStartTime = audioContext.currentTime + 4 - fadeOutDuration;
+    gainNode.gain.exponentialRampToValueAtTime(0.01, fadeOutStartTime);
+
 }

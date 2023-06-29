@@ -3,7 +3,7 @@ import {getRandomTrack} from "./Tracks";
 import {gsap} from "gsap";
 import {addAudio, getAudio} from './AudioFile'
 import {basicVersion} from "../Tiling/SortingHat/CompleteTile2";
-import {playFillSound, startTone} from "./FillSound";
+import {playFillSound, startFillSound, startTone} from "./FillSound";
 let audio = new Audio(getRandomTrack());
 let audioOn = true;
 audio.volume = 0;
@@ -22,7 +22,7 @@ export default function Music() {
 
     function playMusic() {
         getAudio()
-        playFillSound()
+        startFillSound()
         // const audioContext = new AudioContext();
         // const sourceNode = audioContext.createBufferSource();
         // sourceNode.buffer = audioBuffer;

@@ -280,6 +280,7 @@ function App() {
                     if (!twinklePlayed && currFill > getFillMin()) {
                         clearInterval(checkFill)
                         playFillSound()
+                        console.log('HIasdasd')
                         twinklePlayed = true;
                     }
                 }, 500);
