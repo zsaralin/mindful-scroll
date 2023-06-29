@@ -88,12 +88,11 @@ export function fillStripesVert(tile, backCol, stripeCol) {
 
 export function fillStripesHorizGrad(tile, col0, col1) {
     fillTile(tile, "first", false)
-    console.log(`filcolors  ${tile.fillColors}`)
     // let cols = tile.fillColors ? tile.fillColors : (tile.fillColors = setCols(tile));
     const cols = tile.fillColors ? tile.fillColors : setCols(tile, col0, col1)
 
     const ctx = document.getElementById("top-canvas").getContext("2d");
-    const lw = getLineWidth()
+    const lw = Math.floor(Math.random() * 21) + 15; // random num between 15 and 35
     let i = 0
     let [xmin, xmax, y, ymax] = tile.bounds
     ctx.save()

@@ -21,6 +21,7 @@ import {getTileWidth} from "../Tiling/TileWidth";
 import {redrawCanvasB} from "../BasicVersion/AddShapes";
 import {hideBubble} from "../Bubble/Bubble2";
 import {redrawActiveNeigh} from "../Effects/NeighTiles";
+import {off} from "uikit/src/js/util";
 
 export let limitScroll = 0;
 let tilingC;
@@ -292,10 +293,10 @@ export const redrawCanvas = async () => {
                 // drawSecondTilingHelper()
 
                 var rectangle = document.getElementById("gradRectangle");
-                rectangle.style.top = 0 + "px";
+                rectangle.style.top = offsetI - 1 + "px";
                 rectangle.style.width = topC.width + "px";
-                rectangle.style.height = (whiteSpace - scrollBackAmount - 1 + offsetI) + scrollBackAmount + 15 + "px";
-                const position = offsetI === 0 ? '15%' : '55%'
+                rectangle.style.height = (whiteSpace - scrollBackAmount - 1) + scrollBackAmount/2 + "px";
+                const position = offsetI === 0 ? '15%' : '5%'
                 rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
                 offsetI = scrollBackAmount;
                 refreshSpot = top + offsetI - 100;

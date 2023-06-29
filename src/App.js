@@ -271,17 +271,19 @@ function App() {
             }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
 
-            const numPath = getTotalPixelsSlow(currTile)
-            checkFill = setInterval(() => {
-                if(currTile.inPath.length !== numPath) {
-                    currFill = getFillRatio(currTile, smallOffset, TOP_CANV)
-                }
-                if(!twinklePlayed && currFill > FILL_RATIO){
-                    clearInterval(checkFill)
-                    playFillSound()
-                    twinklePlayed = true;
-                }
-            }, 500);
+            if(!basicVersion) {
+                const numPath = getTotalPixelsSlow(currTile)
+                checkFill = setInterval(() => {
+                    if (currTile.inPath.length === numPath) {
+                        currFill = getFillRatio(currTile, smallOffset, TOP_CANV)
+                    }
+                    if (!twinklePlayed && currFill > getFillMin()) {
+                        clearInterval(checkFill)
+                        playFillSound()
+                        twinklePlayed = true;
+                    }
+                }, 500);
+            }
             // let tiles = getOrienTiles(currTile, currTiling)
             // let tiles = getRow(currTile, currTiling)
             // let tiles = getColumn(currTile, currTiling)

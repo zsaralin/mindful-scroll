@@ -43,31 +43,19 @@ export function getTotalPixelsSlow(currTile) {
     const centerY = (tileDim[2] + tileDim[3]) / 2;
     const radius = (tileDim[1] - tileDim[0]) / 2 + BB_PADDING;
 
-    let currentX = startX;
-    let currentY = startY;
+    let totalPixels = 0;
 
-    const processChunk = () => {
-        for (let i = 0; i < 100; i++) { // Adjust the chunk size as needed
+    for (let currentY = startY; currentY <= endY; currentY++) {
+        for (let currentX = startX; currentX <= endX; currentX++) {
             const distance = Math.sqrt((currentX - centerX) ** 2 + (currentY - centerY) ** 2);
             if (distance <= radius && isCircleInPath(currTile.path, currentX, currentY)) {
                 currTile.inPath.push([currentX, currentY]);
-            }
-
-            currentX++;
-            if (currentX > endX) {
-                currentX = startX;
-                currentY++;
-                if (currentY > endY) {
-                    // We've finished processing all pixels
-                    return currTile.inPath.length
-                }
+                totalPixels++;
             }
         }
+    }
+    return totalPixels;
 
-        requestAnimationFrame(processChunk);
-    };
-
-    requestAnimationFrame(processChunk);
 }
 
 export function isCircleInPath(path, x, y, lineWidth) {
