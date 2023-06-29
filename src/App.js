@@ -281,7 +281,8 @@ function App() {
                                 console.log(currFill)
                                 if (!twinklePlayed && currFill > getFillMin()) {
                                     clearInterval(checkFill);
-                                    playFillSound();
+                                    // playFillSound();
+                                    reduceAudio()
                                     console.log('I AM  BEING PLAYED')
                                     twinklePlayed = true;
                                 }

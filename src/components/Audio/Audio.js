@@ -22,7 +22,7 @@ export default function Music() {
 
     function playMusic() {
         getAudio()
-        startFillSound()
+        // startFillSound()
         // const audioContext = new AudioContext();
         // const sourceNode = audioContext.createBufferSource();
         // sourceNode.buffer = audioBuffer;
