@@ -35,6 +35,7 @@ export function startFillSound() {
     audio.load();
 
     audio.addEventListener('ended', function() {
+        gainNode.gain.value = 0;
         var randomStartTime = Math.random() * (audio.duration - 5);
         audio.currentTime = randomStartTime;
         audio.play();
@@ -50,6 +51,6 @@ export function playFillSound(){
     // Schedule the fade-out effect
     var fadeOutDuration = 1; // Fade-out duration in seconds
     var fadeOutStartTime = audioContext.currentTime + 4 - fadeOutDuration;
-    gainNode.gain.exponentialRampToValueAtTime(0.0, fadeOutStartTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.1, fadeOutStartTime);
 
 }

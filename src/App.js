@@ -271,32 +271,38 @@ function App() {
             }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
 
-            if(!basicVersion) {
-                const numPath = getTotalPixelsSlow(currTile)
-                checkFill = setInterval(() => {
-                    if (currTile.inPath.length === numPath) {
-                        currFill = getFillRatio(currTile, smallOffset, TOP_CANV)
-                    }
-                    if (!twinklePlayed && currFill > getFillMin()) {
-                        clearInterval(checkFill)
-                        playFillSound()
-                        console.log('HIasdasd')
-                        twinklePlayed = true;
-                    }
-                }, 500);
+            if (prevTile !== currTile) {
+                if (!basicVersion) {
+                    timeoutFillSound = setTimeout(() => {
+                        const numPath = getTotalPixelsSlow(currTile);
+                        let checkFill = setInterval(() => {
+                            if (currTile.inPath.length === numPath) {
+                                const currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
+                                console.log(currFill)
+                                if (!twinklePlayed && currFill > getFillMin()) {
+                                    clearInterval(checkFill);
+                                    playFillSound();
+                                    console.log('I AM  BEING PLAYED')
+                                    twinklePlayed = true;
+                                }
+                            }
+                        }, 500);
+                    }, 3000); // Delay execution by 5 seconds (5000 milliseconds)
+                }
+                // let tiles = getOrienTiles(currTile, currTiling)
+                // let tiles = getRow(currTile, currTiling)
+                // let tiles = getColumn(currTile, currTiling)
+                // let tiles = getCorners(currTiling)
+                // let tiles = getCornerTiles(currTiling)
+                // fillTilesTogeth(tiles, currColor, "center")
+                // fillOrien(currTile, t)
+
             }
-            // let tiles = getOrienTiles(currTile, currTiling)
-            // let tiles = getRow(currTile, currTiling)
-            // let tiles = getColumn(currTile, currTiling)
-            // let tiles = getCorners(currTiling)
-            // let tiles = getCornerTiles(currTiling)
-
-            // fillTilesTogeth(tiles, currColor, "center")
-            // fillOrien(currTile, t)
-
         }
     }
+
     let checkFill;
+    let timeoutFillSound;
     let dotRemoved = false;
     let currFill;
     let twinklePlayed = false;
@@ -556,6 +562,7 @@ function App() {
             (currFill > getFillMin() || getFillRatio(currTile, smallOffset, TOP_CANV) > getFillMin())) {
             completeTile2(currTile, currTiling, invisCol)
             twinklePlayed = false;
+            clearTimeout(timeoutFillSound)
             currFill = 0;
         }
         if (currTile && !strokeMove && !currTile.watercolor) {
