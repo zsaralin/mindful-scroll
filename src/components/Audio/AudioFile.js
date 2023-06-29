@@ -3,7 +3,7 @@ import {UID} from "../Logging/Logging";
 import {logIdString} from "../Logging/TimeLog";
 import {getAbsArray} from "./Audio";
 
-const musicOn = false;
+const musicOn = true;
 const storage = getStorage()
 
 export function addAudio() {

@@ -37,24 +37,25 @@ export function startFillSound() {
     audio.addEventListener('ended', function() {
         gainNode.gain.value = 0;
         // var randomStartTime = Math.random() * (audio.duration - 5);
-        // audio.currentTime = randomStartTime;
-        audio.play();
+        audio.currentTime = 0;
+        audio.pause()
     });
 }
 
 export function playFillSound(){
     // Fade-in effect
     // var fadeInDuration = 1; // Fade-in duration in seconds
-    // var fadeInStartTime = audioContext.currentTime;
+    var fadeInStartTime = audioContext.currentTime;
+
     // gainNode.gain.exponentialRampToValueAtTime(.5, fadeInStartTime + fadeInDuration);
-    audio.currentTime = 0;
+    gainNode.gain.value = .05;
     audio.play()
-    gainNode.gain.value = 1;
+
     // Schedule the fade-out effect
     var fadeOutDuration = 3; // Fade-out duration in seconds
     var fadeOutStartTime = audioContext.currentTime+fadeOutDuration;
-    gainNode.gain.exponentialRampToValueAtTime(0.1, fadeOutStartTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, fadeOutStartTime);
     setTimeout(() => {
         audio.pause();
-    }, fadeOutDuration * 1000);
+    }, (fadeOutDuration + 1) * 1000);
 }

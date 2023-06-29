@@ -271,10 +271,12 @@ function App() {
             }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
             if (!basicVersion) {
+                if ((currTile && !prevTile) || (currTile && prevTile && currTile.id !== prevTile.id)) {
                     timeoutFillSound = setTimeout(() => {
-                        totPixels = getTotalPixelsSlow(currTile);
+                        totPixels = totPixels ? totPixels : getTotalPixelsSlow(currTile);
                         checkFill = setInterval(() => {
-                            if (currTile.inPath.length === totPixels) {
+                            console.log('TOT ' + totPixels + ' and ' + currTile.inPath.length)
+                            if (totPixels) {
                                 const currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
                                 console.log(currFill)
                                 if (!twinklePlayed && currFill > getFillMin()) {
@@ -285,8 +287,25 @@ function App() {
                                 }
                             }
                         }, 500);
-                    }, 2500); // Delay execution by 5 seconds (5000 milliseconds)
+                    }, 2000); // Delay execution by 5 seconds (5000 milliseconds)
                 }
+                else{
+                    totPixels = totPixels ? totPixels : getTotalPixelsSlow(currTile);
+                    checkFill = setInterval(() => {
+                        console.log('TOT ' + totPixels + ' and ' + currTile.inPath.length)
+                        if (totPixels) {
+                            const currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
+                            console.log(currFill)
+                            if (!twinklePlayed && currFill > getFillMin()) {
+                                clearInterval(checkFill);
+                                playFillSound();
+                                console.log('I AM  BEING PLAYED')
+                                twinklePlayed = true;
+                            }
+                        }
+                    }, 500);
+                }
+            }
                 // let tiles = getOrienTiles(currTile, currTiling)
                 // let tiles = getRow(currTile, currTiling)
                 // let tiles = getColumn(currTile, currTiling)
@@ -555,6 +574,7 @@ function App() {
 
     function onStrokeEnd() {
         clearInterval(checkFill)
+        clearTimeout(timeoutFillSound)
         if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled &&
             (currFill > getFillMin() || getFillRatio(currTile, smallOffset, TOP_CANV) > getFillMin())) {
             completeTile2(currTile, currTiling, invisCol)
@@ -572,7 +592,7 @@ function App() {
         updateOffCanvasWrapper()
         dotRemoved = false;
         resetLineWidth()
-        reduceAudio()
+        // reduceAudio()
         // changeAudio()
         colorDelay()
         clearTimeout(watercolorTimer)
@@ -589,6 +609,8 @@ function App() {
         setHandChanged(false)
         setDragging(false)
         strokeMove = false;
+        totPixels = null;
+
         if (currTile) {
             logStrokeEnd(cursorX, cursorY, touchType,
                 angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
