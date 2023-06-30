@@ -118,6 +118,7 @@ export function getAudio() {
                     })
 
                     audioElement.addEventListener('canplaythrough', () => {
+                        console.log('HEY? IN CAN PLAY THROUGH')
                         // Increase the volume to 0.1 over 5 seconds
                         const targetVolume = 0.1;
                         const fadeDuration = 10; // Duration in seconds
