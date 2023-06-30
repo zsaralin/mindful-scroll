@@ -116,11 +116,6 @@ export function getAudio() {
                     // gainNode.gain.setValueAtTime(1, audioContext.currentTime);
 
                     audioElement.addEventListener('loadedmetadata', () => {
-                        const sourceNode = audioContext.createMediaElementSource(audioElement);
-                        gainNode = audioContext.createGain();
-
-                        sourceNode.connect(gainNode);
-                        gainNode.connect(audioContext.destination);
                         const duration = audioElement.duration;
                         // Set a random starting time
                         const randomTime = Math.floor(Math.random() * duration);
@@ -133,7 +128,13 @@ export function getAudio() {
                         // const fadeDuration = 10; // Duration in seconds
                         // targetTime = audioContext.currentTime + fadeDuration;
                         // gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
+                        const sourceNode = audioContext.createMediaElementSource(audioElement);
+                        gainNode = audioContext.createGain();
+
+                        sourceNode.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
                         audioElement.play()
+
                         resolve({ audioElement });
                     });
 
