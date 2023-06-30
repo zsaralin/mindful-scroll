@@ -106,27 +106,28 @@ export function getAudio() {
                 })
                 .then(response => response.blob())
                 .then(blob => {
-                    // audioContext = new AudioContext();
+                    audioContext = new AudioContext();
                     audioElement = new Audio();
 
-                    // const sourceNode = audioContext.createMediaElementSource(audioElement);
-                    // gainNode = audioContext.createGain();
-                    //
-                    // sourceNode.connect(gainNode);
-                    // gainNode.connect(audioContext.destination);
-                    //
                     audioElement.src = URL.createObjectURL(blob);
                     audioElement.preload = 'auto';
                     //
                     // // Set initial volume to 0 // was at 0.01
                     // gainNode.gain.setValueAtTime(1, audioContext.currentTime);
 
-                    audioElement.addEventListener('canplaythrough', () => {
-                        // const duration = audioElement.duration;
-                        // // Set a random starting time
-                        // const randomTime = Math.floor(Math.random() * duration);
-                        // audioElement.currentTime = randomTime;
+                    audioElement.addEventListener('loadedmetadata', () => {
+                        const sourceNode = audioContext.createMediaElementSource(audioElement);
+                        gainNode = audioContext.createGain();
 
+                        sourceNode.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        const duration = audioElement.duration;
+                        // Set a random starting time
+                        const randomTime = Math.floor(Math.random() * duration);
+                        audioElement.currentTime = randomTime;
+                    })
+
+                    audioElement.addEventListener('canplaythrough', () => {
                         // Increase the volume to 0.1 over 5 seconds
                         // const targetVolume = 0.1;
                         // const fadeDuration = 10; // Duration in seconds
@@ -148,6 +149,7 @@ export function getAudio() {
         });
     }
 }
+let playOnce = true;
 const handleVisibilityChange = () => {
     if(musicOn){
     if (document.hidden) {
