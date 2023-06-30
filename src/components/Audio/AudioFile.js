@@ -106,9 +106,8 @@ export function getAudio() {
                 })
                 .then(response => response.blob())
                 .then(blob => {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    audioElement = new Audio();
-                    audioElement.src = URL.createObjectURL(blob);
+                    audioContext = new (AudioContext || window.webkitAudioContext)();
+                    audioElement = new Audio(URL.createObjectURL(blob));
 
                     audioElement.addEventListener('loadedmetadata', () => {
                         const duration = audioElement.duration;
