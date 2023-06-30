@@ -106,11 +106,31 @@ export function getAudio() {
                 })
                 .then(response => response.blob())
                 .then(blob => {
+                    audioContext = new AudioContext();
                     audioElement = new Audio();
+
+                    const sourceNode = audioContext.createMediaElementSource(audioElement);
+                    gainNode = audioContext.createGain();
+
+                    sourceNode.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+
                     audioElement.src = URL.createObjectURL(blob);
                     audioElement.preload = 'auto';
 
-                    audioElement.addEventListener('canplaythrough', () => {
+                    // Set initial volume to 0 // was at 0.01
+                    gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+
+                    audioElement.addEventListener('canplaythrough', () => {const duration = audioElement.duration;
+                        // Set a random starting time
+                        const randomTime = Math.floor(Math.random() * duration);
+                        audioElement.currentTime = randomTime;
+
+                        // Increase the volume to 0.1 over 5 seconds
+                        const targetVolume = 0.1;
+                        const fadeDuration = 10; // Duration in seconds
+                        targetTime = audioContext.currentTime + fadeDuration;
+                        gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
                         audioElement.play()
                         resolve({ audioElement });
                     });
