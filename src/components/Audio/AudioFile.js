@@ -119,18 +119,19 @@ export function getAudio() {
                     audioElement.preload = 'auto';
 
                     // Set initial volume to 0 // was at 0.01
-                    gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+                    // gainNode.gain.setValueAtTime(1, audioContext.currentTime);
 
-                    audioElement.addEventListener('canplaythrough', () => {const duration = audioElement.duration;
+                    audioElement.addEventListener('canplaythrough', () => {
+                        const duration = audioElement.duration;
                         // Set a random starting time
                         const randomTime = Math.floor(Math.random() * duration);
                         audioElement.currentTime = randomTime;
 
                         // Increase the volume to 0.1 over 5 seconds
-                        const targetVolume = 0.1;
-                        const fadeDuration = 10; // Duration in seconds
-                        targetTime = audioContext.currentTime + fadeDuration;
-                        gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
+                        // const targetVolume = 0.1;
+                        // const fadeDuration = 10; // Duration in seconds
+                        // targetTime = audioContext.currentTime + fadeDuration;
+                        // gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
                         audioElement.play()
                         resolve({ audioElement });
                     });
