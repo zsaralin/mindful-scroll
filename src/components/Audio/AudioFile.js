@@ -229,7 +229,7 @@ export function playAudio(){
         console.log('Audio is already playing');
     } else {
         try {
-            audioElement.play();
+            getAudio()
         } catch (error) {
             console.error('An error occurred while playing the audio AGAIN:', error);
         }}
