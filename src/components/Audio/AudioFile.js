@@ -39,7 +39,6 @@ let gainNode;
 let audioChange = true;
 let requestId;
 let targetTime;
-
 export function getAudio() {
     if (musicOn) {
         const audioPath = 'audio/waves.mp3';
@@ -49,48 +48,30 @@ export function getAudio() {
             .then((url) => {
                 console.log('Download URL:', url);
 
-                return fetch(url, {responseType: 'blob'});
+                return fetch(url, { responseType: 'arraybuffer' });
             })
-            .then(response => response.blob())
-            .then(blob => {
-                audioContext = new AudioContext();
-                audioElement = new Audio();
-
-                const sourceNode = audioContext.createMediaElementSource(audioElement);
+            .then(response => response.arrayBuffer())
+            .then(arrayBuffer => {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 gainNode = audioContext.createGain();
 
+                return audioContext.decodeAudioData(arrayBuffer);
+            })
+            .then(audioBuffer => {
+                const sourceNode = audioContext.createBufferSource();
+                sourceNode.buffer = audioBuffer;
                 sourceNode.connect(gainNode);
                 gainNode.connect(audioContext.destination);
 
-                audioElement.src = URL.createObjectURL(blob);
+                // Set initial volume to 1
+                gainNode.gain.setValueAtTime(1, audioContext.currentTime);
 
-                // Set initial volume to 0 // was at 0.01
-                // gainNode.gain.setValueAtTime(1, audioContext.currentTime);
-                gainNode.gain.value = 1;
-                audioElement.addEventListener('loadedmetadata', () => {
-                    // const duration = audioElement.duration;
-                    //
-                    // // Set a random starting time
-                    // const randomTime = Math.floor(Math.random() * duration);
-                    // audioElement.currentTime = randomTime;
+                sourceNode.start();
 
-                    // Increase the volume to 0.1 over 5 seconds
-                    // const targetVolume = 0.1;
-                    // const fadeDuration = 10; // Duration in seconds
-                    // targetTime = audioContext.currentTime + fadeDuration;
-                    // gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
-                    // Play the audio
-                    try {
-                        audioElement.play();
-                    } catch (error) {
-                        console.error('Error playing audio:', error);
-                    }
-
-                });
-                audioElement.load();
+                // Handle visibility change
                 document.addEventListener('visibilitychange', handleVisibilityChange);
 
-                return {audioElement, audioContext};
+                return { audioContext, sourceNode };
             })
             .catch((error) => {
                 console.error('Error retrieving audio file:', error);
@@ -98,7 +79,7 @@ export function getAudio() {
     }
 }
 
-const handleVisibilityChange = () => {
+    const handleVisibilityChange = () => {
     if (musicOn) {
         if (document.hidden) {
             // Pause the audio when the tab becomes hidden
