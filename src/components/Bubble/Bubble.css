@@ -34,7 +34,7 @@
 
 #circle {
     stroke : white;
-    stroke-width: 2;
+    stroke-width: 1;
     paint-order: stroke;
 }
 

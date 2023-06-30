@@ -18,8 +18,11 @@ let drawn = true;
 export function drawTimer() {
     canvas = document.getElementById('bub-canv')
     const ctx = canvas.getContext('2d');
-    const centerY = 33.5;
-    const centerX = 33;
+    // const centerY = 33.5;
+    // const centerX = 33;
+    // const radius = 7;
+    const centerY = canvas.height - 10;
+    const centerX = canvas.width - 10;
     const radius = 7;
     const percentage = calculatePercentage();
     let fillColor = 'rgba(128, 128, 128, 0.5)';
@@ -27,7 +30,7 @@ export function drawTimer() {
         fillColor = `rgba(0, 0, 0, .6)`;
     }
     // Clear canvas
-    ctx.clearRect(0, 0, canvas.width/3, 80);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw the background circle
     ctx.beginPath();
@@ -68,16 +71,11 @@ export function updateTimer() {
     }
 }
 
+const baseURL = 'https://uwaterloo.ca1.qualtrics.com/jfe/form/SV_cO2e5G9SORaIC2i?'
 function handleClick() {
-    if (UID === '.1') {
+    if(UID) {
         window.open(
-            'https://docs.google.com/document/d/1-X1Jhy_nxj2bdS60b7_S5LFy1AycbTgOktIYdGqPi1c/edit?usp=sharing',
-            '_blank'
-        );
-    } else if (UID === '.2') {
-        window.open(
-            'https://docs.google.com/document/d/1qvniuCkiFiIQq1N6vYYQXH14KS-kVT0pbAYnM_gJIAo/edit?usp=sharing',
-            '_blank'
+            baseURL + `uid=${UID}`
         );
     }
 }

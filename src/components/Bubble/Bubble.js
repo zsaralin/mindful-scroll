@@ -190,13 +190,13 @@ export function getCircle() {
 
 let bubbX; let bubbY; let d;
 export default function Bubble() {
-const radius = 6.5;
+const radius = 7.1;
     useEffect(() => {
         bubble = document.getElementById("bubble");
         circ = document.getElementById('circle')
 
-        bubble.style.width = window.innerWidth;
-        bubble.style.height = window.innerHeight;
+        bubble.style.width = 50;
+        bubble.style.height = 50;
 
         // s = Snap(bubble)
         // circle = s.select('#circle');
@@ -206,16 +206,14 @@ const radius = 6.5;
         // setCirclePoints(circlePoints);
         // setSpeechPoints(speech?.node.getAttribute('d'));
         // setCloudPoints(cloud?.node.getAttribute('d'));
-        bubbX = window.innerWidth - 33;
-        bubbY = window.innerHeight - 29;
+
         bubble.style.opacity = 0
         gsap.to("#bubble", {opacity: 1, duration: 2, delay: 0})
         startColourPreview()
-        d = `M${bubbX},${bubbY} m-7.8,0 a7.8,7.8 0 1,0 15.6,0 a7.8,7.8 0 1,0 -15.6,0`
     }, []);
     return (
         <svg id="bubble" opacity='1' >
-            <path id="circle" d={`M${window.innerWidth - 33},35 m${-radius},0 a${radius},${radius} 0 1,0 ${2 * radius},0 a${radius},${radius} 0 1,0 ${-2 * radius},0`}
+            <path id="circle" d={`M${10},40 m${-radius},0 a${radius},${radius} 0 1,0 ${2 * radius},0 a${radius},${radius} 0 1,0 ${-2 * radius},0`}
                   opacity={basicVersion ? '1' : '1'}/>
             <path id="speechR" d=
                 "M141 46.9738C141 46.9738 159.5 45.5021 159.5 63.0019C159.5 72.0021 159.5 81.6073 159.5 103.502C159.5 103.502 157.5 121.002 133 121.002C124.5 133.502 118.5 141.502 118.5 141.502C118.5 141.502 111 131.002 104 121.002C94.9999 121.002 87.0004 121.002 87.0004 121.002C87.0004 121.002 78.9999 121.002 71.0003 121.002C60.9999 121.002 40.0003 121.002 40.0003 121.002C40.0003 121.002 21.5004 122.002 21.5004 100.002C21.5004 75.0017 22.0002 66.0019 22.0002 66.0019C22.0002 66.0019 20.5004 46.5021 40.0003 46.5021C53.0007 46.9738 141 46.9738 141 46.9738Z"
@@ -244,8 +242,8 @@ const radius = 6.5;
 let circ;
 export function pulseEffect(){
     gsap.timeline({ repeat: -1 })
-        .to(circ, { scale: 1.8, duration: 1, transformOrigin: 'center' })
-        .to(circ, { scale: .3, duration: 1, transformOrigin: 'center' });
+        .to(circ, { scale: 1.3, duration: 1, transformOrigin: 'center' })
+        .to(circ, { scale: .5, duration: 1, transformOrigin: 'center' });
 }
 export function stopPulseEffect() {
     gsap.killTweensOf(circ)

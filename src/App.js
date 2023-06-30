@@ -182,6 +182,10 @@ function App() {
                     canvas.height = 1700 * 2 + scrollBackAmount
                 }
             }
+            const bub = document.getElementById('bub-canv')
+            bub.width = 50//window.innerWidth;
+            bub.height = 50//window.innerHeight;
+
             // canvas.height = window.innerHeight * 6;
             const ctx = document.getElementById(id).getContext("2d");
             ctx.lineCap = "round";
