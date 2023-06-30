@@ -41,90 +41,90 @@ let requestId;
 let targetTime;
 
 export function getAudio() {
-    if (musicOn) {
-        const audioPath = 'audio/waves.mp3';
-        const storageRef = ref(storage, audioPath);
-
-        return getDownloadURL(storageRef)
-            .then((url) => {
-                console.log('Download URL:', url);
-
-                return fetch(url, {responseType: 'blob'});
-            })
-            .then(response => response.blob())
-            .then(blob => {
-                audioContext = new AudioContext();
-                audioElement = new Audio();
-
-                const sourceNode = audioContext.createMediaElementSource(audioElement);
-                gainNode = audioContext.createGain();
-
-                sourceNode.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-
-                audioElement.src = URL.createObjectURL(blob);
-
-                // Set initial volume to 0 // was at 0.01
-                gainNode.gain.setValueAtTime(1, audioContext.currentTime);
-
-                audioElement.addEventListener('loadedmetadata', () => {
-                    const duration = audioElement.duration;
-
-                    // Set a random starting time
-                    const randomTime = Math.floor(Math.random() * duration);
-                    audioElement.currentTime = randomTime;
-
-                    // Increase the volume to 0.1 over 5 seconds
-                    const targetVolume = 0.1;
-                    const fadeDuration = 10; // Duration in seconds
-                    targetTime = audioContext.currentTime + fadeDuration;
-                    gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
-                    // Play the audio
-                    try {
-                        audioElement.play();
-                    }
-                    catch(error){}
-                    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-                });
-
-                return {audioElement, audioContext};
-            })
-            .catch((error) => {
-                console.error('Error retrieving audio file:', error);
-            });
     // if (musicOn) {
     //     const audioPath = 'audio/waves.mp3';
     //     const storageRef = ref(storage, audioPath);
     //
-    //     return new Promise((resolve, reject) => {
-    //         getDownloadURL(storageRef)
-    //             .then((url) => {
-    //                 console.log('Download URL:', url);
+    //     return getDownloadURL(storageRef)
+    //         .then((url) => {
+    //             console.log('Download URL:', url);
     //
-    //                 return fetch(url, { responseType: 'blob' });
-    //             })
-    //             .then(response => response.blob())
-    //             .then(blob => {
-    //                 audioElement = new Audio();
-    //                 audioElement.src = URL.createObjectURL(blob);
-    //                 audioElement.preload = 'auto';
+    //             return fetch(url, {responseType: 'blob'});
+    //         })
+    //         .then(response => response.blob())
+    //         .then(blob => {
+    //             audioContext = new AudioContext();
+    //             audioElement = new Audio();
     //
-    //                 audioElement.addEventListener('canplaythrough', () => {
-    //                     audioElement.play()
-    //                     resolve({ audioElement });
-    //                 });
+    //             const sourceNode = audioContext.createMediaElementSource(audioElement);
+    //             gainNode = audioContext.createGain();
     //
-    //                 audioElement.addEventListener('error', (error) => {
-    //                     reject(error);
-    //                 });
+    //             sourceNode.connect(gainNode);
+    //             gainNode.connect(audioContext.destination);
     //
-    //                 audioElement.load();
-    //             })
-    //             .catch((error) => {
-    //                 reject(error);
+    //             audioElement.src = URL.createObjectURL(blob);
+    //
+    //             // Set initial volume to 0 // was at 0.01
+    //             gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+    //
+    //             audioElement.addEventListener('loadedmetadata', () => {
+    //                 const duration = audioElement.duration;
+    //
+    //                 // Set a random starting time
+    //                 const randomTime = Math.floor(Math.random() * duration);
+    //                 audioElement.currentTime = randomTime;
+    //
+    //                 // Increase the volume to 0.1 over 5 seconds
+    //                 const targetVolume = 0.1;
+    //                 const fadeDuration = 10; // Duration in seconds
+    //                 targetTime = audioContext.currentTime + fadeDuration;
+    //                 gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
+    //                 // Play the audio
+    //                 try {
+    //                     audioElement.play();
+    //                 }
+    //                 catch(error){}
+    //                 document.addEventListener('visibilitychange', handleVisibilityChange);
+    //
     //             });
-    //     });
+    //
+    //             return {audioElement, audioContext};
+    //         })
+    //         .catch((error) => {
+    //             console.error('Error retrieving audio file:', error);
+    //         });
+    if (musicOn) {
+        const audioPath = 'audio/waves.mp3';
+        const storageRef = ref(storage, audioPath);
+
+        return new Promise((resolve, reject) => {
+            getDownloadURL(storageRef)
+                .then((url) => {
+                    console.log('Download URL:', url);
+
+                    return fetch(url, { responseType: 'blob' });
+                })
+                .then(response => response.blob())
+                .then(blob => {
+                    audioElement = new Audio();
+                    audioElement.src = URL.createObjectURL(blob);
+                    audioElement.preload = 'auto';
+
+                    audioElement.addEventListener('canplaythrough', () => {
+                        audioElement.play()
+                        resolve({ audioElement });
+                    });
+
+                    audioElement.addEventListener('error', (error) => {
+                        reject(error);
+                    });
+
+                    audioElement.load();
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
     }
 }
 const handleVisibilityChange = () => {
@@ -195,5 +195,9 @@ export function reduceAudio() {
 }
 
 export function playAudio(){
-    audioElement.play()
+    if (audioElement && !audioElement.paused) {
+        console.log('Audio is already playing');
+    } else {
+        audioElement.play();
+    }
 }
