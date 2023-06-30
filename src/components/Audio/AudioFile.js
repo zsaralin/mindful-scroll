@@ -115,8 +115,8 @@ export function getAudio() {
                     // sourceNode.connect(gainNode);
                     // gainNode.connect(audioContext.destination);
                     //
-                    // audioElement.src = URL.createObjectURL(blob);
-                    // audioElement.preload = 'auto';
+                    audioElement.src = URL.createObjectURL(blob);
+                    audioElement.preload = 'auto';
                     //
                     // // Set initial volume to 0 // was at 0.01
                     // gainNode.gain.setValueAtTime(1, audioContext.currentTime);
