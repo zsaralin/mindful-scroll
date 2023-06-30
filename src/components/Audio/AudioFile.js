@@ -71,8 +71,8 @@ export function getAudio() {
 
                 audioElement.src = URL.createObjectURL(blob);
 
-                // Set initial volume to 0
-                gainNode.gain.setValueAtTime(.01, audioContext.currentTime);
+                // Set initial volume to 0 // was at 0.01
+                gainNode.gain.setValueAtTime(1, audioContext.currentTime);
 
                 audioElement.addEventListener('loadedmetadata', () => {
                     const duration = audioElement.duration;

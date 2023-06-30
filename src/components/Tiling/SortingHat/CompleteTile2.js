@@ -77,9 +77,8 @@ export function completeTile2(tile, tiling) {
     } else if (fillInfo.fillNum === 2) {
         underType = true
         solidFillFn(tile, fillType, true);
-        if(!isFancyStroke(tile)){
         const afterStr = afterBackFillFnMain(tiling, tile, fillType);
-        logStr += afterStr}
+        logStr += afterStr
     } else if (fillInfo.fillNum === 3) {
         underType = true;
         if (["first", "last", "meanHue", "most", "least"].includes(fillType)) {
