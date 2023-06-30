@@ -128,11 +128,13 @@ export function getAudio() {
                         // const fadeDuration = 10; // Duration in seconds
                         // targetTime = audioContext.currentTime + fadeDuration;
                         // gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
-                        const sourceNode = audioContext.createMediaElementSource(audioElement);
+                        // const sourceNode = audioContext.createMediaElementSource(audioElement);
                         gainNode = audioContext.createGain();
 
-                        sourceNode.connect(gainNode);
+                        // sourceNode.connect(gainNode);
                         gainNode.connect(audioContext.destination);
+                        // sourceNode.disconnect();
+
                         audioElement.play()
 
                         resolve({ audioElement });
