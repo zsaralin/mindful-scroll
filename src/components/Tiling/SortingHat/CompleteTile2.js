@@ -41,7 +41,7 @@ export function completeTile2(tile, tiling) {
 
     if (fillInfo.fillNum === 0) {
         underType = helper(fillInfo.underW, under);
-        if (tile.colors > 2 && Math.random() < fillInfo.combinW) {
+        if (!isFancyStroke(tile) && (tile.colors > 2 && Math.random() < fillInfo.combinW)) {
             fillEachPixel(tile);
             logFillTile("fillEachPixel", underType.toString(), tile.i, tile.colors, tile.fillColor, tile.fillColors, colorCode)
             return;
@@ -50,10 +50,9 @@ export function completeTile2(tile, tiling) {
         if (nTiles.length > 3 && Math.random() < .2 && !tiling.fillInfo.strokeTypes.includes("transparent") && !tiling.fillInfo.strokeTypes.includes("dotted")
             && !animActive && Math.random() < 1 && tile.colors.length === 1) {
             fillNeighTiles(tile, nTiles, tile.colors[0], smallOffset, false)
-        } else if(fillType !== "input" && tile.strokeType === "reg" && getFillRatio(tile, smallOffset, 'top-canvas') < .95 && Math.random()<.7){
+        } else if (fillType !== "input" && tile.strokeType === "reg" && getFillRatio(tile, smallOffset, 'top-canvas') < .95 && Math.random() < .7) {
             fillTileFade(tile, fillType, underType)
-        }
-        else{
+        } else {
             solidFillFn(tile, fillType, underType);
         }
 
@@ -67,17 +66,20 @@ export function completeTile2(tile, tiling) {
             afterFillFn(tile, afterType, underType, col);
             logStr += ',' + afterType
         }
-        const ditherBool = Math.random() < fillInfo.ditherW;
-        const i = helper(ditherW, ditherI);
-        if (ditherBool) {
-            dither(tile, i);
-            logStr += `,dither_${i}`
+        if (!isFancyStroke(tile)) {
+            const ditherBool = Math.random() < fillInfo.ditherW;
+            const i = helper(ditherW, ditherI);
+            if (ditherBool) {
+                dither(tile, i);
+                logStr += `,dither_${i}`
+            }
         }
     } else if (fillInfo.fillNum === 2) {
         underType = true
         solidFillFn(tile, fillType, true);
+        if(!isFancyStroke(tile)){
         const afterStr = afterBackFillFnMain(tiling, tile, fillType);
-        logStr += afterStr
+        logStr += afterStr}
     } else if (fillInfo.fillNum === 3) {
         underType = true;
         if (["first", "last", "meanHue", "most", "least"].includes(fillType)) {
@@ -114,7 +116,7 @@ export function completeTile2(tile, tiling) {
         const afterStr = afterBackFillFnMain(tiling, tile, fillType);
         logStr += afterStr
     }
-    console.log('LOGSTR '  + logStr + ' and ' + underType.toString())
+    console.log('LOGSTR ' + logStr + ' and ' + underType.toString())
     logFillTile(logStr, underType.toString(), tile.id, tile.colors, tile.fillColor, tile.fillColors, colorCode)
 }
 
@@ -197,4 +199,9 @@ function compareArrays(arr1, arr2) {
     }
 
     return true; // All elements are equal, arrays are equal
+}
+
+function isFancyStroke(tile) {
+    if (tile.strokeType === "transparent" || tile.strokeType === "dotted") return true
+    else return false;
 }

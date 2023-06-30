@@ -78,7 +78,7 @@ export function getAudio() {
                     const duration = audioElement.duration;
 
                     // Set a random starting time
-                    const randomTime = Math.random() * duration;
+                    const randomTime = Math.floor(Math.random() * duration);
                     audioElement.currentTime = randomTime;
 
                     // Increase the volume to 0.1 over 5 seconds
