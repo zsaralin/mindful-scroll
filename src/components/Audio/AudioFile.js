@@ -40,59 +40,11 @@ let audioChange = true;
 let requestId;
 let targetTime;
 
+
+const targetVolume = 0.1;
+const fadeDuration = 10; // Duration in seconds
+
 export function getAudio() {
-    // if (musicOn) {
-    //     const audioPath = 'audio/waves.mp3';
-    //     const storageRef = ref(storage, audioPath);
-    //
-    //     return getDownloadURL(storageRef)
-    //         .then((url) => {
-    //             console.log('Download URL:', url);
-    //
-    //             return fetch(url, {responseType: 'blob'});
-    //         })
-    //         .then(response => response.blob())
-    //         .then(blob => {
-    //             audioContext = new AudioContext();
-    //             audioElement = new Audio();
-    //
-    //             const sourceNode = audioContext.createMediaElementSource(audioElement);
-    //             gainNode = audioContext.createGain();
-    //
-    //             sourceNode.connect(gainNode);
-    //             gainNode.connect(audioContext.destination);
-    //
-    //             audioElement.src = URL.createObjectURL(blob);
-    //
-    //             // Set initial volume to 0 // was at 0.01
-    //             gainNode.gain.setValueAtTime(1, audioContext.currentTime);
-    //
-    //             audioElement.addEventListener('loadedmetadata', () => {
-    //                 const duration = audioElement.duration;
-    //
-    //                 // Set a random starting time
-    //                 const randomTime = Math.floor(Math.random() * duration);
-    //                 audioElement.currentTime = randomTime;
-    //
-    //                 // Increase the volume to 0.1 over 5 seconds
-    //                 const targetVolume = 0.1;
-    //                 const fadeDuration = 10; // Duration in seconds
-    //                 targetTime = audioContext.currentTime + fadeDuration;
-    //                 gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
-    //                 // Play the audio
-    //                 try {
-    //                     audioElement.play();
-    //                 }
-    //                 catch(error){}
-    //                 document.addEventListener('visibilitychange', handleVisibilityChange);
-    //
-    //             });
-    //
-    //             return {audioElement, audioContext};
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error retrieving audio file:', error);
-    //         });
     if (musicOn) {
         const audioPath = 'audio/waves.mp3';
         const storageRef = ref(storage, audioPath);
@@ -110,9 +62,8 @@ export function getAudio() {
                     audioElement = new Audio(URL.createObjectURL(blob));
 
                     audioElement.addEventListener('loadedmetadata', () => {
-                        const duration = audioElement.duration;
                         // Set a random starting time
-                        const randomTime = Math.floor(Math.random() * duration);
+                        const randomTime = Math.floor(Math.random() * audioElement.duration);
                         audioElement.currentTime = randomTime;
 
                         const sourceNode = audioContext.createMediaElementSource(audioElement);
@@ -124,8 +75,7 @@ export function getAudio() {
 
                     audioElement.addEventListener('canplaythrough', () => {
                         // Increase the volume to 0.1 over 5 seconds
-                        const targetVolume = 0.1;
-                        const fadeDuration = 10; // Duration in seconds
+
                         targetTime = audioContext.currentTime + fadeDuration;
 
                         gainNode.gain.value = 0;
@@ -137,10 +87,18 @@ export function getAudio() {
                         } catch (error) {
                             console.error('An error occurred while playing the audio:', error);
                         }
+                        document.addEventListener('visibilitychange', handleVisibilityChange);
 
                         resolve({audioElement});
                     });
 
+                    audioElement.addEventListener('ended', function() {
+                        gainNode.gain.value = 0;
+                        const randomTime = Math.floor(Math.random() * audioElement.duration);
+                        audioElement.currentTime = randomTime;
+                        gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
+
+                    });
 
                     audioElement.addEventListener('error', (error) => {
                         reject(error);
@@ -182,7 +140,7 @@ export function changeAudio(speedArr) {
                 const speed = getAbsArray(speedArr);
                 if ((speed[0] > 5 || speed[1] > 5) && gainNode.gain.value > 0.05) {
                     reduceAudioMini();
-                } else if ((speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 0.3) {
+                } else if ((speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 0.2) {
                     gainNode.gain.setValueAtTime(gainNode.gain.value + .001, audioContext.currentTime);
 
                 }

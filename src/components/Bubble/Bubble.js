@@ -193,6 +193,8 @@ export default function Bubble() {
 const radius = 6.5;
     useEffect(() => {
         bubble = document.getElementById("bubble");
+        circ = document.getElementById('circle')
+
         bubble.style.width = window.innerWidth;
         bubble.style.height = window.innerHeight;
 
@@ -238,3 +240,14 @@ const radius = 6.5;
     );
 }
 // /*"M100.235 68.6081C100.235 68.6081 103.822 70.7256 106.335 74.8052C108.59 79.137 109.086 80.9176 108.798 85.7394C108.798 85.7394 108.516 89.7995 106.461 93.3396C104.405 96.8797 100.743 99.1008 100.743 99.1008C100.743 99.1008 98.5393 100.647 94.9781 101.638C91.4168 102.629 87.108 101.583 87.108 101.583C87.108 101.583 84.0633 101.308 79.7705 97.978C75.4776 94.6477 74.3966 90.7935 74.3966 90.7935C74.3966 90.7935 72.2355 86.247 73.5454 80.4168C74.4358 75.1299 77.8293 71.7761 77.8293 71.7761C77.8293 71.7761 82.2724 66.7676 89.3843 66.3092C95.7381 65.3379 100.235 68.6081 100.235 68.6081Z"*/
+
+let circ;
+export function pulseEffect(){
+    gsap.timeline({ repeat: -1 })
+        .to(circ, { scale: 1.8, duration: 1, transformOrigin: 'center' })
+        .to(circ, { scale: .3, duration: 1, transformOrigin: 'center' });
+}
+export function stopPulseEffect() {
+    gsap.killTweensOf(circ)
+    gsap.to(circ, {scale: 1})
+}

@@ -60,12 +60,8 @@ export function getTotalPixelsSlow(currTile) {
 
 export function isCircleInPath(path, x, y, lineWidth) {
     let ctx = document.getElementById(strokeCanvas).getContext("2d");
-    // ctx.translate(0,-smallOffset)
-
     let r = lineWidth ? lineWidth / 1.5 : getLineWidth() / 4
     if (ctx.isPointInPath(path, x, y) && ctx.isPointInPath(path, x + r, y + r) && ctx.isPointInPath(path, x + r, y - r) && ctx.isPointInPath(path, x - r, y - r) && ctx.isPointInPath(path, x - r, y + r)) return true
-
-    // ctx.restore()
     return false
 }
 export function getFillRatio(currTile, offS, canv) {

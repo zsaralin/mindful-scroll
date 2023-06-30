@@ -21,7 +21,7 @@ export default function Music() {
     const [intro, setIntro] = useState(true); // do not remove useState
 
     async function playMusic() {
-        await getAudio();
+        getAudio();
 
         // startFillSound()
         // const audioContext = new AudioContext();

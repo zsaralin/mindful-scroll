@@ -56,8 +56,8 @@ import {gsap} from "gsap";
 import {shapeGlow} from "./components/Tile/Shape";
 import ControlPanel, {hideControlPanel, isPanelOn, showControlPanel} from "./components/ControlPanel/ControlPanel";
 import Bubble, {
-    hideColourPreview, moveFeedback,
-    showColourPreview, teleportFeedback,
+    hideColourPreview, moveFeedback, pulseEffect,
+    showColourPreview, stopPulseEffect, teleportFeedback,
 
 } from "./components/Bubble/Bubble";
 import {
@@ -255,6 +255,7 @@ function App() {
             currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
             console.log('dTROKE TYPEEE ' + currTile.strokeType)
         }
+        if(currTile !== prevTile) stopPulseEffect()
         currColor = getCurrColor()
         // stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
@@ -275,43 +276,29 @@ function App() {
                 logAutoScrollStart()
             }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
-            // if (!basicVersion) {
-            //     if ((currTile && !prevTile) || (currTile && prevTile && currTile.id !== prevTile.id)) {
-            //         timeoutFillSound = setTimeout(() => {
-            //             totPixels = totPixels ? totPixels : getTotalPixelsSlow(currTile);
-            //             checkFill = setInterval(() => {
-            //                 console.log('TOT ' + totPixels + ' and ' + currTile.inPath.length)
-            //                 if (totPixels) {
-            //                     const currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
-            //                     console.log(currFill)
-            //                     if (!twinklePlayed && currFill > getFillMin()) {
-            //                         clearInterval(checkFill);
-            //                         // playFillSound();
-            //                         reduceAudio()
-            //                         console.log('I AM  BEING PLAYED')
-            //                         twinklePlayed = true;
-            //                     }
-            //                 }
-            //             }, 500);
-            //         }, 2000); // Delay execution by 5 seconds (5000 milliseconds)
-            //     }
-            //     else{
-            //         totPixels = totPixels ? totPixels : getTotalPixelsSlow(currTile);
-            //         checkFill = setInterval(() => {
-            //             console.log('TOT ' + totPixels + ' and ' + currTile.inPath.length)
-            //             if (totPixels) {
-            //                 const currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
-            //                 console.log(currFill)
-            //                 if (!twinklePlayed && currFill > getFillMin()) {
-            //                     clearInterval(checkFill);
-            //                     playFillSound();
-            //                     console.log('I AM  BEING PLAYED')
-            //                     twinklePlayed = true;
-            //                 }
-            //             }
-            //         }, 500);
-            //     }
+            if (!basicVersion && !currTile.filled && !twinklePlayed) {
+                // if ((currTile && !prevTile) || (currTile && prevTile && currTile.id !== prevTile.id)) {
+                    timeoutFillSound = setTimeout(() => {
+                        totPixels = totPixels ? totPixels : getTotalPixelsSlow(currTile);
+                        checkFill = setInterval(() => {
+                            console.log('TOT ' + totPixels + ' and ' + currTile.inPath.length)
+                            if (totPixels) {
+                                const currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
+                                console.log(currFill)
+                                if (!twinklePlayed && currFill > getFillMin()) {
+                                    clearInterval(checkFill);
+                                    pulseEffect()
+                                    // playFillSound();
+                                    // reduceAudio()
+                                    console.log('I AM  BEING PLAYED')
+                                    twinklePlayed = true;
+                                }
+                            }
+                        }, 500);
+                    }, 2000); // Delay execution by 5 seconds (5000 milliseconds)
+                }
             // }
+
                 // let tiles = getOrienTiles(currTile, currTiling)
                 // let tiles = getRow(currTile, currTiling)
                 // let tiles = getColumn(currTile, currTiling)
@@ -536,6 +523,7 @@ function App() {
         }
         if (doubleTouch) {
             startScroll(Math.abs(touchSpeed[1]), prevTouch0Y, touch0Y)
+            stopPulseEffect()
             if (isAutoScrollActive) {
                 endAutoScroll()
                 logAutoScrollStop()
@@ -586,6 +574,7 @@ function App() {
             completeTile2(currTile, currTiling, invisCol)
             twinklePlayed = false;
             clearTimeout(timeoutFillSound)
+            stopPulseEffect()
             currFill = 0;
         }
         if (currTile && !strokeMove && !currTile.watercolor) {

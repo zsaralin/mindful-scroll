@@ -18,7 +18,7 @@ export function startFillSound() {
     gainNode.connect(audioContext.destination);
 
     // Set initial gain value to 0
-    gainNode.gain.value = 0.01;
+    gainNode.gain.value = 0.0;
 
     // Event listener for when metadata is loaded
     audio.addEventListener('loadedmetadata', function() {
@@ -45,7 +45,7 @@ export function startFillSound() {
 export function playFillSound(){
     // Fade-in effect
     // var fadeInDuration = 1; // Fade-in duration in seconds
-    var fadeInStartTime = audioContext.currentTime;
+    // var fadeInStartTime = audioContext.currentTime;
 
     // gainNode.gain.exponentialRampToValueAtTime(.5, fadeInStartTime + fadeInDuration);
     gainNode.gain.value = .05;
