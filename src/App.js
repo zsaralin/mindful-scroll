@@ -4,7 +4,7 @@ import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import TimerClock, {updateTimer} from './components/Timer.js';
 import Music, {outsidePoly, triggerAudio, UID} from './components/Audio/Audio.js'
-import {changeAudio, playAgain, reduceAudio} from './components/Audio/AudioFile'
+import {changeAudio, playAgain, playAudio, reduceAudio} from './components/Audio/AudioFile'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/StrokeType/ShrinkingStroke'
 import {
     stopColorChange,
@@ -214,7 +214,6 @@ function App() {
     let smallOffset;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
-        playAgain()
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
         // console.log(`tilingIndex ${index}`)
@@ -259,6 +258,10 @@ function App() {
         currColor = getCurrColor()
         // stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
+            if(firstClick) {
+                firstClick = false;
+                playAudio()
+            }
             // Check if the browser supports the WebHaptic API
             // moveFeedback(prevCursorX, prevCursorY, cursorX, cursorY, prevTile !== currTile)
 
