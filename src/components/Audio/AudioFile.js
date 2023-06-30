@@ -114,24 +114,22 @@ export function getAudio() {
                         // Set a random starting time
                         const randomTime = Math.floor(Math.random() * duration);
                         audioElement.currentTime = randomTime;
-                    })
-
-                    audioElement.addEventListener('canplaythrough', () => {
-                        console.log('HEY? IN CAN PLAY THROUGH')
-                        // Increase the volume to 0.1 over 5 seconds
-                        const targetVolume = 0.1;
-                        const fadeDuration = 10; // Duration in seconds
-                        targetTime = audioContext.currentTime + fadeDuration;
 
                         const sourceNode = audioContext.createMediaElementSource(audioElement);
                         gainNode = audioContext.createGain();
 
                         sourceNode.connect(gainNode);
                         gainNode.connect(audioContext.destination);
+                    })
 
-                        // gainNode.gain.value = 1;
-                        // gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                        // gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
+                    audioElement.addEventListener('canplaythrough', () => {
+                        // Increase the volume to 0.1 over 5 seconds
+                        const targetVolume = 0.1;
+                        const fadeDuration = 10; // Duration in seconds
+                        targetTime = audioContext.currentTime + fadeDuration;
+
+                        gainNode.gain.value = 0;
+                        gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
 
 
                         try {
