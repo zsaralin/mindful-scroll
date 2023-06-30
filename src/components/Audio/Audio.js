@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {getRandomTrack} from "./Tracks";
 import {gsap} from "gsap";
-import {addAudio, getAudio, playplay} from './AudioFile'
+import {addAudio, getAudio, playAgain, playplay} from './AudioFile'
 import {basicVersion} from "../Tiling/SortingHat/CompleteTile2";
 import {playFillSound, startFillSound, startTone} from "./FillSound";
 // let audio = new Audio(getRandomTrack());
@@ -21,7 +21,13 @@ export default function Music() {
     const [intro, setIntro] = useState(true); // do not remove useState
 
     function playMusic() {
-        getAudio()
+        getAudio().then(() => {
+            playAgain()
+            console.log('Audio started playing');
+        })
+            .catch((error) => {
+                console.error('Error retrieving audio file:', error);
+            });
         // startFillSound()
         // const audioContext = new AudioContext();
         // const sourceNode = audioContext.createBufferSource();
@@ -51,7 +57,7 @@ export default function Music() {
 
     return (
         <div className="introPage" style={{visibility: intro ? 'visible' : 'hidden',}}>
-            <div id = 'introPage' className="introPage"
+            <div id='introPage' className="introPage"
                  onClick={playMusic}
                  style={{visibility: intro ? 'visible' : 'hidden',}}
             > {intro ? "click anywhere to start" : ""} </div>

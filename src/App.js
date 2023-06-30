@@ -4,7 +4,7 @@ import {useEffect, useRef} from "react";
 import {Helmet} from "react-helmet";
 import TimerClock, {updateTimer} from './components/Timer.js';
 import Music, {outsidePoly, triggerAudio, UID} from './components/Audio/Audio.js'
-import {changeAudio, reduceAudio} from './components/Audio/AudioFile'
+import {changeAudio, playAgain, reduceAudio} from './components/Audio/AudioFile'
 import {drawShrinkingStroke, isShrinkStroke} from './components/Stroke/StrokeType/ShrinkingStroke'
 import {
     stopColorChange,
@@ -214,6 +214,7 @@ function App() {
     let smallOffset;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
+        playAgain()
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
         // console.log(`tilingIndex ${index}`)

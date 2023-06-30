@@ -119,13 +119,6 @@ export function getAudio() {
                         });
                     });
                 })
-                .then(() => {
-                    audioElement.play();
-                    console.log('Audio started playing');
-                })
-                .catch((error) => {
-                    console.error('Error retrieving audio file:', error);
-                });
     }
 }
 const handleVisibilityChange = () => {
@@ -195,4 +188,6 @@ export function reduceAudio() {
     }
 }
 
-
+export function playAgain(){
+    audioElement.play()
+}
