@@ -106,20 +106,20 @@ export function getAudio() {
                 })
                 .then(response => response.blob())
                 .then(blob => {
-                    audioContext = new AudioContext();
+                    // audioContext = new AudioContext();
                     audioElement = new Audio();
 
-                    const sourceNode = audioContext.createMediaElementSource(audioElement);
-                    gainNode = audioContext.createGain();
-
-                    sourceNode.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-
-                    audioElement.src = URL.createObjectURL(blob);
-                    audioElement.preload = 'auto';
-
-                    // Set initial volume to 0 // was at 0.01
-                    gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+                    // const sourceNode = audioContext.createMediaElementSource(audioElement);
+                    // gainNode = audioContext.createGain();
+                    //
+                    // sourceNode.connect(gainNode);
+                    // gainNode.connect(audioContext.destination);
+                    //
+                    // audioElement.src = URL.createObjectURL(blob);
+                    // audioElement.preload = 'auto';
+                    //
+                    // // Set initial volume to 0 // was at 0.01
+                    // gainNode.gain.setValueAtTime(1, audioContext.currentTime);
 
                     audioElement.addEventListener('canplaythrough', () => {
                         // const duration = audioElement.duration;
