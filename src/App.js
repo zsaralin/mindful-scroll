@@ -202,6 +202,7 @@ function App() {
         setColourPal(currTiling.colourPal)
         colorDelay()
         updateTimer()
+        getAudio()
         // addAudio()
 
     }, []);
