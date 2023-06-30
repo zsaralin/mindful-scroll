@@ -85,9 +85,10 @@ export function getAudio() {
                     } catch (error) {
                         console.error('Error playing audio:', error);
                     }
-                    document.addEventListener('visibilitychange', handleVisibilityChange);
 
                 });
+                audioElement.load();
+                document.addEventListener('visibilitychange', handleVisibilityChange);
 
                 return {audioElement, audioContext};
             })
