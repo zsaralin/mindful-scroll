@@ -70,8 +70,7 @@ export function isCircleInPath(path, x, y, lineWidth) {
 }
 export function getFillRatio(currTile, offS, canv) {
     let ctx = document.getElementById(canv).getContext("2d");
-    let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixelsFast(currTile) : currTile.inPath.length/2];
-
+    let fillRatio = [0, currTile.inPath.length === 0 ? getTotalPixelsSlow(currTile)/2 : currTile.inPath.length/2];
     let subsetSize = Math.ceil(currTile.inPath.length / 2); // Half of currTile.inPath length
 
     let shuffledIndices = shuffleArray(Array.from(Array(currTile.inPath.length).keys())); // Generate shuffled indices

@@ -72,7 +72,7 @@ export function getAudio() {
                 audioElement.src = URL.createObjectURL(blob);
 
                 // Set initial volume to 0
-                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(.01, audioContext.currentTime);
 
                 audioElement.addEventListener('loadedmetadata', () => {
                     const duration = audioElement.duration;
@@ -115,6 +115,8 @@ const handleVisibilityChange = () => {
 
 export function changeAudio(speedArr) {
     if(musicOn) {
+        clearInterval(reduce)
+
         if (audioContext && audioContext.currentTime >= targetTime) {
             if (gainNode && audioChange) {
                 clearTimeout(reduce)
@@ -156,13 +158,13 @@ export function reduceAudio() {
             audioChange = false;
             reduce = setInterval(function () {
                 if (gainNode.gain.value > 0.1) {
-                    gainNode.gain.setValueAtTime(gainNode.gain.value - .02, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(gainNode.gain.value - .01, audioContext.currentTime);
                 } else {
                     clearInterval(reduce)
                     audioChange = true;
                     return
                 }
-            }, 200);
+            }, 500);
         }
     }
 }
