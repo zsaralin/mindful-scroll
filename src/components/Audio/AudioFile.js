@@ -106,7 +106,7 @@ export function getAudio() {
                 })
                 .then(response => response.blob())
                 .then(blob => {
-                    audioContext = new window.AudioContext || window.webkitAudioContext;
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     audioElement = new Audio();
                     audioElement.src = URL.createObjectURL(blob);
 
@@ -128,10 +128,17 @@ export function getAudio() {
 
                         sourceNode.connect(gainNode);
                         gainNode.connect(audioContext.destination);
-                        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                        gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
 
-                        audioElement.play()
+                        // gainNode.gain.value = 1;
+                        // gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                        // gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
+
+
+                        try {
+                            audioElement.play();
+                        } catch (error) {
+                            console.error('An error occurred while playing the audio:', error);
+                        }
 
                         resolve({audioElement});
                     });
@@ -221,6 +228,9 @@ export function playAudio(){
     if (audioElement && !audioElement.paused) {
         console.log('Audio is already playing');
     } else {
-        audioElement.play();
-    }
+        try {
+            audioElement.play();
+        } catch (error) {
+            console.error('An error occurred while playing the audio AGAIN:', error);
+        }}
 }
