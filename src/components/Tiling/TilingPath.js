@@ -29,6 +29,7 @@ export function getPathPadding(y, tiling) {
 
 export function createPath(tiling) {
     setPath()
+    console.log('path is ' + path)
     numTilings++
     let [xmin, xmax, ymin, ymax] = getBoundsTiling(tiling)
     let w = xmax - xmin

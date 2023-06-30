@@ -52,7 +52,7 @@ export function drawTransparentStroke(id, x0, y0, x1, y1, theColor, theLineWidth
     // drawHelper(transStrokes[id][transStrokes[id].length - 1])
 }
 
-export function refreshTrans(id) {
+export function refreshTrans(id, filling) {
     const ctx = document.getElementById('top-canvas').getContext("2d");
     let tile = getTileWithId(id)
     ctx.fillStyle = "white"
@@ -61,7 +61,7 @@ export function refreshTrans(id) {
     ctx.fill(tile?.path)
     ctx.restore()
 
-    if (tile.filled) {
+    if (tile.filled || filling) {
         let hslMatch = tile.fillColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
         if (hslMatch) {
             let h = parseInt(hslMatch[1]);

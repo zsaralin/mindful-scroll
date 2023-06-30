@@ -39,7 +39,7 @@ function getSegArr(tiling, edges) {
         console.log('list ' + list.toString())
     }
     else{
-        list = [0, 0, (window.innerWidth / 50) / scale, 9 / scale]
+        list = [0, 0, (window.innerWidth / 50) / scale, (window.innerHeight / 90) / scale]
     }
     for (let i of tiling.fillRegionBounds(list[0], list[1], list[2], list[3])) {
         const T = mul(ST, i.T);

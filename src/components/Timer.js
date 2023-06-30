@@ -2,7 +2,7 @@ import {UID} from "./Logging/Logging";
 import {logTimer} from "./Logging/TimeLog";
 
 // Timer configuration
-const totalTime = 10//*60; // Total time in seconds
+const totalTime = 10*60; // Total time in seconds
 let elapsedTime = 0; // Elapsed time in seconds
 let isTimerDone = false;
 let canvas;

@@ -108,37 +108,6 @@ export function updateOffCanvasWrapper() {
     }
 }
 
-// export const updateOffCanvas = () => {
-//     // const refreshSpot = top + offsetI - 100;
-//     // console.log('updated')
-//     newFill = document.createElement('canvas');
-//     // newTop = document.createElement('canvas');
-//     newFill.width = fillC.width;
-//     newFill.height = fillC.height;
-//     const newFillCtx = newFill.getContext('2d');
-//     // const newTopCtx = newTop.getContext('2d');
-//     // Set the fill color to white
-//     newFillCtx.fillStyle = 'white';
-//     newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
-//
-//     const h = refreshSpot + window.innerHeight //+ 400
-//
-//     newFillCtx.drawImage(fillC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h)
-//     // newTopCtx.drawImage(topC, 0, refreshSpot - 400 - offsetI, fillC.width, h, 0, 0, fillC.width, h)
-//
-//     drawn = true;
-// }
-
-function updateOffCanvasHelper() {
-    // const refreshSpot = top + offsetI - 100;
-    const h = refreshSpot + window.innerHeight //+ 400
-    newTop = document.createElement('canvas');
-    newTop.width = fillC.width;
-    newTop.height = fillC.height;
-    const newTopCtx = newTop.getContext('2d');
-    newTopCtx.drawImage(topC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h)
-}
-
 function updateCanvas() {
     const topCtx = topC.getContext('2d');
     topCtx.drawImage(newTop, 0, 0)
@@ -154,7 +123,7 @@ function updateCanvas2() {
 function updateCanvas0() {
     const topCtx = topC.getContext('2d');
     // topCtx.fillStyle = "red"
-    topCtx.clearRect(0, 200, fillC.width, fillC.height - 200);
+    topCtx.clearRect(0, 0, fillC.width, fillC.height - 0);
     // topCtx.height = refreshSpot + window.innerHeight;
 
 }
@@ -298,7 +267,7 @@ export const redrawCanvas = async () => {
                 rectangle.style.top = 0 + "px";
                 rectangle.style.width = topC.width + "px";
                 rectangle.style.height = (whiteSpace - scrollBackAmount - 1 + offsetI) + scrollBackAmount/2 + "px";
-                const position = offsetI === 0 ? '25%' : '75%'
+                const position = offsetI === 0 ? '25%' : '70%'
                 rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
                 offsetI = scrollBackAmount;
                 refreshSpot = top + offsetI - 100;

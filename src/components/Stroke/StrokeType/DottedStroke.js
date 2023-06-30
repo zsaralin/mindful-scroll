@@ -32,7 +32,7 @@ export function drawDottedStroke(id, x0, y0, x1, y1, theColor, theLineWidth, off
     refreshDotted(id);
 }
 
-export function refreshDotted(id) {
+export function refreshDotted(id, refresh) {
     const ctx = document.getElementById('top-canvas').getContext("2d");
     ctx.fillStyle = document.getElementById('fill-canvas').getContext("2d").fillStyle.toString() === "rgba(0, 0, 0, 0)" ? "white" : document.getElementById('fill-canvas').getContext("2d").fillStyle ;
     // ctx.fill(getTileWithId(id).path)
@@ -41,7 +41,7 @@ export function refreshDotted(id) {
     const tile = getTileWithId(id)
     ctx.fillStyle = "white"
     ctx.fill(tile.path)
-    if(tile.filled){
+    if(tile.filled || refresh){
         ctx.fillStyle = tile.fillColor
         ctx.fill(tile.path)
     }

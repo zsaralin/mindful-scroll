@@ -53,6 +53,7 @@ export function completeTile2(tile, tiling) {
         } else if (fillType !== "input" && tile.strokeType === "reg" && getFillRatio(tile, smallOffset, 'top-canvas') < .95 && Math.random() < .7) {
             fillTileFade(tile, fillType, underType)
         } else {
+            console.log('fill type ' + fillType +' and ' + underType)
             solidFillFn(tile, fillType, underType);
         }
 

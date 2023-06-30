@@ -137,7 +137,7 @@ export function secondTiling(inputArr, offset) {
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
     // console.log('bounnds ' + getBoundsTiling(t))
     offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
-    offsetY = bottom - yMin + finOffset + BETWEEN_SPACE
+    offsetY = bottom - yMin + finOffset + BETWEEN_SPACE;
     // console.log('bounds2 ' + [xMin + offsetX, xMax + offsetX, yMin + offsetY, yMax + offsetY])
     if (oldOffset.length < 2) {
         oldOffset.push(offsetY + yMin);

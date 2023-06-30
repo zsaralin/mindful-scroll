@@ -39,9 +39,9 @@ export function fillTile(tile, str, under, inputCol){
     // console.log('LOOK NOW '  + ctx.fillStyle)
     // ctx.fill(tile.path)
     if(tile.strokeType === "transparent"){
-        refreshTrans(tile.id)
+        refreshTrans(tile.id, true)
     } else if(tile.strokeType === "dotted"){
-        refreshDotted(tile.id)
+        refreshDotted(tile.id, true)
     }
     else{
         ctx.save()
