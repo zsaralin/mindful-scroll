@@ -20,14 +20,9 @@ let audioChange = true;
 export default function Music() {
     const [intro, setIntro] = useState(true); // do not remove useState
 
-    function playMusic() {
-        getAudio().then(() => {
-            playAgain()
-            console.log('Audio started playing');
-        })
-            .catch((error) => {
-                console.error('Error retrieving audio file:', error);
-            });
+    async function playMusic() {
+        await getAudio();
+
         // startFillSound()
         // const audioContext = new AudioContext();
         // const sourceNode = audioContext.createBufferSource();

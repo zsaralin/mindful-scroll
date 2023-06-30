@@ -3,7 +3,7 @@ import {UID} from "../Logging/Logging";
 import {logIdString} from "../Logging/TimeLog";
 import {getAbsArray} from "./Audio";
 
-const musicOn = false;
+const musicOn = true;
 const storage = getStorage()
 
 export function addAudio() {
@@ -93,11 +93,12 @@ export function getAudio() {
     //         .catch((error) => {
     //             console.error('Error retrieving audio file:', error);
     //         });
-     if (musicOn) {
-            const audioPath = 'audio/waves.mp3';
-            const storageRef = ref(storage, audioPath);
+    if (musicOn) {
+        const audioPath = 'audio/waves.mp3';
+        const storageRef = ref(storage, audioPath);
 
-            return getDownloadURL(storageRef)
+        return new Promise((resolve, reject) => {
+            getDownloadURL(storageRef)
                 .then((url) => {
                     console.log('Download URL:', url);
 
@@ -107,18 +108,23 @@ export function getAudio() {
                 .then(blob => {
                     audioElement = new Audio();
                     audioElement.src = URL.createObjectURL(blob);
-                    audioElement.preload = 'auto';
+                    // audioElement.preload = 'auto';
 
-                    return new Promise((resolve, reject) => {
-                        audioElement.addEventListener('canplaythrough', () => {
-                            resolve();
-                        });
-
-                        audioElement.addEventListener('error', (error) => {
-                            reject(error);
-                        });
+                    audioElement.addEventListener('loadedmetadata', () => {
+                        audioElement.play()
+                        resolve({ audioElement });
                     });
+
+                    audioElement.addEventListener('error', (error) => {
+                        reject(error);
+                    });
+
+                    audioElement.load();
                 })
+                .catch((error) => {
+                    reject(error);
+                });
+        });
     }
 }
 const handleVisibilityChange = () => {
