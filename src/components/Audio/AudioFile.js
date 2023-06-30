@@ -69,6 +69,10 @@ export function getAudio() {
                 gainNode.gain.value = 1;
                 audioElement.load();
                 audioElement.play()
+                audioElement.addEventListener('loadedmetadata', () => {
+                    audioElement.play();
+                    console.log('Audio started playing'); // Add this line
+                });
                 // audioElement.addEventListener('loadedmetadata', () => {
                     // const duration = audioElement.duration;
                     //
