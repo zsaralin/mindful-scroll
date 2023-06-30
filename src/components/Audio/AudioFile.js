@@ -106,14 +106,9 @@ export function getAudio() {
                 })
                 .then(response => response.blob())
                 .then(blob => {
-                    audioContext = new AudioContext();
+                    audioContext = new window.AudioContext || window.webkitAudioContext;
                     audioElement = new Audio();
-
                     audioElement.src = URL.createObjectURL(blob);
-                    audioElement.preload = 'auto';
-                    //
-                    // // Set initial volume to 0 // was at 0.01
-                    // gainNode.gain.setValueAtTime(1, audioContext.currentTime);
 
                     audioElement.addEventListener('loadedmetadata', () => {
                         const duration = audioElement.duration;
@@ -124,21 +119,23 @@ export function getAudio() {
 
                     audioElement.addEventListener('canplaythrough', () => {
                         // Increase the volume to 0.1 over 5 seconds
-                        // const targetVolume = 0.1;
-                        // const fadeDuration = 10; // Duration in seconds
-                        // targetTime = audioContext.currentTime + fadeDuration;
-                        // gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
-                        // const sourceNode = audioContext.createMediaElementSource(audioElement);
+                        const targetVolume = 0.1;
+                        const fadeDuration = 10; // Duration in seconds
+                        targetTime = audioContext.currentTime + fadeDuration;
+
+                        const sourceNode = audioContext.createMediaElementSource(audioElement);
                         gainNode = audioContext.createGain();
 
-                        // sourceNode.connect(gainNode);
+                        sourceNode.connect(gainNode);
                         gainNode.connect(audioContext.destination);
-                        // sourceNode.disconnect();
+                        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                        gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
 
                         audioElement.play()
 
-                        resolve({ audioElement });
+                        resolve({audioElement});
                     });
+
 
                     audioElement.addEventListener('error', (error) => {
                         reject(error);
