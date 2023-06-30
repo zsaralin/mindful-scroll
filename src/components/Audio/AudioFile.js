@@ -51,14 +51,7 @@ export function getAudio() {
 
                 return fetch(url, {responseType: 'blob'});
             })
-            .then(response => {
-                const contentLength = response.headers.get('content-length');
-                const totalSize = parseInt(contentLength);
-                const totalGB = (totalSize / (1024 * 1024 * 1024)).toFixed(2);
-                console.log(`Total File Size: ${totalGB}GB`);
-
-                return response.blob()
-            })
+            .then(response => response.blob())
             .then(blob => {
                 audioContext = new AudioContext();
                 audioElement = new Audio();
@@ -72,8 +65,8 @@ export function getAudio() {
                 audioElement.src = URL.createObjectURL(blob);
 
                 // Set initial volume to 0 // was at 0.01
-                gainNode.gain.setValueAtTime(1, audioContext.currentTime);
-
+                // gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+                gainNode.gain.value = 1;
                 audioElement.addEventListener('loadedmetadata', () => {
                     const duration = audioElement.duration;
 
@@ -82,15 +75,16 @@ export function getAudio() {
                     audioElement.currentTime = randomTime;
 
                     // Increase the volume to 0.1 over 5 seconds
-                    const targetVolume = 0.1;
-                    const fadeDuration = 10; // Duration in seconds
-                    targetTime = audioContext.currentTime + fadeDuration;
-                    gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
+                    // const targetVolume = 0.1;
+                    // const fadeDuration = 10; // Duration in seconds
+                    // targetTime = audioContext.currentTime + fadeDuration;
+                    // gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
                     // Play the audio
                     try {
                         audioElement.play();
+                    } catch (error) {
+                        console.error('Error playing audio:', error);
                     }
-                    catch(error){}
                     document.addEventListener('visibilitychange', handleVisibilityChange);
 
                 });
@@ -102,19 +96,22 @@ export function getAudio() {
             });
     }
 }
+
 const handleVisibilityChange = () => {
-    if(musicOn){
-    if (document.hidden) {
-        // Pause the audio when the tab becomes hidden
-        audioElement.pause();
-    } else {
-        // Resume playing the audio when the tab becomes visible again
-        audioElement.play();
+    if (musicOn) {
+        if (document.hidden) {
+            // Pause the audio when the tab becomes hidden
+            audioElement.pause();
+        } else {
+            // Resume playing the audio when the tab becomes visible again
+            audioElement.play();
+        }
     }
-};}
+    ;
+}
 
 export function changeAudio(speedArr) {
-    if(musicOn) {
+    if (musicOn) {
         clearInterval(reduce)
 
         if (audioContext && audioContext.currentTime >= targetTime) {
