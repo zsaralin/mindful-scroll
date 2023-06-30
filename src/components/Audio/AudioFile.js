@@ -68,11 +68,11 @@ export function getAudio() {
                 // gainNode.gain.setValueAtTime(1, audioContext.currentTime);
                 gainNode.gain.value = 1;
                 audioElement.addEventListener('loadedmetadata', () => {
-                    const duration = audioElement.duration;
-
-                    // Set a random starting time
-                    const randomTime = Math.floor(Math.random() * duration);
-                    audioElement.currentTime = randomTime;
+                    // const duration = audioElement.duration;
+                    //
+                    // // Set a random starting time
+                    // const randomTime = Math.floor(Math.random() * duration);
+                    // audioElement.currentTime = randomTime;
 
                     // Increase the volume to 0.1 over 5 seconds
                     // const targetVolume = 0.1;

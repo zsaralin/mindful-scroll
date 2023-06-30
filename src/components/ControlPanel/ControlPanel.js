@@ -45,9 +45,9 @@ export default function ControlPanel() {
             <div id="controlPanel">
                 <div style={{padding: '20px', fontSize: '.9em'}}>Control Panel</div>
                 <FormGroup style={{paddingLeft: '25px', fontSize: '.8em', fontFamily : 'montserrat'}}>
-                    <SwitchGreyChecked name="Music" fn={triggerAudio} />
-                    <SwitchGreyChecked name="Show Feedback" fn={triggerAudio} />
-                    <SwitchGreyChecked name="Show Colour Preview" fn={triggerAudio} />
+                    {/*<SwitchGreyChecked name="Music" fn={triggerAudio} />*/}
+                    {/*<SwitchGreyChecked name="Show Feedback" fn={triggerAudio} />*/}
+                    {/*<SwitchGreyChecked name="Show Colour Preview" fn={triggerAudio} />*/}
                     <SwitchGreyChecked name="Auto Page Scroll" fn={triggerScroll}/>
                     <SwitchGreyChecked name="Auto Complete Tile" fn={triggerCompleteTile} />
                     <SwitchGreyUnchecked name="Auto Stroke Width" fn={triggerShrinkStroke} />
