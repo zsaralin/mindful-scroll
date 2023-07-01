@@ -54,7 +54,7 @@ export function getAudio() {
                 .then((url) => {
                     console.log('Download URL:', url);
 
-                    return fetch(url, { responseType: 'blob' });
+                    return fetch(url, {responseType: 'blob'});
                 })
                 .then(response => response.blob())
                 .then(blob => {
@@ -92,7 +92,7 @@ export function getAudio() {
                         resolve({audioElement});
                     });
 
-                    audioElement.addEventListener('ended', function() {
+                    audioElement.addEventListener('ended', function () {
                         gainNode.gain.value = 0;
                         const randomTime = Math.floor(Math.random() * audioElement.duration);
                         audioElement.currentTime = randomTime;
@@ -112,49 +112,54 @@ export function getAudio() {
         });
     }
 }
+
 let playOnce = true;
 const handleVisibilityChange = () => {
-    if(musicOn){
-    if (document.hidden) {
-        // Pause the audio when the tab becomes hidden
-        audioElement.pause();
-    } else {
-        // Resume playing the audio when the tab becomes visible again
-        audioElement.play();
+    if (musicOn) {
+        if (document.hidden) {
+            // Pause the audio when the tab becomes hidden
+            audioElement.pause();
+        } else {
+            // Resume playing the audio when the tab becomes visible again
+            audioElement.play();
+        }
     }
-};}
+    ;
+}
 
 export function changeAudio(speedArr) {
-    if(musicOn) {
-        clearInterval(reduce)
+    if (musicOn) {
+        if (audioElement && audioContext && audioContext.currentTime >= targetTime) {
+            clearInterval(reduce)
 
-        if (audioContext && audioContext.currentTime >= targetTime) {
-            if (gainNode && audioChange) {
-                clearTimeout(reduce)
-                // gsap.killTweensOf(audio)
-                if (arguments.length === 0) {
-                    reduceAudioMini();
-                    return;
+            if (audioContext && audioContext.currentTime >= targetTime) {
+                if (gainNode && audioChange) {
+                    clearTimeout(reduce)
+                    // gsap.killTweensOf(audio)
+                    if (arguments.length === 0) {
+                        reduceAudioMini();
+                        return;
+                    }
+
+                    const speed = getAbsArray(speedArr);
+                    if ((speed[0] > 5 || speed[1] > 5) && gainNode.gain.value > 0.05) {
+                        reduceAudioMini();
+                    } else if ((speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 0.25) {
+                        gainNode.gain.setValueAtTime(gainNode.gain.value + .01, audioContext.currentTime);
+
+                    }
                 }
 
-                const speed = getAbsArray(speedArr);
-                if ((speed[0] > 5 || speed[1] > 5) && gainNode.gain.value > 0.05) {
-                    reduceAudioMini();
-                } else if ((speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 2) {
-                    gainNode.gain.setValueAtTime(gainNode.gain.value + .005, audioContext.currentTime);
-
-                }
-            }
-
-            function reduceAudioMini() {
-                const targetVolume = Math.max(gainNode.gain.value - 0.01, 0);
-                gainNode.gain.setValueAtTime(targetVolume, audioContext.currentTime);
-                console.log(gainNode.gain.value)
-                if (targetVolume <= 0.05) {
-                    audioChange = false;
-                    setTimeout(function () {
-                        audioChange = true;
-                    }, 3000);
+                function reduceAudioMini() {
+                    const targetVolume = Math.max(gainNode.gain.value - 0.01, 0);
+                    gainNode.gain.setValueAtTime(targetVolume, audioContext.currentTime);
+                    console.log(gainNode.gain.value)
+                    if (targetVolume <= 0.05) {
+                        audioChange = false;
+                        setTimeout(function () {
+                            audioChange = true;
+                        }, 3000);
+                    }
                 }
             }
         }
@@ -180,7 +185,7 @@ export function reduceAudio() {
     }
 }
 
-export function playAudio(){
+export function playAudio() {
     if (audioElement && !audioElement.paused) {
         console.log('Audio is already playing');
     } else {
@@ -188,5 +193,6 @@ export function playAudio(){
             getAudio()
         } catch (error) {
             console.error('An error occurred while playing the audio AGAIN:', error);
-        }}
+        }
+    }
 }
