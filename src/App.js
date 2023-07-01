@@ -253,7 +253,7 @@ function App() {
         if (currTile) {
             smallOffset = getOffSmall(index)
             currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
-            console.log('dTROKE TYPEEE ' + currTile.strokeType)
+            // console.log('dTROKE TYPEEE ' + currTile.strokeType)
         }
         if(currTile !== prevTile) stopPulseEffect()
         currColor = getCurrColor()
@@ -281,16 +281,16 @@ function App() {
                     timeoutFillSound = setTimeout(() => {
                         totPixels = totPixels ? totPixels : getTotalPixelsSlow(currTile);
                         checkFill = setInterval(() => {
-                            console.log('TOT ' + totPixels + ' and ' + currTile.inPath.length)
+                            // console.log('TOT ' + totPixels + ' and ' + currTile.inPath.length)
                             if (totPixels) {
                                 const currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
-                                console.log(currFill)
+                                // console.log(currFill)
                                 if (!twinklePlayed && currFill > getFillMin()) {
                                     clearInterval(checkFill);
                                     pulseEffect()
                                     // playFillSound();
                                     // reduceAudio()
-                                    console.log('I AM  BEING PLAYED')
+                                    // console.log('I AM  BEING PLAYED')
                                     twinklePlayed = true;
                                 }
                             }
@@ -475,7 +475,7 @@ function App() {
             singleTouch = false;
             doubleTouch = true;
             logScrollStart(cursorX, cursorY, touchType, numTouches, angle, force, getOffsetY())
-            console.log(`x: ${prevCursorX} + y: ${prevCursorY}`)
+            // console.log(`x: ${prevCursorX} + y: ${prevCursorY}`)
         }
 
         // store the last touches

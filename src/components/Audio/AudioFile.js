@@ -140,16 +140,16 @@ export function changeAudio(speedArr) {
                 const speed = getAbsArray(speedArr);
                 if ((speed[0] > 5 || speed[1] > 5) && gainNode.gain.value > 0.05) {
                     reduceAudioMini();
-                } else if ((speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 0.2) {
-                    gainNode.gain.setValueAtTime(gainNode.gain.value + .001, audioContext.currentTime);
+                } else if ((speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 0.25) {
+                    gainNode.gain.setValueAtTime(gainNode.gain.value + .005, audioContext.currentTime);
 
                 }
             }
 
             function reduceAudioMini() {
-                const targetVolume = Math.max(gainNode.gain.value - 0.005, 0);
+                const targetVolume = Math.max(gainNode.gain.value - 0.01, 0);
                 gainNode.gain.setValueAtTime(targetVolume, audioContext.currentTime);
-
+                console.log(gainNode.gain.value)
                 if (targetVolume <= 0.05) {
                     audioChange = false;
                     setTimeout(function () {
