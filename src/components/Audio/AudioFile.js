@@ -42,7 +42,7 @@ let targetTime;
 
 
 const targetVolume = 0.1;
-const fadeDuration = 10; // Duration in seconds
+const fadeDuration = 1; // Duration in seconds
 
 export function getAudio() {
     if (musicOn) {
@@ -126,10 +126,13 @@ const handleVisibilityChange = () => {
     }
     ;
 }
+let volIncrease = false;
+let volDecrease = false;
 
 export function changeAudio(speedArr) {
     if (musicOn) {
         if (audioElement && audioContext && audioContext.currentTime >= targetTime) {
+            console.log(gainNode.gain.value)
             clearInterval(reduce)
 
             if (audioContext && audioContext.currentTime >= targetTime) {
@@ -142,19 +145,26 @@ export function changeAudio(speedArr) {
                     }
 
                     const speed = getAbsArray(speedArr);
-                    if ((speed[0] > 5 || speed[1] > 5) && gainNode.gain.value > 0.05) {
+                    if (!volDecrease && (speed[0] > 5 || speed[1] > 5) && gainNode.gain.value > 0.05) {
+                        volDecrease = true;
                         reduceAudioMini();
-                    } else if ((speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 0.25) {
-                        gainNode.gain.setValueAtTime(gainNode.gain.value + .01, audioContext.currentTime);
-
+                    } else if (!volIncrease && (speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 0.2) {
+                        volIncrease = true;
+                        gainNode.gain.setValueAtTime(gainNode.gain.value + 0.01, audioContext.currentTime);
+                        setTimeout(() => {
+                            volIncrease = false;
+                        }, 500);
                     }
                 }
 
                 function reduceAudioMini() {
                     const targetVolume = Math.max(gainNode.gain.value - 0.01, 0);
                     gainNode.gain.setValueAtTime(targetVolume, audioContext.currentTime);
-                    console.log(gainNode.gain.value)
-                    if (targetVolume <= 0.05) {
+                    setTimeout(() => {
+                        volDecrease = false;
+                    }, 500);
+                    // console.log(gainNode.gain.value)
+                    if (targetVolume <= 0.03) {
                         audioChange = false;
                         setTimeout(function () {
                             audioChange = true;
