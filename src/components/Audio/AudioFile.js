@@ -140,7 +140,7 @@ export function changeAudio(speedArr) {
                 const speed = getAbsArray(speedArr);
                 if ((speed[0] > 5 || speed[1] > 5) && gainNode.gain.value > 0.05) {
                     reduceAudioMini();
-                } else if ((speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 0.25) {
+                } else if ((speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 2) {
                     gainNode.gain.setValueAtTime(gainNode.gain.value + .005, audioContext.currentTime);
 
                 }
