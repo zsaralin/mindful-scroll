@@ -176,11 +176,7 @@ function App() {
             if (basicVersion) {
                 canvas.height = window.innerHeight * 3
             } else {
-                if (id === 'fill-canvas' || id === "top-canvas") {
-                    canvas.height = Math.min(1700 * 3 + scrollBackAmount, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;}
-                } else {
-                    canvas.height = 1700 * 2 + scrollBackAmount
-                }
+                canvas.height = canvas.height = 1700 * 3 + scrollBackAmount
             }
             const bub = document.getElementById('bub-canv')
             bub.width = 50//window.innerWidth;
