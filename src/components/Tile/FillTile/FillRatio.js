@@ -11,6 +11,7 @@ let fillMin = FILL_RATIO
 let strokeCanvas = TOP_CANV
 
 export function getTotalPixelsFast(currTile){
+        currTile.inPath = []
         let tileDim = currTile.bounds
         let startX = tileDim[0] - BB_PADDING;
         let startY = tileDim[2] - BB_PADDING;
@@ -45,8 +46,8 @@ export function getTotalPixelsSlow(currTile) {
 
     let totalPixels = 0;
 
-    for (let currentY = startY; currentY <= endY; currentY++) {
-        for (let currentX = startX; currentX <= endX; currentX++) {
+    for (let currentY = startY; currentY <= endY; currentY+=8) {
+        for (let currentX = startX; currentX <= endX; currentX+=8) {
             const distance = Math.sqrt((currentX - centerX) ** 2 + (currentY - centerY) ** 2);
             if (distance <= radius && isCircleInPath(currTile.path, currentX, currentY)) {
                 currTile.inPath.push([currentX, currentY]);

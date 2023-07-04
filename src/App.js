@@ -39,7 +39,7 @@ import {
     changeBool,
     getFillMin,
     getFillRatio,
-    getTotalPixels, getTotalPixelsSlow,
+    getTotalPixels, getTotalPixelsFast, getTotalPixelsSlow,
     isCircleInPath
 } from "./components/Tile/FillTile/FillRatio";
 import {
@@ -276,7 +276,7 @@ function App() {
                 logAutoScrollStart()
             }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
-            if (false && !basicVersion && !currTile.filled && !twinklePlayed) {
+            if (!basicVersion && !currTile.filled && !twinklePlayed) {
                 // if ((currTile && !prevTile) || (currTile && prevTile && currTile.id !== prevTile.id)) {
                     timeoutFillSound = setTimeout(() => {
                         totPixels = totPixels ? totPixels : getTotalPixelsSlow(currTile);
@@ -284,18 +284,18 @@ function App() {
                             // console.log('TOT ' + totPixels + ' and ' + currTile.inPath.length)
                             if (totPixels) {
                                 const currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
-                                // console.log(currFill)
+                                console.log(currFill)
                                 if (!twinklePlayed && currFill > getFillMin()) {
                                     clearInterval(checkFill);
                                     pulseEffect()
                                     // playFillSound();
                                     // reduceAudio()
-                                    // console.log('I AM  BEING PLAYED')
+                                    console.log('I AM  BEING PLAYED')
                                     twinklePlayed = true;
                                 }
                             }
-                        }, 500);
-                    }, 2000); // Delay execution by 5 seconds (5000 milliseconds)
+                        }, 1000);
+                    }, 1000); // Delay execution by 5 seconds (5000 milliseconds)
                 }
             // }
 
@@ -571,6 +571,7 @@ function App() {
         clearTimeout(timeoutFillSound)
         if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled &&
             (currFill > getFillMin() || getFillRatio(currTile, smallOffset, TOP_CANV) > getFillMin())) {
+            getTotalPixelsFast(currTile)
             completeTile2(currTile, currTiling, invisCol)
             twinklePlayed = false;
             clearTimeout(timeoutFillSound)

@@ -132,7 +132,7 @@ let volDecrease = false;
 export function changeAudio(speedArr) {
     if (musicOn) {
         if (audioElement && audioContext && audioContext.currentTime >= targetTime) {
-            console.log(gainNode.gain.value)
+            // console.log(gainNode.gain.value)
             clearInterval(reduce)
 
             if (audioContext && audioContext.currentTime >= targetTime) {
