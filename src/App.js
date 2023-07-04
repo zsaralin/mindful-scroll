@@ -276,7 +276,7 @@ function App() {
                 logAutoScrollStart()
             }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
-            if (!basicVersion && !currTile.filled && !twinklePlayed) {
+            if (false && !basicVersion && !currTile.filled && !twinklePlayed) {
                 // if ((currTile && !prevTile) || (currTile && prevTile && currTile.id !== prevTile.id)) {
                     timeoutFillSound = setTimeout(() => {
                         totPixels = totPixels ? totPixels : getTotalPixelsSlow(currTile);
