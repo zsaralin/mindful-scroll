@@ -38,6 +38,12 @@ export function drawTimer() {
     ctx.fillStyle = fillColor;
     ctx.fill();
 
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius + 1, 0, 2 * Math.PI); // Increase radius by lineWidth
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'white';
+    ctx.stroke();
+
     // Draw the progress arc
     if (!isTimerDone) {
         ctx.beginPath();

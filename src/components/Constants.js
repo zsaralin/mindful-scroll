@@ -18,3 +18,5 @@ export const SWIPE_THRESHOLD = window.innerWidth/12;
 export const TOP_CANV = 'top-canvas'
 
 export const BB_PADDING = 35
+
+export const paperCol = 'rgb(243, 241, 239)'

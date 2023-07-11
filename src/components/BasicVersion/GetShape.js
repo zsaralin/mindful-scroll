@@ -1,16 +1,14 @@
 export let shapeType = 0;
-
+const innerWidth = Math.min(500, window.innerWidth);
 export function getRandomShape(currYMax) {
     const c = document.getElementById('top-canvas').getContext('2d')
-    c.fillStyle = "red"
     let path = new Path2D()
     let dimension = []
-    shapeType =getRandomNum(0, 14)
-
+    shapeType = getRandomNum(0, 14)
     if (shapeType === 0) {
         // circle
         const x = window.innerWidth / 2;
-        const r = window.innerWidth / 5 //+ 100 //> window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 11 + 100
+        const r = innerWidth / 5 //+ 100 //> window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 11 + 100
         const y = currYMax  + window.innerHeight / 2;
         path.ellipse(x, y, r, r, 0, 0, Math.PI * 2);
         dimension = [x - r, x + r, y-r, y+r];
@@ -19,20 +17,20 @@ export function getRandomShape(currYMax) {
         // horizontal ellipse
         const x = window.innerWidth / 2;
         const y = currYMax + window.innerHeight / 2;
-        const r = window.innerWidth / 10 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 10 + 100
+        const r = innerWidth / 3.7 ;
         path.ellipse(x, y, r, r - 50, 0, 0, Math.PI * 2);
-        dimension = [x - r, x + r, y - r + 50, y + r - 50];
+        dimension = [x - r, x + r, y - r + 100, y + r - 50];
     } else if (shapeType === 2) {
         // vertical ellipse
         const x = window.innerWidth / 2;
         const y = currYMax + window.innerHeight / 2;
-        const r = window.innerWidth / 10 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 10 + 100
+        const r =  innerWidth / 3.7 ;
         path.ellipse(x, y, r - 50, r, 0, 0, Math.PI * 2);
-        dimension = [x - (r - 50), x + r - 50, y - r, y + r];
+        dimension = [x - r + 100, x + r - 50, y - r, y + r];
     } else if (shapeType === 3) {
         // square
-        const width = window.innerWidth / 3 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 3 ; // The width of the rectangle
-        const height = window.innerWidth / 3 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 3 ; // The height of the rectangle
+        const width = innerWidth / 3 ; // The width of the rectangle
+        const height = innerWidth / 3 ; // The height of the rectangle
         const x = window.innerWidth / 2 - width / 2;
         const y = currYMax + window.innerHeight / 2 - height / 2;
 
@@ -45,8 +43,8 @@ export function getRandomShape(currYMax) {
         dimension = [x, x + width, y, y + height];
     } else if (shapeType === 4) {
         // triangle
-        const height = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The height of the rectangle
-        const base = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The height of the rectangle
+        const height = innerWidth / 2.5; // The height of the rectangle
+        const base = innerWidth / 2.5; // The height of the rectangle
         const x = window.innerWidth / 2; // X-coordinate of the top vertex
         const y = currYMax + window.innerHeight / 2 - height / 2; // Y-coordinate of the top vertex
 
@@ -58,8 +56,8 @@ export function getRandomShape(currYMax) {
         dimension = [x - base / 2, x + base / 2, y, y + height];
     } else if (shapeType === 5) {
         // up-side down triangle
-        const height = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The height of the rectangle
-        const base = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The height of the rectangle
+        const height = innerWidth / 2.5; // The height of the rectangle
+        const base = innerWidth / 2.5; // The height of the rectangle
         const x = window.innerWidth / 2; // X-coordinate of the bottom vertex
         const y = currYMax + window.innerHeight / 2 + height / 2; // Y-coordinate of the bottom vertex
 
@@ -71,7 +69,7 @@ export function getRandomShape(currYMax) {
         dimension = [x - base / 2, x + base / 2, y - height, y];
     } else if (shapeType === 6) {
         // rhombus
-        const baseSize = ((window.innerWidth / 3 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 3 + 100)); // Adjust the base size scaling factor
+        const baseSize = innerWidth/2; // Adjust the base size scaling factor
         const width = baseSize; // Width of the rhombus
         const height = baseSize; // Height of the rhombus
         const x = window.innerWidth / 2; // X-coordinate of the center
@@ -88,8 +86,8 @@ export function getRandomShape(currYMax) {
 
     if (shapeType === 7) {
         // parallelogram
-        const width = Math.min(window.innerWidth / 6 + 100, window.innerWidth - 100); // The width of the parallelogram
-        const height = Math.min(window.innerWidth / 6 + 100, window.innerHeight - 100); // The height of the parallelogram
+        const width = innerWidth/3; // The width of the parallelogram
+        const height =innerWidth/3; // The height of the parallelogram
         const x = window.innerWidth / 2 - width / 2 + height / 4;
         const y = currYMax + window.innerHeight / 2 - height / 2;
 
@@ -104,8 +102,8 @@ export function getRandomShape(currYMax) {
 
     } else if (shapeType === 8) {
         // parallelogram
-        const width = Math.min(window.innerWidth / 6 + 100, window.innerWidth - 200); // The width of the parallelogram
-        const height = Math.min(window.innerWidth / 6 + 100, window.innerHeight - 200); // The height of the parallelogram
+        const width = innerWidth/3; // The width of the parallelogram
+        const height =innerWidth/3; // The height of the parallelogram
         const x = window.innerWidth / 2 - (width + height / 2) / 2; // Adjusted x-coordinate for centering
         const y = currYMax + window.innerHeight / 2 - height / 2;
 
@@ -155,7 +153,7 @@ export function getRandomShape(currYMax) {
 //     }
     else if (shapeType === 9) {
         // pentagon
-        const sideLength = (window.innerWidth / 4 + 100)* .7 > window.innerWidth - 200 ? window.innerWidth - 200 : (window.innerWidth / 4 + 100) * .7; // The length of each side of the pentagon
+        const sideLength = innerWidth/3.5; // The length of each side of the pentagon
         const radius = sideLength / (2 * Math.sin(Math.PI / 5)); // The radius of the circumcircle of the pentagon
         const angleOffset = -Math.PI / 2; // Offset angle to rotate the pentagon
         const xCenter = window.innerWidth / 2; // x-coordinate of the center of the pentagon
@@ -175,7 +173,7 @@ export function getRandomShape(currYMax) {
 
     } else if (shapeType === 10) {
         // hexagon
-        const sideLength = window.innerWidth / 4 + 100 > window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The length of each side of the hexagon
+        const sideLength = innerWidth / 2.2; // The length of each side of the hexagon
         const radius = sideLength / Math.sqrt(3); // The radius of the circumcircle of the hexagon
         const angleOffset = -Math.PI / 2; // Offset angle to rotate the hexagon
         const xCenter = window.innerWidth / 2; // x-coordinate of the center of the hexagon
@@ -194,7 +192,7 @@ export function getRandomShape(currYMax) {
 
     } else if (shapeType === 11) {
         // heptagon
-        const sideLength = window.innerWidth / 4 + 100 //> window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The length of each side of the heptagon
+        const sideLength = innerWidth / 2.2; //> window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 + 100; // The length of each side of the heptagon
         const radius = (sideLength / (2 * Math.sin(Math.PI / 7))) * Math.cos(Math.PI / 7) * .5; // The radius of the circumcircle of the heptagon
         const angleOffset = -Math.PI / 2; // Offset angle to rotate the heptagon
         const xCenter = window.innerWidth / 2; // x-coordinate of the center of the heptagon
@@ -212,8 +210,8 @@ export function getRandomShape(currYMax) {
         dimension = [xCenter - radius, xCenter + radius, yCenter - radius, yCenter + radius];
     } else if (shapeType === 12) {
         // horizontal rectangle
-        const width = window.innerWidth / 3 + 150 //> window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 3 + 200; // The width of the rectangle
-        const height = window.innerWidth / 4  //> window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 - 200; // The height of the rectangle
+        const width = innerWidth /2.7 - 50; // The height of the rectangle
+        const height = innerWidth /2.7 + 50; // The height of the rectangle
         const x = window.innerWidth / 2 - width / 2;
         const y = currYMax + window.innerHeight / 2 - height / 2;
 
@@ -226,8 +224,8 @@ export function getRandomShape(currYMax) {
         dimension = [x, x + width, y, y + height];
     } else if (shapeType === 13) {
         // vertical rectangle
-        const height = window.innerWidth / 3 + 150 //> window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 3 + 200; // The width of the rectangle
-        const width = window.innerWidth / 4  //> window.innerWidth - 200 ? window.innerWidth - 200 : window.innerWidth / 4 - 200; // The height of the rectangle
+        const width = innerWidth /2.7 + 50; // The height of the rectangle
+        const height = innerWidth /2.7 - 50; // The height of the rectangle
         const x = window.innerWidth / 2 - width / 2;
         const y = currYMax + window.innerHeight / 2 - height / 2;
 

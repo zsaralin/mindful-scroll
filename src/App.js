@@ -45,7 +45,7 @@ import {
 import {
     BETWEEN_SPACE,
     BUBBLE_DIST, FIFTH_WINDOW,
-    FILL_RATIO,
+    FILL_RATIO, paperCol,
     SCROLL_DELTA,
     SCROLL_DIST,
     SHAPE_COLOR,
@@ -66,7 +66,7 @@ import {
     getHeightTiling,
     getOffSmall,
     getTile,
-    getTiling, pathArr,
+    getTiling, oldOverlapOffset, overlapOffset, pathArr,
     tilingIndex,
     top
 } from "./components/Tiling/Tiling3";
@@ -123,6 +123,7 @@ import Bubble2, {hideBubble, showBubble, showBubble2} from "./components/Bubble/
 import {logAutoScrollEnd, logAutoScrollStart, logAutoScrollStop} from "./components/Logging/LogAutoScroll";
 import {addAudio, getAudio} from "./components/Audio/AudioFile";
 import {playFillSound} from "./components/Audio/FillSound";
+import {initCols} from "./components/BasicVersion/ShapeColours";
 
 
 function App() {
@@ -169,7 +170,7 @@ function App() {
 
     useEffect(() => {
         logStart();
-        const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas'];
+        const canvasIds = ['tiling-canvas', 'invis-canvas', 'fill-canvas', 'top-canvas', 'effect-canvas'];
         canvasIds.forEach(id => {
             const canvas = document.getElementById(id);
             canvas.width = window.innerWidth
@@ -193,14 +194,17 @@ function App() {
                 ctx.lineWidth = ctx.lineWidth / 2;
             }
         });
-        basicVersion ? drawTwoShapes() : drawTwo()
-
+        if(basicVersion){
+            drawTwoShapes();
+        } else {
+            drawTwo()
+            colorDelay()
+        }
         ctx = document.getElementById('invis-canvas').getContext("2d");
         startScreenshots()
         initCanv()
         currTiling = prevTiling = pathArr[0]
         setColourPal(currTiling.colourPal)
-        colorDelay()
         updateTimer()
 
         // addAudio()
@@ -284,12 +288,38 @@ function App() {
                             // console.log('TOT ' + totPixels + ' and ' + currTile.inPath.length)
                             if (totPixels) {
                                 const currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
-                                console.log(currFill)
                                 if (!twinklePlayed && currFill > getFillMin()) {
                                     clearInterval(checkFill);
-                                    pulseEffect()
-                                    // playFillSound();
-                                    // reduceAudio()
+                                    const effect = document.getElementById('effect-canvas')
+                                    const effCtx = effect.getContext('2d')
+                                    effCtx.strokeStyle = "black"
+                                    effCtx.lineWidth = 25;
+                                    effCtx.save()
+                                    effCtx.translate(0,-smallOffset)
+                                    gsap.to(effCtx, {
+                                        duration: .5,
+                                        lineWidth: 29,
+                                        onUpdate: () => {
+                                            effCtx.clearRect(0, 0, effect.width, effect.height);
+                                            effCtx.strokeStyle = "black"
+                                            effCtx.stroke(currTile.path);
+                                        },
+                                        onComplete: () => {
+                                            gsap.to(effCtx, {
+                                                duration: .5,
+                                                lineWidth: 25,
+                                                onUpdate: () => {
+                                                    effCtx.clearRect(0, 0, effect.width, effect.height);
+                                                    effCtx.stroke(currTile.path);
+                                                },
+                                                onComplete: () => {
+                                                    effCtx.clearRect(0, 0, effect.width, effect.height);
+                                            effCtx.restore()
+                                                }
+                                            });
+                                        },
+                                    });
+
                                     console.log('I AM  BEING PLAYED')
                                     twinklePlayed = true;
                                 }
@@ -590,7 +620,7 @@ function App() {
         resetLineWidth()
         reduceAudio()
         // changeAudio()
-        colorDelay()
+        if(!basicVersion)colorDelay()
         clearTimeout(watercolorTimer)
         clearInterval(reduceOpac)
         insidePoly = [0, 0]
@@ -711,8 +741,9 @@ function App() {
 
             <div className="wrapper" id="wrapper">
                 <div id="canvas-wrapper">
-                    <canvas ref={canvas} id="fill-canvas"></canvas>
+                    <canvas ref={canvas} id="fill-canvas" style = {{background : ''}}></canvas>
                     <canvas id="top-canvas" style={{display: ''}}></canvas>
+                    <canvas id="effect-canvas" style={{display: ''}}></canvas>
 
                     <canvas id="invis-canvas" style={{display: 'none',}}
                     ></canvas>

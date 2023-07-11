@@ -2,16 +2,17 @@ import {ref} from "firebase/storage";
 import {db, isLogging, UID} from "./Logging";
 import {addDoc, collection} from "firebase/firestore";
 import {basicVersion} from "../Tiling/SortingHat/CompleteTile2";
+import MobileDetect from 'mobile-detect';
 
-export function logIdString(){
+export function logIdString() {
     const today = new Date();
-    const day = today.getDate();
-    const month = today.getMonth() + 1; // Months are zero-based, so we add 1
-    const year = today.getFullYear() ;
-    const minutes = today.getMinutes();
-    const seconds = today.getSeconds();
+    const day = today.getDate().toString().padStart(2, '0'); // Add leading zero if necessary
+    const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero if necessary
+    const year = today.getFullYear();
+    // const minutes = today.getMinutes();
+    // const seconds = today.getSeconds();
 
-    return`${UID}_${year}_${day}_${month}_${minutes}_${seconds}`
+    return `${UID}_${year}_${month}_${day}`;
 }
 
 export function logStart() {
@@ -38,7 +39,7 @@ export function logStart() {
             action: "start",
             winW: window.innerWidth,
             winH: window.innerHeight,
-            basic : basicVersion.toString()
+            basic : basicVersion.toString(),
             // basic: urlParams.get('basic'),
         }
         addDoc(coll, newMessage);
@@ -47,43 +48,8 @@ export function logStart() {
 }
 
 function getDevice(){
-    var userAgent = navigator.userAgent;
-    var model = "Unknown";
-
-// Check if the device is an iPhone
-    if (/iPhone/i.test(userAgent)) {
-        // Extract the iPhone model from the user agent
-        var match = userAgent.match(/iPhone\s*([^\s;]*)/);
-        if (match && match.length > 1) {
-            model = match[1];
-        }
-    }
-// Check if the device is an iPad
-    else if (/iPad/i.test(userAgent)) {
-        // Extract the iPad model from the user agent
-        var match = userAgent.match(/iPad\s*([^\s;]*)/);
-        if (match && match.length > 1) {
-            model = match[1];
-        }
-    }
-// Check if the device is a Google Pixel
-    else if (/Pixel/i.test(userAgent)) {
-        // Extract the Pixel model from the user agent
-        var match = userAgent.match(/Pixel\s*([^\s;]*)/);
-        if (match && match.length > 1) {
-            model = match[1];
-        }
-    }
-// Check if the device is an Android phone or tablet
-    else if (/Android/i.test(userAgent)) {
-        // Extract the Android model from the user agent
-        var match = userAgent.match(/Android\s*([^;]*)/);
-        if (match && match.length > 1) {
-            model = match[1];
-        }
-    }
-
-    return model
+    const md = new MobileDetect(window.navigator.userAgent);
+    return md.mobile();
 }
 
 export function logTimer() {

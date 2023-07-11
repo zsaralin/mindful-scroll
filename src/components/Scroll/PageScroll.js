@@ -2,7 +2,7 @@ import {drawBottomTiling, drawTwoTilings, refreshTilings, refreshTilings2, topSe
 import {redrawStrokes} from "../Stroke/StrokeType/StrokeArr";
 import {redrawActiveTiles, stopWatercolor} from "../Effects/Watercolor";
 import {setInternalOffset} from "../Tile/CompleteTile";
-import {BETWEEN_SPACE, SCROLL_DELTA, SCROLL_DIST, TOP_PAGE_SPACE} from "../Constants";
+import {BETWEEN_SPACE, paperCol, SCROLL_DELTA, SCROLL_DIST, TOP_PAGE_SPACE} from "../Constants";
 import {endAutoScroll, isAutoScrollActive} from "./AutoScroll";
 import {getOffsetY, setOffsetY} from "./Offset";
 import {isSlowScrollOn} from "./SlowScroll";
@@ -263,12 +263,27 @@ export const redrawCanvas = async () => {
                 fourthStep = false;
                 // drawSecondTilingHelper()
 
-                var rectangle = document.getElementById("gradRectangle");
-                rectangle.style.top = 0 + "px";
-                rectangle.style.width = topC.width + "px";
-                rectangle.style.height = (whiteSpace - scrollBackAmount - 1 + offsetI) + scrollBackAmount/2 + "px";
-                const position = offsetI === 0 ? '25%' : '70%'
-                rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
+                // var rectangle = document.getElementById("gradRectangle");
+                // rectangle.style.top = 0 + "px";
+                // rectangle.style.width = topC.width + "px";
+                // rectangle.style.height = (whiteSpace - scrollBackAmount - 1 + offsetI) + scrollBackAmount/2 + "px";
+                // const position = offsetI === 0 ? '25%' : '70%'
+                // rectangle.style.background = "linear-gradient(to bottom, white " + position + ", rgba(255,255,255,.1)";
+
+                const tilingCtx = tilingC.getContext('2d');
+                const rectangleTop = 0;
+                const rectangleWidth = topC.width;
+                const rectangleHeight = whiteSpace - scrollBackAmount - 1 + offsetI + scrollBackAmount/2;
+
+                const gradient = tilingCtx.createLinearGradient(0, rectangleTop, 0, rectangleHeight);
+                gradient.addColorStop(0, 'white');
+                const position = offsetI === 0 ? 0.25 : 0.7;
+                gradient.addColorStop(position, 'white');
+                gradient.addColorStop(1, 'transparent');
+
+                tilingCtx.fillStyle = gradient;
+                tilingCtx.fillRect(0, rectangleTop, rectangleWidth, rectangleHeight);
+
                 offsetI = scrollBackAmount;
                 refreshSpot = top + offsetI - 100;
 
@@ -292,7 +307,7 @@ export const updateOffCanvas = () => {
     newFill = document.createElement('canvas');
     newTop = document.createElement('canvas');
     newFill.width = fillC.width;
-    newFill.height = refreshSpot + window.innerHeight//fillC.height;
+    newFill.height = refreshSpot + window.innerHeight + 550 //fillC.height;
     newTop.width = fillC.width;
     newTop.height = refreshSpot + window.innerHeight//fillC.height;
     const newFillCtx = newFill.getContext('2d');
@@ -302,7 +317,7 @@ export const updateOffCanvas = () => {
 
     const drawFillImage = () => {
         return new Promise((resolve) => {
-            newFillCtx.fillStyle = 'white';
+            newFillCtx.fillStyle = paperCol;
             newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
             newFillCtx.drawImage(fillC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h);
             resolve();

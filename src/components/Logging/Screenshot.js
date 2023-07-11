@@ -3,6 +3,7 @@ import {deleteObject, getStorage, listAll, ref, uploadString} from "firebase/sto
 import {logIdString} from "./TimeLog";
 import {db, isLogging, startTime, UID} from "./Logging";
 import {addDoc, collection} from "firebase/firestore";
+import {getOffsetY} from "../Scroll/Offset";
 
 const storage = getStorage()
 
@@ -30,9 +31,9 @@ function captureScreenshot() {
     const combinedContext = combinedCanvas.getContext('2d');
 
     // Draw the source canvases onto the combined canvas
-    combinedContext.drawImage(canvas1, 0, 0, viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight);
-    combinedContext.drawImage(canvas2, 0, 0, viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight);
-    combinedContext.drawImage(canvas3, 0, 0, viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight);
+    combinedContext.drawImage(canvas1, 0, getOffsetY(), viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight);
+    combinedContext.drawImage(canvas2, 0, getOffsetY(), viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight);
+    combinedContext.drawImage(canvas3, 0, getOffsetY(), viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight);
 
     const dataUrl = combinedCanvas.toDataURL()
     const time= Date.now()

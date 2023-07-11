@@ -5,7 +5,6 @@ import {addAudio, getAudio, playAgain, playplay} from './AudioFile'
 import {basicVersion} from "../Tiling/SortingHat/CompleteTile2";
 import {playFillSound, startFillSound, startTone} from "./FillSound";
 // let audio = new Audio(getRandomTrack());
-let audioOn = true;
 // audio.volume = 0;
 // let font = false;
 
@@ -22,6 +21,7 @@ export default function Music() {
 
     async function playMusic() {
         getAudio();
+        document.documentElement.style.backgroundColor = 'rgb(243, 241, 239)'
 
         // startFillSound()
         // const audioContext = new AudioContext();

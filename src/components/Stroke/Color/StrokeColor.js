@@ -143,7 +143,7 @@ export function getColourPal() {
 
 export function setColourPal(inp) {
     colourPal = inp ? inp : basicVersion ? generateColourPal() : generateColourPal().cols
-    color = basicVersion ? colourPal[0] : colourPal[Math.floor(Math.random() * colourPal.length)]
+    color = basicVersion ? colourPal : colourPal[Math.floor(Math.random() * colourPal.length)]
     // console.log(colourPal)
     clearInterval(shortPause)
     // colorDelay()

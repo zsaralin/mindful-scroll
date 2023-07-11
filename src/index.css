@@ -1,3 +1,4 @@
+
 body {
   overflow: hidden;
   font-family: 'Montserrat';
@@ -8,6 +9,7 @@ body {
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none;
+  /*background-color: rgb(243, 241, 239);*/
 }
 @font-face {
   font-family: 'Montserrat';

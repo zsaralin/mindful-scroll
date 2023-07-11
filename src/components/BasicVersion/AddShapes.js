@@ -6,6 +6,7 @@ import {getOffsetY, setOffsetY} from "../Scroll/Offset";
 import {getFillInfo} from "../Tiling/SortingHat/TilingFillType";
 import {generateColourPal} from "../Stroke/Color/ColourPalette";
 import {logTiling} from "../Logging/LogTilling";
+import {getShapeCol} from "./ShapeColours";
 
 let xMin, xMax, yMin, yMax;
 let shapesDrawn = 0;
@@ -21,7 +22,7 @@ export function drawShape(offsetY){
     const shape = getRandomShape(offsetY)
     const pathDict = addShape(shape)
     const tiling = {pathDict: pathDict}
-    tiling.colourPal = generateColourPal()
+    tiling.colourPal = getShapeCol(shapeType)
     tiling.i = shapesDrawn;
     tiling.offset = [0, offsetY]
     pathArr.push(tiling);
