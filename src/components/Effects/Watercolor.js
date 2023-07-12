@@ -28,7 +28,7 @@ export function watercolor(r2, currTile, currColor, off, redraw, type, x, y) {
     if (!redraw) {
         fillRatio = getFillRatio(currTile, off,  canvStr);
         if (activeTileArr[currTile.id] || currTile.filled) return; // already active watercolor in tile
-        logWaterStart(currTile.id, currColor);
+        logWaterStart(currTile.id, currColor, type);
         currTile.watercolor = true;
     }
     let currPath = currTile.path;
@@ -77,7 +77,7 @@ export function watercolor(r2, currTile, currColor, off, redraw, type, x, y) {
     animations[currColor] = animation; // Add the animation to the dictionary
 
     function onComplete() {
-        logWaterEnd(currTile.id, currColor);
+        logWaterEnd(currTile.id, currColor, type);
         pushCompleteTile(currTile, currColor);
         fillTileOff(currPath, currColor, off)
         currTile.watercolor = false;

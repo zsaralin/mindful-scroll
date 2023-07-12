@@ -19,7 +19,7 @@ export function logFillTile(type, under, tileId, colors, fillColor, fillColors, 
         addDoc(coll, newMessage);
     }
 }
-export function logWaterStart(tileId, color){
+export function logWaterStart(tileId, color, type){
 if(isLogging) {
     const coll = collection(db, "log");
     const newMessage = {
@@ -28,12 +28,13 @@ if(isLogging) {
         type: "E",
         action: "ws",
         tileId: tileId,
-        color: color
+        color: color,
+        dir: type,
     };
     addDoc(coll, newMessage);
 }
 }
-export function logWaterEnd(tileId, color){
+export function logWaterEnd(tileId, color, type){
     if(isLogging) {
         const coll = collection(db, "log");
         const newMessage = {
@@ -42,7 +43,8 @@ export function logWaterEnd(tileId, color){
             type: "E",
             action: "ws",
             tileId: tileId,
-            color: color
+            color: color,
+            dir: type,
         };
         addDoc(coll, newMessage);
     }

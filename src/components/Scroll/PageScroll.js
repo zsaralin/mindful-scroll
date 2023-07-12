@@ -273,15 +273,16 @@ export const redrawCanvas = async () => {
                 const tilingCtx = tilingC.getContext('2d');
                 const rectangleTop = 0;
                 const rectangleWidth = topC.width;
-                const rectangleHeight = whiteSpace - scrollBackAmount - 1 + offsetI + scrollBackAmount/2;
+                const rectangleHeight = offsetI + 300;
+                const gr = tilingCtx.createLinearGradient(0, rectangleTop, 0, rectangleHeight);
+                gr.addColorStop(0, 'white');
+                const position = offsetI === 0 ? .5: .7;
+                gr.addColorStop(position, 'white');
+                gr.addColorStop(1,'rgba(255,255,255,0)');
 
-                const gradient = tilingCtx.createLinearGradient(0, rectangleTop, 0, rectangleHeight);
-                gradient.addColorStop(0, 'white');
-                const position = offsetI === 0 ? 0.25 : 0.7;
-                gradient.addColorStop(position, 'white');
-                gradient.addColorStop(1, 'transparent');
-
-                tilingCtx.fillStyle = gradient;
+                // tilingCtx.fillStyle = "white";
+                // tilingCtx.fillRect(0, rectangleTop, rectangleWidth, rectangleHeight);
+                tilingCtx.fillStyle = gr;
                 tilingCtx.fillRect(0, rectangleTop, rectangleWidth, rectangleHeight);
 
                 offsetI = scrollBackAmount;

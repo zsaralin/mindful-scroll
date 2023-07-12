@@ -216,7 +216,7 @@ function App() {
     let lw;
     let index;
     let smallOffset;
-
+    let pathThicker = false;
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
@@ -290,6 +290,7 @@ function App() {
                                 const currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
                                 if (!twinklePlayed && currFill > getFillMin()) {
                                     clearInterval(checkFill);
+                                    pathThicker = true;
                                     const effect = document.getElementById('effect-canvas')
                                     const effCtx = effect.getContext('2d')
                                     effCtx.strokeStyle = "black"
@@ -298,7 +299,7 @@ function App() {
                                     effCtx.translate(0,-smallOffset)
                                     gsap.to(effCtx, {
                                         duration: .5,
-                                        lineWidth: 29,
+                                        lineWidth: 34,
                                         onUpdate: () => {
                                             effCtx.clearRect(0, 0, effect.width, effect.height);
                                             effCtx.strokeStyle = "black"
@@ -314,6 +315,7 @@ function App() {
                                                 },
                                                 onComplete: () => {
                                                     effCtx.clearRect(0, 0, effect.width, effect.height);
+                                                    pathThicker = false;
                                             effCtx.restore()
                                                 }
                                             });
@@ -572,7 +574,7 @@ function App() {
         if (!doubleTouch) {
             if (!isPanelOn()) {
                 // showColourPreview(currTile, prevTile !== currTile, getHandChange())
-                showBubble(currTile, prevTile !== currTile, getHandChange())
+                // showBubble(currTile, prevTile !== currTile, getHandChange())
                 onStrokeEnd()
             }
         } else {
@@ -596,11 +598,12 @@ function App() {
 
     }
 
-    function onStrokeEnd() {
+    async function onStrokeEnd() {
         clearInterval(checkFill)
         clearTimeout(timeoutFillSound)
         if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled &&
             (currFill > getFillMin() || getFillRatio(currTile, smallOffset, TOP_CANV) > getFillMin())) {
+            if (pathThicker) await delay(400)
             getTotalPixelsFast(currTile)
             completeTile2(currTile, currTiling, invisCol)
             twinklePlayed = false;
@@ -620,7 +623,7 @@ function App() {
         resetLineWidth()
         reduceAudio()
         // changeAudio()
-        if(!basicVersion)colorDelay()
+        if (!basicVersion) colorDelay()
         clearTimeout(watercolorTimer)
         clearInterval(reduceOpac)
         insidePoly = [0, 0]
