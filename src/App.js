@@ -394,14 +394,15 @@ function App() {
             logStrokeMove(prevCursorX, prevCursorY, cursorX, cursorY, speed[0], speed[1], touchType, angle, force,
                 getLineWidth(), currTile.id, currTiling.i, currColor, currTile.strokeType, sizeChange, currTile.filled.toString(), currTile.colors)
             sizeChange = "null"
+
         } else {
-            if (!doubleTouch) {
+            if (!doubleTouch &&  insidePoly[1] / insidePoly[0] > .3) {
                 changeAudio()
             }
             insidePoly[1] += 1;
         }
+        insidePoly[0] += 1;
     }
-
     let midId;
 
     function onMouseDown(event) {
@@ -496,7 +497,7 @@ function App() {
                     force = touch.force;
                 }
             }
-            let r = getLineWidth() / 2
+            let r = getLineWidth() /// 2
             singleTouch = true;
             doubleTouch = false;
             const touch0X = cursorX = event.touches[0]?.pageX - r;
@@ -537,7 +538,7 @@ function App() {
     let firstMove = false;
 
     function onTouchMove(event) {
-        let r = getLineWidth() / 2
+        let r = getLineWidth() /// 2
 
         const touch0X = event.touches[0].pageX - r;
         const touch0Y = event.touches[0].pageY - r;

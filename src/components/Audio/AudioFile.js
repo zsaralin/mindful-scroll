@@ -63,8 +63,8 @@ export function getAudio() {
 
                     audioElement.addEventListener('loadedmetadata', () => {
                         // Set a random starting time
-                        const randomTime = Math.floor(Math.random() * audioElement.duration);
-                        audioElement.currentTime = randomTime;
+                        // const randomTime = Math.floor(Math.random() * audioElement.duration);
+                        // audioElement.currentTime = randomTime;
 
                         const sourceNode = audioContext.createMediaElementSource(audioElement);
                         gainNode = audioContext.createGain();
@@ -78,12 +78,13 @@ export function getAudio() {
 
                         targetTime = audioContext.currentTime + fadeDuration;
 
-                        gainNode.gain.value = 0;
-                        gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
+
 
 
                         try {
                             audioElement.play();
+                            gainNode.gain.value = 0;
+                            gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
                         } catch (error) {
                             console.error('An error occurred while playing the audio:', error);
                         }
