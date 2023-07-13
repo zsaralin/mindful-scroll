@@ -210,6 +210,9 @@ function App() {
         currTiling = prevTiling = pathArr[0]
         setColourPal(currTiling.colourPal)
         updateTimer()
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        if(urlParams.get("h") === "l") rightHanded = false;
 
         // addAudio()
 
@@ -221,6 +224,7 @@ function App() {
     let index;
     let smallOffset;
     let pathThicker = false;
+    let rightHanded = true;
 
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
         lw = getLineWidth()
@@ -406,7 +410,6 @@ function App() {
     let midId;
 
     function onMouseDown(event) {
-        console.log('HEY')
         let strokeR = getLineWidth() / 2 // stroke radius
         // detect left clicks
         if (event.button === 0) {
@@ -496,12 +499,14 @@ function App() {
                 if (touch.force > 0) {
                     force = touch.force;
                 }
+                rightHanded = angle < 4.7 ? true : false;
             }
-            let r = getLineWidth() /// 2
+            let yFinger = touchType === "stylus" ? getLineWidth() / 2 : getLineWidth() / 1.5
+            let xFinger = rightHanded ? yFinger : -yFinger
             singleTouch = true;
             doubleTouch = false;
-            const touch0X = cursorX = event.touches[0]?.pageX - r;
-            const touch0Y = cursorY = event.touches[0]?.pageY - r;
+            const touch0X = event.touches[0].pageX - xFinger;
+            const touch0Y = event.touches[0].pageY - yFinger;
 
             const scaledX = touch0X;
             const scaledY = toTrueY(touch0Y);
@@ -538,12 +543,12 @@ function App() {
     let firstMove = false;
 
     function onTouchMove(event) {
-        let r = getLineWidth() /// 2
-
-        const touch0X = event.touches[0].pageX - r;
-        const touch0Y = event.touches[0].pageY - r;
-        const prevTouch0X = prevTouches[0]?.pageX - r;
-        const prevTouch0Y = prevTouches[0]?.pageY - r;
+        let yFinger = touchType === "stylus" ? getLineWidth() / 2 : getLineWidth() / 1.5
+        let xFinger = rightHanded ? yFinger : -yFinger
+        const touch0X = event.touches[0].pageX - xFinger;
+        const touch0Y = event.touches[0].pageY - yFinger;
+        const prevTouch0X = prevTouches[0]?.pageX - xFinger;
+        const prevTouch0Y = prevTouches[0]?.pageY - yFinger;
 
         cursorX = event.touches[0].pageX //- r;
         cursorY = event.touches[0].pageY //- r;
@@ -654,7 +659,6 @@ function App() {
         clearInterval(midId)
         ratio = 0;
         firstMove = false;
-        setHandChanged(false)
         setDragging(false)
         strokeMove = false;
         totPixels = null;
