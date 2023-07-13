@@ -25,9 +25,9 @@ export function drawTimer() {
     const centerX = canvas.width - 10;
     const radius = 7;
     const percentage = calculatePercentage();
-    let fillColor = 'rgba(128, 128, 128, 0.5)';
+    let fillColor = 'rgba(200, 200, 200, 1)';
     if (isTimerDone) {
-        fillColor = `rgba(0, 0, 0, .6)`;
+        fillColor = `rgba(0, 0, 0, 1)`;
     }
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);

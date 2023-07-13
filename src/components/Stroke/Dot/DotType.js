@@ -13,7 +13,7 @@ export function startDot(id, x0, y0, x1, y1, color, lw, type) {
         drawStroke(x0, y0, x1, y1, color, lw)
     }
     else if(type === "dotted") drawDottedDot(id, x0, y0, x1, y1, color, lw)
-    else if (type === "blur") blurryDotHelper(x0, y0, x1, y1, color, lw)
+    else if (type === "blurry") blurryDotHelper(x0, y0, x1, y1, color, lw)
     else if (type === "transparent") drawTransparentDot(id, x0, y0, x1, y1, color, lw)
         // dot only
     else if (type === "clover") drawClover(x0, y0, x1, y1, color, lw)

@@ -7,6 +7,7 @@ import {getFillInfo} from "../Tiling/SortingHat/TilingFillType";
 import {generateColourPal} from "../Stroke/Color/ColourPalette";
 import {logTiling} from "../Logging/LogTilling";
 import {getShapeCol} from "./ShapeColours";
+import {BETWEEN_SPACE, paperCol} from "../Constants";
 
 let xMin, xMax, yMin, yMax;
 let shapesDrawn = 0;
@@ -110,6 +111,11 @@ export function redrawCanvasB(){
         firstStep = false;
         secondStep = false;
 
+        const t = document.getElementById('tiling-canvas')
+        const tx = t.getContext('2d')
+
+        tx.fillStyle = paperCol;
+        tx.fillRect(0, refresh + scrollBack - scrollBackOff + 150, t.width, window.innerHeight);
         drawShape(refresh + scrollBack - scrollBackOff)
         drawShape( refresh+window.innerHeight/2  + scrollBack- scrollBackOff)
 

@@ -6,7 +6,7 @@ import {setTiling} from "./SortingHat";
 import {getOffsetY} from "../Scroll/Offset";
 import {clearCanvas, drawTwoTilings, getTilingIndex2} from "./Tiling2";
 import {prevOffsetY, scrollBackAmount} from "../Scroll/PageScroll";
-import {TOP_PAGE_SPACE, BETWEEN_SPACE, SHAPE_COLOR} from "../Constants";
+import {TOP_PAGE_SPACE, BETWEEN_SPACE, SHAPE_COLOR, paperCol} from "../Constants";
 import {getFillInfo, getFillType} from "./SortingHat/TilingFillType";
 import {checkOverlap} from "./TilingPath";
 import {getRandomShape} from "../BasicVersion/GetShape.js";
@@ -184,6 +184,13 @@ export function drawSecondTilingHelper() {
     pathArr[pathArr.length - 1].midSeg = midSeg;
     pathArr[pathArr.length - 1].vert = vert;
     pathArr[pathArr.length - 1].orien = orien;
+
+    const t = document.getElementById('tiling-canvas')
+    const tx = t.getContext('2d')
+
+    tx.fillStyle = paperCol;
+    tx.fillRect(0, top + scrollBackAmount, t.width, pathArr[pathArr.length - 1].bounds[3]- pathArr[pathArr.length - 1].bounds[2] + 300);
+    // tx.fillStyle = 'transparent';
 
     drawTiling(pathArr[pathArr.length - 1])
     pathArr[pathArr.length - 1].fillInfo = getFillInfo()

@@ -69,6 +69,7 @@ export function logTimer() {
 
 export function logRefresh(){
     if (isLogging) {
+        console.log('IMM REFRESHING')
         const coll = collection(db, "log");
         const newMessage = {
             uid: UID,

@@ -19,6 +19,7 @@ export function setCols(tile, col0, col1){
     } else {
         cols = setCol2Plus(tile, col1)
     }
+    tile.fillColors = cols;
     return cols
 }
 

@@ -185,7 +185,7 @@ export const redrawCanvas = async () => {
         newTiling = document.createElement('canvas');
 
         newInvis.width = newTiling.width = invisC.width;
-        newInvis.height = newTiling.height = refreshSpot + window.innerHeight//invisC.height;
+        newInvis.height = newTiling.height = refreshSpot + window.innerHeight + 100 //invisC.height;
 
         const newInvisCtx = newInvis.getContext('2d');
         const newTilingCtx = newTiling.getContext('2d');
@@ -308,7 +308,7 @@ export const updateOffCanvas = () => {
     newFill = document.createElement('canvas');
     newTop = document.createElement('canvas');
     newFill.width = fillC.width;
-    newFill.height = refreshSpot + window.innerHeight + 550 //fillC.height;
+    newFill.height = refreshSpot + window.innerHeight //+ 600 //fillC.height;
     newTop.width = fillC.width;
     newTop.height = refreshSpot + window.innerHeight//fillC.height;
     const newFillCtx = newFill.getContext('2d');
@@ -318,7 +318,7 @@ export const updateOffCanvas = () => {
 
     const drawFillImage = () => {
         return new Promise((resolve) => {
-            newFillCtx.fillStyle = paperCol;
+            newFillCtx.fillStyle = "white";
             newFillCtx.fillRect(0, 0, fillC.width, fillC.height);
             newFillCtx.drawImage(fillC, 0, refreshSpot - whiteSpace - offsetI, fillC.width, h, 0, 0, fillC.width, h);
             resolve();

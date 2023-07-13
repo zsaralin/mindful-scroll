@@ -21,7 +21,7 @@ export default function Music() {
 
     async function playMusic() {
         getAudio();
-        document.documentElement.style.backgroundColor = 'rgb(238, 238, 230)'
+        // document.documentElement.style.backgroundColor = 'rgba(238, 238, 230,1)'
 
         // startFillSound()
         // const audioContext = new AudioContext();

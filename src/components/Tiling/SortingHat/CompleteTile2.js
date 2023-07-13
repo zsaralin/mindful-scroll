@@ -47,7 +47,7 @@ export function completeTile2(tile, tiling) {
             return;
         }
         let nTiles = getNeighTiles(tile, tiling)
-        if (nTiles.length > 3 && Math.random() < .2 && !tiling.fillInfo.strokeTypes.includes("transparent") && !tiling.fillInfo.strokeTypes.includes("dotted")
+        if (nTiles.length > 3 && Math.random() < .3 && !tiling.fillInfo.strokeTypes.includes("transparent") && !tiling.fillInfo.strokeTypes.includes("dotted")
             && !animActive && Math.random() < 1 && tile.colors.length === 1) {
             fillNeighTiles(tile, nTiles, tile.colors[0], smallOffset, false)
         } else if (fillType !== "input" && tile.strokeType === "reg" && getFillRatio(tile, smallOffset, 'top-canvas') < .95 && Math.random() < .7) {

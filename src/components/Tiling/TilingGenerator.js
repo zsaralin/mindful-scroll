@@ -80,29 +80,30 @@ export function drawTiling(tiling) {
     const tilingCtx = tilingCanvas.getContext('2d');
     const invisCtx = invisCanvas.getContext('2d');
 
-    if(basicVersion){
-        const topCanv = document.getElementById('top-canvas');
-        const topCtx = topCanv.getContext('2d');
-        topCtx.fillStyle = 'white';
-        tilingCtx.lineWidth = getTileWidth();
-        tilingCtx.strokeStyle = '#000';
-        invisCtx.strokeStyle = '#000';
-        for (let p in pathDict) {
-            const path = pathDict[p].path;
-            tilingCtx.fill(path);
-            tilingCtx.stroke(path);
-            topCtx.fill(path)
-            invisCtx.fillStyle = p;
-            invisCtx.fill(path);
-            invisCtx.stroke(path);
-        }
-        return
-    }
+    // if(basicVersion){
+    //     const topCanv = document.getElementById('top-canvas');
+    //     const topCtx = topCanv.getContext('2d');
+    //     topCtx.fillStyle = 'white';
+    //     tilingCtx.lineWidth = getTileWidth();
+    //     tilingCtx.strokeStyle = '#000';
+    //     invisCtx.strokeStyle = '#000';
+    //     for (let p in pathDict) {
+    //         const path = pathDict[p].path;
+    //         tilingCtx.fill(path);
+    //         tilingCtx.stroke(path);
+    //         topCtx.fill(path)
+    //         invisCtx.fillStyle = p;
+    //         invisCtx.fill(path);
+    //         invisCtx.stroke(path);
+    //     }
+    //     return
+    // }
     const fillCanv = document.getElementById('fill-canvas');
     const fillCtx = fillCanv.getContext('2d');
     fillCtx.fillStyle = 'white';
 
     // tilingCtx.fillStyle = 'transparent';
+    // tilingCtx.globalCompositeOperation = 'destination-out';
     tilingCtx.lineWidth = getTileWidth();
     tilingCtx.strokeStyle = '#000';
 
@@ -111,9 +112,12 @@ export function drawTiling(tiling) {
 
     for (let p in pathDict) {
         const path = pathDict[p].path;
+        tilingCtx.globalCompositeOperation = 'destination-out';
         tilingCtx.fill(path);
+        tilingCtx.globalCompositeOperation = 'source-over';
         tilingCtx.stroke(path);
-        fillCtx.fill(path)
+
+        // fillCtx.fill(path)
         invisCtx.fillStyle = p;
         invisCtx.fill(path);
         invisCtx.stroke(path);

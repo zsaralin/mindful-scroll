@@ -19,4 +19,4 @@ export const TOP_CANV = 'top-canvas'
 
 export const BB_PADDING = 35
 
-export const paperCol = 'rgb(243, 241, 239)'
+export const paperCol = 'rgba(238, 238, 230,1)'

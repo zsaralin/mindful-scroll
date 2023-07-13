@@ -3,6 +3,7 @@ import {addDoc, collection} from "firebase/firestore";
 
 export function logFillTile(type, under, tileId, colors, fillColor, fillColors, colorCode) {
     if(isLogging) {
+        console.log('HERE YEEEEEEEEEE ' + fillColors + ' and fillColor ' + fillColor)
         const coll = collection(db, "log");
         const newMessage = {
             uid: UID,
@@ -13,7 +14,8 @@ export function logFillTile(type, under, tileId, colors, fillColor, fillColors, 
             under: under,
             tileId: tileId,
             colors: colors,
-            fillColor: fillColors,
+            fillColor: fillColor === 'undefined' ? "null" : fillColor,
+            fillColors: fillColors ? fillColors : "null",
             colorCode: colorCode,
         };
         addDoc(coll, newMessage);
@@ -41,7 +43,7 @@ export function logWaterEnd(tileId, color, type){
             uid: UID,
             time: Date.now(),
             type: "E",
-            action: "ws",
+            action: "we",
             tileId: tileId,
             color: color,
             dir: type,

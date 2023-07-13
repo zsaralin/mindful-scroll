@@ -188,8 +188,12 @@ function App() {
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
             if (id === 'tiling-canvas') {
-                ctx.fillStyle = 'transparent';
+                ctx.fillStyle = 'rgba(255,255,255,0)';
                 ctx.lineWidth = getTileWidth();
+                ctx.fillStyle = paperCol;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                // ctx.fillStyle = 'rgba(255,255,255,0)';
+
             } else if (id === 'invis-canvas') {
                 ctx.lineWidth = ctx.lineWidth / 2;
             }
@@ -225,8 +229,10 @@ function App() {
         // invisCol = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data.toString()
         const [r, g, b, a] = ctx.getImageData(prevScaledX, prevScaledY, 1, 1).data;
         const invisCol = [r, g, b, a].join(',')
+        console.log('hey ' + invisCol)
         if (invisCol === '0,0,0,0') {
             doubleTouch = true;
+            console.log('SCROLLING START')
             logScrollStart(cursorX, cursorY, touchType, numTouches, angle, force, getOffsetY())
             return
         }
@@ -277,7 +283,6 @@ function App() {
 
             if (cursorY > FIFTH_WINDOW) {
                 startAutoScroll();
-                logAutoScrollStart()
             }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
             if (!basicVersion && !currTile.filled && !twinklePlayed) {
@@ -301,7 +306,6 @@ function App() {
                                         duration: .5,
                                         lineWidth: 34,
                                         onUpdate: () => {
-                                            effCtx.clearRect(0, 0, effect.width, effect.height);
                                             effCtx.strokeStyle = "black"
                                             effCtx.stroke(currTile.path);
                                         },
@@ -347,18 +351,18 @@ function App() {
     let dotRemoved = false;
     let currFill;
     let twinklePlayed = false;
+    let sizeChange = "null"
 
     function onStrokeMove(prevScaledX, prevScaledY, scaledX, scaledY, speed) {
         if (!doubleTouch && currTile && !currTile.watercolor && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset) && isCircleInPath(currTile.path, scaledX, scaledY + smallOffset)) {
             strokeMove = true;
-            hideBubble()
+            // hideBubble()
             stopColorChange()
             if (!dotRemoved) {
                 removeLastDot(currTile)
                 dotRemoved = true;
             }
             if (currTile.strokeType === "reg" && isShrinkStroke()) {
-                let sizeChange;
                 const absSpeedX = Math.abs(speed[0]);
                 const absSpeedY = Math.abs(speed[1]);
 
@@ -380,11 +384,11 @@ function App() {
             changeAudio(touchSpeed)
             if (cursorY > FIFTH_WINDOW) {
                 startAutoScroll();
-                logAutoScrollStart()
+                // logAutoScrollStart()
             }
             logStrokeMove(prevCursorX, prevCursorY, cursorX, cursorY, speed[0], speed[1], touchType, angle, force,
-                getLineWidth(), currTile.id, currTiling.i, currColor, currTile.strokeType, tooFast.toString(), currTile.filled.toString(), currTile.colors)
-
+                getLineWidth(), currTile.id, currTiling.i, currColor, currTile.strokeType, sizeChange, currTile.filled.toString(), currTile.colors)
+            sizeChange = "null"
         } else {
             if (!doubleTouch) {
                 changeAudio()
@@ -396,6 +400,7 @@ function App() {
     let midId;
 
     function onMouseDown(event) {
+        console.log('HEY')
         let strokeR = getLineWidth() / 2 // stroke radius
         // detect left clicks
         if (event.button === 0) {
@@ -506,6 +511,8 @@ function App() {
             // moveFeedback()
             singleTouch = false;
             doubleTouch = true;
+            console.log('SCROLLING START dubbbbbbbbs')
+
             logScrollStart(cursorX, cursorY, touchType, numTouches, angle, force, getOffsetY())
             // console.log(`x: ${prevCursorX} + y: ${prevCursorY}`)
         }
@@ -558,7 +565,6 @@ function App() {
             stopPulseEffect()
             if (isAutoScrollActive) {
                 endAutoScroll()
-                logAutoScrollStop()
             }
             logScrollMove(prevCursorX, prevCursorY, cursorX, cursorY, touchSpeed[0], touchSpeed[1], touchType, numTouches, angle, force, getOffsetY())
         }
@@ -578,6 +584,7 @@ function App() {
                 onStrokeEnd()
             }
         } else {
+            console.log('ENDING SCROLL')
             logScrollEnd(prevCursorX, prevCursorY, touchType, numTouches, angle, force, getOffsetY())
         }
         if (requestId) {
@@ -603,8 +610,8 @@ function App() {
         clearTimeout(timeoutFillSound)
         if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled &&
             (currFill > getFillMin() || getFillRatio(currTile, smallOffset, TOP_CANV) > getFillMin())) {
-            if (pathThicker) await delay(400)
             getTotalPixelsFast(currTile)
+            if (pathThicker) await delay(200)
             completeTile2(currTile, currTiling, invisCol)
             twinklePlayed = false;
             clearTimeout(timeoutFillSound)
@@ -751,9 +758,9 @@ function App() {
                     <canvas id="invis-canvas" style={{display: 'none',}}
                     ></canvas>
                     <canvas id="tiling-canvas" style={{display: '', background: '', zIndex: 2}}
-                            onMouseDown={onMouseDown}
-                            onMouseUp={onMouseUp}
-                            onMouseMove={onMouseMove}
+                            // onMouseDown={onMouseDown}
+                            // onMouseUp={onMouseUp}
+                            // onMouseMove={onMouseMove}
                             onTouchStart={onTouchStart}
                             onTouchEnd={onTouchEnd}
                             onTouchCancel={onTouchEnd}

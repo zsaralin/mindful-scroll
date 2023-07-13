@@ -26,7 +26,7 @@ export function logStrokeStart(x, y, touchType, angle, force, lw, tileId, tiling
     }
 }
 
-export async function logStrokeMove(x0, y0, x1, y1, speedX, speedY, touchType, angle, force, lw, tileId, tilingId, col, stType, shrink, filled, totCol) {
+export async function logStrokeMove(x0, y0, x1, y1, speedX, speedY, touchType, angle, force, lw, tileId, tilingId, col, stType, sizeChange, filled, totCol) {
     if (isLogging) {
         const coll = collection(db, "log");
         const newMessage = {
@@ -49,7 +49,7 @@ export async function logStrokeMove(x0, y0, x1, y1, speedX, speedY, touchType, a
             tilingId: tilingId,
             col: col,
             stType: stType,
-            shrink: shrink,
+            sizeChange: sizeChange,
             filled: filled,
             totCol: totCol,
         }
@@ -88,7 +88,7 @@ export async function logDot(x, y, touchType, angle, force, lw, tileId, tilingId
         const newMessage = {
             time: Date.now(),
             type: "I",
-            action: "st",
+            action: "dot",
             uid: UID,
             event: "U",
             x: x,
