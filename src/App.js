@@ -501,7 +501,7 @@ function App() {
                 }
                 rightHanded = angle < 4.7 && angle > 1.5 ? false : true;
             }
-            let yFinger = touchType === "stylus" ? getLineWidth() / 2 : getLineWidth() / 1.5
+            let yFinger = touchType === "stylus" ? getLineWidth() / 3 : getLineWidth() / 1.5
             let xFinger = rightHanded ? yFinger : -yFinger
             singleTouch = true;
             doubleTouch = false;
@@ -543,7 +543,7 @@ function App() {
     let firstMove = false;
 
     function onTouchMove(event) {
-        let yFinger = touchType === "stylus" ? getLineWidth() / 2 : getLineWidth() / 1.5
+        let yFinger = touchType === "stylus" ? getLineWidth() /3 : getLineWidth() / 1.5
         let xFinger = rightHanded ? yFinger : -yFinger
         const touch0X = event.touches[0].pageX - xFinger;
         const touch0Y = event.touches[0].pageY - yFinger;
