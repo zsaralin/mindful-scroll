@@ -189,7 +189,7 @@ export function drawSecondTilingHelper() {
     const tx = t.getContext('2d')
 
     tx.fillStyle = paperCol;
-    tx.fillRect(0, top + scrollBackAmount, t.width, pathArr[pathArr.length - 1].bounds[3]- pathArr[pathArr.length - 1].bounds[2] + 300);
+    tx.fillRect(0, top + scrollBackAmount, t.width, pathArr[pathArr.length - 1].bounds[3]- pathArr[pathArr.length - 1].bounds[2] + 500);
     // tx.fillStyle = 'transparent';
 
     drawTiling(pathArr[pathArr.length - 1])

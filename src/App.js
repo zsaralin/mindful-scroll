@@ -177,7 +177,7 @@ function App() {
             if (basicVersion) {
                 canvas.height = window.innerHeight * 3
             } else {
-                    canvas.height = Math.min(1700 * 3 + scrollBackAmount, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;}
+                canvas.height = Math.min(1700 * 3 + scrollBackAmount, window.innerHeight * 6)//(basicVersion ? 3 : 4)+ 400;}
             }
             const bub = document.getElementById('bub-canv')
             bub.width = 50//window.innerWidth;
@@ -198,7 +198,7 @@ function App() {
                 ctx.lineWidth = ctx.lineWidth / 2;
             }
         });
-        if(basicVersion){
+        if (basicVersion) {
             drawTwoShapes();
         } else {
             drawTwo()
@@ -221,6 +221,7 @@ function App() {
     let index;
     let smallOffset;
     let pathThicker = false;
+
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
@@ -265,11 +266,11 @@ function App() {
             currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
             // console.log('dTROKE TYPEEE ' + currTile.strokeType)
         }
-        if(currTile !== prevTile) stopPulseEffect()
+        if (currTile !== prevTile) stopPulseEffect()
         currColor = getCurrColor()
         // stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
-            if(firstClick) {
+            if (firstClick) {
                 firstClick = false;
                 playAudio()
             }
@@ -285,63 +286,67 @@ function App() {
                 startAutoScroll();
             }
             logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
-            if (!basicVersion && !currTile.filled && !twinklePlayed) {
+            if (!basicVersion && !currTile.filled) {
                 // if ((currTile && !prevTile) || (currTile && prevTile && currTile.id !== prevTile.id)) {
-                    timeoutFillSound = setTimeout(() => {
-                        totPixels = totPixels ? totPixels : getTotalPixelsSlow(currTile);
-                        checkFill = setInterval(() => {
-                            // console.log('TOT ' + totPixels + ' and ' + currTile.inPath.length)
-                            if (totPixels) {
-                                const currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
-                                if (!twinklePlayed && currFill > getFillMin()) {
-                                    clearInterval(checkFill);
-                                    pathThicker = true;
-                                    const effect = document.getElementById('effect-canvas')
-                                    const effCtx = effect.getContext('2d')
-                                    effCtx.strokeStyle = "black"
-                                    effCtx.lineWidth = 25;
-                                    effCtx.save()
-                                    effCtx.translate(0,-smallOffset)
-                                    gsap.to(effCtx, {
-                                        duration: .5,
-                                        lineWidth: 34,
-                                        onUpdate: () => {
-                                            effCtx.strokeStyle = "black"
-                                            effCtx.stroke(currTile.path);
-                                        },
-                                        onComplete: () => {
-                                            gsap.to(effCtx, {
-                                                duration: .5,
-                                                lineWidth: 25,
-                                                onUpdate: () => {
-                                                    effCtx.clearRect(0, 0, effect.width, effect.height);
-                                                    effCtx.stroke(currTile.path);
-                                                },
-                                                onComplete: () => {
-                                                    effCtx.clearRect(0, 0, effect.width, effect.height);
-                                                    pathThicker = false;
-                                            effCtx.restore()
+                timeoutFillSound = setTimeout(() => {
+                    totPixels = totPixels ? totPixels : getTotalPixelsSlow(currTile);
+                    checkFill = setInterval(() => {
+                        // console.log('TOT ' + totPixels + ' and ' + currTile.inPath.length)
+                        if (totPixels) {
+                            currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
+                            if (currFill > getFillMin()) {
+                                clearInterval(checkFill);
+                                pathThicker = true;
+                                const effect = document.getElementById('effect-canvas')
+                                const effCtx = effect.getContext('2d')
+                                effCtx.strokeStyle = "black"
+                                effCtx.lineWidth = 25;
+                                effCtx.save()
+                                effCtx.translate(0, -smallOffset)
+                                gsap.to(effCtx, {
+                                    duration: .5,
+                                    lineWidth: 34,
+                                    onUpdate: () => {
+                                        effCtx.strokeStyle = "black"
+                                        effCtx.stroke(currTile.path);
+                                    },
+                                    onComplete: () => {
+                                        gsap.to(effCtx, {
+                                            duration: .5,
+                                            lineWidth: 25,
+                                            onUpdate: () => {
+                                                effCtx.clearRect(0, 0, effect.width, effect.height);
+                                                effCtx.stroke(currTile.path);
+                                            },
+                                            onComplete: () => {
+                                                effCtx.clearRect(0, 0, effect.width, effect.height);
+                                                pathThicker = false;
+                                                if (storedFillEvent) {
+                                                    onStrokeEnd()
+                                                    storedFillEvent = false;
                                                 }
-                                            });
-                                        },
-                                    });
+                                                effCtx.restore()
+                                            }
+                                        });
+                                    },
+                                });
 
-                                    console.log('I AM  BEING PLAYED')
-                                    twinklePlayed = true;
-                                }
+                                console.log('I AM  BEING PLAYED')
+                                twinklePlayed = true;
                             }
-                        }, 1000);
-                    }, 1000); // Delay execution by 5 seconds (5000 milliseconds)
-                }
+                        }
+                    }, 1000);
+                }, 1000); // Delay execution by 5 seconds (5000 milliseconds)
+            }
             // }
 
-                // let tiles = getOrienTiles(currTile, currTiling)
-                // let tiles = getRow(currTile, currTiling)
-                // let tiles = getColumn(currTile, currTiling)
-                // let tiles = getCorners(currTiling)
-                // let tiles = getCornerTiles(currTiling)
-                // fillTilesTogeth(tiles, currColor, "center")
-                // fillOrien(currTile, t)
+            // let tiles = getOrienTiles(currTile, currTiling)
+            // let tiles = getRow(currTile, currTiling)
+            // let tiles = getColumn(currTile, currTiling)
+            // let tiles = getCorners(currTiling)
+            // let tiles = getCornerTiles(currTiling)
+            // fillTilesTogeth(tiles, currColor, "center")
+            // fillOrien(currTile, t)
         }
     }
 
@@ -605,13 +610,19 @@ function App() {
 
     }
 
+    let storedFillEvent = false;
+
     async function onStrokeEnd() {
         clearInterval(checkFill)
         clearTimeout(timeoutFillSound)
+        if (pathThicker) {
+            storedFillEvent = true;
+            return
+        }
         if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled &&
             (currFill > getFillMin() || getFillRatio(currTile, smallOffset, TOP_CANV) > getFillMin())) {
             getTotalPixelsFast(currTile)
-            if (pathThicker) await delay(200)
+            // if (pathThicker) await pathThicker === false;
             completeTile2(currTile, currTiling, invisCol)
             twinklePlayed = false;
             clearTimeout(timeoutFillSound)
@@ -751,16 +762,16 @@ function App() {
 
             <div className="wrapper" id="wrapper">
                 <div id="canvas-wrapper">
-                    <canvas ref={canvas} id="fill-canvas" style = {{background : ''}}></canvas>
+                    <canvas ref={canvas} id="fill-canvas" style={{background: ''}}></canvas>
                     <canvas id="top-canvas" style={{display: ''}}></canvas>
                     <canvas id="effect-canvas" style={{display: ''}}></canvas>
 
                     <canvas id="invis-canvas" style={{display: 'none',}}
                     ></canvas>
                     <canvas id="tiling-canvas" style={{display: '', background: '', zIndex: 2}}
-                            // onMouseDown={onMouseDown}
-                            // onMouseUp={onMouseUp}
-                            // onMouseMove={onMouseMove}
+                        // onMouseDown={onMouseDown}
+                        // onMouseUp={onMouseUp}
+                        // onMouseMove={onMouseMove}
                             onTouchStart={onTouchStart}
                             onTouchEnd={onTouchEnd}
                             onTouchCancel={onTouchEnd}

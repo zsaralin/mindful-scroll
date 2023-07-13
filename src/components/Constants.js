@@ -1,7 +1,7 @@
 export const LINE_WIDTH = 25;
 export const TILE_WIDTH = 25;
 
-export const FILL_RATIO = .85;
+export const FILL_RATIO = .2//.85;
 export const SHAPE_COLOR = 'rgb(0,255,0)';
 export const BUBBLE_DIST = 120
 
@@ -19,4 +19,4 @@ export const TOP_CANV = 'top-canvas'
 
 export const BB_PADDING = 35
 
-export const paperCol = 'rgba(238, 238, 230,1)'
+export const paperCol = 'rgba(280, 245, 230,1)'

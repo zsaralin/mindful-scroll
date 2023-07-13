@@ -185,7 +185,7 @@ export const redrawCanvas = async () => {
         newTiling = document.createElement('canvas');
 
         newInvis.width = newTiling.width = invisC.width;
-        newInvis.height = newTiling.height = refreshSpot + window.innerHeight + 100 //invisC.height;
+        newInvis.height = newTiling.height = refreshSpot + window.innerHeight + 110 //invisC.height;
 
         const newInvisCtx = newInvis.getContext('2d');
         const newTilingCtx = newTiling.getContext('2d');

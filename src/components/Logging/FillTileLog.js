@@ -14,7 +14,7 @@ export function logFillTile(type, under, tileId, colors, fillColor, fillColors, 
             under: under,
             tileId: tileId,
             colors: colors,
-            fillColor: fillColor === 'undefined' ? "null" : fillColor,
+            fillColor: typeof fillColor === 'undefined' ? "null" : fillColor,
             fillColors: fillColors ? fillColors : "null",
             colorCode: colorCode,
         };
