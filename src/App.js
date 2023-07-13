@@ -499,7 +499,7 @@ function App() {
                 if (touch.force > 0) {
                     force = touch.force;
                 }
-                rightHanded = angle < 4.7 ? true : false;
+                rightHanded = angle < 4.7 && angle > 1.5 ? false : true;
             }
             let yFinger = touchType === "stylus" ? getLineWidth() / 2 : getLineWidth() / 1.5
             let xFinger = rightHanded ? yFinger : -yFinger
