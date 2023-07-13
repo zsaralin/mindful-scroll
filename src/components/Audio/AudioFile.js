@@ -158,7 +158,7 @@ export function changeAudio(speedArr) {
                 }
 
                 function reduceAudioMini() {
-                    const targetVolume = Math.max(gainNode.gain.value - 0.005, 0);
+                    const targetVolume = Math.max(gainNode.gain.value - 0.01, 0);
                     gainNode.gain.setValueAtTime(targetVolume, audioContext.currentTime);
                     setTimeout(() => {
                         volDecrease = false;
