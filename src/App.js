@@ -291,7 +291,7 @@ function App() {
                 startAutoScroll();
             }
             currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
-            logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors, currFill)
+            logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors, currFill, currTile.strokeType)
             if (!basicVersion && !currTile.filled) {
                 // if ((currTile && !prevTile) || (currTile && prevTile && currTile.id !== prevTile.id)) {
                 timeoutFillSound = setTimeout(() => {
@@ -675,7 +675,7 @@ function App() {
         if (currTile) {
             const fr = currFill || getFillRatio(currTile, smallOffset, TOP_CANV)
             logStrokeEnd(cursorX, cursorY, touchType,
-                angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors, fr)
+                angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors, fr, currTile.strokeType)
         }
     }
 
