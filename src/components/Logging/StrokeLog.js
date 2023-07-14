@@ -1,7 +1,7 @@
 import {addDoc, collection} from "firebase/firestore";
 import {db, deleteMessages, isLogging, startTime, UID} from "./Logging";
 
-export function logStrokeStart(x, y, touchType, angle, force, lw, tileId, tilingId, col, filled, totCol) {
+export function logStrokeStart(x, y, touchType, angle, force, lw, tileId, tilingId, col, filled, totCol, fr) {
     if (isLogging) {
         const coll = collection(db, "log");
         const newMessage = {
@@ -21,6 +21,7 @@ export function logStrokeStart(x, y, touchType, angle, force, lw, tileId, tiling
             col: col,
             filled: filled,
             totCol: totCol,
+            fr: fr,
         }
         addDoc(coll, newMessage);
     }
@@ -57,7 +58,7 @@ export async function logStrokeMove(x0, y0, x1, y1, speedX, speedY, touchType, a
     }
 }
 
-export async function logStrokeEnd(x, y, touchType, angle, force, lw, tileId, tilingId, col, filled, totCol) {
+export async function logStrokeEnd(x, y, touchType, angle, force, lw, tileId, tilingId, col, filled, totCol, fr) {
     if (isLogging) {
         const coll = collection(db, "log");
         const newMessage = {
@@ -77,6 +78,7 @@ export async function logStrokeEnd(x, y, touchType, angle, force, lw, tileId, ti
             col: col,
             filled: filled,
             totCol: totCol,
+            fr: fr,
         };
         addDoc(coll, newMessage);
     }

@@ -22,6 +22,7 @@ export function logScrollStart(x, y, touchType, numTouches, angle, force,) {
 }
 
 export function logScrollMove(x0,y0,x1,y1, speedX, speedY, touchType, numTouches, angle, force,) {
+    console.log(y1-y0)
     if (isLogging) {
         const coll = collection(db, "log");
         const newMessage = {

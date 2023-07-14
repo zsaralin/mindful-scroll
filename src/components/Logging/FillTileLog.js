@@ -3,7 +3,6 @@ import {addDoc, collection} from "firebase/firestore";
 
 export function logFillTile(type, under, tileId, colors, fillColor, fillColors, colorCode) {
     if(isLogging) {
-        console.log('HERE YEEEEEEEEEE ' + fillColors + ' and fillColor ' + fillColor)
         const coll = collection(db, "log");
         const newMessage = {
             uid: UID,

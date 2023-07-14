@@ -2,6 +2,7 @@ import {db, isLogging, UID} from "./Logging";
 import {addDoc, collection} from "firebase/firestore";
 import {tileIds} from "../Tiling/TilingPathDict";
 import {path} from "../Tiling/TilingPath";
+import {basicVersion} from "../Tiling/SortingHat/CompleteTile2";
 
 export function logTiling(tilingI, tiles, bounds, offset, colourPal, fillInfo, tilingType) {
     if (isLogging) {
@@ -17,9 +18,10 @@ export function logTiling(tilingI, tiles, bounds, offset, colourPal, fillInfo, t
             offset: offset,
             colourPal: colourPal,
             tilingType: tilingType,
-            tilingPath: path,
+            tilingPath: basicVersion ? "null": path,
             fillInfo: JSON.stringify(fillInfo),
         }
         addDoc(coll, newMessage);
     }
 }
+

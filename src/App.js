@@ -124,6 +124,7 @@ import {logAutoScrollEnd, logAutoScrollStart, logAutoScrollStop} from "./compone
 import {addAudio, getAudio} from "./components/Audio/AudioFile";
 import {playFillSound} from "./components/Audio/FillSound";
 import {initCols} from "./components/BasicVersion/ShapeColours";
+import {logFillShape} from "./components/Logging/FillTileLog";
 
 
 function App() {
@@ -289,7 +290,8 @@ function App() {
             if (cursorY > FIFTH_WINDOW) {
                 startAutoScroll();
             }
-            logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
+            currFill = getFillRatio(currTile, smallOffset, TOP_CANV);
+            logStrokeStart(cursorX, cursorY, touchType, angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors, currFill)
             if (!basicVersion && !currTile.filled) {
                 // if ((currTile && !prevTile) || (currTile && prevTile && currTile.id !== prevTile.id)) {
                 timeoutFillSound = setTimeout(() => {
@@ -501,7 +503,7 @@ function App() {
                 }
                 rightHanded = angle < 4.7 && angle > 1.5 ? false : true;
             }
-            let yFinger = touchType === "stylus" ? getLineWidth() / 3 : getLineWidth() / 1.5
+            let yFinger = touchType === "stylus" ? getLineWidth() / 4 : getLineWidth() / 1.5
             let xFinger = rightHanded ? yFinger : -yFinger
             singleTouch = true;
             doubleTouch = false;
@@ -543,7 +545,7 @@ function App() {
     let firstMove = false;
 
     function onTouchMove(event) {
-        let yFinger = touchType === "stylus" ? getLineWidth() /3 : getLineWidth() / 1.5
+        let yFinger = touchType === "stylus" ? getLineWidth() /4 : getLineWidth() / 1.5
         let xFinger = rightHanded ? yFinger : -yFinger
         const touch0X = event.touches[0].pageX - xFinger;
         const touch0Y = event.touches[0].pageY - yFinger;
@@ -577,7 +579,11 @@ function App() {
             if (isAutoScrollActive) {
                 endAutoScroll()
             }
-            logScrollMove(prevCursorX, prevCursorY, cursorX, cursorY, touchSpeed[0], touchSpeed[1], touchType, numTouches, angle, force, getOffsetY())
+            if(logCounter == 0){
+                logCounter += 1;
+            }
+            else if(logCounter !== 0){
+            logScrollMove(prevCursorX, prevCursorY, cursorX, cursorY, touchSpeed[0], touchSpeed[1], touchType, numTouches, angle, force, getOffsetY())}
         }
         prevTouches[0] = event.touches[0];
         prevTouches[1] = event.touches[1];
@@ -586,6 +592,8 @@ function App() {
         prevCursorY = cursorY
 
     }
+
+    let logCounter = 0;
 
     function onTouchEnd(event) {
         if (!doubleTouch) {
@@ -597,6 +605,7 @@ function App() {
         } else {
             console.log('ENDING SCROLL')
             logScrollEnd(prevCursorX, prevCursorY, touchType, numTouches, angle, force, getOffsetY())
+            logCounter = 0;
         }
         if (requestId) {
             cancelAnimationFrame(requestId);
@@ -625,7 +634,7 @@ function App() {
             storedFillEvent = true;
             return
         }
-        if (!basicVersion && currTile && !currTile.watercolor && currTile && !currTile.filled &&
+        if (!basicVersion && currTile && !currTile.watercolor && !currTile.filled &&
             (currFill > getFillMin() || getFillRatio(currTile, smallOffset, TOP_CANV) > getFillMin())) {
             getTotalPixelsFast(currTile)
             // if (pathThicker) await pathThicker === false;
@@ -664,8 +673,9 @@ function App() {
         totPixels = null;
 
         if (currTile) {
+            const fr = currFill || getFillRatio(currTile, smallOffset, TOP_CANV)
             logStrokeEnd(cursorX, cursorY, touchType,
-                angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors)
+                angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.filled.toString(), currTile.colors, fr)
         }
     }
 
