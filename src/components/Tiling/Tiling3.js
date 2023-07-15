@@ -132,13 +132,10 @@ export let q = 0;
 export function secondTiling(inputArr, offset) {
     const finOffset = offset !== undefined ? offset : scrollBackAmount;
     top = bottom + BETWEEN_SPACE //+ finOffset ;
-    console.log('TOP ISSSS ' + top)
     let t = makeRandomTiling(inputArr);
     [xMin, xMax, yMin, yMax] = getBoundsTiling(t);
-    // console.log('bounnds ' + getBoundsTiling(t))
     offsetX = -(xMin - (window.innerWidth - xMax)) / 2;
     offsetY = bottom - yMin + finOffset + BETWEEN_SPACE;
-    // console.log('bounds2 ' + [xMin + offsetX, xMax + offsetX, yMin + offsetY, yMax + offsetY])
     if (oldOffset.length < 2) {
         oldOffset.push(offsetY + yMin);
     } else {
@@ -210,8 +207,6 @@ export function getTile(y, invisCol) {
         if (tile !== undefined) {
             return tile
         }
-        console.log('DID NOT GET TILE'
-        )
         // let currTiling = pathArr[(tilingIndex(y + getOffsetY()))].pathDict//pathArr[(tilingIndex(y))].pathDict
         // return currTiling['rgb(' + invisCol.substring(0, invisCol.length - 4) + ')']
     }

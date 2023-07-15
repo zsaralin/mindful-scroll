@@ -29,7 +29,6 @@ export function getPathPadding(y, tiling) {
 
 export function createPath(tiling) {
     setPath()
-    console.log('path is ' + path)
     numTilings++
     let [xmin, xmax, ymin, ymax] = getBoundsTiling(tiling)
     let w = xmax - xmin
@@ -99,7 +98,6 @@ export function createPath(tiling) {
             leftEdge = getYPadding() + leftPath
         }
         if (tileXMax < leftEdge || tileXMin > rightEdge) {//&& x1 > leftEdge && x1 < rightEdge) {
-            console.log('hey')
             tiling.splice(i, 1); // remove the current tile from the array
             i--; // decrement the index to account for the removed element        }
         } else if (Math.random() < .1) {

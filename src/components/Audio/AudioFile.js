@@ -41,7 +41,7 @@ let requestId;
 let targetTime;
 
 
-const targetVolume = 0.1;
+const targetVolume = 0.4;
 const fadeDuration = 1; // Duration in seconds
 
 export function getAudio() {
@@ -149,7 +149,7 @@ export function changeAudio(speedArr) {
                     if (!volDecrease && (speed[0] > 5 || speed[1] > 5) && gainNode.gain.value > 0.05) {
                         volDecrease = true;
                         reduceAudioMini();
-                    } else if (!volIncrease && (speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 0.2) {
+                    } else if (!volIncrease && (speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 0.4) {
                         volIncrease = true;
                         gainNode.gain.setValueAtTime(gainNode.gain.value + 0.005, audioContext.currentTime);
                         setTimeout(() => {

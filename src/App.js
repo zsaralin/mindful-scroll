@@ -579,10 +579,12 @@ function App() {
             if (isAutoScrollActive) {
                 endAutoScroll()
             }
+
             if(logCounter == 0){
                 logCounter += 1;
             }
             else if(logCounter !== 0){
+
             logScrollMove(prevCursorX, prevCursorY, cursorX, cursorY, touchSpeed[0], touchSpeed[1], touchType, numTouches, angle, force, getOffsetY())}
         }
         prevTouches[0] = event.touches[0];
