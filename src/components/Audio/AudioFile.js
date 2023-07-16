@@ -79,12 +79,10 @@ export function getAudio() {
 
                         targetTime = audioContext.currentTime + fadeDuration;
 
-                        gainNode.gain.value = 0;
-                        gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
-
-
                         try {
                             audioElement.play();
+                            gainNode.gain.value = 0;
+                            gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
                         } catch (error) {
                             console.error('An error occurred while playing the audio:', error);
                         }
