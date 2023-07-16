@@ -65,6 +65,7 @@ export function getAudio() {
                         // Set a random starting time
                         // const randomTime = Math.floor(Math.random() * audioElement.duration);
                         // audioElement.currentTime = randomTime;
+                        audioElement.currentTime = 0;
 
                         const sourceNode = audioContext.createMediaElementSource(audioElement);
                         gainNode = audioContext.createGain();
@@ -94,8 +95,7 @@ export function getAudio() {
 
                     audioElement.addEventListener('ended', function () {
                         gainNode.gain.value = 0;
-                        const randomTime = Math.floor(Math.random() * audioElement.duration);
-                        audioElement.currentTime = randomTime;
+                        audioElement.currentTime = 0;
                         gainNode.gain.linearRampToValueAtTime(targetVolume, targetTime);
 
                     });
