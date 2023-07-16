@@ -42,7 +42,7 @@ let targetTime;
 
 
 const targetVolume = 0.4;
-const fadeDuration = 1; // Duration in seconds
+const fadeDuration = 5; // Duration in seconds
 
 export function getAudio() {
     if (musicOn) {

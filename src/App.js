@@ -490,6 +490,7 @@ function App() {
 
 
     function onTouchStart(event) {
+        playAudio()
         touchType = event.touches[0]?.touchType;
         numTouches = event.touches.length
         cursorX = event.touches[0].pageX
