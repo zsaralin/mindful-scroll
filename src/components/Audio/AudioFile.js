@@ -145,9 +145,8 @@ export function changeAudio(speedArr) {
                         // volDecrease = true;
                         reduceAudioMini();
                     } else if (!volIncrease && (speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 0.4) {
-                        console.log('hey')
                         // volIncrease = true;
-                        gainNode.gain.setValueAtTime(gainNode.gain.value + 0.001, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(gainNode.gain.value + 0.003, audioContext.currentTime);
                         // setTimeout(() => {
                         //     volIncrease = false;
                         // }, 100);
@@ -156,16 +155,16 @@ export function changeAudio(speedArr) {
                 function reduceAudioMini() {
                     const targetVolume = Math.max(gainNode.gain.value - 0.01, 0);
                     gainNode.gain.setValueAtTime(targetVolume, audioContext.currentTime);
-                    setTimeout(() => {
+                    // setTimeout(() => {
                         // volDecrease = false;
-                    }, 100);
+                    // }, 100);
                     // console.log(gainNode.gain.value)
-                    if (targetVolume <= 0.03) {
+                    // if (targetVolume <= 0.03) {
                         // audioChange = false;
                         // setTimeout(function () {
                         //     audioChange = true;
                         // }, 100);
-                    }
+                    // }
                 }
             }
         }
