@@ -42,7 +42,7 @@ let targetTime;
 
 
 const targetVolume = 0.4;
-const fadeDuration = 5; // Duration in seconds
+const fadeDuration = 1; // Duration in seconds
 
 export function getAudio() {
     if (musicOn) {
@@ -130,12 +130,10 @@ let volDecrease = false;
 export function changeAudio(speedArr) {
     if (musicOn) {
         if (audioElement && audioContext && audioContext.currentTime >= targetTime) {
-            // console.log(gainNode.gain.value)
+            // console.log(gainNode.gain.value + ' and ' + speedArr)
             clearInterval(reduce)
-
-            if (audioContext && audioContext.currentTime >= targetTime) {
                 if (gainNode && audioChange) {
-                    clearTimeout(reduce)
+                    clearInterval(reduce)
                     // gsap.killTweensOf(audio)
                     if (arguments.length === 0) {
                         reduceAudioMini();
@@ -143,30 +141,30 @@ export function changeAudio(speedArr) {
                     }
 
                     const speed = getAbsArray(speedArr);
-                    if (!volDecrease && (speed[0] > 5 || speed[1] > 5) && gainNode.gain.value > 0.05) {
-                        volDecrease = true;
+                    if (!volDecrease && (speed[0] > 5 || speed[1] > 5) && gainNode.gain.value > 0.15) {
+                        // volDecrease = true;
                         reduceAudioMini();
                     } else if (!volIncrease && (speed[0] < 5 || speed[1] < 5) && gainNode.gain.value < 0.4) {
-                        volIncrease = true;
-                        gainNode.gain.setValueAtTime(gainNode.gain.value + 0.005, audioContext.currentTime);
-                        setTimeout(() => {
-                            volIncrease = false;
-                        }, 500);
+                        console.log('hey')
+                        // volIncrease = true;
+                        gainNode.gain.setValueAtTime(gainNode.gain.value + 0.025, audioContext.currentTime);
+                        // setTimeout(() => {
+                        //     volIncrease = false;
+                        // }, 100);
                     }
-                }
 
                 function reduceAudioMini() {
                     const targetVolume = Math.max(gainNode.gain.value - 0.01, 0);
                     gainNode.gain.setValueAtTime(targetVolume, audioContext.currentTime);
                     setTimeout(() => {
-                        volDecrease = false;
-                    }, 500);
+                        // volDecrease = false;
+                    }, 100);
                     // console.log(gainNode.gain.value)
                     if (targetVolume <= 0.03) {
-                        audioChange = false;
-                        setTimeout(function () {
-                            audioChange = true;
-                        }, 3000);
+                        // audioChange = false;
+                        // setTimeout(function () {
+                        //     audioChange = true;
+                        // }, 100);
                     }
                 }
             }
@@ -181,14 +179,14 @@ export function reduceAudio() {
         if (audioElement && audioContext && audioContext.currentTime >= targetTime) {
             audioChange = false;
             reduce = setInterval(function () {
-                if (gainNode.gain.value > 0.1) {
-                    gainNode.gain.setValueAtTime(gainNode.gain.value - .005, audioContext.currentTime);
+                if (gainNode.gain.value > 0.15) {
+                    gainNode.gain.setValueAtTime(gainNode.gain.value - .002, audioContext.currentTime);
                 } else {
                     clearInterval(reduce)
                     audioChange = true;
                     return
                 }
-            }, 500);
+            }, 100);
         }
     }
 }

@@ -403,7 +403,7 @@ function App() {
 
         } else {
             if (!doubleTouch &&  insidePoly[1] / insidePoly[0] > .3) {
-                changeAudio()
+                reduceAudio()
             }
             insidePoly[1] += 1;
         }
