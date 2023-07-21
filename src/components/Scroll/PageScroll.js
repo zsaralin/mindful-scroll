@@ -315,7 +315,7 @@ export const updateOffCanvas = () => {
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
 
-    const h = refreshSpot + window.innerHeight * 2;
+    const h = refreshSpot + window.innerHeight;
 
     const drawFillImage = () => {
         return new Promise((resolve) => {
