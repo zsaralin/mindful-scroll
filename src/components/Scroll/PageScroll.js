@@ -185,7 +185,7 @@ export const redrawCanvas = async () => {
         newTiling = document.createElement('canvas');
 
         newInvis.width = newTiling.width = invisC.width;
-        newInvis.height = newTiling.height = refreshSpot + window.innerHeight + 120 + BETWEEN_SPACE //invisC.height;
+        newInvis.height = newTiling.height = refreshSpot + window.innerHeight + 60 + BETWEEN_SPACE //invisC.height;
 
         const newInvisCtx = newInvis.getContext('2d');
         const newTilingCtx = newTiling.getContext('2d');
@@ -287,7 +287,7 @@ export const redrawCanvas = async () => {
 
                 offsetI = scrollBackAmount;
                 refreshSpot = top + offsetI - 100;
-
+                console.log(refreshSpot)
                 redrawActiveTiles()
                 redrawActiveNeigh()
 
@@ -309,13 +309,13 @@ export const updateOffCanvas = () => {
     newFill = document.createElement('canvas');
     newTop = document.createElement('canvas');
     newFill.width = fillC.width;
-    newFill.height = refreshSpot + window.innerHeight //+ 600 //fillC.height;
+    newFill.height = refreshSpot //+ window.innerHeight //+ 600 //fillC.height;
     newTop.width = fillC.width;
-    newTop.height = refreshSpot + window.innerHeight//fillC.height;
+    newTop.height = refreshSpot //+ window.innerHeight//fillC.height;
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
 
-    const h = refreshSpot + window.innerHeight;
+    const h =  refreshSpot //- whiteSpace - offsetI - offsetI;
 
     const drawFillImage = () => {
         return new Promise((resolve) => {
