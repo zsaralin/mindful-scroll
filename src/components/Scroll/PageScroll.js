@@ -309,9 +309,9 @@ export const updateOffCanvas = () => {
     newFill = document.createElement('canvas');
     newTop = document.createElement('canvas');
     newFill.width = fillC.width;
-    newFill.height = refreshSpot //+ window.innerHeight //+ 600 //fillC.height;
+    newFill.height = refreshSpot + window.innerHeight //+ 600 //fillC.height;
     newTop.width = fillC.width;
-    newTop.height = refreshSpot //+ window.innerHeight//fillC.height;
+    newTop.height = refreshSpot + window.innerHeight//fillC.height;
     const newFillCtx = newFill.getContext('2d');
     const newTopCtx = newTop.getContext('2d');
 
