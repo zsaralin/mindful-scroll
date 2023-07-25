@@ -6,7 +6,7 @@ import {getStorage, ref, uploadBytes, uploadString, listAll, deleteObject} from 
 import * as htmlToImage from 'html-to-image';
 import {dateString, logIdString} from "./TimeLog";
 
-export let isLogging  = true;
+export let isLogging  = false;
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
