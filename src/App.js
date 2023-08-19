@@ -227,6 +227,11 @@ function App() {
     let pathThicker = false;
     let rightHanded = true;
 
+    let switchC = 0;
+    let switchD = 0;
+    let switchStrokes = ["reg","blurry", "dotted", "transparent", "transparent" ]
+    let switchDots = ["reg","blurry", "dotted", "transparent","transparent", "clover", "flower" ]
+
     function onStrokeStart(prevScaledX, prevScaledY, x, y) {
         lw = getLineWidth()
         index = tilingIndex(prevScaledY)
@@ -268,8 +273,13 @@ function App() {
         // console.log(currTiling.fillInfo.strokeW + ' and ' + currTiling.fillInfo.strokeTypes)
         if (currTile) {
             smallOffset = getOffSmall(index)
-            currTile.strokeType = currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
+            currTile.strokeType = switchStrokes[switchC]//currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
             // console.log('dTROKE TYPEEE ' + currTile.strokeType)
+            currTile.dotType = switchDots[switchD]
+            switchC++;
+            switchD++
+            if(switchD > 6) switchD=  0;
+            if(switchC > 4) switchC = 0;
         }
         if (currTile !== prevTile) stopPulseEffect()
         currColor = getCurrColor()

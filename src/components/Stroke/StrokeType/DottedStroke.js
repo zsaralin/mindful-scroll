@@ -46,7 +46,10 @@ export function refreshDotted(id, refresh) {
         ctx.fill(tile.path)
     }
     ctx.restore()
+    redrawTileStrokes()
+
     redrawDottedStrokesTile(id)
+    redrawTileStrokes()
 }
 
 export function redrawDottedStrokes() {
