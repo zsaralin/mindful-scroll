@@ -273,15 +273,19 @@ function App() {
         // console.log(currTiling.fillInfo.strokeW + ' and ' + currTiling.fillInfo.strokeTypes)
         if (currTile) {
             smallOffset = getOffSmall(index)
-            currTile.strokeType = switchStrokes[switchC]//currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
+            currTile.strokeType = "reg"//currTile?.strokeType ? currTile.strokeType : helper(currTiling.fillInfo.strokeW, currTiling.fillInfo.strokeTypes)
             // console.log('dTROKE TYPEEE ' + currTile.strokeType)
+            // switchC++;
+            // switchD++
+            // if(switchD > 6) switchD=  0;
+            // if(switchC > 4) switchC = 0;
+        }
+        if (currTile !== prevTile) {
+            stopPulseEffect()
             currTile.dotType = switchDots[switchD]
-            switchC++;
             switchD++
             if(switchD > 6) switchD=  0;
-            if(switchC > 4) switchC = 0;
         }
-        if (currTile !== prevTile) stopPulseEffect()
         currColor = getCurrColor()
         // stopColorChange()
         if (currTile && isCircleInPath(currTile.path, prevScaledX, prevScaledY + smallOffset)) {
