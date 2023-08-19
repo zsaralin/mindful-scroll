@@ -4,7 +4,7 @@ export function getRandomShape(currYMax) {
     const c = document.getElementById('top-canvas').getContext('2d')
     let path = new Path2D()
     let dimension = []
-    shapeType = 3//getRandomNum(0, 14)
+    shapeType = getRandomNum(0, 14)
     if (shapeType === 0) {
         // circle
         const x = window.innerWidth / 2;
@@ -12,6 +12,7 @@ export function getRandomShape(currYMax) {
         const y = currYMax  + window.innerHeight / 2;
         path.ellipse(x, y, r, r, 0, 0, Math.PI * 2);
         dimension = [x - r, x + r, y-r, y+r];
+
     } else if (shapeType === 1) {
         // horizontal ellipse
         const x = window.innerWidth / 2;
@@ -28,8 +29,8 @@ export function getRandomShape(currYMax) {
         dimension = [x - r + 100, x + r - 50, y - r, y + r];
     } else if (shapeType === 3) {
         // square
-        const width = innerWidth + 200 // /3 ; // The width of the rectangle
-        const height = innerWidth ///3 ; // The height of the rectangle
+        const width = innerWidth / 3 ; // The width of the rectangle
+        const height = innerWidth / 3 ; // The height of the rectangle
         const x = window.innerWidth / 2 - width / 2;
         const y = currYMax + window.innerHeight / 2 - height / 2;
 
