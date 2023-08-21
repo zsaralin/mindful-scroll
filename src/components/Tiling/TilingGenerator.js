@@ -21,7 +21,7 @@ function getScaler(tiling) {
     let t1 = tiling.getT1()
     let t2 = tiling.getT2()
     const B = Math.abs((t1.x * t2.y) - (t2.x * t1.y)) / (tiling.numAspects())
-    const A = !mediaQuery.matches ?  2.3 : 1.3; // 1.3 to 1.0
+    const A = !mediaQuery.matches ?  2.3 : 1.5; // 1.3 to 1.0
     return Math.sqrt(A / B)
 }
 
