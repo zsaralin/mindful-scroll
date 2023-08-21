@@ -148,7 +148,7 @@ export function makeRandomTilingHelper(t) {
         scale = getScaler(t.t)
         return getSegArr(t.t, t.e)
     }
-    tilingType = 21//generateRandomNum()
+    tilingType = 48//generateRandomNum()
     const tp = tilingTypes[tilingType];
      tiling = new IsohedralTiling(tp);
 
