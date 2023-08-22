@@ -21,7 +21,7 @@ function getScaler(tiling) {
     let t1 = tiling.getT1()
     let t2 = tiling.getT2()
     const B = Math.abs((t1.x * t2.y) - (t2.x * t1.y)) / (tiling.numAspects())
-    const A = !mediaQuery.matches ?  2.3 : 1.5; // 1.3 to 1.0
+    const A = !mediaQuery.matches ? Math.floor(Math.random() * 2.5) + 2 : 1.3 + Math.random() * 0.6; // 1.3 to 1.0
     return Math.sqrt(A / B)
 }
 
@@ -110,13 +110,7 @@ export function drawTiling(tiling) {
     // invisCtx.lineWidth = tilingCtx.lineWidth / 2;
     invisCtx.strokeStyle = '#000';
 
-    let count = 0
     for (let p in pathDict) {
-        console.log(count)
-        count++
-        if (count %2 == 0){
-            continue;
-        }
         const path = pathDict[p].path;
         tilingCtx.globalCompositeOperation = 'destination-out';
         tilingCtx.fill(path);
@@ -148,7 +142,7 @@ export function makeRandomTilingHelper(t) {
         scale = getScaler(t.t)
         return getSegArr(t.t, t.e)
     }
-    tilingType = 53//generateRandomNum()
+    tilingType = generateRandomNum()
     const tp = tilingTypes[tilingType];
      tiling = new IsohedralTiling(tp);
 
