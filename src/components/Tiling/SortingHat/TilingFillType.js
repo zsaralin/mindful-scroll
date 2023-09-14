@@ -7,17 +7,17 @@ import {dither} from "../../Effects/Dither";
 const sections = [0, 1, 2, 3]
 const solidFill = ["first", "last", "meanHue", "most", "least"]
 const afterFill = ["complem", "inverseHue"]
-const afterBackFill = [["dither", "blurry", "pixel"], ["blurry", "dither"], ["dither", "blurry"], ["pixel", "blurry"], ["pixel", "dither"]]
+const afterBackFill = ["dither", "blurry", "pixel", ["blurry", "dither"], ["dither", "blurry"], ["pixel", "blurry"], ["pixel", "dither"]]
 const pattern = ["outline", "stripes", "gradient"]
 const stripes = ["horiz", "vert", "diag"]
-const gradient = ["horiz", "vert", "diag","radial"]
+const gradient = ["radial", "diag", "vert", "horiz"]
 const under = [true, false]
 
 export function getFillInfo() {
     if (basicVersion) { //simple
         return {strokeTypes: ["reg"], strokeW: [1]}
     } else {
-        const num = 3//sections[Math.floor(Math.random() * sections.length)];
+        const num = sections[Math.floor(Math.random() * sections.length)];
         if (num === 0) {
             const weights = [5, 3, 2, 1, 1]
             const totFillTypes = [1, 2, 3, 4, 5]
@@ -62,10 +62,10 @@ export function getFillInfo() {
             const n = helper(weights, totFillTypes) // # of solid fill types
             const solidTypes = chooseRandomElements(solidFill, n)
             // Randomly choose either one element or the first two elements
-            const patternTypes = ["outline"]//Math.random() < .7 ? pattern[Math.floor(Math.random() * pattern.length)] : pattern.slice(0, 2);
+            const patternTypes = Math.random() < .7 ? pattern[Math.floor(Math.random() * pattern.length)] : pattern.slice(0, 2);
             const fillTypes = solidTypes.concat(patternTypes);
             const fillW = generateRandomWeights(fillTypes.length)
-            // fillW.sort((a, b) => b - a); // want higher weights for solidTypes
+            fillW.sort((a, b) => b - a); // want higher weights for solidTypes
             let col0 = generateRandomWeights(6, true)
             let col1 = generateRandomWeights(15, true)
             col1 = adjustCol(col0, col1)
@@ -170,15 +170,15 @@ function generateRandomWeights(n, cols) {
 
     // Generate random decimal values
     function pushWeights(){
-    for (let i = 0; i < n; i++) {
-        let randomValue = Math.random();
-        if (cols) {
-            const modifiedValue = randomValue < 0.7 ? 0 : randomValue; // do not want inverse + inverse hue at the same time
-            randomWeights.push(modifiedValue);
-        } else {
-            randomWeights.push(randomValue)
-        }
-    }}
+        for (let i = 0; i < n; i++) {
+            let randomValue = Math.random();
+            if (cols) {
+                const modifiedValue = randomValue < 0.7 ? 0 : randomValue; // do not want inverse + inverse hue at the same time
+                randomWeights.push(modifiedValue);
+            } else {
+                randomWeights.push(randomValue)
+            }
+        }}
     pushWeights()
     while(randomWeights.every(value => value === 0)){
         randomWeights = [];

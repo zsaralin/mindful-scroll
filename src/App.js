@@ -667,6 +667,7 @@ function App() {
         }
         if (currTile && !strokeMove && !currTile.watercolor) {
             currTile.dotType = currTile.dotType ? currTile.dotType : dotTypesHelper(currTile.strokeType)
+            console.log(currTile.dotType)
             drawJustDot(currTile)
             logDot(cursorX, cursorY, touchType,
                 angle, force, getLineWidth(), currTile.id, currTiling.i, currColor, currTile.dotType, currTile.filled.toString(), currTile.colors)
