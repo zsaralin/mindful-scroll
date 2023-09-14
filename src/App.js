@@ -268,7 +268,7 @@ function App() {
         //     }
         // }
         if (prevTiling !== currTiling) {
-            // setColourPal(currTiling.colourPal)
+            setColourPal(currTiling.colourPal)
         }
         // console.log(currTiling.fillInfo.strokeW + ' and ' + currTiling.fillInfo.strokeTypes)
         if (currTile) {
