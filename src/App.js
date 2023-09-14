@@ -268,7 +268,7 @@ function App() {
         //     }
         // }
         if (prevTiling !== currTiling) {
-            setColourPal(currTiling.colourPal)
+            // setColourPal(currTiling.colourPal)
         }
         // console.log(currTiling.fillInfo.strokeW + ' and ' + currTiling.fillInfo.strokeTypes)
         if (currTile) {
@@ -281,7 +281,7 @@ function App() {
             // if(switchC > 4) switchC = 0;
         }
         if (currTile !== prevTile) {
-            stopPulseEffect()
+            // stopPulseEffect()
             // currTile.dotType = switchDots[switchD]
             // switchD++
             // currTile.strokeType = switchStrokes[switchC]
@@ -289,7 +289,7 @@ function App() {
             // switchC++;
             // switchD++
             // if(switchD > 6) switchD=  0;
-            // if(switchC > 4) switchC = 0;
+            // if(switchC > 3) switchC = 0;
         }
         currColor = getCurrColor()
         // stopColorChange()

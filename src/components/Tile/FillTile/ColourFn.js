@@ -57,6 +57,8 @@ function setCol1(tile, weightsI) {
     let cumulativeWeight = 0;
     for (let i = 0; i < weights.length; i++) {
         cumulativeWeight += weights[i];
+        console.log('case 0')
+        return getShades(tile.colors[0]);
         if (randomNum < cumulativeWeight) {
             colorCode = `1_${i}`;
             switch (i) {

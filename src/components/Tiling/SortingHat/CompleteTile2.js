@@ -34,8 +34,8 @@ export let basicVersion = basic === 'true' ? true : false;
 export function completeTile2(tile, tiling) {
     fillTileColors(tile);
     const fillInfo = tiling.fillInfo;
-    const fillType = helper(fillInfo.fillW, fillInfo.fillTypes);
-
+    const fillType = "outline" //helper(fillInfo.fillW, fillInfo.fillTypes);
+    console.log('fill ' + fillType)
     let logStr = fillType
     let underType;
 
@@ -144,18 +144,22 @@ export function afterFillFn(currTile, fillType, under, col) {
 }
 
 export function afterBackFillFn(currTile, fillType, i, background) {
+    console.log('fill is : ' + fillType)
     if (fillType === "dither") dither(currTile, i)
     else if (fillType === "blurry") blurTile(currTile)
     else if (fillType === "pixel") pixelated(currTile, i, background)
 }
 
 function afterBackFillFnMain(tiling, tile, fillType) {
-    const afterBackFillType = helper(tiling.fillInfo.afterBackW, tiling.fillInfo.afterFillTypes)
+    const afterBackFillType =  "blurry" //helper(tiling.fillInfo.afterBackW, tiling.fillInfo.afterFillTypes)
+    afterBackFillFn(tile, afterBackFillType)
+    return ',blurry'
+    return
     if (afterBackFillType === "dither") {
         const i = helper(ditherW, ditherI)
         afterBackFillFn(tile, afterBackFillType, i)
         return ',dither_' + i
-    } else if (afterBackFillType === "pixel" && tile.colors > 1) {
+    } else if (afterBackFillType === "pixel" ) {
         const i = helper(ditherW, [3, 4, 5, 6, 7])
         afterBackFillFn(tile, afterBackFillType, i, getCol(tile, fillType))
         return ',pixel' + i

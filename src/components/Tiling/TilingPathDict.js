@@ -111,11 +111,11 @@ function fillColourArray(numTile) {
         if(num[0] + i > 255){
             cols[i] = "rgb(" + (num[0]) + ", " + num[1] + ", " + num[2] + ")"
 
-        let g = num[1]
-        let b = num[2]
-    }
-    return cols
-}}
+            let g = num[1]
+            let b = num[2]
+        }
+        return cols
+    }}
 
 
 // Function to generate a random RGB color

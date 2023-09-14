@@ -144,7 +144,7 @@ export function makeRandomTilingHelper(t) {
     }
     tilingType = generateRandomNum()
     const tp = tilingTypes[tilingType];
-     tiling = new IsohedralTiling(tp);
+    tiling = new IsohedralTiling(tp);
 
     // Randomize the tiling vertex parameters
     let ps = tiling.getParameters();
