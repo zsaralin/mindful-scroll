@@ -150,7 +150,8 @@ export function afterBackFillFn(currTile, fillType, i, background) {
 }
 
 function afterBackFillFnMain(tiling, tile, fillType) {
-    const afterBackFillType = helper(tiling.fillInfo.afterBackW, tiling.fillInfo.afterFillTypes)
+    // const afterBackFillType = helper(tiling.fillInfo.afterBackW, tiling.fillInfo.afterFillTypes)
+    const afterBackFillType = "blurry"
     if (afterBackFillType === "dither") {
         const i = helper(ditherW, ditherI)
         afterBackFillFn(tile, afterBackFillType, i)

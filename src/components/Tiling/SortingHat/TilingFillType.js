@@ -17,7 +17,7 @@ export function getFillInfo() {
     if (basicVersion) { //simple
         return {strokeTypes: ["reg"], strokeW: [1]}
     } else {
-        const num = sections[Math.floor(Math.random() * sections.length)];
+        const num = 3//sections[Math.floor(Math.random() * sections.length)];
         if (num === 0) {
             const weights = [5, 3, 2, 1, 1]
             const totFillTypes = [1, 2, 3, 4, 5]
