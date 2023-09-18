@@ -282,14 +282,14 @@ function App() {
         }
         if (currTile !== prevTile) {
             // stopPulseEffect()
-            // currTile.dotType = switchDots[switchD]
-            // switchD++
-            // currTile.strokeType = switchStrokes[switchC]
-            // if(switchD > 6) switchD=  0;
-            // switchC++;
-            // switchD++
-            // if(switchD > 6) switchD=  0;
-            // if(switchC > 3) switchC = 0;
+            currTile.dotType = switchDots[switchD]
+            switchD++
+            currTile.strokeType = switchStrokes[switchC]
+            if(switchD > 6) switchD=  0;
+            switchC++;
+            switchD++
+            if(switchD > 6) switchD=  0;
+            if(switchC > 3) switchC = 0;
         }
         currColor = getCurrColor()
         // stopColorChange()
