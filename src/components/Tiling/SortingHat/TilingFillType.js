@@ -8,7 +8,7 @@ const sections = [0, 1, 2, 3]
 const solidFill = ["first", "last", "meanHue", "most", "least"]
 const afterFill = ["complem", "inverseHue"]
 const afterBackFill = ["dither", "blurry", "pixel", ["blurry", "dither"], ["dither", "blurry"], ["pixel", "blurry"], ["pixel", "dither"]]
-const pattern = ["outline", "stripes", "gradient"]
+const pattern = [ "stripes", "gradient"]//["outline", "stripes", "gradient"]
 const stripes = ["horiz", "vert", "diag"]
 const gradient = ["radial", "diag", "vert", "horiz"]
 const under = [true, false]
@@ -17,7 +17,7 @@ export function getFillInfo() {
     if (basicVersion) { //simple
         return {strokeTypes: ["reg"], strokeW: [1]}
     } else {
-        const num = sections[Math.floor(Math.random() * sections.length)];
+        const num = 3//sections[Math.floor(Math.random() * sections.length)];
         if (num === 0) {
             const weights = [5, 3, 2, 1, 1]
             const totFillTypes = [1, 2, 3, 4, 5]
