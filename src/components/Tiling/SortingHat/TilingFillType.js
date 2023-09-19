@@ -17,7 +17,7 @@ export function getFillInfo() {
     if (basicVersion) { //simple
         return {strokeTypes: ["reg"], strokeW: [1]}
     } else {
-        const num = sections[Math.floor(Math.random() * sections.length)];
+        const num = 0//sections[Math.floor(Math.random() * sections.length)];
         if (num === 0) {
             const weights = [5, 3, 2, 1, 1]
             const totFillTypes = [1, 2, 3, 4, 5]
@@ -26,7 +26,7 @@ export function getFillInfo() {
             const fillW = generateRandomWeights(fillTypes.length)
             const underW = generateRandomWeights(under.length)
             const combinW = Math.random()
-            const otherStrokeType = ["blurry", "transparent", "dotted"][Math.floor(Math.random() * 3)]; // choose one at random
+            const otherStrokeType = ["transparent", "transparent", "transparent"][Math.floor(Math.random() * 3)]; // choose one at random
             const randomW = [0, 0, 0, 0.2, 0.7][Math.floor(Math.random() * 5)];
             const strokeTypes = ["reg", otherStrokeType]
             const strokeW = [1 - randomW, randomW]
@@ -42,7 +42,7 @@ export function getFillInfo() {
             const randomNumber = Math.random();
             const ditherW = randomNumber < 0.5 ? 0 : randomNumber
 
-            const otherStrokeType = ["blurry", "transparent", "dotted"][Math.floor(Math.random() * 3)]; // choose one at random
+            const otherStrokeType = ["transparent", "transparent", "transparent"][Math.floor(Math.random() * 3)]; // choose one at random
             const randomW = [0, 0, 0, 0.2, 0.7][Math.floor(Math.random() * 5)];
             const strokeTypes = ["reg", otherStrokeType]
             const strokeW = [1 - randomW, randomW]
