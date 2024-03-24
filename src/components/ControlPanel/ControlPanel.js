@@ -29,6 +29,7 @@ export function hideControlPanel() {
 }
 
 export function showControlPanel() {
+    console.log('hi?')
     const controlPanelBackground = document.getElementById("controlPanelBackground");
     controlPanelBackground.style.visibility  = 'visible'
     gsap.to("#controlPanel", {left: 0 + 'px', duration: 1, delay: 0})

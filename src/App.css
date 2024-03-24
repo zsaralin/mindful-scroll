@@ -28,7 +28,7 @@
     position: fixed;
     width: 30px;
     height: 25px;
-    z-index: 3;
+    z-index: 4;
     border: solid 1px grey;
 }
 
@@ -41,7 +41,7 @@
     top: -2px;
     background-color: white;
     text-align: center;
-    z-index: 4;
+    z-index: 5;
     color: black;
     -webkit-appearance: none;
     outline: solid grey 2px;
