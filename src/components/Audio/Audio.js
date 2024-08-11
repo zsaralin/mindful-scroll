@@ -32,6 +32,7 @@ export default function Music() {
             }, 1000); // Timing to match the fade-out duration
         } else if (clickable) {
             getAudio();
+            setVisible(false); // Hide the message and the white page if accessed via touch or pen
             setFade(false); // Hide the message if accessed via touch or pen
         }
     }
