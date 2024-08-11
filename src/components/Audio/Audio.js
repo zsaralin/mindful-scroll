@@ -14,6 +14,7 @@ export default function Music() {
     const [message, setMessage] = useState("click anywhere to start"); // State for the displayed message
     const [fade, setFade] = useState(true); // State to control fading in and out
     const [clickable, setClickable] = useState(true); // State to control whether the click listener is active
+    const [visible, setVisible] = useState(true); // State to control the visibility of the entire page
 
     function playMusic(event) {
         if (event.pointerType === "mouse" && clickable) {
@@ -33,21 +34,22 @@ export default function Music() {
         } else if (clickable) {
             getAudio();
             setVisible(false); // Hide the message and the white page if accessed via touch or pen
-            setFade(false); // Hide the message if accessed via touch or pen
         }
     }
 
     return (
-        <div className="introPage" style={{ visibility: 'visible' }}>
-            <div id='introPage' className="introPage"
-                 onPointerDown={clickable ? playMusic : null} // Remove click listener after transition
-                 style={{
-                     transition: 'opacity 1s', // Smooth transition for fading
-                     opacity: fade ? 1 : 0, // Control fading in and out based on the fade state
-                 }}
-            >
-                {message}
+        visible && (
+            <div className="introPage" style={{ visibility: 'visible' }}>
+                <div id='introPage' className="introPage"
+                     onPointerDown={clickable ? playMusic : null} // Remove click listener after transition
+                     style={{
+                         transition: 'opacity 1s', // Smooth transition for fading
+                         opacity: fade ? 1 : 0, // Control fading in and out based on the fade state
+                     }}
+                >
+                    {message}
+                </div>
             </div>
-        </div>
+        )
     );
 };
